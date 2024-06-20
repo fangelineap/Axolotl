@@ -86,7 +86,7 @@ const Header = (props: {
                     href="/"
                     className={
                       pathname === "/"
-                        ? "text-green-500 dark:text-green"
+                        ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
                   >
@@ -98,7 +98,7 @@ const Header = (props: {
                     href="/pages/order"
                     className={
                       pathname === "/pages/order"
-                        ? "text-green-500 dark:text-green"
+                        ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
                   >
@@ -110,7 +110,7 @@ const Header = (props: {
                     href="/pages/order-history"
                     className={
                       pathname === "/pages/order-history"
-                        ? "text-green-500 dark:text-green"
+                        ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
                   >
@@ -122,7 +122,7 @@ const Header = (props: {
                     href="/pages/medicine"
                     className={
                       pathname === "/pages/medicine"
-                        ? "text-green-500 dark:text-green"
+                        ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
                   >
