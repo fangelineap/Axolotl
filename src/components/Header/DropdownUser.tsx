@@ -27,7 +27,7 @@ const DropdownUser = () => {
           />
         </span>
 
-        <span className="flex items-center gap-2 font-medium text-dark dark:text-dark-6">
+        {/* <span className="flex items-center gap-2 font-medium text-dark dark:text-dark-6">
           <span className="hidden lg:block">Jhon Smith</span>
 
           <svg
@@ -45,7 +45,7 @@ const DropdownUser = () => {
               fill=""
             />
           </svg>
-        </span>
+        </span> */}
       </Link>
 
       {/* <!-- Dropdown Star --> */}

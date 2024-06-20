@@ -39,11 +39,21 @@ const menuGroups = [
             />
           </svg>
         ),
-        label: "Dashboard",
+        label: "Home",
         route: "#",
-        children: [
-          { label: "eCommerce", route: "/" },
-        ],
+        children: [{ label: "eCommerce", route: "/" }],
+      },
+      {
+        label: "Order",
+        route: "/pages/order",
+      },
+      {
+        label: "Order History",
+        route: "/pages/order-history",
+      },
+      {
+        label: "Medicine",
+        route: "/pages/medicine",
       },
       {
         icon: (
@@ -162,9 +172,7 @@ const menuGroups = [
         ),
         label: "Tables",
         route: "#",
-        children: [
-          { label: "Tables", route: "/tables" },
-        ],
+        children: [{ label: "Tables", route: "/tables" }],
       },
       {
         icon: (
@@ -186,9 +194,7 @@ const menuGroups = [
         ),
         label: "Pages",
         route: "#",
-        children: [
-          { label: "Settings", route: "/pages/settings" },
-        ],
+        children: [{ label: "Settings", route: "/pages/settings" }],
       },
     ],
   },
@@ -219,9 +225,7 @@ const menuGroups = [
         ),
         label: "Charts",
         route: "#",
-        children: [
-          { label: "Basic Chart", route: "/charts/basic-chart" },
-        ],
+        children: [{ label: "Basic Chart", route: "/charts/basic-chart" }],
       },
       {
         icon: (
@@ -288,9 +292,7 @@ const menuGroups = [
         ),
         label: "Authentication",
         route: "#",
-        children: [
-          { label: "Sign In", route: "/auth/signin" },
-        ],
+        children: [{ label: "Sign In", route: "/auth/signin" }],
       },
     ],
   },
@@ -316,7 +318,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <Image
               width={176}
               height={32}
-              src={"/images/logo/logo-dark.svg"}
+              src={"/images/logo/axolotl.svg"}
               alt="Logo"
               priority
               className="dark:hidden"

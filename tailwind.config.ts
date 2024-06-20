@@ -23,7 +23,7 @@ const config: Config = {
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
-        primary: "#5750F1",
+        primary: "#1CBF90",
         stroke: "#E6EBF1",
         "stroke-dark": "#27303E",
         dark: {
@@ -97,6 +97,26 @@ const config: Config = {
           light: {
             DEFAULT: "#FCD34D",
             4: "#FFFBEB",
+          },
+        },
+        kalbe: {
+          dark: {
+            DEFAULT: "#26725C",
+          },
+          medium: {
+            DEFAULT: "#2B9879",
+          },
+          light: {
+            DEFAULT: "#1CBF90",
+          },
+          veryLight: {
+            DEFAULT: "#D4EDD6",
+          },
+          proLight: {
+            DEFAULT: "#E0F7E2",
+          },
+          ultraLight: {
+            DEFAULT: "#F0FFF0",
           },
         },
       },

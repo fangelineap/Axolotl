@@ -1,17 +1,18 @@
 import Link from "next/link";
 import DarkModeSwitcher from "./DarkModeSwitcher";
-import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
-import SearchForm from "@/components/Header/SearchForm";
+import { usePathname } from "next/navigation";
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-999 flex w-full border-b border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark">
-      <div className="flex flex-grow items-center justify-between px-4 py-5 shadow-2 md:px-5 2xl:px-10">
+      <div className="flex flex-grow items-center justify-between px-2 py-2 md:px-2 2xl:px-10">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
           {/* <!-- Hamburger Toggle BTN --> */}
           <button
@@ -56,38 +57,88 @@ const Header = (props: {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
-            <Image
-              width={32}
-              height={32}
-              src={"/images/logo/logo-icon.svg"}
-              alt="Logo"
-            />
+          <Link href="/">
+            <h5 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
+              Axolotl
+            </h5>
           </Link>
         </div>
 
-        <div className="hidden lg:block">
-          <div>
-            <h1 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
-              Dashboard
-            </h1>
-            <p className="font-medium">Next.js Admin Dashboard Solution</p>
+        <div className="flex items-center justify-normal gap-2 2xsm:gap-4 lg:w-full lg:justify-end xl:w-auto xl:justify-normal">
+          <div className="flex">
+            <div className="hidden lg:block">
+              <div>
+                <Link href="/">
+                  <Image
+                    width={200}
+                    height={200}
+                    src={"/images/logo/axolotl.svg"}
+                    alt="Logo"
+                    className="cursor-pointer"
+                  />
+                </Link>
+              </div>
+            </div>
+            <div className="flex">
+              <ul className="lg:w-41 hidden items-center gap-5 py-3 lg:flex">
+                <li>
+                  <Link
+                    href="/"
+                    className={
+                      pathname === "/"
+                        ? "text-green-500 dark:text-green"
+                        : "text-black dark:text-white"
+                    }
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pages/order"
+                    className={
+                      pathname === "/pages/order"
+                        ? "text-green-500 dark:text-green"
+                        : "text-black dark:text-white"
+                    }
+                  >
+                    Order
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pages/order-history"
+                    className={
+                      pathname === "/pages/order-history"
+                        ? "text-green-500 dark:text-green"
+                        : "text-black dark:text-white"
+                    }
+                  >
+                    Order History
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pages/medicine"
+                    className={
+                      pathname === "/pages/medicine"
+                        ? "text-green-500 dark:text-green"
+                        : "text-black dark:text-white"
+                    }
+                  >
+                    Medicine
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
         <div className="flex items-center justify-normal gap-2 2xsm:gap-4 lg:w-full lg:justify-end xl:w-auto xl:justify-normal">
           <ul className="flex items-center gap-2 2xsm:gap-4">
-            {/* <!-- Search Form --> */}
-            <SearchForm />
-            {/* <!-- Search Form --> */}
-
             {/* <!-- Dark Mode Toggle --> */}
             <DarkModeSwitcher />
             {/* <!-- Dark Mode Toggle --> */}
-
-            {/* <!-- Notification Menu Area --> */}
-            <DropdownNotification />
-            {/* <!-- Notification Menu Area --> */}
           </ul>
 
           {/* <!-- User Area --> */}
