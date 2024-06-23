@@ -66,16 +66,25 @@ const Header = (props: {
 
         <div className="flex items-center justify-normal gap-2 2xsm:gap-4 lg:w-full lg:justify-end xl:w-auto xl:justify-normal">
           <div className="flex">
-            <div className="hidden lg:block">
+            <div className="mr-10 hidden lg:block">
               <div>
                 <Link href="/">
-                  <Image
-                    width={200}
-                    height={200}
-                    src={"/images/logo/axolotl.svg"}
-                    alt="Logo"
-                    className="cursor-pointer"
-                  />
+                  <div className="cursor-pointer rounded-md p-2 dark:hidden">
+                    <Image
+                      width={175}
+                      height={175}
+                      src={"/images/logo/logo-axolotl-main.svg"}
+                      alt="Logo"
+                    />
+                  </div>
+                  <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
+                    <Image
+                      width={175}
+                      height={175}
+                      src={"/images/logo/logo-axolotl-main.svg"}
+                      alt="Logo"
+                    />
+                  </div>
                 </Link>
               </div>
             </div>

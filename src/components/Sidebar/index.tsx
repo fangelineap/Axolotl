@@ -315,24 +315,30 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
           <Link href="/">
-            <Image
-              width={176}
-              height={32}
-              src={"/images/logo/axolotl.svg"}
-              alt="Logo"
-              priority
-              className="dark:hidden"
-              style={{ width: "auto", height: "auto" }}
-            />
-            <Image
-              width={176}
-              height={32}
-              src={"/images/logo/logo.svg"}
-              alt="Logo"
-              priority
-              className="hidden dark:block"
-              style={{ width: "auto", height: "auto" }}
-            />
+            <div className="cursor-pointer rounded-md p-2 dark:hidden">
+              <Image
+                width={190}
+                height={32}
+                src={"/images/logo/logo-axolotl-main.svg"}
+                alt="Logo"
+                priority
+                className="dark:hidden"
+                // style={{ width: "auto", height: "auto" }}
+                style={{ height: "auto" }}
+              />
+            </div>
+            <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
+              <Image
+                width={190}
+                height={32}
+                src={"/images/logo/logo-axolotl-main.svg"}
+                alt="Logo"
+                priority
+                className="hidden dark:block"
+                // style={{ width: "auto", height: "auto" }}
+                style={{ height: "auto" }}
+              />
+            </div>
           </Link>
 
           <button

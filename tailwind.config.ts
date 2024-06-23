@@ -22,10 +22,10 @@ const config: Config = {
       colors: {
         current: "currentColor",
         transparent: "transparent",
-        white: "#FFFFFF",
+        white: "#F8F9FA",
         primary: "#1CBF90",
-        stroke: "#E6EBF1",
-        "stroke-dark": "#27303E",
+        stroke: "#DADADA",
+        "stroke-dark": "#BABABA",
         dark: {
           DEFAULT: "#111928",
           2: "#1F2A37",

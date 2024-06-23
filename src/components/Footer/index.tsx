@@ -9,19 +9,35 @@ const Footer = () => {
         <div className="flex flex-col px-25 md:flex-row md:items-start">
           <div className="flex flex-col items-start">
             <Link href="/">
-              <div className="cursor-pointer">
+              <div className="cursor-pointer rounded-md p-2 dark:hidden">
                 <Image
                   width={250}
                   height={250}
-                  src="/images/logo/axolotl-kalbe.svg"
+                  src={"/images/logo/logo-axolotl-main.svg"}
                   alt="Logo"
                 />
               </div>
+              <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
+                <Image
+                  width={250}
+                  height={250}
+                  src={"/images/logo/logo-axolotl-main.svg"}
+                  alt="Logo"
+                />
+              </div>
+              {/* <div className="cursor-pointer">
+                <Image
+                  width={250}
+                  height={250}
+                  src="/images/logo/logo-axolotl-main.svg"
+                  alt="Logo"
+                />
+              </div> */}
             </Link>
             <span className="font-extrabold">
               To improve Health for a Better Live, by
             </span>
-            <span>Prioritizing your health at your house.</span>
+            <span>prioritizing your health at your house.</span>
             <div className="py-6">
               <Image
                 width={200}
@@ -45,7 +61,7 @@ const Footer = () => {
               Security
             </span>
             <span className="mt-2 text-gray-500 dark:text-gray-400">
-              Term & Privacy
+              Terms & Privacy
             </span>
           </div>
         </div>
