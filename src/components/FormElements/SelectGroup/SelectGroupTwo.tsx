@@ -1,7 +1,19 @@
 "use client";
 import React, { useState } from "react";
 
-const SelectGroupTwo: React.FC = () => {
+interface CustomProps {
+  customClasses?: string;
+  label: string;
+  content: string[];
+  required: boolean
+}
+
+const SelectGroupTwo: React.FC<CustomProps> = ({
+  customClasses,
+  label,
+  content=["One", "Two"],
+  required
+}: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
 
@@ -9,14 +21,25 @@ const SelectGroupTwo: React.FC = () => {
     setIsOptionSelected(true);
   };
 
+  const getContent = () => {
+    let res: any = [];
+    content.forEach(str => {
+      res.push(<option value={str} className="text-dark-5 dark:text-dark-6 bg-kalbe-proLight">
+          {str}
+        </option>)
+    });
+
+    return (res);
+  };
+
   return (
-    <div>
+    <div className={customClasses}>
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        Select Country
+        {label}<span className="ml-1 text-red">*</span>
       </label>
 
       <div className="relative z-20 rounded-[7px] bg-white dark:bg-dark-2">
-        <span className="absolute left-4 top-1/2 z-30 -translate-y-1/2">
+        {/* <span className="absolute left-4 top-1/2 z-30 -translate-y-1/2">
           <svg
             width="20"
             height="20"
@@ -36,7 +59,7 @@ const SelectGroupTwo: React.FC = () => {
               </clipPath>
             </defs>
           </svg>
-        </span>
+        </span> */}
 
         <select
           value={selectedOption}
@@ -44,19 +67,11 @@ const SelectGroupTwo: React.FC = () => {
             setSelectedOption(e.target.value);
             changeTextColor();
           }}
-          className={`relative z-10 w-full appearance-none rounded-[7px] border border-stroke bg-transparent px-11.5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
+          className={`relative z-10 w-full appearance-none rounded-[7px] border border-stroke bg-transparent py-3 pl-5 pr-11.5 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
             isOptionSelected ? "text-dark dark:text-white" : ""
           }`}
         >
-          <option value="UnitedStates" className="text-dark-5 dark:text-dark-6">
-            United States
-          </option>
-          <option value="UK" className="text-dark-5 dark:text-dark-6">
-            UK
-          </option>
-          <option value="Canada" className="text-dark-5 dark:text-dark-6">
-            Canada
-          </option>
+          {getContent()}
         </select>
 
         <span className="absolute right-4.5 top-1/2 z-10 -translate-y-1/2 text-dark-4 dark:text-dark-6">

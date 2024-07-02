@@ -118,6 +118,9 @@ const config: Config = {
           ultraLight: {
             DEFAULT: "#F0FFF0",
           },
+          gray: {
+            secondary: "#777777"
+          }
         },
       },
       fontSize: {

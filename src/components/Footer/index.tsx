@@ -71,24 +71,28 @@ const Footer = () => {
             height={20}
             src="/images/icon/instagram.svg"
             alt="Instagram"
+            className="hover:bg-slate-300 cursor-pointer"
           />
           <Image
             width={20}
             height={20}
             src="/images/icon/twitter.svg"
             alt="Twitter"
+            className="hover:bg-slate-300 cursor-pointer"
           />
           <Image
             width={20}
             height={20}
             src="/images/icon/linkedin.svg"
             alt="Linkedin"
+            className="hover:bg-slate-300 cursor-pointer"
           />
           <Image
             width={20}
             height={20}
             src="/images/icon/youtube.svg"
             alt="Youtube"
+            className="hover:bg-slate-300 cursor-pointer"
           />
         </div>
       </div>
