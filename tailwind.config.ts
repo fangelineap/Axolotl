@@ -52,7 +52,7 @@ const config: Config = {
           dark: "#1A8245",
           light: {
             DEFAULT: "#2CD673",
-            1: "#10B981",
+            1: "#1CBF90", //kalbe light
             2: "#57DE8F",
             3: "#82E6AC",
             4: "#ACEFC8",
@@ -297,7 +297,11 @@ const config: Config = {
       content: {
         "icon-copy": 'url("../images/icon/icon-copy-alt.svg")',
       },
-      transitionProperty: { width: "width", stroke: "stroke" },
+      transitionProperty: {
+        width: "width",
+        stroke: "stroke",
+        "transform-opacity": "transform, opacity",
+      },
       borderWidth: {
         6: "6px",
         10: "10px",

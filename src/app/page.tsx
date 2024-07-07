@@ -4,8 +4,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import React from "react";
 
 export const metadata: Metadata = {
-  title:
-    "Axolotl - Your Caregiver",
+  title: "Axolotl - Your Caregiver",
   description: "Axolotl - Your Caregiver",
 };
 
