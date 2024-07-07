@@ -59,6 +59,7 @@ const Footer = () => {
             </span>
           </div>
         </div>
+<<<<<<< HEAD
         <div className="mt-6 flex justify-center md:mt-0 md:w-1/3 md:justify-end lg:w-1/4 xl:w-1/5 2xl:w-1/6">
           <div className="flex space-x-3">
             <Image
@@ -86,6 +87,37 @@ const Footer = () => {
               alt="Youtube"
             />
           </div>
+=======
+        <div className="absolute right-5  flex space-x-3">
+          <Image
+            width={20}
+            height={20}
+            src="/images/icon/instagram.svg"
+            alt="Instagram"
+            className="hover:bg-slate-300 cursor-pointer"
+          />
+          <Image
+            width={20}
+            height={20}
+            src="/images/icon/twitter.svg"
+            alt="Twitter"
+            className="hover:bg-slate-300 cursor-pointer"
+          />
+          <Image
+            width={20}
+            height={20}
+            src="/images/icon/linkedin.svg"
+            alt="Linkedin"
+            className="hover:bg-slate-300 cursor-pointer"
+          />
+          <Image
+            width={20}
+            height={20}
+            src="/images/icon/youtube.svg"
+            alt="Youtube"
+            className="hover:bg-slate-300 cursor-pointer"
+          />
+>>>>>>> 7b761bd6441355c536ab2f4e301495cf112185d2
         </div>
       </div>
     </footer>

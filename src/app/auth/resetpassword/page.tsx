@@ -12,7 +12,7 @@ const ResetPassword = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Reset Password Form" />
       <div className="flex justify-center pb-9 pt-3">
-        <div className="w-full min-w-[450px] rounded-[10px] border border-stroke bg-white shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:w-4/5 md:w-2/3 lg:w-5/12">
+        <div className="w-full min-w-[350px] rounded-[10px] border border-stroke bg-white shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:w-4/5 md:w-2/3 lg:w-5/12">
           <div className="rounded-t-[10px] border-b border-stroke bg-kalbe-light px-6.5 py-4 dark:border-dark-3 ">
             <h3 className="text-center text-xl font-semibold text-white">
               Reset Password

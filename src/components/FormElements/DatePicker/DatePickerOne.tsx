@@ -1,7 +1,13 @@
 import flatpickr from "flatpickr";
 import { useEffect } from "react";
 
-const DatePickerOne = () => {
+interface CustomProps {
+  customClasses?: string,
+  label: string,
+  required?: boolean
+}
+
+const DatePickerOne = ({customClasses, label, required}: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
     flatpickr(".form-datepicker", {
@@ -17,9 +23,9 @@ const DatePickerOne = () => {
   }, []);
 
   return (
-    <div>
+    <div className={customClasses}>
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        Date picker
+        {label} <span className="ml-1 text-red">*</span>
       </label>
       <div className="relative">
         <input
