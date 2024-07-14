@@ -4,6 +4,8 @@ import GuestHeader from "../Guest/GuestHeader";
 import Sidebar from "@/components/Sidebar";
 import GuestSidebar from "../Guest/Sidebar Guest";
 import { usePathname } from "next/navigation";
+import PatientHeader from "../Patient/PatientHeader";
+import PatientSidebar from "../Patient/Sidebar Patient";
 
 const DynamicHeader = ({
   sidebarOpen,
@@ -29,6 +31,19 @@ const DynamicHeader = ({
           setSidebarOpen={setSidebarOpen}
         />
         <GuestSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+      </>
+    );
+  } else if (pathname.startsWith("/pages/patient")) {
+    return (
+      <>
+        <PatientHeader
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <PatientSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
