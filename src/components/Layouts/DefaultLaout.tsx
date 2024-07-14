@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Footer from "../Footer";
 import DynamicHeader from "./DynamicHeader";
+import Header from "../Header";
 
 export default function DefaultLayout({
   children,
@@ -12,6 +13,7 @@ export default function DefaultLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
+<<<<<<< HEAD
     <div className="flex h-screen overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
@@ -25,7 +27,8 @@ export default function DefaultLayout({
           </div>
         </main>
         <Footer />
+
       </div>
-    </div>
+    </>
   );
 }
