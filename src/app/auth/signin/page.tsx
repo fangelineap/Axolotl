@@ -13,7 +13,7 @@ import { redirect } from "next/navigation";
 // };
 
 const SignIn = () => {
-  const onSignIn = async (form: FormData) => {
+  const signIn = async (form: FormData) => {
     "use server";
 
     const { error, data } = await signInWithEmailAndPassword(
@@ -40,7 +40,7 @@ const SignIn = () => {
               Sign In
             </h3>
           </div>
-          <form action={onSignIn}>
+          <form action={signIn}>
             <div className="p-6.5">
               <div className="flex flex-col items-center justify-center pb-6">
                 <h1 className="text-xl font-bold">Welcome back!</h1>
@@ -56,7 +56,7 @@ const SignIn = () => {
                 required
               />
 
-              <PasswordInput name="password" />
+              <PasswordInput label="Password" name="password" />
 
               <div className="mb-5.5 mt-3 flex items-center justify-end">
                 <Link

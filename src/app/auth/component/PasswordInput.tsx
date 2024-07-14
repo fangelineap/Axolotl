@@ -3,16 +3,17 @@
 import React, { useState } from "react";
 
 interface PasswordInputProps {
-    name: string
+    name: string,
+    label: string
 }
 
-const PasswordInput = ({name}: PasswordInputProps) => {
+const PasswordInput = ({name, label}: PasswordInputProps) => {
   const [visible, setVisible] = useState<boolean>(true);
 
   return (
-    <div className="relative">
+    <div className="relative mb-4.5">
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        Password
+        {label}
         <span className="ml-1 text-red">*</span>
       </label>
       <input

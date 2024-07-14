@@ -1,7 +1,11 @@
 import { useState } from "react";
 
-const CheckboxBlood = () => {
-  const [isChecked, setIsChecked] = useState<"A"|"B"|"AB"|"O"|"">("");
+interface CheckboxBloodProps {
+  blood: "A" | "B" | "AB" | "O" | "",
+  setBlood: (blood: "A" | "B" | "AB" | "O" | "") => void
+}
+
+const CheckboxBlood = ({ blood, setBlood }: CheckboxBloodProps) => {
 
   return (
     <div className="flex items-center w-full lg:w-1/2">
@@ -15,12 +19,12 @@ const CheckboxBlood = () => {
             id="checkboxLabelA"
             className="sr-only"
             onClick={() => {
-              setIsChecked("A");
+              setBlood("A");
             }}
           />
           <div
             className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              isChecked === "A" && "!border-4"
+              blood === "A" && "!border-4"
             }`}
           >
             <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
@@ -36,14 +40,15 @@ const CheckboxBlood = () => {
           <input
             type="checkbox"
             id="checkboxLabelB"
+            name="checkboxBlood"
             className="sr-only"
             onClick={() => {
-              setIsChecked("B");
+              setBlood("B");
             }}
           />
           <div
             className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              isChecked === "B" && "!border-4"
+              blood === "B" && "!border-4"
             }`}
           >
             <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
@@ -61,12 +66,12 @@ const CheckboxBlood = () => {
             id="checkboxLabelAB"
             className="sr-only"
             onClick={() => {
-              setIsChecked("AB");
+              setBlood("AB");
             }}
           />
           <div
             className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              isChecked === "AB" && "!border-4"
+              blood === "AB" && "!border-4"
             }`}
           >
             <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
@@ -84,12 +89,12 @@ const CheckboxBlood = () => {
             id="checkboxLabelO"
             className="sr-only"
             onClick={() => {
-              setIsChecked("O");
+              setBlood("O");
             }}
           />
           <div
             className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              isChecked === "O" && "!border-4"
+              blood === "O" && "!border-4"
             }`}
           >
             <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>

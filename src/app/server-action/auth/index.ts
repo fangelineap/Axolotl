@@ -1,6 +1,7 @@
 "use server";
 
 import createSupabaseServerClient from "@/app/lib/server";
+import { redirect } from "next/navigation";
 
 export async function signInWithEmailAndPassword(
   email: string,
@@ -13,3 +14,45 @@ export async function signInWithEmailAndPassword(
     password: password,
   });
 }
+
+export async function registerWithEmailAndPassword(
+  email: string,
+  password: string,
+  phoneNumber: string,
+  firstName: string,
+  lastName: string,
+  role: string,
+) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+  });
+
+  if (error) {
+    console.log("Error while registering user: ", error);
+    return { data, error };
+  }
+
+  if (role === "Caregiver") {
+    return await supabase.from("users").insert({
+      first_name: firstName,
+      last_name: lastName,
+      phone_number: phoneNumber,
+      user_id: data.user?.id,
+    });
+  }
+
+  return await supabase.from("users").insert({
+    first_name: firstName,
+    last_name: lastName,
+    phone_number: phoneNumber,
+    role: role,
+    user_id: data.user?.id,
+  });
+}
+
+export async function addPersonalInformation(
+  role: "Patient" | "System Admin" | "Drugstore Admin" | "Nurse" | "Midwife",
+) {}

@@ -5,14 +5,16 @@ interface CustomProps {
   customClasses?: string;
   label: string;
   content: string[];
-  required: boolean
+  required: boolean;
+  name: string;
 }
 
 const SelectGroupTwo: React.FC<CustomProps> = ({
   customClasses,
   label,
   content=["One", "Two"],
-  required
+  required,
+  name
 }: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
@@ -35,7 +37,7 @@ const SelectGroupTwo: React.FC<CustomProps> = ({
   return (
     <div className={customClasses}>
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        {label}<span className="ml-1 text-red">*</span>
+        {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
 
       <div className="relative z-20 rounded-[7px] bg-white dark:bg-dark-2">
@@ -62,6 +64,7 @@ const SelectGroupTwo: React.FC<CustomProps> = ({
         </span> */}
 
         <select
+        name={name}
           value={selectedOption}
           onChange={(e) => {
             setSelectedOption(e.target.value);
