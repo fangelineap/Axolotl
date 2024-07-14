@@ -42,7 +42,7 @@ const RegisterInit = () => {
                   />
                   <div className="flex flex-col">
                     <h2 className="font-semibold">Caregiver</h2>
-                    <p className="text-kalbe-gray-secondary">
+                    <p className="text-dark-secondary">
                       Be a home care assistant
                     </p>
                   </div>
@@ -73,7 +73,7 @@ const RegisterInit = () => {
                   />
                   <div className="flex flex-col">
                     <h2 className="font-semibold">Patient</h2>
-                    <p className="text-kalbe-gray-secondary">
+                    <p className="text-dark-secondary">
                       Book appointments
                     </p>
                   </div>

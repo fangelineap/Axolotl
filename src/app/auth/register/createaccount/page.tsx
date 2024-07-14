@@ -51,14 +51,14 @@ const CreateAccount = ({ searchParams }: any) => {
             <h2>Create Account</h2>
           </div>
           <div className="flex items-center justify-start gap-1">
-            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-gray-secondary font-medium text-white">
+            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white">
               3
             </h2>
             <h2>Personal Infomation</h2>
           </div>
           {searchParams.role === "Caregiver" && (
             <div className="flex items-center justify-start gap-1">
-              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-gray-secondary font-medium text-white">
+              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white">
                 4
               </h2>
               <h2>Review</h2>
@@ -66,7 +66,7 @@ const CreateAccount = ({ searchParams }: any) => {
           )}
           <div className="flex items-center justify-start gap-1">
             <h2
-              className={`flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-gray-secondary font-medium text-white`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white`}
               // ${searchParams.role === "Caregiver" && window.screen.width > 1000 && "ml-2"}
             >
               {searchParams.role === "Caregiver" ? 5 : 4}
@@ -147,7 +147,7 @@ const CreateAccount = ({ searchParams }: any) => {
               <PasswordInput name="confirmPassword" label="Confirm Password" />
 
               <div className="mt-5.5 flex justify-center gap-3">
-                <button className="w-1/4 rounded-[7px] bg-kalbe-gray-secondary p-[8px] font-medium text-white hover:bg-opacity-90">
+                <button className="w-1/4 rounded-[7px] bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90">
                   Back
                 </button>
                 <button

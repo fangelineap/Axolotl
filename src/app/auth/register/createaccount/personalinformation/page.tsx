@@ -161,7 +161,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           </div>
           {searchParams.role === "Caregiver" && (
             <div className="flex items-center justify-start gap-1">
-              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-gray-secondary font-medium text-white">
+              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-dark-secondary font-medium text-white">
                 4
               </h2>
               <h2>Review</h2>
@@ -169,7 +169,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           )}
           <div className="flex items-center justify-start gap-1">
             <h2
-              className={`flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-gray-secondary font-medium text-white ${searchParams.role === "Caregiver" && "lg:ml-2"}`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full bg-dark-secondary font-medium text-white ${searchParams.role === "Caregiver" && "lg:ml-2"}`}
             >
               {searchParams.role === "Caregiver" ? 5 : 4}
             </h2>
@@ -791,7 +791,7 @@ const PersonalInformation = ({ searchParams }: any) => {
 
               {/* Third div for finish button */}
               <div className="mt-5.5 flex items-center justify-center gap-3">
-                <button className="w-1/4 rounded-[7px] bg-kalbe-gray-secondary p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]">
+                <button className="w-1/4 rounded-[7px] bg-dark-secondary p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]">
                   Back
                 </button>
                 {loading ? (

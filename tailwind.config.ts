@@ -1,6 +1,31 @@
 import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
 
+// MAIN BG = white
+// MAIN TEXT = dark
+// SECONDARY TEXT = dark-secondary
+
+// MAIN OUTLINE = gray
+// SECONDARY OUTLINE = gray-1
+// TERTIARY OUTLINE = gray-2
+
+// SUCCESS = green
+// WARNING = yellow
+// ERROR = red
+// AWAITING = blue
+
+// BG SUCCESS = green-light
+// BG WARNING = yellow-light
+// BG ERROR = red-light
+// BG AWAITING = blue-light
+
+// KALBE DARK = kalbe-dark
+// KALBE MEDIUM = kalbe-medium
+// KALBE LIGHT = kalbe-light
+// KALBE VERY LIGHT = kalbe-veryLight
+// KALBE PRO LIGHT = kalbe-proLight
+// KALBE ULTRA LIGHT = kalbe-ultraLight
+
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -22,12 +47,13 @@ const config: Config = {
       colors: {
         current: "currentColor",
         transparent: "transparent",
-        white: "#F8F9FA",
-        primary: "#1CBF90",
+        white: "#F8F9FA", // BG Primary
+        primary: "#1CBF90", // Kalbe Primary
         stroke: "#DADADA",
         "stroke-dark": "#BABABA",
         dark: {
-          DEFAULT: "#111928",
+          DEFAULT: "#111928", // Black Primary
+          secondary: "#777777", // Text Secondary
           2: "#1F2A37",
           3: "#374151",
           4: "#4B5563",
@@ -37,10 +63,11 @@ const config: Config = {
           8: "#E5E7EB",
         },
         gray: {
-          DEFAULT: "#E9ECEF",
-          dark: "#122031",
-          1: "#DADADA",
-          2: "#BABABA",
+          DEFAULT: "#E9ECEF", // Light White
+          cancel: "#ACACAC", // BG Cancel
+          dark: "#BABABA", // Dark Gray
+          1: "#DADADA", // Light Gray
+          2: "#BABABA", // Dark Gray
           3: "#E5E7EB",
           4: "#D1D5DB",
           5: "#9CA3AF",
@@ -48,24 +75,24 @@ const config: Config = {
           7: "#374151",
         },
         green: {
-          DEFAULT: "#22AD5C",
-          dark: "#1A8245",
+          DEFAULT: "#1CBF90",
+          dark: "#26725C",
           light: {
-            DEFAULT: "#2CD673",
-            1: "#1CBF90", //kalbe light
-            2: "#57DE8F",
-            3: "#82E6AC",
-            4: "#ACEFC8",
+            DEFAULT: "#1CBF90",
+            1: "#1CBF90", // Kalbe medium
+            2: "#D4EDD6", // Kalbe very light
+            3: "#E0F7E2", // Kalbe pro light
+            4: "#F0FFF0", // Kalbe ultra light
             5: "#C2F3D6",
             6: "#DAF8E6",
             7: "#E9FBF0",
           },
         },
         red: {
-          DEFAULT: "#F23030",
-          dark: "#E10E0E",
+          DEFAULT: "#EE4D4D", // Kalbe Danger
+          dark: "#EE4D4D",
           light: {
-            DEFAULT: "#F56060",
+            DEFAULT: "#FBE3E4", // BG Kalbe Danger
             2: "#F89090",
             3: "#FBC0C0",
             4: "#FDD8D8",
@@ -74,10 +101,10 @@ const config: Config = {
           },
         },
         blue: {
-          DEFAULT: "#3C50E0",
-          dark: "#1C3FB7",
+          DEFAULT: "#3E8DD8", // Kalbe Medicine/Awaiting
+          dark: "#3E8DD8", // Kalbe Medicine/Awaiting
           light: {
-            DEFAULT: "#5475E5",
+            DEFAULT: "#D8E8F7", // BG Kalbe Medicine/Awaiting
             2: "#8099EC",
             3: "#ADBCF2",
             4: "#C3CEF6",
@@ -91,11 +118,11 @@ const config: Config = {
         },
         yellow: {
           dark: {
-            DEFAULT: "#F09D30",
+            DEFAULT: "#F09D30", // Kalbe Warning
             2: "#D97706",
           },
           light: {
-            DEFAULT: "#FFF6E1",
+            DEFAULT: "#FFF6E1", // BG Kalbe Warning
             4: "#FFFBEB",
           },
         },
@@ -118,9 +145,6 @@ const config: Config = {
           ultraLight: {
             DEFAULT: "#F0FFF0",
           },
-          gray: {
-            secondary: "#777777"
-          }
         },
       },
       fontSize: {
