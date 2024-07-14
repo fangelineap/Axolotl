@@ -32,18 +32,18 @@ const Home = () => {
               <ButtonDefault
                 label="Get Started"
                 link="/get-started"
-                customClasses="bg-green-light-1 text-white py-2 px-4 rounded hover:bg-green-light-2"
+                customClasses="bg-kalbe-light text-white py-2 px-4 rounded hover:bg-kalbe-medium"
               />
               <ButtonDefault
                 label="Get in touch"
                 link="/get-in-touch"
-                customClasses="bg-transparent border border-green-light-1 text-green-light-1 py-2 px-4 rounded hover:text-green-light-2 hover:border-green-light-2"
+                customClasses="bg-transparent border border-kalbe-light text-kalbe-light py-2 px-4 rounded hover:text-kalbe-medium hover:border-kalbe-medium"
               />
             </div>
           </div>
         </div>
       </div>
-      <div className="bg-gray-100 py-12">
+      <div className="py-12">
         <div className="container mx-auto px-6 lg:px-10">
           <div className="mb-8 text-center">
             <div className="flex flex-wrap justify-center space-x-4 text-lg font-medium text-gray-600 md:space-x-8">
@@ -61,12 +61,12 @@ const Home = () => {
               ))}
             </div>
           </div>
-          <div className="mx-auto mb-8 max-w-2xl text-center">
-            <blockquote className="mt-10 text-2xl font-semibold text-gray-700 md:text-4xl">
+          <div className="mx-auto mb-8 max-w-3xl text-center">
+            <blockquote className="mt-10 text-10xl font-bold md:text-4xl">
               &quot;Wherever the art of medicine is loved, there is also a love
               of humanity.&quot;
             </blockquote>
-            <cite className="mt-2 block text-gray-500">
+            <cite className="mt-2 block">
               —Hippocrates, Father of Modern Medicine
             </cite>
           </div>
@@ -76,11 +76,11 @@ const Home = () => {
               alt="Kalbe Logo"
               width={200}
               height={200}
-              className="mx-auto mt-4  md:mt-6"
+              className="mx-auto mt-4 md:mt-6"
             />
             <p className="mt-5 justify-center text-gray-600">
               With a mission from&nbsp;
-              <span className="font-bold text-green-light-1">
+              <span className="font-bold text-kalbe-light">
                 PT Kalbe Farma, Tbk
               </span>
               , we have an ambition to
@@ -102,13 +102,13 @@ const Home = () => {
             </div>
             <div className="w-full lg:order-1 lg:w-1/2">
               <div className="text-center lg:text-left">
-                <h3 className="text-2xl font-semibold sm:text-7xl">
+                <h3 className="text-2xl font-normal sm:text-7xl text-dark">
                   To{" "}
-                  <span className="font-extrabold text-dark-2">
+                  <span className="font-bold">
                     Improve Health
                   </span>{" "}
                   for a&nbsp;
-                  <span className="font-extrabold text-dark-2">
+                  <span className="font-bold">
                     Better Life
                   </span>
                 </h3>
@@ -123,7 +123,7 @@ const Home = () => {
                 </p>
                 <a
                   href=""
-                  className="mt-4 inline-block text-green-light-1 hover:text-green-light-2"
+                  className="mt-4 inline-block text-kalbe-light hover:text-kalbe-medium"
                 >
                   Read our patients journey →
                 </a>
@@ -245,11 +245,11 @@ const Home = () => {
               <ButtonDefault
                 label="Apply as Caregiver"
                 link=""
-                customClasses="bg-green-light-1 text-white py-2 px-4 rounded hover:bg-green-light-2"
+                customClasses="bg-kalbe-light text-white py-2 px-4 rounded hover:bg-kalbe-medium"
               />
               <a
                 href=""
-                className="flex items-center text-green-light-1 hover:text-green-light-2"
+                className="flex items-center text-kalbe-light hover:text-kalbe-medium"
               >
                 More Information →
               </a>

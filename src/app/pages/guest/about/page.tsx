@@ -6,7 +6,7 @@ const About = () => {
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-4xl p-6">
-        <h1 className="mb-8 text-left text-5xl  text-black">
+        <h1 className="mb-8 text-left text-5xl text-black">
           The Story of <span className="font-extrabold">Axolotl</span>
         </h1>
         <div className="space-y-10 text-black">
@@ -68,11 +68,10 @@ const About = () => {
             />
             <p className="mt-4 text-center text-lg md:ml-6 md:mt-0 md:text-left">
               You might have an acquaintance to help you find the caregiver or
-              they might be the one. <br />
+              they might be the one. <br /> <br />
               But have you ever thought about their legality? Or whenever you go
-              to a new city and don&apos;t know anyone? <br />
-              And when do you need to send a caregiver to your parents in other
-              cities?
+              to a new city and don&apos;t know anyone? And when do you need to
+              send a caregiver to your parents in other cities?
             </p>
           </div>
           <div className="flex flex-col items-center md:flex-row">
@@ -84,7 +83,8 @@ const About = () => {
             />
             <p className="mt-4 text-center text-lg md:ml-6 md:mt-0 md:text-left">
               Well, I think you start to question these circumstances and to
-              answer your questions, that&apos;s where Axolotl comes in. <br />
+              answer your questions, that&apos;s where Axolotl comes in. <br />{" "}
+              <br />
               We&apos;re addressing these concerns and trying to bring back
               features that help the caregiver which will cut your waiting time!
             </p>
@@ -92,20 +92,20 @@ const About = () => {
           <div className="flex flex-col items-center md:flex-row">
             <div className="w-full md:w-auto">
               <iframe
+                className="rounded-lg"
                 width="300"
                 height="200"
                 src="https://www.youtube.com/embed/uUw4NJmAUNI?si=syqClaDEecFtKjCZ"
                 title="YouTube video player"
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
             </div>
             <p className="mt-4 text-center text-lg md:ml-6 md:mt-0 md:text-left">
-              Why Axolotl? Just hit and listen to this video <br />
+              Why Axolotl? Just hit and listen to this video <br /> <br />
               You see, it&apos;s widely known for its ability to regenerate lost
               limbs, we want you to believe that you also have the great power
-              to heal and improve your health. <br />
+              to heal and improve your health. <br /> <br />
               Let Axolotl be your guide to get yourself healthy as soon as
               possible 🥰
             </p>
@@ -121,7 +121,7 @@ const About = () => {
                   href="https://www.goodreads.com/work/quotes/21981414-axolotl-la-presencia-de-una-vida-diferente-de-otra-forma-de-mirar"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-green-light-1"
+                  className="underline hover:text-kalbe-light"
                 >
                   Axolotl
                 </a>

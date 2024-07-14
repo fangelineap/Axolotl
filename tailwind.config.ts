@@ -37,10 +37,10 @@ const config: Config = {
           8: "#E5E7EB",
         },
         gray: {
-          DEFAULT: "#EFF4FB",
+          DEFAULT: "#E9ECEF",
           dark: "#122031",
-          1: "#F9FAFB",
-          2: "#F3F4F6",
+          1: "#DADADA",
+          2: "#BABABA",
           3: "#E5E7EB",
           4: "#D1D5DB",
           5: "#9CA3AF",
@@ -91,11 +91,11 @@ const config: Config = {
         },
         yellow: {
           dark: {
-            DEFAULT: "#F59E0B",
+            DEFAULT: "#F09D30",
             2: "#D97706",
           },
           light: {
-            DEFAULT: "#FCD34D",
+            DEFAULT: "#FFF6E1",
             4: "#FFFBEB",
           },
         },

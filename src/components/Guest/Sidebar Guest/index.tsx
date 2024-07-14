@@ -111,8 +111,8 @@ const menuGroups = [
         label: "Health Service",
         route: "",
         dropdownItems: [
-          { label: "Nurses", route: "/health-service/nurses" },
-          { label: "Midwives", route: "/health-service/midwives" },
+          { label: "Nurses", route: "/auth/signin" },
+          { label: "Midwives", route: "/auth/signin" },
         ],
       },
     ],

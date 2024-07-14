@@ -17,7 +17,7 @@ const Careers: React.FC = () => {
             role in enhancing the lives of individuals and families, fostering
             independence, and promoting overall well-being.
           </p>
-          <button className="h-12 w-40 rounded-full bg-green-500 font-semibold text-white hover:bg-green-600 md:h-14 md:w-48">
+          <button className="h-12 w-40 rounded-full bg-kalbe-light font-semibold text-white hover:bg-kalbe-medium md:h-14 md:w-48">
             Apply Now
           </button>
         </div>
@@ -43,9 +43,9 @@ const Careers: React.FC = () => {
         </div>
       </div>
       <div className="mx-auto max-w-4xl p-6 text-black">
-        <div className="container mx-auto rounded-lg border border-emerald-300 bg-emerald-50 p-6">
+        <div className="container mx-auto rounded-lg border border-kalbe-light bg-kalbe-ultraLight p-6">
           <div className="flex flex-col md:flex-row">
-            <div className="w-full border-b border-emerald-300 p-4 md:w-1/2 md:border-b-0 md:border-r">
+            <div className="w-full border-b border-kalbe-light p-4 md:w-1/2 md:border-b-0 md:border-r">
               <h2 className="mb-4 text-2xl font-bold">
                 As a <span className="font-extrabold">Caregiver</span>, you’ll
               </h2>
@@ -126,7 +126,7 @@ const Careers: React.FC = () => {
               <h2 className="mb-4 text-3xl font-bold">
                 Start your <span className="font-extrabold">Journey</span> Now!
               </h2>
-              <div className="mb-6 flex w-full items-center justify-center rounded-lg border border-amber-500 bg-amber-100 p-4">
+              <div className="mb-6 flex w-full items-center justify-center rounded-lg border border-yellow-dark bg-yellow-light p-4">
                 <div className="flex-shrink-0 pr-4">
                   <Image
                     src="/images/freepik/warning.svg"
@@ -136,10 +136,10 @@ const Careers: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="mb-2 font-bold text-yellow-600">
+                  <h3 className="mb-2 font-bold text-yellow-dark">
                     Quick Tips for Speed Up Your Registration
                   </h3>
-                  <ul className="list-inside list-disc text-yellow-800">
+                  <ul className="list-inside list-disc text-yellow-dark text-sm">
                     <li>
                       Get all necessary documents before registering yourself as
                       a caregiver.
@@ -150,7 +150,7 @@ const Careers: React.FC = () => {
                   </ul>
                 </div>
               </div>
-              <button className="h-12 w-40 rounded bg-green-light-1 font-semibold text-white hover:bg-green-light-2 md:h-9 md:w-48">
+              <button className="h-12 w-40 rounded bg-kalbe-light font-semibold text-white hover:bg-kalbe-medium md:h-9 md:w-48">
                 Apply as Caregiver
               </button>
             </div>

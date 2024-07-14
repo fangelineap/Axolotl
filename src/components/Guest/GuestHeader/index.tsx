@@ -114,13 +114,13 @@ const GuestHeader: React.FC<HeaderProps> = ({
             </Link>
           </div>
           <div className="flex flex-grow justify-center">
-            <ul className="flex items-center gap-5 py-3">
+            <ul className="flex items-center gap-10 py-3 text-xl">
               <li>
                 <Link href="/pages/guest">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
                       isActive("/pages/guest")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
@@ -131,9 +131,9 @@ const GuestHeader: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/pages/guest/about">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
                       isActive("/pages/guest/about")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
@@ -144,9 +144,9 @@ const GuestHeader: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/pages/guest/careers">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
                       isActive("/pages/guest/careers")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
@@ -160,8 +160,8 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 onClick={toggleDropdown}
               >
                 <div
-                  className={`cursor-pointer text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                    dropdownOpen ? "font-bold text-green-light-1" : ""
+                  className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
+                    dropdownOpen ? "font-bold text-kalbe-light" : ""
                   }`}
                 >
                   <div className="flex">
@@ -180,14 +180,14 @@ const GuestHeader: React.FC<HeaderProps> = ({
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
                     <li className="border-b border-gray-200 dark:border-gray-700">
                       <Link href="/pages/guest/health-services/nurses">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
+                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
                           Nurses
                         </div>
                       </Link>
                     </li>
                     <li>
                       <Link href="/pages/guest/health-services/midwives">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
+                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
                           Midwives
                         </div>
                       </Link>
@@ -199,9 +199,9 @@ const GuestHeader: React.FC<HeaderProps> = ({
           </div>
         </div>
         <div className="ml-auto">
-          <Link href="/login">
+          <Link href="/auth/signin">
             <div className="text-black dark:text-white">
-              <button className="rounded bg-green-light-1 px-4 py-2 text-white hover:bg-green-light-2">
+              <button className="rounded bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-medium">
                 Login
               </button>
             </div>
@@ -239,7 +239,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                   <div
                     className={`block text-black dark:text-white ${
                       isActive("/pages/guest")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
@@ -252,7 +252,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                   <div
                     className={`block text-black dark:text-white ${
                       isActive("/pages/guest/about")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
@@ -265,7 +265,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                   <div
                     className={`block text-black dark:text-white ${
                       isActive("/pages/guest/careers")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
