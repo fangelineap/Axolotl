@@ -53,6 +53,12 @@ export async function registerWithEmailAndPassword(
   });
 }
 
-export async function addPersonalInformation(
-  role: "Patient" | "System Admin" | "Drugstore Admin" | "Nurse" | "Midwife",
-) {}
+export async function getCaregiver(caregiverId: any) {
+  const supabase = await createSupabaseServerClient();
+  return (await supabase.from('caregiver').select('*').eq('caregiver_id', caregiverId).limit(1));
+}
+
+export async function getUser(user_id: string) {
+  const supabase = await createSupabaseServerClient();
+  return await supabase.from('users').select().eq('user_id', user_id);
+}

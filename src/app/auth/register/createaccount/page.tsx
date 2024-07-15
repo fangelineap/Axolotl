@@ -12,24 +12,30 @@ const CreateAccount = ({ searchParams }: any) => {
   console.log("Role ", searchParams.role);
 
   const toPersonalInformation = async (form: FormData) => {
-    "use server"
-    if (form.get("password") === form.get("confirmPassword")) {
-      const {data, error} = await registerWithEmailAndPassword(
+    "use server";
+    if (
+      form.get("password")?.toString() ==
+      form.get("confirmPassword")?.toString()
+    ) {
+      const { data, error } = await registerWithEmailAndPassword(
         form.get("email")!.toString(),
         form.get("password")!.toString(),
         form.get("phoneNumber")!.toString(),
         form.get("firstName")!.toString(),
         form.get("lastName")!.toString(),
-        searchParams.role
+        searchParams.role,
       );
 
-      if(error) {
-        console.log('Errorrrrrrrrrrrrrrrrrrrr ', error);
-      }
-      else {
-        redirect(`/auth/register/createaccount/personalinformation?role=${searchParams.role}`);
+      if (error) {
+        console.log("Errorrrrrrrrrrrrrrrrrrrr ", error);
+      } else {
+        redirect(
+          `/auth/register/createaccount/personalinformation?role=${searchParams.role}`,
+        );
       }
     }
+
+    console.log("Password not matched");
   };
 
   return (
@@ -147,9 +153,11 @@ const CreateAccount = ({ searchParams }: any) => {
               <PasswordInput name="confirmPassword" label="Confirm Password" />
 
               <div className="mt-5.5 flex justify-center gap-3">
-                <button className="w-1/4 rounded-[7px] bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90">
-                  Back
-                </button>
+                <Link className="w-1/4" href="javascript:history.back()">
+                  <button className="bg-gray-cancel-hover w-full rounded-[7px] p-[8px] font-medium text-white hover:bg-opacity-90">
+                    Back
+                  </button>
+                </Link>
                 <button
                   type="submit"
                   className="w-1/4 rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"

@@ -34,6 +34,7 @@ const DatePickerOne = ({customClasses, label, required, name}: CustomProps) => {
           className="form-datepicker w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 font-normal outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary"
           placeholder="mm/dd/yyyy"
           data-class="flatpickr-right"
+          required={required}
         />
 
         <div className="pointer-events-none absolute inset-0 left-auto right-5 flex items-center">

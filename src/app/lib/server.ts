@@ -23,3 +23,17 @@ export default async function createSupabaseServerClient() {
     },
   );
 }
+
+export async function getUserFromSession() {
+  const supabase = await createSupabaseServerClient();
+  const {data, error} = await supabase.auth.getSession();
+  return await supabase.from('users').select().eq('user_id', data.session?.user.id);
+}
+
+export async function getCaregiver() {
+  const supabase = await createSupabaseServerClient();
+  const {data, error} = await supabase.auth.getSession();
+  const {data: caregiverData, error: caregiverError} = await supabase.from('caregiver').select().eq('caregiver_id', data.session?.user.id);
+
+  console.log('caregiver data:', caregiverData);
+}

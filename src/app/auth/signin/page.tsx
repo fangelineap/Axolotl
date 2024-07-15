@@ -4,7 +4,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
 import InputGroup from "@/components/FormElements/InputGroup";
 import PasswordInput from "../component/PasswordInput";
-import { signInWithEmailAndPassword } from "@/app/server-action/auth";
+import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
 
 // export const metadata: Metadata = {
@@ -21,11 +21,24 @@ const SignIn = () => {
       form.get("password")!.toString(),
     );
 
-    console.log("Errorr ", error);
-    console.log("Dataaa ", data);
+    if(error) {
+      console.log('error while trying to log in', error);
+      return;
+    }
 
     if (data) {
-      redirect("/pages/admin");
+      const {data: userData, error: userError} = await getUser(data.user.id);
+      if(userError) {
+        console.log('user does not exist');
+        return;
+      }
+
+      if(userData[0].role == "Nurse" || userData[0].role == "Midwife") {
+        redirect(`/auth/register/createaccount/personalinformation/review?role=Caregiver`)
+      }
+      else if(userData[0].role == "Patient") {
+        redirect("/pages/admin");
+      }
     }
   };
 
@@ -60,7 +73,7 @@ const SignIn = () => {
 
               <div className="mb-5.5 mt-3 flex items-center justify-end">
                 <Link
-                  href="#"
+                  href="/auth/forgetpassword"
                   className="text-body-sm text-primary hover:underline"
                 >
                   Forget password?

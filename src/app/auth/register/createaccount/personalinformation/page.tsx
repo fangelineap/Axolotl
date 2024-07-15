@@ -9,9 +9,12 @@ import SelectGroupTwo from "@/components/FormElements/SelectGroup/SelectGroupTwo
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { createBrowserClient } from "@supabase/ssr";
 import { error } from "console";
+import { Session } from "inspector";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PersonalInformation = ({ searchParams }: any) => {
   const router = useRouter();
@@ -28,6 +31,8 @@ const PersonalInformation = ({ searchParams }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [finished, setFinished] = useState<boolean>(false);
 
+  let session: any;
+
   console.log("Roleeeee:", searchParams.role);
 
   const onClose = () => {
@@ -43,6 +48,8 @@ const PersonalInformation = ({ searchParams }: any) => {
 
     const { data: userData, error } = await supabase.auth.getSession();
 
+    session = userData.session?.user.id;
+
     if (userData.session?.user) {
       const { data, error } = await supabase.storage
         .from(storage)
@@ -57,6 +64,14 @@ const PersonalInformation = ({ searchParams }: any) => {
   };
 
   const addPersonalInfo = async (form: FormData) => {
+    // form validation
+    if (form.get("birthdate")?.toString() == "") {
+      toast.warning("Please fill the birthdate field", {
+        position: "bottom-right",
+      });
+      return;
+    }
+
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -103,16 +118,25 @@ const PersonalInformation = ({ searchParams }: any) => {
             str: pathStr,
           });
 
-        setLoading(false);
-        setFinished(true);
+        if (insertError) {
+          setLoading(false);
+          toast.error("An error occured while uploading your data", {
+            position: "bottom-right",
+          });
+          return;
+        }
 
-        // if (insertError) {
-        //   console.log("Error ", insertError);
-        // } else {
-        //   router.push("/pages/admin");
-        // }
+        setLoading(false);
+        router.push(`/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`);
       }
     } else if (searchParams.role == "Patient") {
+      // form validation
+      if (blood == "" || isSmoking == "") {
+        toast.warning("Please fill all fields", { position: "bottom-right" });
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.from("patient").insert({
         blood_type: blood,
         height: form.get("height"),
@@ -138,6 +162,7 @@ const PersonalInformation = ({ searchParams }: any) => {
 
   return (
     <DefaultLayout>
+      <ToastContainer />
       <Breadcrumb pageName="Personal Information Form" />
       <div className="mb-3.5 flex items-center justify-center">
         <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
@@ -161,7 +186,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           </div>
           {searchParams.role === "Caregiver" && (
             <div className="flex items-center justify-start gap-1">
-              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-dark-secondary font-medium text-white">
+              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white">
                 4
               </h2>
               <h2>Review</h2>
@@ -169,7 +194,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           )}
           <div className="flex items-center justify-start gap-1">
             <h2
-              className={`flex h-7 w-7 items-center justify-center rounded-full bg-dark-secondary font-medium text-white ${searchParams.role === "Caregiver" && "lg:ml-2"}`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white ${searchParams.role === "Caregiver" && "lg:ml-2"}`}
             >
               {searchParams.role === "Caregiver" ? 5 : 4}
             </h2>
@@ -259,6 +284,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                                 name="height"
                                 id="height"
                                 placeholder="Height"
+                                required
                               />
                             </div>
                             <div className="relative w-[240px]">
@@ -268,6 +294,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                                 name="weight"
                                 id="weight"
                                 placeholder="Weight"
+                                required
                               />
                               <span className="absolute right-[0.5px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.2px]">
                                 kg
@@ -341,6 +368,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                                   name="medicineQuantity"
                                   id="medicineQuantity"
                                   placeholder="0"
+                                  required
                                 />
                               </div>
                               <div className="relative w-[240px] xl:w-[170px]">
@@ -350,6 +378,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                                   name="medicineFrequency"
                                   id="medicineFrequency"
                                   placeholder="0"
+                                  required
                                 />
                                 <span className="absolute right-[0.5px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.1px]">
                                   /day
@@ -366,6 +395,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                           <textarea
                             name="illnessHistory"
                             rows={3}
+                            required
                             placeholder="E.g. In 1995, I had chickenpox, and in 2002, I suffered a fractured left arm from a fall. I underwent an appendectomy in 2010. I was diagnosed with hypertension in 2018 and have been on Lisinopril 10mg daily since then"
                             className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary active:border-primary disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                           ></textarea>
@@ -393,7 +423,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                         </label>
                         <div
                           id="FileUpload"
-                          className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray-2 px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
+                          className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
                         >
                           <input
                             type="file"
@@ -406,6 +436,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                               const profilePhotoFile = e.target.files![0];
                               setProfilePhoto(profilePhotoFile);
                             }}
+                            required
                           />
                           <div className="flex flex-col items-center justify-center">
                             {profilePhoto ? (
@@ -528,6 +559,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                               name="workExperiences"
                               id="workExperiences"
                               placeholder="0"
+                              required
                             />
                           </div>
                         </div>
@@ -543,7 +575,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                         </label>
                         <div
                           id="FileUpload"
-                          className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray-2 px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
+                          className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
                         >
                           <input
                             type="file"
@@ -556,6 +588,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                               const cvDocumentFile = e.target.files![0];
                               setCv(cvDocumentFile);
                             }}
+                            required
                           />
                           {cv ? (
                             <div className="flex h-[105px] items-center justify-center ">
@@ -611,7 +644,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                       </label>
                       <div
                         id="FileUpload"
-                        className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray-2 px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
+                        className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
                       >
                         <input
                           type="file"
@@ -624,6 +657,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                             const degreeFile = e.target.files![0];
                             setCertificate(degreeFile);
                           }}
+                          required
                         />
                         {certificate ? (
                           <div className="flex h-[105px] items-center justify-center ">
@@ -672,7 +706,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                       </label>
                       <div
                         id="FileUpload"
-                        className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray-2 px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
+                        className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
                       >
                         <input
                           type="file"
@@ -685,6 +719,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                             const strFile = e.target.files![0];
                             setStr(strFile);
                           }}
+                          required
                         />
                         {str ? (
                           <div className="flex h-[105px] items-center justify-center ">
@@ -733,7 +768,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                       </label>
                       <div
                         id="FileUpload"
-                        className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray-2 px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
+                        className="relative mb-5.5 block w-full cursor-pointer appearance-none rounded-xl border border-dashed border-gray-4 bg-gray px-4 py-4 hover:border-kalbe-light hover:bg-kalbe-proLight dark:border-dark-3 dark:bg-dark-2 dark:hover:border-kalbe-light sm:py-7.5"
                       >
                         <input
                           type="file"
@@ -746,6 +781,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                             const sipFile = e.target.files![0];
                             setSip(sipFile);
                           }}
+                          required
                         />
                         {sip ? (
                           <div className="flex h-[105px] items-center justify-center ">
@@ -791,7 +827,10 @@ const PersonalInformation = ({ searchParams }: any) => {
 
               {/* Third div for finish button */}
               <div className="mt-5.5 flex items-center justify-center gap-3">
-                <button className="w-1/4 rounded-[7px] bg-dark-secondary p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]">
+                <button
+                  onClick={() => router.back()}
+                  className="bg-gray-cancel-hover w-1/4 rounded-[7px] p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
+                >
                   Back
                 </button>
                 {loading ? (
@@ -843,14 +882,14 @@ const PersonalInformation = ({ searchParams }: any) => {
           </form>
         </div>
       </div>
-      {finished && (
+      {searchParams.role == 'Caregiver' && finished && (
         <>
           <div
             className={`pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 ${finished ? "opacity-100" : "opacity-0"} backdrop-blur-sm transition-opacity duration-300`}
           >
             <div
               data-dialog="dialog-xs"
-              className="font-sans text-blue-gray-500 relative m-4 w-1/4 min-w-[25%] max-w-[25%] rounded-lg bg-white text-base font-light leading-relaxed antialiased shadow-2xl"
+              className="font-sans text-blue-gray-500 relative m-4 w-[75%] min-w-[25%] rounded-lg bg-white p-3 text-base font-light leading-relaxed antialiased shadow-2xl md:max-w-[50%] lg:w-1/4 lg:max-w-[25%]"
             >
               <div className="flex flex-col items-center justify-center pt-[30px]">
                 <svg
@@ -876,11 +915,11 @@ const PersonalInformation = ({ searchParams }: any) => {
               <div className="text-blue-gray-500 mb-6 mt-2 flex shrink-0 flex-wrap items-center justify-center p-4">
                 <button
                   type="button"
-                  className="w-1/3 cursor-pointer rounded-sm bg-kalbe-light text-white p-1 font-semibold hover:bg-kalbe-medium"
+                  className="w-1/3 cursor-pointer rounded-sm bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
                   onClick={(e) => {
                     e.preventDefault();
                     setFinished(false);
-                    router.push("/pages/admin");
+                    router.push('/pages/admin');
                   }}
                 >
                   Next

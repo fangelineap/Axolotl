@@ -6,6 +6,8 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterInit = () => {
   const [role, setRole] = useState<"Caregiver" | "Patient" | "">("");
@@ -47,14 +49,12 @@ const RegisterInit = () => {
                     </p>
                   </div>
                 </div>
-                {role === "Caregiver" ? (
+                {role === "Caregiver" && (
                   <img
                     src="/images/icon/icon-done.svg"
                     className="rounded-full border bg-kalbe-veryLight"
                     alt="Checked Logo"
                   />
-                ) : (
-                  ""
                 )}
               </div>
 
@@ -73,9 +73,7 @@ const RegisterInit = () => {
                   />
                   <div className="flex flex-col">
                     <h2 className="font-semibold">Patient</h2>
-                    <p className="text-dark-secondary">
-                      Book appointments
-                    </p>
+                    <p className="text-dark-secondary">Book appointments</p>
                   </div>
                 </div>
                 {role === "Patient" ? (
@@ -99,6 +97,7 @@ const RegisterInit = () => {
                       type="checkbox"
                       id="formCheckbox"
                       className="taskCheckbox sr-only"
+                      required
                     />
                     <div className="box mr-3 flex h-5 w-5 items-center justify-center rounded border border-stroke dark:border-dark-3">
                       <span className="text-white opacity-0">
@@ -130,18 +129,48 @@ const RegisterInit = () => {
               </div>
 
               <Link
-                href={{ pathname: "/auth/register/createaccount", query: { role: role } }}
+                href={{
+                  pathname: "/auth/register/createaccount",
+                  query: { role: role },
+                }}
                 className="flex justify-center"
               >
-                <button className="w-1/3 rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    const cbox = document.getElementById("formCheckbox");
+                    const cboxCustom = document.querySelector(".box");
+
+                    if (role == "") {
+                      e.preventDefault();
+                      // e.stopPropagation();
+                      toast.warning("Please select a role", {
+                        position: "bottom-right",
+                      });
+                      // alert('Please select a role');
+                    } else if (!cbox?.checked) {
+                      e.preventDefault();
+                      // e.stopPropagation();
+                      toast.warning(
+                        "Please read our terms and conditions before accessing out application",
+                        {
+                          position: "bottom-right",
+                        },
+                      );
+                    }
+                  }}
+                  className="w-1/3 rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
+                >
                   Next
                 </button>
               </Link>
 
+              <ToastContainer />
+
               <p className="mt-4.5 text-center text-body-sm">
                 Already have an account?{" "}
                 <span>
-                  <Link href="signup" className="text-primary hover:underline">
+                  <Link href="/auth/signin" className="text-primary hover:underline">
                     Sign in instead
                   </Link>
                 </span>
