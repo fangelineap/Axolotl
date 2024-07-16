@@ -5,6 +5,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { USER } from "@/types/axolotl";
 import { createBrowserClient } from "@supabase/ssr";
+import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Review = ({ searchParams }: any) => {
@@ -12,6 +13,8 @@ const Review = ({ searchParams }: any) => {
     "Verified" | "Unverified" | "Rejected" | ""
   >("");
   const [notes, setNotes] = useState<string[]>([]);
+
+  const router = useRouter();
 
   const checkUser = async () => {
     const supabase = createBrowserClient(
@@ -184,8 +187,9 @@ const Review = ({ searchParams }: any) => {
           {status == 'Verified' && (
             <div className="text-blue-gray-500 mb-6 flex shrink-0 flex-wrap items-center justify-center">
               <button
-                type="button"
+                type="submit"
                 className="w-1/4 cursor-pointer rounded-[5px] bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
+                onClick={() => router.push('/pages/admin')}
               >
                 Okay
               </button>

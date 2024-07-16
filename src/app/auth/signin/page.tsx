@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 //   description: "This is Next.js Form Layout page for NextAdmin Dashboard Kit",
 // };
 
-const SignIn = () => {
+const SignIn = ({ searchParams }: any) => {
   const signIn = async (form: FormData) => {
     "use server";
 
@@ -21,22 +21,21 @@ const SignIn = () => {
       form.get("password")!.toString(),
     );
 
-    if(error) {
-      console.log('error while trying to log in', error);
-      return;
+    if (error) {
+      redirect("/auth/signin?success=false");
     }
 
     if (data) {
-      const {data: userData, error: userError} = await getUser(data.user.id);
-      if(userError) {
-        console.log('user does not exist');
-        return;
+      const { data: userData, error: userError } = await getUser(data.user.id);
+      if (userError) {
+        redirect("/auth/signin?success=false");
       }
 
-      if(userData[0].role == "Nurse" || userData[0].role == "Midwife") {
-        redirect(`/auth/register/createaccount/personalinformation/review?role=Caregiver`)
-      }
-      else if(userData[0].role == "Patient") {
+      if (userData[0].role == "Nurse" || userData[0].role == "Midwife") {
+        redirect(
+          `/auth/register/createaccount/personalinformation/review?role=Caregiver`,
+        );
+      } else if (userData[0].role == "Patient") {
         redirect("/pages/admin");
       }
     }
@@ -69,8 +68,21 @@ const SignIn = () => {
                 required
               />
 
-              <PasswordInput label="Password" name="password" />
+              <PasswordInput
+                label="Password"
+                placeholder="Enter your password"
+                name="password"
+                required
+              />
 
+              {searchParams.success != null && (
+                <div className="visible mb-4.5 rounded-md bg-red-400 p-3">
+                  <p className="ml-3 text-sm font-medium text-white">
+                    Invalid credentials
+                  </p>
+                </div>
+              )}
+              
               <div className="mb-5.5 mt-3 flex items-center justify-end">
                 <Link
                   href="/auth/forgetpassword"
@@ -92,7 +104,10 @@ const SignIn = () => {
               <p className="mt-3 text-center text-body-sm">
                 Don't have an account?{" "}
                 <span>
-                  <Link href="signup" className="text-primary hover:underline">
+                  <Link
+                    href="/auth/register"
+                    className="text-primary hover:underline"
+                  >
                     Sign Up
                   </Link>
                 </span>

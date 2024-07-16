@@ -6,7 +6,6 @@ import React from "react";
 import PasswordInput from "../../component/PasswordInput";
 import { registerWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
 
 const CreateAccount = ({ searchParams }: any) => {
   console.log("Role ", searchParams.role);
@@ -27,7 +26,9 @@ const CreateAccount = ({ searchParams }: any) => {
       );
 
       if (error) {
-        console.log("Errorrrrrrrrrrrrrrrrrrrr ", error);
+        redirect(
+          `/auth/register/createaccount?role=${searchParams.role}&message=exist`,
+        );
       } else {
         redirect(
           `/auth/register/createaccount/personalinformation?role=${searchParams.role}`,
@@ -35,7 +36,9 @@ const CreateAccount = ({ searchParams }: any) => {
       }
     }
 
-    console.log("Password not matched");
+    redirect(
+      `/auth/register/createaccount?role=${searchParams.role}&message=pass`,
+    );
   };
 
   return (
@@ -149,12 +152,32 @@ const CreateAccount = ({ searchParams }: any) => {
                 </div>
               </div>
 
-              <PasswordInput name="password" label="Password" />
-              <PasswordInput name="confirmPassword" label="Confirm Password" />
+              <PasswordInput
+                name="password"
+                placeholder="Enter your password"
+                label="Password"
+                required
+              />
+              <PasswordInput
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                label="Confirm Password"
+                required
+              />
+
+              {searchParams.message != null && (
+                <div className="visible mb-4.5 rounded-md bg-red-400 p-3">
+                  <p className="ml-3 text-sm font-medium text-white">
+                    {searchParams.message == "pass"
+                      ? "Password does not match"
+                      : "User with this email already exist"}
+                  </p>
+                </div>
+              )}
 
               <div className="mt-5.5 flex justify-center gap-3">
                 <Link className="w-1/4" href="javascript:history.back()">
-                  <button className="bg-gray-cancel-hover w-full rounded-[7px] p-[8px] font-medium text-white hover:bg-opacity-90">
+                  <button className="w-full rounded-[7px] bg-gray-cancel-hover p-[8px] font-medium text-white hover:bg-opacity-90">
                     Back
                   </button>
                 </Link>

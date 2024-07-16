@@ -53,6 +53,27 @@ export async function registerWithEmailAndPassword(
   });
 }
 
+export async function forgetPassword(email: string) {
+  const supabase = await createSupabaseServerClient();
+
+  return await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'http://localhost:3000/auth/resetpassword',
+  });
+}
+
+export async function resetPassword(password: string, code:string) {
+  const supabase = await createSupabaseServerClient();
+
+  const {data: sessionData, error:sessionError} = await supabase.auth.exchangeCodeForSession(code);
+  const {data, error} = await supabase.auth.updateUser({password: password});
+
+  if(error) {
+    alert('Erorr. Please try again.')
+  }
+
+  redirect('/auth/signin');
+}
+
 export async function getCaregiver(caregiverId: any) {
   const supabase = await createSupabaseServerClient();
   return (await supabase.from('caregiver').select('*').eq('caregiver_id', caregiverId).limit(1));

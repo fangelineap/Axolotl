@@ -1,9 +1,22 @@
+import { forgetPassword } from "@/app/server-action/auth";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import { redirect } from "next/navigation";
 import React from "react";
 
-const ForgetPassword = () => {
+const ForgetPassword = ({ searchParams }: any) => {
+  const handleRedirect = async (form: FormData) => {
+    "use server";
+
+    const { data, error } = await forgetPassword(form.get("email")!.toString());
+    if (error != null) {
+      redirect("/auth/forgetpassword/?success=false");
+    } else {
+      redirect("/auth/forgetpassword/?success=true");
+    }
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Forget Password Form" />
@@ -14,7 +27,7 @@ const ForgetPassword = () => {
               Forget Password
             </h3>
           </div>
-          <form action="#">
+          <form action={handleRedirect}>
             <div className="p-6.5">
               <div className="flex flex-col items-center justify-center pb-6">
                 <h1 className="text-xl font-bold">Confirm your email!</h1>
@@ -30,8 +43,23 @@ const ForgetPassword = () => {
                 required
               />
 
+              {searchParams.success != null && (
+                <div
+                  className={`hidden ${searchParams.success == "true" ? "visible bg-kalbe-veryLight" : "visible bg-red-400"} mb-4.5 rounded-md p-3`}
+                >
+                  <p className="ml-3 text-sm font-medium text-white">
+                    {searchParams.success == "true"
+                      ? "Check your email"
+                      : "Enter a valid email address"}
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-center">
-                <button className="flex w-1/3 justify-center rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90">
+                <button
+                  type="submit"
+                  className="flex w-1/3 justify-center rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
+                >
                   Confirm Email
                 </button>
               </div>
