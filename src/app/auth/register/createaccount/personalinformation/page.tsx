@@ -884,7 +884,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           </form>
         </div>
       </div>
-      {searchParams.role == "Caregiver" && finished && (
+      {searchParams.role != null && finished && (
         <>
           <div
             className={`pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 ${finished ? "opacity-100" : "opacity-0"} backdrop-blur-sm transition-opacity duration-300`}
