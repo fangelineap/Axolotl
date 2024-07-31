@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef, ReactNode, RefObject } from "react";
 
 interface Props {
-  children: React.ReactNode;
-  exceptionRef?: React.RefObject<HTMLElement>;
+  children: ReactNode;
+  exceptionRef?: RefObject<HTMLElement>;
   onClick: () => void;
   className?: string;
 }
@@ -17,21 +17,22 @@ const ClickOutside: React.FC<Props> = ({
 
   useEffect(() => {
     const handleClickListener = (event: MouseEvent) => {
-      let clickedInside: null | boolean = false;
-      if (exceptionRef) {
-        clickedInside =
-          (wrapperRef.current &&
-            wrapperRef.current.contains(event.target as Node)) ||
-          (exceptionRef.current && exceptionRef.current === event.target) ||
-          (exceptionRef.current &&
-            exceptionRef.current.contains(event.target as Node));
-      } else {
-        clickedInside =
-          wrapperRef.current &&
-          wrapperRef.current.contains(event.target as Node);
+      if (
+        wrapperRef.current &&
+        wrapperRef.current.contains(event.target as Node)
+      ) {
+        return;
       }
 
-      if (!clickedInside) onClick();
+      if (
+        exceptionRef &&
+        exceptionRef.current &&
+        exceptionRef.current.contains(event.target as Node)
+      ) {
+        return;
+      }
+
+      onClick();
     };
 
     document.addEventListener("mousedown", handleClickListener);
@@ -42,7 +43,7 @@ const ClickOutside: React.FC<Props> = ({
   }, [exceptionRef, onClick]);
 
   return (
-    <div ref={wrapperRef} className={`${className || ""}`}>
+    <div ref={wrapperRef} className={className}>
       {children}
     </div>
   );

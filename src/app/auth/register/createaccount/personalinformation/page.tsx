@@ -127,7 +127,9 @@ const PersonalInformation = ({ searchParams }: any) => {
         }
 
         setLoading(false);
-        router.push(`/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`);
+        router.push(
+          `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`,
+        );
       }
     } else if (searchParams.role == "Patient") {
       // form validation
@@ -829,7 +831,7 @@ const PersonalInformation = ({ searchParams }: any) => {
               <div className="mt-5.5 flex items-center justify-center gap-3">
                 <button
                   onClick={() => router.back()}
-                  className="bg-gray-cancel-hover w-1/4 rounded-[7px] p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
+                  className="w-1/4 rounded-[7px] bg-gray-cancel-hover p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
                 >
                   Back
                 </button>
@@ -882,7 +884,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           </form>
         </div>
       </div>
-      {searchParams.role == 'Caregiver' && finished && (
+      {searchParams.role == "Caregiver" && finished && (
         <>
           <div
             className={`pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 ${finished ? "opacity-100" : "opacity-0"} backdrop-blur-sm transition-opacity duration-300`}
@@ -919,7 +921,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                   onClick={(e) => {
                     e.preventDefault();
                     setFinished(false);
-                    router.push('/pages/admin');
+                    router.push("/pages/admin");
                   }}
                 >
                   Next

@@ -1,7 +1,4 @@
-"use client";
-
-import React, { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import React, { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
@@ -110,49 +107,38 @@ const menuGroups = [
         ),
         label: "Health Service",
         route: "",
-        dropdownItems: [
-          { label: "Nurses", route: "/auth/signin" },
-          { label: "Midwives", route: "/auth/signin" },
+        children: [
+          { label: "Nurses", route: "/pages/guest/nurses" },
+          { label: "Midwives", route: "/pages/guest/midwives" },
         ],
       },
     ],
   },
 ];
 
-const GuestSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-  const pathname = usePathname();
+const GuestSidebar: React.FC<SidebarProps> = ({
+  sidebarOpen,
+  setSidebarOpen,
+}) => {
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   return (
-    <ClickOutside onClick={() => setSidebarOpen(false)}>
+    <ClickOutside
+      onClick={() => setSidebarOpen(false)}
+      exceptionRef={dropdownRef}
+    >
       <aside
+        ref={dropdownRef}
         className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white transition-transform-opacity duration-300 ease-in-out dark:border-stroke-dark dark:bg-gray-dark ${
           sidebarOpen
             ? "translate-x-0 opacity-100"
             : "-translate-x-full opacity-0"
         }`}
       >
-        {/* <!-- SIDEBAR HEADER --> */}
+        {/* SIDEBAR HEADER */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
-          <Link href="/">
+          <Link href="">
             <div className="cursor-pointer rounded-md p-2 dark:hidden">
               <Image
                 width={190}
@@ -161,7 +147,6 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 alt="Logo"
                 priority
                 className="dark:hidden"
-                // style={{ width: "auto", height: "auto" }}
                 style={{ height: "auto" }}
               />
             </div>
@@ -173,7 +158,6 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 alt="Logo"
                 priority
                 className="hidden dark:block"
-                // style={{ width: "auto", height: "auto" }}
                 style={{ height: "auto" }}
               />
             </div>
@@ -198,10 +182,10 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </svg>
           </button>
         </div>
-        {/* <!-- SIDEBAR HEADER --> */}
+        {/* SIDEBAR HEADER */}
 
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-          {/* <!-- Sidebar Menu --> */}
+          {/* Sidebar Menu */}
           <nav className="mt-1 px-4 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
@@ -216,6 +200,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         item={menuItem}
                         pageName={pageName}
                         setPageName={setPageName}
+                        dropdownRef={dropdownRef}
                       />
                     </li>
                   ))}
@@ -223,7 +208,7 @@ const GuestSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </div>
             ))}
           </nav>
-          {/* <!-- Sidebar Menu --> */}
+          {/* Sidebar Menu */}
         </div>
       </aside>
     </ClickOutside>

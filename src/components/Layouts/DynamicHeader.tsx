@@ -23,7 +23,10 @@ const DynamicHeader = ({
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       </>
     );
-  } else if (pathname.startsWith("/pages/guest")) {
+  } else if (
+    pathname.startsWith("/pages/guest") ||
+    pathname.startsWith("/auth")
+  ) {
     return (
       <>
         <GuestHeader
