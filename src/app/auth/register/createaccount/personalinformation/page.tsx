@@ -127,9 +127,7 @@ const PersonalInformation = ({ searchParams }: any) => {
         }
 
         setLoading(false);
-        router.push(
-          `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`,
-        );
+        router.push(`/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`);
       }
     } else if (searchParams.role == "Patient") {
       // form validation
@@ -831,7 +829,7 @@ const PersonalInformation = ({ searchParams }: any) => {
               <div className="mt-5.5 flex items-center justify-center gap-3">
                 <button
                   onClick={() => router.back()}
-                  className="w-1/4 rounded-[7px] bg-gray-cancel-hover p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
+                  className="bg-gray-cancel-hover w-1/4 rounded-[7px] p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
                 >
                   Back
                 </button>
@@ -921,7 +919,9 @@ const PersonalInformation = ({ searchParams }: any) => {
                   onClick={(e) => {
                     e.preventDefault();
                     setFinished(false);
-                    router.push("/pages/admin");
+                    if(searchParams.role == 'Patient') {
+                      router.push('/pages/patient');
+                    }
                   }}
                 >
                   Next
