@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
@@ -130,7 +129,7 @@ const GuestSidebar: React.FC<SidebarProps> = ({
     >
       <aside
         ref={dropdownRef}
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white transition-transform-opacity duration-300 ease-in-out dark:border-stroke-dark dark:bg-gray-dark ${
+        className={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white transition-transform-opacity duration-300 ease-in-out dark:border-stroke-dark dark:bg-gray-dark ${
           sidebarOpen
             ? "translate-x-0 opacity-100"
             : "-translate-x-full opacity-0"
@@ -138,30 +137,17 @@ const GuestSidebar: React.FC<SidebarProps> = ({
       >
         {/* SIDEBAR HEADER */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
-          <Link href="">
-            <div className="cursor-pointer rounded-md p-2 dark:hidden">
-              <Image
-                width={190}
-                height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
-                alt="Logo"
-                priority
-                className="dark:hidden"
-                style={{ height: "auto" }}
-              />
-            </div>
-            <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
-              <Image
-                width={190}
-                height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
-                alt="Logo"
-                priority
-                className="hidden dark:block"
-                style={{ height: "auto" }}
-              />
-            </div>
-          </Link>
+          <div className="cursor-pointer rounded-md p-2 dark:hidden">
+            <Image
+              width={190}
+              height={32}
+              src={"/images/logo/axolotlonly.svg"}
+              alt="Logo"
+              priority
+              className="dark:hidden"
+              style={{ height: "auto" }}
+            />
+          </div>
 
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}

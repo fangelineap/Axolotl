@@ -85,33 +85,21 @@ const GuestHeader: React.FC<HeaderProps> = ({
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link href="/">
-            <h5 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
-              Axolotl
-            </h5>
-          </Link>
+          <h5 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
+            Axolotl
+          </h5>
         </div>
 
         <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
           <div className="mr-10 hidden lg:block">
-            <Link href="/">
-              <div className="cursor-pointer rounded-md p-2 dark:hidden">
-                <Image
-                  width={175}
-                  height={175}
-                  src={"/images/logo/logo-axolotl-main.svg"}
-                  alt="Logo"
-                />
-              </div>
-              <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
-                <Image
-                  width={175}
-                  height={175}
-                  src={"/images/logo/logo-axolotl-main.svg"}
-                  alt="Logo"
-                />
-              </div>
-            </Link>
+            <div className="cursor-pointer rounded-md p-2 dark:hidden">
+              <Image
+                width={175}
+                height={175}
+                src={"/images/logo/axolotlonly.svg"}
+                alt="Logo"
+              />
+            </div>
           </div>
           <div className="flex flex-grow justify-center">
             <ul className="flex items-center gap-10 py-3 text-xl">

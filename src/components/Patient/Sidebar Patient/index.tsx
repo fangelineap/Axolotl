@@ -1,7 +1,4 @@
-"use client";
-
-import React, { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import React, { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
@@ -45,25 +42,14 @@ const menuGroups = [
       {
         icon: (
           <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
+            className="text- fill-current"
             xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#e8eaed"
           >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M11.9999 1.25C9.37654 1.25 7.24989 3.37665 7.24989 6C7.24989 8.62335 9.37654 10.75 11.9999 10.75C14.6232 10.75 16.7499 8.62335 16.7499 6C16.7499 3.37665 14.6232 1.25 11.9999 1.25ZM8.74989 6C8.74989 4.20507 10.205 2.75 11.9999 2.75C13.7948 2.75 15.2499 4.20507 15.2499 6C15.2499 7.79493 13.7948 9.25 11.9999 9.25C10.205 9.25 8.74989 7.79493 8.74989 6Z"
-              fill=""
-            />
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M11.9999 12.25C9.68634 12.25 7.55481 12.7759 5.97534 13.6643C4.41937 14.5396 3.24989 15.8661 3.24989 17.5L3.24982 17.602C3.24869 18.7638 3.24728 20.222 4.5263 21.2635C5.15577 21.7761 6.03637 22.1406 7.2261 22.3815C8.41915 22.6229 9.97412 22.75 11.9999 22.75C14.0257 22.75 15.5806 22.6229 16.7737 22.3815C17.9634 22.1406 18.844 21.7761 19.4735 21.2635C20.7525 20.222 20.7511 18.7638 20.75 17.602L20.7499 17.5C20.7499 15.8661 19.5804 14.5396 18.0244 13.6643C16.445 12.7759 14.3134 12.25 11.9999 12.25ZM4.74989 17.5C4.74989 16.6487 5.37127 15.7251 6.71073 14.9717C8.02669 14.2315 9.89516 13.75 11.9999 13.75C14.1046 13.75 15.9731 14.2315 17.289 14.9717C18.6285 15.7251 19.2499 16.6487 19.2499 17.5C19.2499 18.8078 19.2096 19.544 18.5263 20.1004C18.1558 20.4022 17.5364 20.6967 16.4761 20.9113C15.4192 21.1252 13.9741 21.25 11.9999 21.25C10.0257 21.25 8.58063 21.1252 7.52368 20.9113C6.46341 20.6967 5.84401 20.4022 5.47348 20.1004C4.79021 19.544 4.74989 18.8078 4.74989 17.5Z"
-              fill=""
-            />
+            <path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z" />
           </svg>
         ),
         label: "Order History",
@@ -89,72 +75,48 @@ const menuGroups = [
         ),
         label: "Health Service",
         route: "",
-        dropdownItems: [
-          { label: "Nurses", route: "/health-service/nurses" },
-          { label: "Midwives", route: "/health-service/midwives" },
+        children: [
+          { label: "Nurses", route: "/pages/guest/nurses" },
+          { label: "Midwives", route: "/pages/guest/midwives" },
         ],
       },
     ],
   },
 ];
 
-const PatientSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-  const pathname = usePathname();
+const PatientSidebar: React.FC<SidebarProps> = ({
+  sidebarOpen,
+  setSidebarOpen,
+}) => {
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   return (
-    <ClickOutside onClick={() => setSidebarOpen(false)}>
+    <ClickOutside
+      onClick={() => setSidebarOpen(false)}
+      exceptionRef={dropdownRef}
+    >
       <aside
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white transition-transform-opacity duration-300 ease-in-out dark:border-stroke-dark dark:bg-gray-dark ${
+        ref={dropdownRef}
+        className={`fixed left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white transition-transform-opacity duration-300 ease-in-out dark:border-stroke-dark dark:bg-gray-dark ${
           sidebarOpen
             ? "translate-x-0 opacity-100"
             : "-translate-x-full opacity-0"
         }`}
       >
-        {/* <!-- SIDEBAR HEADER --> */}
+        {/* SIDEBAR HEADER */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
-          <Link href="/pages/patient">
-            <div className="cursor-pointer rounded-md p-2 dark:hidden">
-              <Image
-                width={190}
-                height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
-                alt="Logo"
-                priority
-                className="dark:hidden"
-                style={{ height: "auto" }}
-              />
-            </div>
-            <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
-              <Image
-                width={190}
-                height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
-                alt="Logo"
-                priority
-                className="hidden dark:block"
-                style={{ height: "auto" }}
-              />
-            </div>
-          </Link>
+          <div className="cursor-pointer rounded-md p-2 dark:hidden">
+            <Image
+              width={190}
+              height={32}
+              src={"/images/logo/axolotlonly.svg"}
+              alt="Logo"
+              priority
+              className="dark:hidden"
+              style={{ height: "auto" }}
+            />
+          </div>
 
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -175,10 +137,10 @@ const PatientSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </svg>
           </button>
         </div>
-        {/* <!-- SIDEBAR HEADER --> */}
+        {/* SIDEBAR HEADER */}
 
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-          {/* <!-- Sidebar Menu --> */}
+          {/* Sidebar Menu */}
           <nav className="mt-1 px-4 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
@@ -188,17 +150,12 @@ const PatientSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                 <ul className="mb-6 flex flex-col gap-2">
                   {group.menuItems.map((menuItem, menuIndex) => (
-                    <li
-                      key={menuIndex}
-                      className={`relative ${
-                        pathname === menuItem.route ? "" : ""
-                      }`}
-                      ref={menuItem.dropdownItems ? dropdownRef : undefined}
-                    >
+                    <li key={menuIndex} className="relative">
                       <SidebarItem
                         item={menuItem}
                         pageName={pageName}
                         setPageName={setPageName}
+                        dropdownRef={dropdownRef}
                       />
                     </li>
                   ))}
@@ -206,7 +163,7 @@ const PatientSidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </div>
             ))}
           </nav>
-          {/* <!-- Sidebar Menu --> */}
+          {/* Sidebar Menu */}
         </div>
       </aside>
     </ClickOutside>

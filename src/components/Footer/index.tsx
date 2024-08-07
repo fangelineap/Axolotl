@@ -13,15 +13,7 @@ const Footer = () => {
                 <Image
                   width={250}
                   height={250}
-                  src={"/images/logo/logo-axolotl-main.svg"}
-                  alt="Logo"
-                />
-              </div>
-              <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
-                <Image
-                  width={250}
-                  height={250}
-                  src={"/images/logo/logo-axolotl-main.svg"}
+                  src={"/images/logo/axolotlonly.svg"}
                   alt="Logo"
                 />
               </div>

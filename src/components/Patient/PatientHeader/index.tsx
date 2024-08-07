@@ -86,11 +86,11 @@ const PatientHeader: React.FC<HeaderProps> = ({
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link href="/pages/patient">
+          <div>
             <h5 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
               Axolotl
             </h5>
-          </Link>
+          </div>
         </div>
 
         <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
@@ -100,15 +100,7 @@ const PatientHeader: React.FC<HeaderProps> = ({
                 <Image
                   width={175}
                   height={175}
-                  src={"/images/logo/logo-axolotl-main.svg"}
-                  alt="Logo"
-                />
-              </div>
-              <div className="hidden cursor-pointer rounded-md bg-white p-2 dark:block">
-                <Image
-                  width={175}
-                  height={175}
-                  src={"/images/logo/logo-axolotl-main.svg"}
+                  src={"/images/logo/axolotlonly.svg"}
                   alt="Logo"
                 />
               </div>

@@ -62,29 +62,13 @@ const Home = () => {
             </div>
           </div>
           <div className="mx-auto mb-8 max-w-3xl text-center">
-            <blockquote className="mt-10 text-10xl font-bold md:text-4xl">
+            <blockquote className="text-10xl mt-10 font-bold md:text-4xl">
               &quot;Wherever the art of medicine is loved, there is also a love
               of humanity.&quot;
             </blockquote>
             <cite className="mt-2 block">
               —Hippocrates, Father of Modern Medicine
             </cite>
-          </div>
-          <div className="text-center">
-            <Image
-              src="/images/logo/kalbe.svg"
-              alt="Kalbe Logo"
-              width={200}
-              height={200}
-              className="mx-auto mt-4 md:mt-6"
-            />
-            <p className="mt-5 justify-center text-gray-600">
-              With a mission from&nbsp;
-              <span className="font-bold text-kalbe-light">
-                PT Kalbe Farma, Tbk
-              </span>
-              , we have an ambition to
-            </p>
           </div>
         </div>
       </div>
@@ -102,15 +86,10 @@ const Home = () => {
             </div>
             <div className="w-full lg:order-1 lg:w-1/2">
               <div className="text-center lg:text-left">
-                <h3 className="text-2xl font-normal sm:text-7xl text-dark">
-                  To{" "}
-                  <span className="font-bold">
-                    Improve Health
-                  </span>{" "}
-                  for a&nbsp;
-                  <span className="font-bold">
-                    Better Life
-                  </span>
+                <h3 className="text-2xl font-normal text-dark sm:text-7xl">
+                  To <span className="font-bold">Improve Health</span> for
+                  a&nbsp;
+                  <span className="font-bold">Better Life</span>
                 </h3>
                 <p className="mt-4 text-center text-xl">
                   &quot;Axolotl&apos;s home care services have been a lifeline
