@@ -16,7 +16,7 @@ const DynamicHeader = ({
 }) => {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/pages/admin")) {
+  if (pathname.startsWith("/admin")) {
     return (
       <>
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

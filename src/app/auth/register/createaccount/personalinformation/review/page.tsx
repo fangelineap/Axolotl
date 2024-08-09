@@ -189,7 +189,7 @@ const Review = ({ searchParams }: any) => {
               <button
                 type="submit"
                 className="w-1/4 cursor-pointer rounded-[5px] bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
-                onClick={() => router.push('/pages/admin')}
+                onClick={() => router.push('/admin')}
               >
                 Okay
               </button>

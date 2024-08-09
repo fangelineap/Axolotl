@@ -36,7 +36,7 @@ const SignIn = ({ searchParams }: any) => {
           `/auth/register/createaccount/personalinformation/review?role=Caregiver`,
         );
       } else if (userData[0].role == "Patient") {
-        redirect("/pages/admin");
+        redirect("/admin");
       }
     }
   };

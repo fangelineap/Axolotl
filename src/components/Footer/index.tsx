@@ -13,7 +13,7 @@ const Footer = () => {
                 <Image
                   width={250}
                   height={250}
-                  src={"/images/logo/axolotlonly.svg"}
+                  src={"/images/logo/axolotl.svg"}
                   alt="Logo"
                 />
               </div>

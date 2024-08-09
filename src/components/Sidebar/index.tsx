@@ -321,7 +321,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <Image
                 width={190}
                 height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
+                src={"/images/logo/axolotl.svg"}
                 alt="Logo"
                 priority
                 className="dark:hidden"
@@ -333,7 +333,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <Image
                 width={190}
                 height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
+                src={"/images/logo/axolotl.svg"}
                 alt="Logo"
                 priority
                 className="hidden dark:block"

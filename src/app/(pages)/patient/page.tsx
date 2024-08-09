@@ -50,7 +50,7 @@ const Home: React.FC = () => {
         "Wound treatment",
         "Providing specialized care for wound cleaning, dressing changes, and monitoring for proper healing.",
         "Someone who has comorbidities",
-        "Offering personalized assistance and support for managing multiple health conditions, ensuring ...",
+        "Offering personalized assistance and support for managing multiple health conditions, ensuring optimal wound healing and overall well-being.",
       ],
       price: "500.000",
     },
@@ -161,15 +161,13 @@ const Home: React.FC = () => {
               />
               <div className="p-4">
                 <h3 className="text-lg font-bold">{service.title}</h3>
-                <ul className="mt-2 text-sm text-gray-600">
-                  {service.features.map((feature, i) => (
-                    <li key={i} className="list-di mt-1">
-                      • &nbsp;{feature}
-                    </li>
-                  ))}
-                </ul>
+                {service.features.map((feature, i) => (
+                  <ul className="mt-2 ml-4 text-sm text-gray-600 list-disc list-outside" key={i}>
+                    <li className="mt-1">{feature}</li>
+                  </ul>
+                ))}
               </div>
-              <hr className="my-4" />
+              <hr className="my-1" />
               <div className="p-4 text-center">
                 <p>
                   Starts from

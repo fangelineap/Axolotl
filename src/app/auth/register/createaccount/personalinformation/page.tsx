@@ -37,7 +37,7 @@ const PersonalInformation = ({ searchParams }: any) => {
 
   const onClose = () => {
     setFinished(false);
-    router.push("/pages/admin");
+    router.push("/admin");
   };
 
   const uploadToStorage = async (storage: string, file: string) => {
