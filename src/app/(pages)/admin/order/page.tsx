@@ -1,4 +1,4 @@
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 
 const Order = () => {

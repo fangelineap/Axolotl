@@ -1,4 +1,4 @@
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Image from "next/image";
 import React from "react";
 

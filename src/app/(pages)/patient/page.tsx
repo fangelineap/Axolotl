@@ -1,5 +1,5 @@
 "use client";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";

@@ -65,8 +65,8 @@ const config: Config = {
         gray: {
           DEFAULT: "#E9ECEF", // Light White
           cancel: {
-            DEFAULT: "#ADB5BD",
-            hover: "#6c757d"
+            DEFAULT: "#6C757D",
+            hover: "#CED4DA"
           }, // BG Cancel
           dark: "#BABABA", // Dark Gray
           1: "#DADADA", // Light Gray

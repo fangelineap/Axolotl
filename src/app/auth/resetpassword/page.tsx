@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import PasswordInput from "../component/PasswordInput";
 import { resetPassword } from "@/app/server-action/auth";

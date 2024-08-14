@@ -1,6 +1,6 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";
 import InputGroup from "@/components/FormElements/InputGroup";
 import PasswordInput from "../component/PasswordInput";

@@ -2,7 +2,7 @@
 
 import { getCaregiver } from "@/app/server-action/auth";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { USER } from "@/types/axolotl";
 import { createBrowserClient } from "@supabase/ssr";
 import { redirect, useRouter } from "next/navigation";
