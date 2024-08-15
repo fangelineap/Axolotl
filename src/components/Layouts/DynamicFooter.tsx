@@ -2,8 +2,8 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import CGAdminFooter from "./CGAdmin";
-import GuestPatientFooter from "./GuestPatient";
+import CGAdminFooter from "../Footer/CGAdmin";
+import GuestPatientFooter from "../Footer/GuestPatient";
 
 const DynamicFooter = () => {
   const pathname = usePathname();

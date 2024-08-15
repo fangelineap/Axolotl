@@ -1,4 +1,4 @@
-import DynamicFooter from "../Footer/DynamicFooter";
+import DynamicFooter from "./DynamicFooter";
 import SidebarToggleWrapper from "./SidebarToggle";
 
 export default function DefaultLayout({
