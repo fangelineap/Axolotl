@@ -1,4 +1,4 @@
-import Footer from "../Footer";
+import DynamicFooter from "../Footer/DynamicFooter";
 import SidebarToggleWrapper from "./SidebarToggle";
 
 export default function DefaultLayout({
@@ -16,7 +16,7 @@ export default function DefaultLayout({
             {children}
           </div>
         </main>
-        <Footer />
+        <DynamicFooter />
       </div>
     </div>
   );

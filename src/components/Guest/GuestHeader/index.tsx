@@ -96,7 +96,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
               <Image
                 width={175}
                 height={175}
-                src={"/images/logo/axolotlonly.svg"}
+                src={"/images/logo/axolotl.svg"}
                 alt="Logo"
               />
             </div>
@@ -104,10 +104,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
           <div className="flex flex-grow justify-center">
             <ul className="flex items-center gap-10 py-3 text-xl">
               <li>
-                <Link href="/pages/guest">
+                <Link href="/guest">
                   <div
                     className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/pages/guest")
+                      isActive("/guest")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}
@@ -117,10 +117,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 </Link>
               </li>
               <li>
-                <Link href="/pages/guest/about">
+                <Link href="/guest/about">
                   <div
                     className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/pages/guest/about")
+                      isActive("/guest/about")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}
@@ -130,10 +130,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 </Link>
               </li>
               <li>
-                <Link href="/pages/guest/careers">
+                <Link href="/guest/careers">
                   <div
                     className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/pages/guest/careers")
+                      isActive("/guest/careers")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}
@@ -167,14 +167,14 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 {dropdownOpen && (
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
                     <li className="border-b border-gray-200 dark:border-gray-700">
-                      <Link href="/pages/guest/health-services/nurses">
+                      <Link href="/guest/health-services/nurses">
                         <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
                           Nurses
                         </div>
                       </Link>
                     </li>
                     <li>
-                      <Link href="/pages/guest/health-services/midwives">
+                      <Link href="/guest/health-services/midwives">
                         <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
                           Midwives
                         </div>
@@ -223,10 +223,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
             </button>
             <ul className="mt-20 space-y-6 px-6">
               <li>
-                <Link href="/pages/guest">
+                <Link href="/guest">
                   <div
                     className={`block text-black dark:text-white ${
-                      isActive("/pages/guest")
+                      isActive("/guest")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}
@@ -236,10 +236,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 </Link>
               </li>
               <li>
-                <Link href="/pages/guest/about">
+                <Link href="/guest/about">
                   <div
                     className={`block text-black dark:text-white ${
-                      isActive("/pages/guest/about")
+                      isActive("/guest/about")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}
@@ -249,10 +249,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 </Link>
               </li>
               <li>
-                <Link href="/pages/guest/careers">
+                <Link href="/guest/careers">
                   <div
                     className={`block text-black dark:text-white ${
-                      isActive("/pages/guest/careers")
+                      isActive("/guest/careers")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}

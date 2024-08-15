@@ -9,20 +9,29 @@ interface HeaderProps {
   setSidebarOpen: (arg0: boolean) => void;
 }
 
-const PatientHeader: React.FC<HeaderProps> = ({
+const AdminHeader: React.FC<HeaderProps> = ({
   sidebarOpen,
   setSidebarOpen,
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
+  const [dropdownOrderOpen, setDropdownOrderOpen] = useState(false);
+  const [dropdownManagementOpen, setDropdownManagementOpen] = useState(false);
+  const dropdownOrderRef = useRef<HTMLLIElement>(null);
+  const dropdownManagementRef = useRef<HTMLLIElement>(null);
   const pathname = usePathname();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
+      dropdownOrderRef.current &&
+      !dropdownOrderRef.current.contains(event.target as Node)
     ) {
-      setDropdownOpen(false);
+      setDropdownOrderOpen(false);
+    }
+
+    if (
+      dropdownManagementRef.current &&
+      !dropdownManagementRef.current.contains(event.target as Node)
+    ) {
+      setDropdownManagementOpen(false);
     }
   };
 
@@ -33,8 +42,14 @@ const PatientHeader: React.FC<HeaderProps> = ({
     };
   }, []);
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
+  const toggleOrderDropdown = () => {
+    setDropdownOrderOpen(!dropdownOrderOpen);
+    setDropdownManagementOpen(false);
+  };
+
+  const toggleManagementDropdown = () => {
+    setDropdownManagementOpen(!dropdownManagementOpen);
+    setDropdownOrderOpen(false);
   };
 
   const isActive = (path: string) => pathname === path;
@@ -106,47 +121,32 @@ const PatientHeader: React.FC<HeaderProps> = ({
               </div>
             </Link>
           </div>
-          <div className="flex flex-grow justify-center">
+          <div className="flex flex-grow items-center">
             <ul className="flex items-center gap-5 py-3">
               <li>
-                <Link href="/patient">
+                <Link href="/admin">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                      isActive("/patient")
-                        ? "font-bold text-green-light-1"
-                        : ""
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
+                      isActive("/admin") ? "font-bold text-kalbe-light" : ""
                     }`}
                   >
-                    Dashboard
-                  </div>
-                </Link>
-              </li>
-              <li>
-                <Link href="/patient/order-history">
-                  <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                      isActive("/patient/order-history")
-                        ? "font-bold text-green-light-1"
-                        : ""
-                    }`}
-                  >
-                    Order History
+                    Home
                   </div>
                 </Link>
               </li>
 
               <li
                 className="relative"
-                ref={dropdownRef}
-                onClick={toggleDropdown}
+                ref={dropdownOrderRef}
+                onClick={toggleOrderDropdown}
               >
                 <div
-                  className={`cursor-pointer text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                    dropdownOpen ? "font-bold text-green-light-1" : ""
+                  className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
+                    dropdownOrderOpen ? "text-kalbe-light" : ""
                   }`}
                 >
                   <div className="flex">
-                    <div className="flex-none">Health Services</div>
+                    <div className="flex-none">Order</div>
                     <div className="ml-2 mt-1 flex-none">
                       <Image
                         src={"/images/icon/icon-arrow-down.svg"}
@@ -157,19 +157,67 @@ const PatientHeader: React.FC<HeaderProps> = ({
                     </div>
                   </div>
                 </div>
-                {dropdownOpen && (
+                {dropdownOrderOpen && (
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
                     <li className="border-b border-gray-200 dark:border-gray-700">
-                      <Link href="/guest/health-services/nurses">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
-                          Nurses
+                      <Link href="/admin/order/service">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          Service
                         </div>
                       </Link>
                     </li>
                     <li>
-                      <Link href="/guest/health-services/midwives">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
-                          Midwives
+                      <Link href="/admin/order/medicine">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          Medicine
+                        </div>
+                      </Link>
+                    </li>
+                  </ul>
+                )}
+              </li>
+              <li
+                className="relative"
+                ref={dropdownManagementRef}
+                onClick={toggleManagementDropdown}
+              >
+                <div
+                  className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
+                    dropdownManagementOpen ? "text-kalbe-light" : ""
+                  }`}
+                >
+                  <div className="flex">
+                    <div className="flex-none">Management</div>
+                    <div className="ml-2 mt-1 flex-none">
+                      <Image
+                        src={"/images/icon/icon-arrow-down.svg"}
+                        alt="Arrow Down"
+                        width={15}
+                        height={15}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {dropdownManagementOpen && (
+                  <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
+                    <li className="border-b border-gray-200 dark:border-gray-700">
+                      <Link href="/admin/manage/user">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          User
+                        </div>
+                      </Link>
+                    </li>
+                    <li className="border-b border-gray-200 dark:border-gray-700">
+                      <Link href="/admin/manage/approval">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          Approval
+                        </div>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/admin/manage/medicine">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          Medicine
                         </div>
                       </Link>
                     </li>
@@ -187,4 +235,4 @@ const PatientHeader: React.FC<HeaderProps> = ({
   );
 };
 
-export default PatientHeader;
+export default AdminHeader;

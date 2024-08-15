@@ -45,15 +45,15 @@ const menuGroups = [
       },
       {
         label: "Order",
-        route: "/pages/order",
+        route: "/order",
       },
       {
         label: "Order History",
-        route: "/pages/order-history",
+        route: "/order-history",
       },
       {
         label: "Medicine",
-        route: "/pages/medicine",
+        route: "/medicine",
       },
       {
         icon: (
@@ -194,7 +194,7 @@ const menuGroups = [
         ),
         label: "Pages",
         route: "#",
-        children: [{ label: "Settings", route: "/pages/settings" }],
+        children: [{ label: "Settings", route: "/settings" }],
       },
     ],
   },

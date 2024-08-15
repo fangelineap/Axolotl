@@ -36,7 +36,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Home",
-        route: "/pages/guest",
+        route: "/guest",
       },
       {
         icon: (
@@ -63,7 +63,7 @@ const menuGroups = [
           </svg>
         ),
         label: "About",
-        route: "/pages/guest/about",
+        route: "/guest/about",
       },
       {
         icon: (
@@ -84,7 +84,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Careers",
-        route: "/pages/guest/careers",
+        route: "/guest/careers",
       },
       {
         icon: (
@@ -107,8 +107,8 @@ const menuGroups = [
         label: "Health Service",
         route: "",
         children: [
-          { label: "Nurses", route: "/pages/guest/nurses" },
-          { label: "Midwives", route: "/pages/guest/midwives" },
+          { label: "Nurses", route: "/guest/nurses" },
+          { label: "Midwives", route: "/guest/midwives" },
         ],
       },
     ],
@@ -141,7 +141,7 @@ const GuestSidebar: React.FC<SidebarProps> = ({
             <Image
               width={190}
               height={32}
-              src={"/images/logo/axolotlonly.svg"}
+              src={"/images/logo/axolotl.svg"}
               alt="Logo"
               priority
               className="dark:hidden"

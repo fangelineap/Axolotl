@@ -909,7 +909,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                 <div className="flex flex-col items-center justify-center">
                   <label className="text-2xl font-bold">Success!</label>
                   <label>Congratulations!</label>
-                  <label>Let's visit your homepage</label>
+                  <label>Let&apos;s visit your homepage</label>
                 </div>
               </div>
               <div className="text-blue-gray-500 mb-6 mt-2 flex shrink-0 flex-wrap items-center justify-center p-4">
@@ -920,7 +920,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                     e.preventDefault();
                     setFinished(false);
                     if(searchParams.role == 'Patient') {
-                      router.push('/pages/patient');
+                      router.push('/patient');
                     }
                   }}
                 >
