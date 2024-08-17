@@ -1,9 +1,10 @@
 "use client";
 
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React, { useState } from "react";
 
 const page = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
 
   return (

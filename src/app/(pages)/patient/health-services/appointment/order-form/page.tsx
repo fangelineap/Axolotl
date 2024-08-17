@@ -2,7 +2,7 @@
 
 import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React, { useState } from "react";
 
 const PlacingOrder = () => {
