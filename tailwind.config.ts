@@ -94,6 +94,7 @@ const config: Config = {
         red: {
           DEFAULT: "#EE4D4D", // Kalbe Danger
           dark: "#EE4D4D",
+          hover: "#F7CAD0",
           light: {
             DEFAULT: "#FBE3E4", // BG Kalbe Danger
             2: "#F89090",
@@ -120,6 +121,7 @@ const config: Config = {
           },
         },
         yellow: {
+          hover: "#FFE97F",
           dark: {
             DEFAULT: "#F09D30", // Kalbe Warning
             2: "#D97706",

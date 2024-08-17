@@ -3,8 +3,10 @@ import { Pagination } from "@mui/material";
 import {
   IconChevronDown,
   IconChevronUp,
+  IconEye,
   IconSearch,
   IconSelector,
+  IconTrash,
 } from "@tabler/icons-react";
 import {
   useReactTable,
@@ -42,7 +44,33 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
 
   const table = useReactTable({
     data,
-    columns,
+    columns: [
+      ...columns,
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <div className="flex justify-center gap-3">
+            {showAction && (
+              <button
+                onClick={() => showAction(row.original)}
+                className="text-dark-secondary hover:text-blue"
+              >
+                <IconEye stroke={1.5} />
+              </button>
+            )}
+            {deleteAction && (
+              <button
+                onClick={() => deleteAction(row.original)}
+                className="text-dark-secondary hover:text-red"
+              >
+                <IconTrash stroke={1.5} />
+              </button>
+            )}
+          </div>
+        ),
+      } as ColumnDef<T>,
+    ],
     state: {
       globalFilter,
       columnFilters,

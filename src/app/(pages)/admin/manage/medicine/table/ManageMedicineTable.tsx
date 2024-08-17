@@ -13,6 +13,7 @@ function ManageMedicineTable() {
       data={data}
       columns={columns as ColumnDef<AdminMedicineTable>[]}
       showAction={(row: AdminMedicineTable) => console.log(row)}
+      deleteAction={(row: AdminMedicineTable) => console.log(row)}
     />
     </div>
   );
