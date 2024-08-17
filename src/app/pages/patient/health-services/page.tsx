@@ -1,0 +1,615 @@
+"use client";
+
+import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import React, { useState } from "react";
+
+const page = () => {
+  const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
+
+  return (
+    <DefaultLayout>
+      <div className="flex flex-col items-center justify-center">
+        <div className="block w-full max-w-[85%]">
+          <h1 className="mb-5 text-4xl font-bold">
+            Book Your Appointment in Seconds
+          </h1>
+        </div>
+
+        {/* Header */}
+        <div className="relative min-h-[200px] w-full max-w-[85%] rounded-md bg-primary">
+          <div className="flex min-h-[200px] flex-col  items-center lg:flex-row">
+            <div className="mx-5 w-full p-3 lg:w-[30%]">
+              <div className="mb-6 flex gap-2 rounded-md border border-white p-4 text-white">
+                <h1 className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-base font-semibold text-primary">
+                  1
+                </h1>
+                <h1 className="text-base font-semibold">Set Your Location</h1>
+              </div>
+              <div className="flex gap-2 rounded-md border border-white p-4 text-white">
+                <h1 className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-base font-semibold text-primary">
+                  2
+                </h1>
+                <h1 className="text-base font-semibold">
+                  Choose Your Caregiver
+                </h1>
+              </div>
+            </div>
+            <div className="w-full p-3 lg:w-[35%]">
+              <div className="mb-6 flex gap-2 rounded-md border border-white p-4 text-white">
+                <h1 className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-base font-semibold text-primary">
+                  3
+                </h1>
+                <h1 className="text-base font-semibold">
+                  Caregiver will accept right away
+                </h1>
+              </div>
+              <div className="flex gap-2 rounded-md border border-white p-4 text-white">
+                <h1 className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-base font-semibold text-primary">
+                  4
+                </h1>
+                <h1 className="text-base font-semibold">
+                  Caregiver will come soon
+                </h1>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end md:relative">
+            <img
+              className="w-200 h-56 rounded-br-md md:absolute md:bottom-0 md:right-0"
+              src="/images/freepik/patient-health-services.svg"
+              alt=""
+            />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="mt-6 flex h-[100%] w-[85%] flex-col justify-between gap-7 lg:flex-row">
+          <div className="lg:w-[35%]">
+            <div className="mb-5 rounded-md border-2 border-primary bg-white">
+              <div className="bg-primary p-3">
+                <h1 className="text-lg font-semibold text-white">
+                  Set Your Location
+                </h1>
+              </div>
+              <div className="px-5">
+                <div
+                  onClick={() => {
+                    if (location !== "Malang") setLocation("Malang");
+                    else setLocation("");
+                  }}
+                  className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${location === "Malang" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
+                >
+                  <div className="flex items-center justify-start gap-7">
+                    <img
+                      src={`${location === "Malang" ? "/images/icon/icon-done.svg" : "/images/icon/icon-done-not-filled.svg"}`}
+                      className={`rounded-full border ${location === "Malang" ? "bg-kalbe-veryLight" : "bg-white"}`}
+                      alt="Checked Logo"
+                    />
+                    <div className="flex flex-col">
+                      <h2 className="font-semibold">
+                        Malang City, East Java, Indonesia
+                      </h2>
+                      <p className="text-dark-secondary">Blimbing area</p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  onClick={() => {
+                    if (location !== "Bali") setLocation("Bali");
+                    else setLocation("");
+                  }}
+                  className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${location === "Bali" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
+                >
+                  <div className="flex items-center justify-start gap-7">
+                    <img
+                      src={`${location === "Bali" ? "/images/icon/icon-done.svg" : "/images/icon/icon-done-not-filled.svg"}`}
+                      className={`rounded-full border ${location === "Bali" ? "bg-kalbe-veryLight" : "bg-white"}`}
+                      alt="Checked Logo"
+                    />
+                    <div className="flex flex-col">
+                      <h2 className="font-semibold">
+                        Gianyar City, Bali, Indonesia
+                      </h2>
+                      <p className="text-dark-secondary">Gianyar Area</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-md border-2 border-primary bg-white">
+              <div className="bg-primary p-3">
+                <h1 className="text-lg font-semibold text-white">
+                  Filter Rating
+                </h1>
+              </div>
+              {/* Rating */}
+              <div className="px-5 py-2">
+                <div className="mb-1 inline-flex w-full items-center">
+                  <label
+                    className="relative flex cursor-pointer items-center rounded-full p-3"
+                    htmlFor="checkbox"
+                  >
+                    <input
+                      type="checkbox"
+                      className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
+                      id="checkbox"
+                      name="rating4to5"
+                    />
+                    <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        stroke-width="1"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                  </label>
+                  <label htmlFor="Rating4to5" className="flex gap-2">
+                    <img
+                      src="/images/logo/star.svg"
+                      height={20}
+                      width={20}
+                      alt="Star Logo"
+                    />
+                    <span>4 - 5 stars</span>
+                  </label>
+                </div>
+                <div className="mb-1 inline-flex w-full items-center">
+                  <label
+                    className="relative flex cursor-pointer items-center rounded-full p-3"
+                    htmlFor="checkbox"
+                  >
+                    <input
+                      type="checkbox"
+                      className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
+                      id="checkbox"
+                      name="rating3to4"
+                    />
+                    <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        stroke-width="1"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                  </label>
+                  <label htmlFor="Rating4to5" className="flex gap-2">
+                    <img
+                      src="/images/logo/star.svg"
+                      height={20}
+                      width={20}
+                      alt="Star Logo"
+                    />
+                    <span>3 - 4 stars</span>
+                  </label>
+                </div>
+                <div className="mb-1 inline-flex w-full items-center">
+                  <label
+                    className="relative flex cursor-pointer items-center rounded-full p-3"
+                    htmlFor="checkbox"
+                  >
+                    <input
+                      type="checkbox"
+                      className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
+                      id="checkbox"
+                      name="rating2to3"
+                    />
+                    <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        stroke-width="1"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                  </label>
+                  <label htmlFor="Rating4to5" className="flex gap-2">
+                    <img
+                      src="/images/logo/star.svg"
+                      height={20}
+                      width={20}
+                      alt="Star Logo"
+                    />
+                    <span>2 - 3 stars</span>
+                  </label>
+                </div>
+                <div className="inline-flex w-full items-center">
+                  <label
+                    className="relative flex cursor-pointer items-center rounded-full p-3"
+                    htmlFor="checkbox"
+                  >
+                    <input
+                      type="checkbox"
+                      className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
+                      id="checkbox"
+                      name="rating1to2"
+                    />
+                    <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        stroke="currentColor"
+                        stroke-width="1"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </span>
+                  </label>
+                  <label htmlFor="Rating4to5" className="flex gap-2">
+                    <img
+                      src="/images/logo/star.svg"
+                      height={20}
+                      width={20}
+                      alt="Star Logo"
+                    />
+                    <span>1 - 2 stars</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="lg:w-[65%]">
+            <h1 className="p-3 text-lg font-semibold">Choose Your Caregiver</h1>
+            <div className="p-3">
+              <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                  <img
+                    src="/images/user/caregiver.png"
+                    height={100}
+                    width={100}
+                    className="rounded-full"
+                    alt="CG pfp"
+                  />
+                  <div className="flex w-full items-center gap-5">
+                    <div className="w-[70%]">
+                      <h1 className="mb-2 font-semibold">
+                        Strawberry Shortcake, A.Md.Kep.
+                      </h1>
+                      <div className="mb-2 flex gap-2">
+                        <img
+                          src="/images/logo/building.svg"
+                          height={20}
+                          width={20}
+                          alt="Building Logo"
+                        />
+                        <h1 className="text-sm text-dark-secondary">
+                          RS Axolotl Malang, Malang City, East Java
+                        </h1>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="flex gap-2">
+                          <img
+                            src="/images/logo/briefcase.svg"
+                            height={20}
+                            width={20}
+                            alt="Briefcase Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">
+                            10 years
+                          </h1>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src="/images/logo/star.svg"
+                            height={20}
+                            width={20}
+                            alt="Star Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">4.5</h1>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-25 w-[0.5px] bg-primary"></div>
+                    <div className="flex w-[30%] justify-end">
+                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                  <img
+                    src="/images/user/caregiver.png"
+                    height={100}
+                    width={100}
+                    className="rounded-full"
+                    alt=""
+                  />
+                  <div className="flex w-full items-center gap-5">
+                    <div className="w-[70%]">
+                      <h1 className="mb-2 font-semibold">
+                        Strawberry Shortcake, A.Md.Kep.
+                      </h1>
+                      <div className="mb-2 flex gap-2">
+                        <img
+                          src="/images/logo/building.svg"
+                          height={20}
+                          width={20}
+                          alt="Building Logo"
+                        />
+                        <h1 className="text-sm text-dark-secondary">
+                          RS Axolotl Malang, Malang City, East Java
+                        </h1>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="flex gap-2">
+                          <img
+                            src="/images/logo/briefcase.svg"
+                            height={20}
+                            width={20}
+                            alt="Briefcase Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">
+                            10 years
+                          </h1>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src="/images/logo/star.svg"
+                            height={20}
+                            width={20}
+                            alt="Star Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">4.5</h1>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-25 w-[0.5px] bg-primary"></div>
+                    <div className="flex w-[30%] justify-end">
+                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                  <img
+                    src="/images/user/caregiver.png"
+                    height={100}
+                    width={100}
+                    className="rounded-full"
+                    alt=""
+                  />
+                  <div className="flex w-full items-center gap-5">
+                    <div className="w-[70%]">
+                      <h1 className="mb-2 font-semibold">
+                        Strawberry Shortcake, A.Md.Kep.
+                      </h1>
+                      <div className="mb-2 flex gap-2">
+                        <img
+                          src="/images/logo/building.svg"
+                          height={20}
+                          width={20}
+                          alt="Building Logo"
+                        />
+                        <h1 className="text-sm text-dark-secondary">
+                          RS Axolotl Malang, Malang City, East Java
+                        </h1>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="flex gap-2">
+                          <img
+                            src="/images/logo/briefcase.svg"
+                            height={20}
+                            width={20}
+                            alt="Briefcase Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">
+                            10 years
+                          </h1>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src="/images/logo/star.svg"
+                            height={20}
+                            width={20}
+                            alt="Star Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">4.5</h1>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-25 w-[0.5px] bg-primary"></div>
+                    <div className="flex w-[30%] justify-end">
+                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                  <img
+                    src="/images/user/caregiver.png"
+                    height={100}
+                    width={100}
+                    className="rounded-full"
+                    alt=""
+                  />
+                  <div className="flex w-full items-center gap-5">
+                    <div className="w-[70%]">
+                      <h1 className="mb-2 font-semibold">
+                        Strawberry Shortcake, A.Md.Kep.
+                      </h1>
+                      <div className="mb-2 flex gap-2">
+                        <img
+                          src="/images/logo/building.svg"
+                          height={20}
+                          width={20}
+                          alt="Building Logo"
+                        />
+                        <h1 className="text-sm text-dark-secondary">
+                          RS Axolotl Malang, Malang City, East Java
+                        </h1>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="flex gap-2">
+                          <img
+                            src="/images/logo/briefcase.svg"
+                            height={20}
+                            width={20}
+                            alt="Briefcase Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">
+                            10 years
+                          </h1>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src="/images/logo/star.svg"
+                            height={20}
+                            width={20}
+                            alt="Star Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">4.5</h1>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-25 w-[0.5px] bg-primary"></div>
+                    <div className="flex w-[30%] justify-end">
+                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-3 flex justify-between">
+              <p>Showing 1 to 4 of 16 entries</p>
+              <nav aria-label="Page navigation example">
+                <ul className="flex h-8 items-center -space-x-px text-sm">
+                  <li>
+                    <a
+                      href="#"
+                      className="ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      <span className="sr-only">Previous</span>
+                      <svg
+                        className="h-2.5 w-2.5 rtl:rotate-180"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 6 10"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 1 1 5l4 4"
+                        />
+                      </svg>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      1
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      2
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      aria-current="page"
+                      className="z-10 flex h-8 items-center justify-center border border-primary bg-kalbe-proLight px-3 leading-tight text-primary hover:bg-kalbe-ultraLight hover:text-primary dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                    >
+                      3
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      4
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      5
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                    >
+                      <span className="sr-only">Next</span>
+                      <svg
+                        className="h-2.5 w-2.5 rtl:rotate-180"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 6 10"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m1 9 4-4-4-4"
+                        />
+                      </svg>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </DefaultLayout>
+  );
+};
+
+export default page;
