@@ -6,6 +6,8 @@ import PatientHeader from "../Patient/PatientHeader";
 import PatientSidebar from "../Patient/Sidebar Patient";
 import AdminHeader from "../Admin/AdminHeader";
 import AdminSidebar from "../Admin/AdminSidebar";
+import CaregiverHeader from "../Caregiver/CaregiverHeader/page";
+import CaregiverSidebar from "../Caregiver/Sidebar Caregiver/page";
 
 const DynamicHeader = ({
   sidebarOpen,
@@ -55,14 +57,14 @@ const DynamicHeader = ({
         />
       </>
     );
-  } else if (pathname.startsWith("/")) {
+  } else if (pathname.startsWith("/caregiver")) {
     return (
       <>
-        <GuestHeader
+        <CaregiverHeader
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        <GuestSidebar
+        <CaregiverSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />

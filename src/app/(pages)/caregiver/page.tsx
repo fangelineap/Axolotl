@@ -159,7 +159,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="flex flex-col sm:p-3 lg:mb-0 lg:flex-row lg:items-start lg:space-x-4">
-                    <button className="mb-2 mt-0 rounded-lg border border-green px-4 py-2 text-sm font-bold text-kalbe-light hover:border-none hover:bg-green-success-hover">
+                    <button className="hover:bg-green-success-hover mb-2 mt-0 rounded-lg border border-green px-4 py-2 text-sm font-bold text-kalbe-light hover:bg-green-light-4">
                       See more
                     </button>
                     <div className="hidden lg:block lg:h-20 lg:border-l lg:border-gray-400"></div>
@@ -172,7 +172,7 @@ const Dashboard = () => {
                         Cancel Appointment
                       </button>
 
-                      <button className="mb-2 rounded-lg bg-green-success px-4 py-2 text-sm font-bold text-white hover:bg-green-success-hover hover:text-green">
+                      <button className="bg-green-success hover:bg-green-success-hover mb-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-green-light-4 hover:text-primary">
                         Medicine Preparation
                       </button>
                     </div>
@@ -223,7 +223,7 @@ const Dashboard = () => {
               No, cancel
             </button>
             <button
-              className="rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:bg-red-hover hover:text-red"
+              className="hover:bg-red-hover rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:text-red"
               onClick={handleCancel}
             >
               Yes, I&apos;m sure
@@ -259,7 +259,7 @@ const Dashboard = () => {
               Cancel
             </button>
             <button
-              className="rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:bg-red-hover hover:text-red"
+              className="hover:bg-red-hover rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:text-red"
               onClick={handleFinalCancel}
             >
               Cancel this appointment
