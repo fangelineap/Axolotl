@@ -86,7 +86,7 @@ const CaregiverSidebar: React.FC<SidebarProps> = ({
             <Image
               width={190}
               height={32}
-              src={"/images/logo/axolotlonly.svg"}
+              src={"/images/logo/axolotl.svg"}
               alt="Logo"
               priority
               className="dark:hidden"
