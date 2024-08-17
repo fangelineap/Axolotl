@@ -19,7 +19,7 @@ import {
   ColumnSort,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import CustomPagination from "../Pagination/Pagination";
 
@@ -41,6 +41,7 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
   const pathName = usePathname();
+  const router = useRouter();
 
   const table = useReactTable({
     data,
@@ -53,7 +54,11 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
           <div className="flex justify-center gap-3">
             {showAction && (
               <button
-                onClick={() => showAction(row.original)}
+                onClick={() => {
+                  showAction(row.original)
+                  const id = row.original.id || row.original.uuid
+                  router.push(`${pathName}/${id}`)
+                }}
                 className="text-dark-secondary hover:text-blue"
               >
                 <IconEye stroke={1.5} />
