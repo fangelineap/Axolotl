@@ -102,7 +102,7 @@ const SignIn = ({ searchParams }: any) => {
               </div>
 
               <p className="mt-3 text-center text-body-sm">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <span>
                   <Link
                     href="/auth/register"
