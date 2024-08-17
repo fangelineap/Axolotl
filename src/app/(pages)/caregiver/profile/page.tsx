@@ -43,7 +43,7 @@ const CaregiverProfile = () => {
         {/* Profile Header Section */}
         <div className="mt-6 flex items-center gap-4">
           <Image
-            src="/images/logo/axolotlonly.svg" // Replace with the actual path to the avatar image
+            src="/images/logo/axolotl.svg" // Replace with the actual path to the avatar image
             alt="Avatar"
             className="rounded-full"
             width="150"
