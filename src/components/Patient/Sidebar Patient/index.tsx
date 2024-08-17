@@ -37,7 +37,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Home",
-        route: "/pages/patient",
+        route: "/patient",
       },
       {
         icon: (
@@ -53,7 +53,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Order History",
-        route: "/pages/patient/order-history",
+        route: "/patient/order-history",
       },
       {
         icon: (
@@ -76,8 +76,8 @@ const menuGroups = [
         label: "Health Service",
         route: "",
         children: [
-          { label: "Nurses", route: "/pages/guest/nurses" },
-          { label: "Midwives", route: "/pages/guest/midwives" },
+          { label: "Nurses", route: "/guest/nurses" },
+          { label: "Midwives", route: "/guest/midwives" },
         ],
       },
     ],
@@ -110,7 +110,7 @@ const PatientSidebar: React.FC<SidebarProps> = ({
             <Image
               width={190}
               height={32}
-              src={"/images/logo/axolotlonly.svg"}
+              src={"/images/logo/axolotl.svg"}
               alt="Logo"
               priority
               className="dark:hidden"

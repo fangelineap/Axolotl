@@ -1,6 +1,6 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";
 import InputGroup from "@/components/FormElements/InputGroup";
 import PasswordInput from "../component/PasswordInput";
@@ -36,7 +36,7 @@ const SignIn = ({ searchParams }: any) => {
           `/auth/register/createaccount/personalinformation/review?role=Caregiver`,
         );
       } else if (userData[0].role == "Patient") {
-        redirect("/pages/admin");
+        redirect("/admin");
       }
     }
   };
@@ -102,7 +102,7 @@ const SignIn = ({ searchParams }: any) => {
               </div>
 
               <p className="mt-3 text-center text-body-sm">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <span>
                   <Link
                     href="/auth/register"

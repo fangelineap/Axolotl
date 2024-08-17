@@ -2,7 +2,7 @@
 
 import { getCaregiver } from "@/app/server-action/auth";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { USER } from "@/types/axolotl";
 import { createBrowserClient } from "@supabase/ssr";
 import { redirect, useRouter } from "next/navigation";
@@ -189,7 +189,7 @@ const Review = ({ searchParams }: any) => {
               <button
                 type="submit"
                 className="w-1/4 cursor-pointer rounded-[5px] bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
-                onClick={() => router.push('/pages/admin')}
+                onClick={() => router.push('/admin')}
               >
                 Okay
               </button>

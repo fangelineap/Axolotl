@@ -45,15 +45,15 @@ const menuGroups = [
       },
       {
         label: "Order",
-        route: "/pages/order",
+        route: "/order",
       },
       {
         label: "Order History",
-        route: "/pages/order-history",
+        route: "/order-history",
       },
       {
         label: "Medicine",
-        route: "/pages/medicine",
+        route: "/medicine",
       },
       {
         icon: (
@@ -194,7 +194,7 @@ const menuGroups = [
         ),
         label: "Pages",
         route: "#",
-        children: [{ label: "Settings", route: "/pages/settings" }],
+        children: [{ label: "Settings", route: "/settings" }],
       },
     ],
   },
@@ -321,7 +321,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <Image
                 width={190}
                 height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
+                src={"/images/logo/axolotl.svg"}
                 alt="Logo"
                 priority
                 className="dark:hidden"
@@ -333,7 +333,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               <Image
                 width={190}
                 height={32}
-                src={"/images/logo/logo-axolotl-main.svg"}
+                src={"/images/logo/axolotl.svg"}
                 alt="Logo"
                 priority
                 className="hidden dark:block"

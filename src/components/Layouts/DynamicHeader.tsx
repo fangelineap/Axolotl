@@ -1,11 +1,11 @@
 import React from "react";
-import Header from "@/components/Header";
 import GuestHeader from "../Guest/GuestHeader";
-import Sidebar from "@/components/Sidebar";
 import GuestSidebar from "../Guest/Sidebar Guest";
 import { usePathname } from "next/navigation";
 import PatientHeader from "../Patient/PatientHeader";
 import PatientSidebar from "../Patient/Sidebar Patient";
+import AdminHeader from "../Admin/AdminHeader";
+import AdminSidebar from "../Admin/AdminSidebar";
 
 const DynamicHeader = ({
   sidebarOpen,
@@ -16,17 +16,20 @@ const DynamicHeader = ({
 }) => {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/pages/admin")) {
+  if (pathname.startsWith("/admin")) {
     return (
       <>
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <AdminHeader
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <AdminSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
       </>
     );
-  } else if (
-    pathname.startsWith("/pages/guest") ||
-    pathname.startsWith("/auth")
-  ) {
+  } else if (pathname.startsWith("/guest") || pathname.startsWith("/auth")) {
     return (
       <>
         <GuestHeader
@@ -39,7 +42,7 @@ const DynamicHeader = ({
         />
       </>
     );
-  } else if (pathname.startsWith("/pages/patient")) {
+  } else if (pathname.startsWith("/patient")) {
     return (
       <>
         <PatientHeader
@@ -55,8 +58,14 @@ const DynamicHeader = ({
   } else if (pathname.startsWith("/")) {
     return (
       <>
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <GuestHeader
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <GuestSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
       </>
     );
   }

@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                     <Image
                       width={175}
                       height={175}
-                      src={"/images/logo/logo-axolotl-main.svg"}
+                      src={"/images/logo/axolotl.svg"}
                       alt="Logo"
                     />
                   </div>
@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                     <Image
                       width={175}
                       height={175}
-                      src={"/images/logo/logo-axolotl-main.svg"}
+                      src={"/images/logo/axolotl.svg"}
                       alt="Logo"
                     />
                   </div>
@@ -106,9 +106,9 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 </li>
                 <li>
                   <Link
-                    href="/pages/admin/order"
+                    href="/admin/order"
                     className={
-                      pathname === "/pages/admin/order"
+                      pathname === "/admin/order"
                         ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
@@ -118,9 +118,9 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 </li>
                 <li>
                   <Link
-                    href="/pages/admin/order-history"
+                    href="/admin/order-history"
                     className={
-                      pathname === "/pages/admin/order-history"
+                      pathname === "/admin/order-history"
                         ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
@@ -130,9 +130,9 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 </li>
                 <li>
                   <Link
-                    href="/pages/admin/medicine"
+                    href="/admin/medicine"
                     className={
-                      pathname === "/pages/admin/medicine"
+                      pathname === "/admin/medicine"
                         ? "font-semibold text-green-500 dark:text-green"
                         : "text-black dark:text-white"
                     }
