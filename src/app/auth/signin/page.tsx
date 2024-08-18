@@ -7,10 +7,9 @@ import PasswordInput from "../component/PasswordInput";
 import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
 
-// export const metadata: Metadata = {
-//   title: "Next.js Form Layout Page | NextAdmin - Next.js Dashboard Kit",
-//   description: "This is Next.js Form Layout page for NextAdmin Dashboard Kit",
-// };
+export const metadata: Metadata = {
+  title: "Sign In to Axolotl"
+};
 
 const SignIn = ({ searchParams }: any) => {
   const signIn = async (form: FormData) => {
