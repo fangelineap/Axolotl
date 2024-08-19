@@ -28,6 +28,7 @@ interface DataTableProps<T extends { id?: number; uuid?: string }> {
   columns: ColumnDef<T>[];
   showAction?: (row: T) => void;
   deleteAction?: (rowData: T) => void;
+  basePath?: string;
 }
 
 export function DataTable<T extends { id?: number; uuid?: string }>({
@@ -35,6 +36,7 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
   columns,
   showAction,
   deleteAction,
+  basePath,
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
@@ -55,9 +57,13 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
             {showAction && (
               <button
                 onClick={() => {
-                  showAction(row.original)
-                  const id = row.original.id || row.original.uuid
-                  router.push(`${pathName}/${id}`)
+                  showAction(row.original);
+                  const id = row.original.id || row.original.uuid;
+                  const navigatePath = basePath
+                    ? `${basePath}/${id}`
+                    : `${pathName}/${id}`;
+                  //router.push(`${pathName}/${id}`);
+                  router.push(navigatePath);
                 }}
                 className="text-dark-secondary hover:text-blue"
               >
@@ -93,8 +99,8 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
 
   return (
     <div className="rounded-xl border border-gray-1 bg-white p-5">
-      <div className="flex justify-between border-b border-gray-1 pb-4">
-        <div className="flex w-80">
+      <div className="flex flex-col justify-between border-b border-gray-1 pb-4 md:flex-row">
+        <div className="mb-4 flex w-full md:mb-0 md:w-80">
           <input
             type="text"
             placeholder="Search here..."
@@ -106,7 +112,7 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
             <IconSearch className="text-white" />
           </button>
         </div>
-        <div>
+        <div className="flex w-full items-center justify-between md:w-auto">
           {pathName === "/admin/manage/medicine" && (
             <button className="mr-5 rounded-md bg-primary p-2 text-white">
               Add Medicine
@@ -132,7 +138,7 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
           </select>
         </div>
       </div>
-      <div>
+      <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead className="border-b border-gray-1">
             {table.getHeaderGroups().map((headerGroup) => (
