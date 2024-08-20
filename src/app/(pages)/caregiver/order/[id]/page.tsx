@@ -1,18 +1,13 @@
 "use client";
 import React from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import OrderStatus from "@/components/OrderDetail/OrderStatus";
-import PatientInformation from "@/components/OrderDetail/PatientInformation";
-import MedicalDetails from "@/components/OrderDetail/MedicalDetails";
-import ServiceDetails from "@/components/OrderDetail/ServiceDetails";
-import AdditionalMedications from "@/components/OrderDetail/AdditionaMedications";
-import ProofOfService from "@/components/OrderDetail/ProofOfService";
-import { useParams, useRouter } from "next/navigation";
+import OrderDetail from "@/components/Caregiver/OrderDetail/page";
+import { useParams, useSearchParams } from "next/navigation";
 
 const orders = [
   {
     id: 1,
-    status: "Cancel",
+    status: "Pending",
     patientInfo: {
       name: "Axolotl",
       address: "Jl. Lorem Ipsum, Malang City, East Java, Indonesia, 12345",
@@ -48,12 +43,19 @@ const orders = [
       imageUrl: "/images/proof-of-service.jpg",
     },
   },
+  // Additional orders can be added here...
 ];
 
 const OrderDetailPage = () => {
   const params = useParams();
-  const id = params.id;
-  const orderData = orders.find((order) => order.id === parseInt(id as string));
+  const searchParams = useSearchParams();
+
+  const id = parseInt(params.id as string);
+  const orderType = searchParams.get("orderType");
+  const patientName = searchParams.get("patientName");
+  const status = searchParams.get("status");
+
+  const orderData = orders.find((order) => order.id === id);
 
   if (!orderData) {
     return <div>Order not found</div>;
@@ -70,16 +72,30 @@ const OrderDetailPage = () => {
       <h1 className="mb-6 text-5xl font-bold text-gray-800">Order Details</h1>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <OrderStatus status={orderData.status} />
-          {/* <PatientInformation {...orderData.patientInfo} />
-          <MedicalDetails {...orderData.medicalDetails} />
-          <ServiceDetails {...orderData.serviceDetails} />
-          <AdditionalMedications medications={orderData.medications} /> */}
-        </div>
-        <div>
-          {/* <ProofOfService imageUrl={orderData.proofOfService.imageUrl} /> */}
-        </div>
+        <OrderDetail
+          status={status || orderData.status}
+          patientInfo={{
+            name: patientName || orderData.patientInfo.name,
+            address: orderData.patientInfo.address,
+            phoneNumber: orderData.patientInfo.phoneNumber,
+            birthdate: orderData.patientInfo.birthdate,
+          }}
+          medicalDetails={orderData.medicalDetails}
+          serviceDetails={{
+            orderId: `#${id}`,
+            orderDate: orderData.serviceDetails.orderDate,
+            serviceType: orderType || orderData.serviceDetails.serviceType,
+            totalDays: orderData.serviceDetails.totalDays,
+            startTime: orderData.serviceDetails.startTime,
+            endTime: orderData.serviceDetails.endTime,
+            serviceFee: orderData.serviceDetails.serviceFee,
+            totalCharge: orderData.serviceDetails.totalCharge,
+          }}
+          medications={orderData.medications}
+          proofOfService={orderData.proofOfService}
+          orderType={orderType || orderData.serviceDetails.serviceType}
+          patientName={patientName || orderData.patientInfo.name}
+        />
       </div>
     </DefaultLayout>
   );

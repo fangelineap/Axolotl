@@ -59,18 +59,9 @@ const Order = () => {
   ];
 
   const columns: ColumnDef<Order>[] = [
-    {
-      accessorKey: "id",
-      header: "Order ID",
-    },
-    {
-      accessorKey: "orderType",
-      header: "Order Type",
-    },
-    {
-      accessorKey: "patientName",
-      header: "Patient Name",
-    },
+    { accessorKey: "id", header: "Order ID" },
+    { accessorKey: "orderType", header: "Order Type" },
+    { accessorKey: "patientName", header: "Patient Name" },
     {
       accessorKey: "status",
       header: "Status",
@@ -78,7 +69,6 @@ const Order = () => {
         const status = getValue<string>();
         const colorClass =
           statusColorClassMap[status] || "bg-gray-500 text-white";
-
         return (
           <span
             className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
@@ -91,7 +81,13 @@ const Order = () => {
   ];
 
   const handleShowAction = (row: Order) => {
-    router.push(`/order?id=${row.id}`);
+    const query = new URLSearchParams({
+      orderType: row.orderType,
+      patientName: row.patientName,
+      status: row.status,
+    }).toString();
+
+    router.push(`/order/${row.id}?${query}`);
   };
 
   return (
