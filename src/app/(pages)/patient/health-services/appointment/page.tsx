@@ -127,21 +127,22 @@ const OrderCaregiver = () => {
             </div>
           </div>
           <div className="p-3 lg:w-[30%]">
-            <div className="rounded-md border-2 border-primary bg-white">
-              <div className="bg-primary p-3">
-                <h1 className="text-lg font-semibold text-white">
+            <div className="rounded-md border-[1px] border-stroke bg-white py-2">
+              <div className="p-3">
+                <h1 className="text-lg font-bold text-primary text-center">
                   Create Appointment
                 </h1>
               </div>
               <div className="px-5 py-2">
                 <DatePickerOne
                   customClasses="w-full mb-3"
-                  label="Birthdate"
-                  name="birthdate"
+                  label="Pick a date"
+                  name="appointmentDate"
                   required
                 />
                 <Select
                   label="Pick a time"
+                  name="appointmentTime"
                   placeholder="HH:MM"
                   required
                   customClass={"w-full mb-3"}
@@ -153,6 +154,7 @@ const OrderCaregiver = () => {
                 />
                 <Select
                   label="Choose your home service"
+                  name="appointmentService"
                   placeholder="Select service"
                   required
                   customClass={"w-full mb-3"}
