@@ -1,11 +1,16 @@
 import Link from "next/link";
 
 interface AdminBreadcrumbsProps {
-  parentPage?: string
+  parentPage?: string;
   pageName: string;
+  subPage?: string;
 }
 
-const AdminBreadcrumbs = ({ parentPage,pageName }: AdminBreadcrumbsProps) => {
+const AdminBreadcrumbs = ({
+  parentPage,
+  pageName,
+  subPage,
+}: AdminBreadcrumbsProps) => {
   return (
     <div className="mb-6 ml-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
       <nav>
@@ -15,9 +20,7 @@ const AdminBreadcrumbs = ({ parentPage,pageName }: AdminBreadcrumbsProps) => {
               Home /
             </Link>
           </li>
-          {parentPage && (
-            <li className="font-medium">{parentPage} /</li>
-          )}
+          {parentPage && <li className="font-medium">{parentPage} /</li>}
           <li className="font-medium text-primary">{pageName}</li>
         </ol>
       </nav>

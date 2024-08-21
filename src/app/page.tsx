@@ -1,7 +1,7 @@
-import ECommerce from "@/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
+import GuestPage from "../components/Axolotl/Home/GuestPage";
 
 export const metadata: Metadata = {
   title: "Axolotl - Your Caregiver",
@@ -11,9 +11,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <DefaultLayout>
-        <ECommerce />
-      </DefaultLayout>
+      <GuestPage />
     </>
   );
 }

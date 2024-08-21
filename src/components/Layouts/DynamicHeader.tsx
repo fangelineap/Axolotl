@@ -31,19 +31,6 @@ const DynamicHeader = ({
         />
       </>
     );
-  } else if (pathname.startsWith("/guest") || pathname.startsWith("/auth")) {
-    return (
-      <>
-        <GuestHeader
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-        <GuestSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      </>
-    );
   } else if (pathname.startsWith("/patient")) {
     return (
       <>
@@ -70,9 +57,20 @@ const DynamicHeader = ({
         />
       </>
     );
+  } else {
+    return (
+      <>
+        <GuestHeader
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+        <GuestSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+      </>
+    );
   }
-
-  return null;
 };
 
 export default DynamicHeader;

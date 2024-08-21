@@ -55,9 +55,9 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
             {showAction && (
               <button
                 onClick={() => {
-                  showAction(row.original)
-                  const id = row.original.id || row.original.uuid
-                  router.push(`${pathName}/${id}`)
+                  showAction(row.original);
+                  const id = row.original.id || row.original.uuid;
+                  router.push(`${pathName}/${id}`);
                 }}
                 className="text-dark-secondary hover:text-blue"
               >
@@ -108,7 +108,10 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
         </div>
         <div>
           {pathName === "/admin/manage/medicine" && (
-            <button className="mr-5 rounded-md bg-primary p-2 text-white">
+            <button
+              className="mr-5 rounded-md bg-primary p-2 text-white"
+              onClick={() => router.push(`${pathName}/add`)}
+            >
               Add Medicine
             </button>
           )}

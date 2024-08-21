@@ -104,10 +104,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
           <div className="flex flex-grow justify-center">
             <ul className="flex items-center gap-10 py-3 text-xl">
               <li>
-                <Link href="/guest">
+                <Link href="/">
                   <div
                     className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/guest")
+                      isActive("/")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}
@@ -223,10 +223,10 @@ const GuestHeader: React.FC<HeaderProps> = ({
             </button>
             <ul className="mt-20 space-y-6 px-6">
               <li>
-                <Link href="/guest">
+                <Link href="/">
                   <div
                     className={`block text-black dark:text-white ${
-                      isActive("/guest")
+                      isActive("/")
                         ? "font-bold text-kalbe-light"
                         : ""
                     }`}

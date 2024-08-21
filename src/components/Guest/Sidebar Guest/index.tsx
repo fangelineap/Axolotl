@@ -36,7 +36,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Home",
-        route: "/guest",
+        route: "/",
       },
       {
         icon: (

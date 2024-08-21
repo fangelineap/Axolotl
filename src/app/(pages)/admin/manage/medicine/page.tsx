@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Axolotl - Admin Manage Medicine",
 };
 
-async function AdminManageMedicine() {
+function AdminManageMedicine() {
   return (
     <div className="bg-gray">
       <DefaultLayout>
