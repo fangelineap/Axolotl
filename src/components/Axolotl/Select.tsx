@@ -2,6 +2,7 @@ import React from "react";
 
 interface SelectProps {
   label: string;
+  name: string
   placeholder: string;
   required: boolean;
   customClass: string;
@@ -13,6 +14,7 @@ interface SelectProps {
 }
 const Select = ({
   label,
+  name,
   placeholder,
   required,
   customClass,
@@ -28,6 +30,7 @@ const Select = ({
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
       <select
+      name={name}
         value={selectedOption}
         onChange={(e) => {
           setSelectedOption(e.target.value);
