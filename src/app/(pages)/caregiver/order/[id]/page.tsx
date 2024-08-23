@@ -7,7 +7,7 @@ import { useParams, useSearchParams } from "next/navigation";
 const orders = [
   {
     id: 1,
-    status: "Pending",
+    status: "Ongoing",
     patientInfo: {
       name: "Axolotl",
       address: "Jl. Lorem Ipsum, Malang City, East Java, Indonesia, 12345",
@@ -19,8 +19,9 @@ const orders = [
       mainConcerns: ["Wound Treatment"],
       currentMedicine: ["Paracetamol", "Ibuprofen"],
       symptoms: ["Fever"],
-      medicalDescriptions: "Lorem ipsum dolor sit amet...",
-      conjectures: ["Conjecture", "Lack of Money"],
+      medicalDescriptions:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Nam ac dolor eget metus scelerisque elementum. Integer sit amet turpis quis magna dictum dapibus. Duis convallis, orci sit amet auctor sodales, libero velit dictum purus, ut varius elit justo id arcu. Cras vulputate auctor arcu, at tristique est varius ac. Vivamus dapibus efficitur nulla, sed scelerisque lorem tristique eget. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean a tincidunt nisi. Nam sit amet magna lacus. Ut condimentum, purus sed suscipit placerat, erat arcu suscipit nisi, et elementum eros velit eu justo.",
+      conjectures: "Lack of Money",
     },
     serviceDetails: {
       orderId: "#123456789",
@@ -39,8 +40,13 @@ const orders = [
       { quantity: 1, name: "PROPOFOL", price: "Rp. 10.000" },
       { quantity: 1, name: "PROPOFOL", price: "Rp. 10.000" },
     ],
+    price: {
+      total: "Rp. 50.000",
+      delivery: "Rp. 10.000",
+      totalCharge: "Rp. 60.000",
+    },
     proofOfService: {
-      imageUrl: "/images/proof-of-service.jpg",
+      imageUrl: "/images/logo/axolotl.svg",
     },
   },
   // Additional orders can be added here...
@@ -71,7 +77,7 @@ const OrderDetailPage = () => {
 
       <h1 className="mb-6 text-5xl font-bold text-gray-800">Order Details</h1>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div>
         <OrderDetail
           status={status || orderData.status}
           patientInfo={{
@@ -90,6 +96,11 @@ const OrderDetailPage = () => {
             endTime: orderData.serviceDetails.endTime,
             serviceFee: orderData.serviceDetails.serviceFee,
             totalCharge: orderData.serviceDetails.totalCharge,
+          }}
+          price={{
+            total: orderData.price.total,
+            delivery: orderData.price.delivery,
+            totalCharge: orderData.price.totalCharge,
           }}
           medications={orderData.medications}
           proofOfService={orderData.proofOfService}
