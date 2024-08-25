@@ -1,8 +1,22 @@
 "use client";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import ReactModal from "react-modal";
+
+type Appointment = {
+  title: string;
+  description: string;
+  provider: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+};
+
+type AppointmentDay = {
+  date: string;
+  appointments: Appointment[];
+};
 
 // Helper function to format the date as 'Saturday, July 20'
 const formatDate = (date: Date) => {
@@ -17,17 +31,32 @@ const formatDate = (date: Date) => {
 
 const Dashboard = () => {
   const today = new Date();
-  const formattedToday = formatDate(today);
+  const formattedToday = useMemo(() => formatDate(today), [today]);
 
-  // Example of adding a future date for demonstration purposes
-  const futureDate = new Date(today);
-  futureDate.setDate(today.getDate() + 12); // Add 12 days to the current date
-  const formattedFutureDate = formatDate(futureDate);
+  const futureDate = useMemo(() => {
+    const future = new Date(today);
+    future.setDate(today.getDate() + 12); // Add 12 days to the current date
+    return future;
+  }, [today]);
 
-  const appointments = [
+  const formattedFutureDate = useMemo(
+    () => formatDate(futureDate),
+    [futureDate],
+  );
+
+  const appointments: AppointmentDay[] = [
     {
       date: formattedToday,
-      appointments: [],
+      appointments: [
+        {
+          title: "Neonatal Care",
+          description: "Wound Treatment",
+          provider: "Axel",
+          startTime: `${today.toLocaleDateString()} 23:59`,
+          endTime: `${new Date(today.getTime() + 86400000).toLocaleDateString()} 23:59`,
+          location: "Jl. Gajah Mada, East Java, Indonesia",
+        },
+      ],
     },
     {
       date: formattedFutureDate,
@@ -61,11 +90,12 @@ const Dashboard = () => {
   ];
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [reasonModalIsOpen, setReasonModalIsOpen] = useState(false);
   const [cancellationReason, setCancellationReason] = useState("");
 
-  const openModal = (appointment) => {
+  const openModal = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setModalIsOpen(true);
   };
@@ -76,8 +106,8 @@ const Dashboard = () => {
   };
 
   const openReasonModal = () => {
-    setModalIsOpen(false); // Close the first modal
-    setReasonModalIsOpen(true); // Open the second modal
+    setModalIsOpen(false);
+    setReasonModalIsOpen(true);
   };
 
   const closeReasonModal = () => {
@@ -102,7 +132,7 @@ const Dashboard = () => {
       {appointments.map((day) => (
         <div key={day.date} className="mt-8">
           <h2
-            className={`text-3xl font-medium sm:text-2xl ${day.appointments.length === 0 ? "rounded-lg border-0 bg-kalbe-ultraLight pb-2 pl-5 pt-2 text-kalbe-light" : "rounded-lg border-0 bg-gray pb-2 pl-5 pt-2 text-gray-800"}`}
+            className={`text-3xl font-medium sm:text-2xl ${day.date === formattedToday ? "rounded-lg border-0 bg-kalbe-ultraLight pb-2 pl-5 pt-2 text-kalbe-light" : "rounded-lg border-0 bg-gray pb-2 pl-5 pt-2 text-gray-800"}`}
           >
             {day.date}{" "}
             {day.date === formattedToday && (
@@ -190,6 +220,7 @@ const Dashboard = () => {
         onRequestClose={closeModal}
         contentLabel="Cancel Appointment"
         className="fixed inset-0 z-10 flex items-center justify-center bg-gray-800 bg-opacity-75 p-4"
+        ariaHideApp={false}
       >
         <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-xl font-bold">Confirmation</h2>
@@ -223,7 +254,7 @@ const Dashboard = () => {
               No, cancel
             </button>
             <button
-              className="hover:bg-red-hover rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:text-red"
+              className="rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:bg-red-hover hover:text-red"
               onClick={handleCancel}
             >
               Yes, I&apos;m sure
@@ -238,6 +269,7 @@ const Dashboard = () => {
         onRequestClose={closeReasonModal}
         contentLabel="Cancellation Reason"
         className="fixed inset-0 z-10 flex items-center justify-center bg-gray-800 bg-opacity-75 p-4"
+        ariaHideApp={false}
       >
         <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
           <h2 className="mb-4 text-xl font-bold">Confirmation</h2>
@@ -259,7 +291,7 @@ const Dashboard = () => {
               Cancel
             </button>
             <button
-              className="hover:bg-red-hover rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:text-red"
+              className="rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:bg-red-hover hover:text-red"
               onClick={handleFinalCancel}
             >
               Cancel this appointment

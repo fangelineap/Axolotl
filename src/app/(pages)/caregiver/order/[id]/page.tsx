@@ -4,7 +4,63 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderDetail from "@/components/Caregiver/OrderDetail/page";
 import { useParams, useSearchParams } from "next/navigation";
 
-const orders = [
+// TypeScript Types
+type PatientInfo = {
+  name: string;
+  address: string;
+  phoneNumber: string;
+  birthdate: string;
+};
+
+type MedicalDetails = {
+  causes: string;
+  mainConcerns: string[];
+  currentMedicine: string[];
+  symptoms: string[];
+  medicalDescriptions: string;
+  conjectures: string;
+};
+
+type ServiceDetails = {
+  orderId: string;
+  orderDate: string;
+  serviceType: string;
+  totalDays: string;
+  startTime: string;
+  endTime: string;
+  serviceFee: string;
+  totalCharge: string;
+};
+
+type Medication = {
+  quantity: number;
+  name: string;
+  price: string;
+};
+
+type Price = {
+  total: string;
+  delivery: string;
+  totalCharge: string;
+};
+
+type ProofOfService = {
+  imageUrl: string;
+};
+
+type Order = {
+  id: number;
+  status: string;
+  patientInfo: PatientInfo;
+  medicalDetails: MedicalDetails;
+  serviceDetails: ServiceDetails;
+  medications: Medication[];
+  price: Price;
+  proofOfService: ProofOfService;
+};
+
+// Sample Orders Data
+const orders: Order[] = [
   {
     id: 1,
     status: "Ongoing",
@@ -12,7 +68,7 @@ const orders = [
       name: "Axolotl",
       address: "Jl. Lorem Ipsum, Malang City, East Java, Indonesia, 12345",
       phoneNumber: "08123456789",
-      birthdate: "34/13/2054",
+      birthdate: "34/13/2054", // Ensure date format is correct
     },
     medicalDetails: {
       causes: "Post Fractured Left Arm Surgery",
@@ -25,11 +81,11 @@ const orders = [
     },
     serviceDetails: {
       orderId: "#123456789",
-      orderDate: "31/06/2024",
+      orderDate: "31/06/2024", // Ensure date format is correct
       serviceType: "After Care",
       totalDays: "2x Visit",
-      startTime: "32/07/2024 23:59",
-      endTime: "33/07/2024 23:59",
+      startTime: "32/07/2024 23:59", // Ensure date format is correct
+      endTime: "33/07/2024 23:59", // Ensure date format is correct
       serviceFee: "2 x Rp. 500.000",
       totalCharge: "Rp. 1.000.000",
     },
@@ -52,7 +108,7 @@ const orders = [
   // Additional orders can be added here...
 ];
 
-const OrderDetailPage = () => {
+const OrderDetailPage: React.FC = () => {
   const params = useParams();
   const searchParams = useSearchParams();
 
