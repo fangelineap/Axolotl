@@ -1,5 +1,6 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface OrderDetailProps {
   status: string;
@@ -53,10 +54,22 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
   price,
   proofOfService,
 }) => {
+  const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)"); // Tailwind's 'md' size is 768px
+    setIsMdOrLarger(mediaQuery.matches);
+
+    const handleResize = () => setIsMdOrLarger(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleResize);
+
+    return () => mediaQuery.removeEventListener("change", handleResize);
+  }, []);
+
   return (
-    <div className="flex justify-between">
+    <div className="flex flex-col lg:flex-row lg:justify-between">
       {/* Left Side */}
-      <div className="flex-1">
+      <div className="mb-6 flex-1 lg:mr-8">
         {/* Order Status */}
         <div className="flex-auto">
           <div className="mb-6">
@@ -85,61 +98,58 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
         {/* Patient Information */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Patient Information</h2>
-          <div className="flex flex-row">
-            <div className="flex flex-col gap-y-1">
-              <div>
+          {isMdOrLarger ? (
+            <div className=" mt-2 flex flex-row ">
+              <div className=" flex flex-col gap-y-1">
                 <strong>Patient Name</strong>
-              </div>
-              <div>
                 <strong>Address</strong>
-              </div>
-              <div>
                 <strong>Phone Number</strong>
-              </div>
-              <div>
                 <strong>Birthdate</strong>
               </div>
+              <div className="ml-19 flex flex-col gap-y-1">
+                <div>{patientInfo.name}</div>
+                <div>{patientInfo.address}</div>
+                <div>{patientInfo.phoneNumber}</div>
+                <div>{patientInfo.birthdate}</div>
+              </div>
             </div>
-            <div className="ml-20 flex flex-col gap-y-1">
-              <div>{patientInfo.name}</div>
-              <div>{patientInfo.address}</div>
-              <div>{patientInfo.phoneNumber}</div>
-              <div>{patientInfo.birthdate}</div>
+          ) : (
+            <div className="mt-2 flex flex-col gap-y-2">
+              <div>
+                <strong>Patient Name:</strong> {patientInfo.name}
+              </div>
+              <div>
+                <strong>Address:</strong> {patientInfo.address}
+              </div>
+              <div>
+                <strong>Phone Number:</strong> {patientInfo.phoneNumber}
+              </div>
+              <div>
+                <strong>Birthdate:</strong> {patientInfo.birthdate}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Medical Concerns & Conjecture (Medical Details) */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Medical Concerns & Conjecture</h2>
-          <div className="flex flex-row">
+          <div className="mt-2 flex flex-col sm:flex-row">
             <div className="flex flex-col gap-y-1">
-              <div>
-                <strong>Causes</strong>
-              </div>
-              <div>
-                <strong>Main Concerns</strong>
-              </div>
-              <div>
-                <strong>Current Medicine</strong>
-              </div>
-              <div>
-                <strong>Symptoms</strong>
-              </div>
-              <div>
-                <strong>Medical Descriptions</strong>
-              </div>
+              <strong>Causes</strong>
+              <strong>Main Concerns</strong>
+              <strong>Current Medicine</strong>
+              <strong>Symptoms</strong>
+              <strong>Medical Descriptions</strong>
             </div>
-            <div className="ml-9 flex flex-col gap-y-1">
+            <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
               <div>{medicalDetails.causes}</div>
               <div>{medicalDetails.mainConcerns.join(", ")}</div>
               <div>{medicalDetails.currentMedicine.join(", ")}</div>
               <div>{medicalDetails.symptoms.join(", ")}</div>
             </div>
           </div>
-          <div className="mt-2 flex flex-col">
-            <div>{medicalDetails.medicalDescriptions}</div>
-          </div>
+          <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
 
           <div className="mt-2">
             <div className="flex flex-col items-center justify-center text-center">
@@ -197,25 +207,25 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
         </div>
 
         {/* Additional Medications */}
-        <div className="mb-6">
+        <div>
           <h2 className="mb-4 text-xl font-bold">Additional Medications</h2>
-          <div className="overflow-hidden rounded-lg border border-primary">
-            <table className="w-full table-auto">
+          <div className="overflow-hidden rounded-md border border-primary">
+            <table className="w-full table-auto text-sm">
               <thead>
                 <tr className="bg-green-light text-white">
-                  <th className="rounded-tl-lg p-2 text-left">Quantity</th>
+                  <th className="p-2 text-left">Quantity</th>
                   <th className="p-2 text-left">Name</th>
-                  <th className=" rounded-tr-lg p-2  pr-15 text-end">Price</th>
+                  <th className="p-2 text-right">Price</th>
                 </tr>
               </thead>
               <tbody>
                 {medications.map((med, index) => (
                   <tr key={index}>
-                    <td className=" border-primary p-2 text-left">
+                    <td className="border-primary p-2 text-left">
                       {med.quantity}
                     </td>
-                    <td className=" border-primary p-2">{med.name}</td>
-                    <td className=" border-primary p-2 text-right">
+                    <td className="border-primary p-2">{med.name}</td>
+                    <td className="border-primary p-2 text-right">
                       {med.price}
                     </td>
                   </tr>
@@ -235,18 +245,18 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                 <tr>
                   <td
                     colSpan={2}
-                    className=" border-primary p-2 text-left font-bold"
+                    className="border-primary p-2 text-left font-bold"
                   >
                     Delivery Fee
                   </td>
-                  <td className=" border-primary p-2 text-right">
+                  <td className="border-primary p-2 text-right">
                     {price.delivery}
                   </td>
                 </tr>
                 <tr>
                   <td
                     colSpan={2}
-                    className="rounded-bl-lg  border-primary p-2 text-left font-bold"
+                    className="rounded-bl-lg border-primary p-2 text-left font-bold"
                   >
                     Total Charge
                   </td>
@@ -261,8 +271,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
       </div>
 
       {/* Right Side */}
-      <div className="mr-14">
-        <div className="h-auto w-full max-w-md rounded-lg border bg-white p-6">
+      <div className=" w-full max-w-md rounded-lg  bg-white p-6 lg:mt-0 lg:w-auto">
+        <div className="rounded-xl border p-4">
           <h2 className="mb-4 text-center text-xl font-bold text-primary">
             Evidence
           </h2>
