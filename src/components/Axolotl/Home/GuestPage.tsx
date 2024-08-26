@@ -240,15 +240,15 @@ const GuestPage = () => {
             <div className="mt-6 flex flex-col items-center space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
               <ButtonDefault
                 label="Apply as Caregiver"
-                link=""
+                link="/guest/careers"
                 customClasses="bg-kalbe-light text-white py-2 px-4 rounded hover:bg-kalbe-medium"
               />
-              <a
-                href=""
+              <Link
+                href="/guest/careers"
                 className="flex items-center text-kalbe-light hover:text-kalbe-medium"
               >
                 More Information →
-              </a>
+              </Link>
             </div>
             <div className="mt-8 flex justify-center">
               <Image

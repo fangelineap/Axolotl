@@ -8,8 +8,6 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import SelectGroupTwo from "@/components/FormElements/SelectGroup/SelectGroupTwo";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
-import { error } from "console";
-import { Session } from "inspector";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";

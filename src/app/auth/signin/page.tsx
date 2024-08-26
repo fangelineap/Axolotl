@@ -6,10 +6,9 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import PasswordInput from "../component/PasswordInput";
 import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
+import { getMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = {
-  title: "Sign In to Axolotl"
-};
+export const metadata: Metadata = getMetadata("sign in");
 
 const SignIn = ({ searchParams }: any) => {
   const signIn = async (form: FormData) => {
@@ -81,7 +80,7 @@ const SignIn = ({ searchParams }: any) => {
                   </p>
                 </div>
               )}
-              
+
               <div className="mb-5.5 mt-3 flex items-center justify-end">
                 <Link
                   href="/auth/forgetpassword"

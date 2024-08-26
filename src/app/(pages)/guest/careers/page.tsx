@@ -1,6 +1,10 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { getMetadata } from "@/utils/metadata";
+
+export const metadata = getMetadata("careers");
 
 const Careers: React.FC = () => {
   return (
@@ -18,7 +22,7 @@ const Careers: React.FC = () => {
             independence, and promoting overall well-being.
           </p>
           <button className="h-12 w-40 rounded-full bg-kalbe-light font-semibold text-white hover:bg-kalbe-medium md:h-14 md:w-48">
-            Apply Now
+            <Link href={"/auth/register"}>Apply Now</Link>
           </button>
         </div>
       </div>
@@ -139,7 +143,7 @@ const Careers: React.FC = () => {
                   <h3 className="mb-2 font-bold text-yellow-dark">
                     Quick Tips for Speed Up Your Registration
                   </h3>
-                  <ul className="list-inside list-disc text-yellow-dark text-sm">
+                  <ul className="list-inside list-disc text-sm text-yellow-dark">
                     <li>
                       Get all necessary documents before registering yourself as
                       a caregiver.

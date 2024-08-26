@@ -6,6 +6,8 @@ interface EditLabelProps {
   placeholder?: string;
   value?: string;
   disabled?: boolean;
+  name: string;
+  required?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -14,13 +16,18 @@ const EditLabel = ({
   type,
   placeholder,
   value,
-  disabled = true,
+  disabled = false,
   onChange,
+  required,
+  name,
 }: EditLabelProps) => {
   return (
     <div className="mb-3 flex items-center justify-between gap-5">
-      <label className="font-medium text-dark dark:text-white">{label}</label>
+      <label className="font-medium text-dark dark:text-white">
+        {label} {required && <span className="ml-1 text-red">*</span>}
+      </label>
       <input
+        name={name}
         type={type}
         placeholder={placeholder}
         value={value}

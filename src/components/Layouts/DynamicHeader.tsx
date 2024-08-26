@@ -8,6 +8,8 @@ import AdminHeader from "../Admin/AdminHeader";
 import AdminSidebar from "../Admin/AdminSidebar";
 import CaregiverHeader from "../Caregiver/CaregiverHeader/page";
 import CaregiverSidebar from "../Caregiver/Sidebar Caregiver/page";
+import AuthHeader from "../Auth/AuthHeader";
+import AuthSidebar from "../Auth/AuthSidebar";
 
 const DynamicHeader = ({
   sidebarOpen,
@@ -52,6 +54,16 @@ const DynamicHeader = ({
           setSidebarOpen={setSidebarOpen}
         />
         <CaregiverSidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+        />
+      </>
+    );
+  } else if (pathname.startsWith("/auth")) {
+    return (
+      <>
+        <AuthHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <AuthSidebar
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />

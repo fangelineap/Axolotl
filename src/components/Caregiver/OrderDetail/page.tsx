@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 interface OrderDetailProps {
@@ -69,10 +70,10 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <div
                 className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
                   status === "Done"
-                    ? "bg-green-500"
+                    ? "bg-primary"
                     : status === "Ongoing"
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
+                      ? "bg-yellow"
+                      : "bg-red"
                 }`}
               >
                 {status}
@@ -141,12 +142,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
           </div>
 
           <div className="mt-2">
-            <div className="rounded-lg border border-green-300">
-              <div className="rounded-t-lg bg-green-light py-2 text-center text-white">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className=" w-full rounded-t-md border border-primary bg-green-light py-2 text-white">
                 <p className="font-bold">Conjecture</p>
               </div>
-              <div className="bg-white py-2 text-center">
-                <p className="font-bold text-primary">
+              <div className="w-full py-2 rounded-b-md border border-primary font-bold text-primary">
+                <p>
                   {medicalDetails.conjectures}
                 </p>
               </div>
@@ -166,7 +167,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <strong className="mr-15">Order Date</strong>
               <div className="ml-8">{serviceDetails.orderDate}</div>
             </div>
-            <div className="my-2 w-full border-b border-gray-400"></div>{" "}
+            <div className="my-2 w-full border-b border-black"></div>{" "}
             {/* Full-width horizontal line */}
             <div className="flex">
               <strong className="mr-12">Service Type</strong>
@@ -249,7 +250,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                   >
                     Total Charge
                   </td>
-                  <td className="rounded-br-lg  border-primary p-2 text-right font-bold text-black">
+                  <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
                     {price.totalCharge}
                   </td>
                 </tr>
@@ -267,10 +268,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
           </h2>
           <p className="text-md mb-4 text-left font-bold">Proof of Service</p>
           <div className="mt-4 rounded-lg border p-4">
-            <img
+            <Image
               src={proofOfService.imageUrl}
               alt="Proof of Service"
               className="mx-auto h-auto max-w-full rounded-lg"
+              height={500}
+              width={500}
             />
           </div>
         </div>

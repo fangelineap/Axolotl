@@ -1,8 +1,8 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
-import { getAdminMedicineById } from "../actions";
-import { AdminMedicineTable } from "../table/data";
-import ViewMedicine from "@/components/Admin/Manage/Medicine/ViewMedicine";
+import { AdminMedicineTable } from "../../table/data";
+import { getAdminMedicineById } from "../../actions";
+import UpdateMedicine from "@/components/Admin/Manage/Medicine/UpdateMedicine";
 
 interface MedicinePageProps {
   params: { medicineId: string };
@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: MedicinePageProps) {
   }
 
   return {
-    title: `${response.name} Details`,
+    title: `Update Medicine ${response.name} Details`,
   };
 }
 
-async function AdminShowMedicine({ params }: MedicinePageProps) {
+async function AdminUpdateMedicine({ params }: MedicinePageProps) {
   const medicine = await fetchData({ params });
 
   if (!medicine) {
@@ -45,9 +45,9 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
 
   return (
     <DefaultLayout>
-        <ViewMedicine medicine={medicine} />
+      <UpdateMedicine medicine={medicine} />
     </DefaultLayout>
   );
 }
 
-export default AdminShowMedicine;
+export default AdminUpdateMedicine;

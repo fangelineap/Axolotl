@@ -121,6 +121,7 @@ const config: Config = {
           },
         },
         yellow: {
+          DEFAULT: "#F09D30", // Kalbe Warning
           hover: "#FFE97F",
           dark: {
             DEFAULT: "#F09D30", // Kalbe Warning

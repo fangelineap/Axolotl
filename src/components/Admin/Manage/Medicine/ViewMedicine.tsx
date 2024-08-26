@@ -1,87 +1,26 @@
 "use client";
 
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
-import EditLabel from "@/components/Axolotl/EditLabel";
+import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import PriceBox from "@/components/Axolotl/PriceBox";
 import { IconBan } from "@tabler/icons-react";
-import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 interface ViewMedicineProps {
-  add?: boolean;
-  view?: boolean;
   medicine: AdminMedicineTable;
 }
 
-function ViewMedicine({ add, view, medicine }: ViewMedicineProps) {
-  const [editMode, setEditMode] = useState(false);
-
-  // TODO: Add form validation
-  const [formData, setFormData] = useState({
-    name: medicine.name,
-    type: medicine.type,
-    price: medicine.price,
-    exp_date: medicine.exp_date,
-  });
+function ViewMedicine(data: ViewMedicineProps) {
+  const router = useRouter();
 
   const formatDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(formData.exp_date));
-
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSaveChanges = async () => {
-    try {
-      const updatedMedicine = {
-        uuid: medicine.uuid,
-        name: formData.name,
-        type: formData.type,
-        price: formData.price,
-        exp_date: formData.exp_date,
-      };
-
-      // TODO: Update the medicine in the database
-      const response = await fetch(`/api/medicines/${medicine.uuid}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedMedicine),
-      });
-
-      // TODO: Set Toast
-      if (response.ok) {
-        alert("Medicine details updated successfully.");
-        setEditMode(false);
-      } else {
-        alert("Failed to update medicine details.");
-      }
-    } catch (error) {
-      console.error("Error updating medicine details:", error);
-      alert("An error occurred while updating the medicine details.");
-    }
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      name: medicine.name,
-      type: medicine.type,
-      price: medicine.price,
-      exp_date: medicine.exp_date,
-    });
-    setEditMode(false);
-  };
+  }).format(new Date(data.medicine.exp_date));
 
   return (
     <div className="mx-20 h-auto w-auto">
@@ -93,8 +32,17 @@ function ViewMedicine({ add, view, medicine }: ViewMedicineProps) {
         <div className="w-[100%] lg:mr-11 lg:w-[65%]">
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-lg font-semibold">Product Photo</h1>
-            {medicine.medicine_photo ? (
-              <div className="h-auto w-[100%] rounded-md border border-primary bg-kalbe-ultraLight"></div>
+            {data.medicine.medicine_photo ? (
+              <div className="flex h-auto w-[100%] items-center justify-center rounded-md border border-primary bg-kalbe-ultraLight px-4 py-8">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(data.medicine.medicine_photo)}`}
+                  alt="Medicine Photo"
+                  className="max-w-[80%] rounded-xl border border-primary"
+                  width={200}
+                  height={200}
+                  layout="responsive"
+                />
+              </div>
             ) : (
               <div className="flex h-65 w-[100%] items-center justify-center rounded-md border border-red bg-red-light">
                 <div className="flex flex-col items-center justify-center">
@@ -108,32 +56,29 @@ function ViewMedicine({ add, view, medicine }: ViewMedicineProps) {
             )}
           </div>
           <div className="flex flex-col">
-            <EditLabel
+            <DisabledLabel
               label="Product ID"
-              value={medicine.uuid}
+              horizontal
+              value={data.medicine.uuid}
               type="text"
-              disabled={true}
             />
-            <EditLabel
+            <DisabledLabel
               label="Name"
-              value={formData.name}
+              horizontal
+              value={data.medicine.name}
               type="text"
-              disabled={!editMode}
-              onChange={handleInputChange}
             />
-            <EditLabel
+            <DisabledLabel
               label="Type"
-              value={formData.type}
+              horizontal
+              value={data.medicine.type}
               type="text"
-              disabled={!editMode}
-              onChange={handleInputChange}
             />
-            <EditLabel
+            <DisabledLabel
               label="Exp. Date"
+              horizontal
               value={formatDate}
               type="text"
-              disabled={!editMode}
-              onChange={handleInputChange}
             />
           </div>
         </div>
@@ -145,52 +90,28 @@ function ViewMedicine({ add, view, medicine }: ViewMedicineProps) {
               <h1 className="text-center text-heading-4 font-bold">Pricing</h1>
             </div>
             <div className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <h1 className="text-lg font-semibold">
-                  Price{" "}
-                  <span className="text-sm font-normal text-dark-secondary">
-                    /pcs
-                  </span>
-                </h1>
-                <PriceBox
-                  value={formData.price}
-                  disabled={!editMode}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      price: parseFloat(e.target.value),
-                    })
-                  }
-                />
-              </div>
-              {editMode ? (
-                <>
-                  <button
-                    onClick={handleCancel}
-                    className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-light"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveChanges}
-                    className="w-full rounded-[4px] bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-veryLight hover:text-primary"
-                  >
-                    Update Medicine
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={toggleEditMode}
-                    className="w-full rounded-[4px] border border-yellow-dark py-2 text-lg font-semibold text-yellow-dark hover:bg-yellow-light"
-                  >
-                    Update Medicine
-                  </button>
-                  <button className="w-full rounded-[4px] bg-gray-cancel py-2 text-lg font-semibold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel">
-                    Go back
-                  </button>
-                </>
-              )}
+              <PriceBox
+                placeholder={data.medicine.price.toString()}
+                value={data.medicine.price}
+                disabled={true}
+              />
+
+              <button
+                onClick={() => {
+                  router.push(
+                    `/admin/manage/medicine/edit/${data.medicine.uuid}`,
+                  );
+                }}
+                className="w-full rounded-[4px] border border-yellow-dark py-2 text-lg font-semibold text-yellow-dark hover:bg-yellow-light"
+              >
+                Update Medicine
+              </button>
+              <button
+                onClick={() => router.back()}
+                className="w-full rounded-[4px] bg-gray-cancel py-2 text-lg font-semibold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+              >
+                Go back
+              </button>
             </div>
           </div>
         </div>
