@@ -103,7 +103,6 @@ function AddMedicine() {
     const { data: userData, error } = await supabase.auth.getSession();
 
     if (userData.session?.user) {
-      console.log(fileName);
       const { data, error } = await supabase.storage
         .from(storage)
         .upload(fileName, file, {
@@ -185,12 +184,8 @@ function AddMedicine() {
 
     const { data, error } = await addAdminMedicine(medicineData);
 
-    console.log(error);
-
     if (error !== null && error !== undefined) {
       await cancelUploadAdminToStorage(pathMedicine as string);
-
-      console.log(error);
 
       toast.error("Failed to save medicine. Uploaded photo has been deleted.", {
         position: "bottom-right",
