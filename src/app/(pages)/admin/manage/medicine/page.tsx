@@ -1,12 +1,10 @@
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { Metadata } from "next";
 import React from "react";
 import ManageMedicineTable from "./table/ManageMedicineTable";
+import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 
-export const metadata: Metadata = {
-  title: "Axolotl - Admin Manage Medicine",
-};
+export const metadata = getAdminMetadata("Manage Medicine");
 
 function AdminManageMedicine() {
   return (

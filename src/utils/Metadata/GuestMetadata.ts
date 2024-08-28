@@ -1,4 +1,4 @@
-export const getMetadata = (page: string) => {
+export const getGuestMetadata = (page: string) => {
   switch (page) {
     case "careers":
       return {

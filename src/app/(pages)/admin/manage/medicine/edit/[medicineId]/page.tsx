@@ -3,6 +3,7 @@ import React from "react";
 import { AdminMedicineTable } from "../../table/data";
 import { getAdminMedicineById } from "../../actions";
 import UpdateMedicine from "@/components/Admin/Manage/Medicine/UpdateMedicine";
+import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 
 interface MedicinePageProps {
   params: { medicineId: string };
@@ -45,6 +46,11 @@ async function AdminUpdateMedicine({ params }: MedicinePageProps) {
 
   return (
     <DefaultLayout>
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Medicine"
+        pageName="Update"
+      />
       <UpdateMedicine medicine={medicine} />
     </DefaultLayout>
   );

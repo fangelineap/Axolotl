@@ -3,6 +3,7 @@ import React from "react";
 import { getAdminMedicineById } from "../actions";
 import { AdminMedicineTable } from "../table/data";
 import ViewMedicine from "@/components/Admin/Manage/Medicine/ViewMedicine";
+import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 
 interface MedicinePageProps {
   params: { medicineId: string };
@@ -45,7 +46,12 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
 
   return (
     <DefaultLayout>
-        <ViewMedicine medicine={medicine} />
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Medicine"
+        pageName="View"
+      />
+      <ViewMedicine medicine={medicine} />
     </DefaultLayout>
   );
 }

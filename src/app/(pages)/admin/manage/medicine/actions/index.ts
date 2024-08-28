@@ -3,8 +3,41 @@
 import createSupabaseServerClient from "@/app/lib/server";
 import { unstable_noStore } from "next/cache";
 import { AdminMedicineTable } from "../table/data";
+import { createBrowserClient } from "@supabase/ssr";
 
-export async function addAdminMedicine() {}
+export async function addAdminMedicine(form: AdminMedicineTable) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+  const { name, type, price, exp_date, medicine_photo } = form;
+
+  if (!name || !type || !price || !exp_date) {
+    return {
+      data: null,
+      error: { name: "Invalid input data", message: "Invalid input data" },
+    };
+  }
+
+  try {
+    const { data, error } = await supabase.from("medicine").insert({
+      name: name,
+      type: type,
+      price: price,
+      exp_date: exp_date,
+      medicine_photo: medicine_photo,
+    });
+
+    return { data, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error: {
+        name: "InsertError",
+        message: "Failed to insert data into the database.",
+      },
+    };
+  }
+}
 
 export async function getAdminMedicine() {
   unstable_noStore();

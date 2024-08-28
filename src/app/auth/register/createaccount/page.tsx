@@ -137,12 +137,12 @@ const CreateAccount = ({ searchParams }: any) => {
                   >
                     Phone Number<span className="ml-1 text-red">*</span>
                   </label>
-                  <div className="relative">
-                    <span className="absolute rounded-bl-[7px] rounded-tl-[7px] bg-slate-300 p-[12.5px]">
+                  <div className="flex w-full items-center">
+                    <label className="rounded-l-md border border-r-0 border-gray-1 bg-gray px-2 py-3 font-normal text-dark-secondary focus:border-primary focus-visible:outline-none dark:text-white">
                       +62
-                    </span>
+                    </label>
                     <input
-                      className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent py-3 pl-16 pr-4.5 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                      className="w-full rounded-r-md border border-gray-1 bg-white px-2 py-3 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                       type="text"
                       name="phoneNumber"
                       id="phoneNumber"

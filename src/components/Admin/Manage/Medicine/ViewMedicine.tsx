@@ -33,7 +33,7 @@ function ViewMedicine(data: ViewMedicineProps) {
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-lg font-semibold">Product Photo</h1>
             {data.medicine.medicine_photo ? (
-              <div className="flex h-auto w-[100%] items-center justify-center rounded-md border border-primary bg-kalbe-ultraLight px-4 py-8">
+              <div className={`flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${data.medicine.medicine_photo ? "bg-white" : "bg-kalbe-ultraLight"}`}>
                 <Image
                   src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(data.medicine.medicine_photo)}`}
                   alt="Medicine Photo"

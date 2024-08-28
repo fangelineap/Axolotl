@@ -1,9 +1,9 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { getMetadata } from "@/utils/metadata";
+import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import Image from "next/image";
 import React from "react";
 
-export const metadata = getMetadata("about");
+export const metadata = getGuestMetadata("about");
 
 const About = () => {
   return (

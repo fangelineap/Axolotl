@@ -1,7 +1,7 @@
 import { getAdminMedicine } from "../actions";
 
 export interface AdminMedicineTable {
-  uuid: string;
+  uuid?: string;
   name: string;
   type: string;
   exp_date: string | Date;

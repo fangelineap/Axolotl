@@ -6,9 +6,9 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import PasswordInput from "../component/PasswordInput";
 import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
-import { getMetadata } from "@/utils/metadata";
+import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 
-export const metadata: Metadata = getMetadata("sign in");
+export const metadata: Metadata = getGuestMetadata("sign in");
 
 const SignIn = ({ searchParams }: any) => {
   const signIn = async (form: FormData) => {

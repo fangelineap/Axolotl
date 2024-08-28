@@ -2,9 +2,9 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getMetadata } from "@/utils/metadata";
+import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 
-export const metadata = getMetadata("careers");
+export const metadata = getGuestMetadata("careers");
 
 const Careers: React.FC = () => {
   return (

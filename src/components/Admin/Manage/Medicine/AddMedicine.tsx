@@ -1,6 +1,6 @@
 "use client";
 
-import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";
+import { addAdminMedicine } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import EditLabel from "@/components/Axolotl/EditLabel";
 import PriceBox from "@/components/Axolotl/PriceBox";
@@ -8,7 +8,6 @@ import SelectMedicineTypes from "@/components/Axolotl/SelectMedicineTypes";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { createBrowserClient } from "@supabase/ssr";
 import { IconUpload } from "@tabler/icons-react";
-import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -16,21 +15,16 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { uuidv7 } from "uuidv7";
 
-interface UpdateMedicineProps {
-  medicine: AdminMedicineTable;
-}
-
-function UpdateMedicine({ medicine }: UpdateMedicineProps) {
+function AddMedicine() {
   const router = useRouter();
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
-    medicine.medicine_photo ? medicine.medicine_photo : null,
+    null,
   );
-
-  const [formData, setFormData] = useState({
-    name: medicine.name,
-    type: medicine.type,
-    price: medicine.price,
-    exp_date: medicine.exp_date,
+  const [formData, setFormData] = useState<AdminMedicineTable>({
+    name: "",
+    type: "",
+    price: 0,
+    exp_date: new Date().toISOString(),
   });
 
   const formatDate = new Intl.DateTimeFormat("en-US", {
@@ -56,22 +50,21 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       });
       return false;
     }
-    if (!formData.name) {
+    if (!form.get("name")) {
       toast.warning("Please enter the medicine name.", {
         position: "bottom-right",
       });
       return false;
     }
-    if (!formData.type) {
+    if (!form.get("type")) {
       toast.warning("Please enter the medicine type.", {
         position: "bottom-right",
       });
       return false;
     }
     if (
-      formData.price === null ||
-      formData.price === undefined ||
-      isNaN(formData.price)
+      !form.get("price") ||
+      isNaN(parseFloat(form.get("price")?.toString() || "0"))
     ) {
       toast.warning("Please enter a valid price.", {
         position: "bottom-right",
@@ -110,6 +103,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     const { data: userData, error } = await supabase.auth.getSession();
 
     if (userData.session?.user) {
+      console.log(fileName);
       const { data, error } = await supabase.storage
         .from(storage)
         .upload(fileName, file, {
@@ -118,6 +112,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
         });
 
       if (error) {
+        console.error("Error uploading file. Please try again.");
         return undefined;
       }
 
@@ -150,7 +145,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       const name = uuidv7();
       const extension = medicinePhoto.name.split(".")[1];
       const fileName = `${name}_${Date.now()}.${extension}`;
-
       const path = await uploadAdminToStorage(
         "medicine",
         fileName,
@@ -159,14 +153,14 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
 
       return fileName;
     } catch (error) {
-      toast.error("Error uploading file: " + error, {
+      toast.error("Error uploading file. Please try again.", {
         position: "bottom-right",
       });
-      return undefined;
+      return;
     }
   };
 
-  const saveUpdatedMedicine = async (form: FormData) => {
+  const saveMedicine = async (form: FormData) => {
     if (validateForm(form) == false) return;
 
     const pathMedicine = await handleFileUpload(medicinePhoto as File);
@@ -179,18 +173,19 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
 
     // Update the medicine in the database
-    const updatedMedicine = {
-      uuid: medicine.uuid,
+    const medicineData = {
       name: form.get("name")?.toString() || "",
       type: form.get("type")?.toString() || "",
       price: parseFloat(form.get("price")?.toString() || "0"),
       exp_date: new Date(
         form.get("exp_date")?.toString() || "",
       ).toLocaleString(),
-      medicine_photo: pathMedicine,
+      medicine_photo: pathMedicine as string,
     };
 
-    const { data, error } = await updateAdminMedicineById(updatedMedicine);
+    const { data, error } = await addAdminMedicine(medicineData);
+
+    console.log(error);
 
     if (error !== null && error !== undefined) {
       await cancelUploadAdminToStorage(pathMedicine as string);
@@ -209,18 +204,17 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     });
 
     setTimeout(() => {
-      
       router.refresh();
-      router.replace(`/admin/manage/medicine/${medicine.uuid}`);
-    }, 3000)
+      router.replace(`/admin/manage/medicine/`);
+    }, 3000);
   };
 
   return (
     <div className="mx-20 h-auto w-auto">
       <ToastContainer />
       {/* Title */}
-      <form action={saveUpdatedMedicine}>
-        <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
+      <form action={saveMedicine}>
+        <h1 className="mb-5 text-heading-1 font-bold">Add Medicine</h1>
         {/* Container */}
         <div className="flex flex-col justify-between lg:flex-row">
           {/* Left Side */}
@@ -241,24 +235,13 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                   onChange={handleFileChange}
                 />
                 {medicinePhoto ? (
-                  typeof medicinePhoto === "string" ? (
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(medicine.medicine_photo ?? "")}`}
-                      alt="Medicine Photo"
-                      className="max-w-[80%] rounded-xl border border-primary"
-                      width={200}
-                      height={200}
-                      layout="responsive"
-                    />
-                  ) : (
-                    <Image
-                      src={URL.createObjectURL(medicinePhoto)}
-                      alt="Medicine Photo"
-                      className="w-[90%] rounded-xl border border-primary"
-                      width={200}
-                      height={200}
-                    />
-                  )
+                  <Image
+                    src={URL.createObjectURL(medicinePhoto as Blob)}
+                    alt="Medicine Photo"
+                    className="w-[90%] rounded-xl border border-primary"
+                    width={200}
+                    height={200}
+                  />
                 ) : (
                   <div className="flex flex-col items-center justify-center">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray p-2">
@@ -274,24 +257,19 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
               <EditLabel
                 name="uuid"
                 label="Product ID"
-                value={medicine.uuid}
+                value="This will be auto-generated"
                 type="text"
                 disabled={true}
               />
               <EditLabel
                 name="name"
                 label="Name"
-                value={formData.name}
+                placeholder="Medicine Name"
                 type="text"
                 onChange={handleInputChange}
                 required={true}
               />
-              <SelectMedicineTypes
-                value={formData.type}
-                name="type"
-                label="Type"
-                required={true}
-              />
+              <SelectMedicineTypes name="type" label="Type" required={true} />
               <CustomDatePicker
                 name="exp_date"
                 label="Exp. Date"
@@ -327,7 +305,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                   required={true}
                 />
                 <button
-                  onClick={() => router.back()}
+                  onClick={() => router.replace("/admin/manage/medicine")}
                   className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-light"
                 >
                   Cancel
@@ -336,7 +314,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                   type="submit"
                   className="w-full rounded-[4px] bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-veryLight hover:text-primary"
                 >
-                  Update Medicine
+                  Add Medicine
                 </button>
               </div>
             </div>
@@ -347,4 +325,4 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
   );
 }
 
-export default UpdateMedicine;
+export default AddMedicine;

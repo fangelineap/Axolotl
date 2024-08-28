@@ -5,13 +5,13 @@ import { Box } from "@mui/material";
 const columnHelper = createColumnHelper<AdminMedicineTable>();
 export const columns = [
   columnHelper.accessor("uuid", {
-    cell: (info) => info.getValue().toString(),
+    cell: (info) => info.getValue()?.toString(),
     header: "Product ID",
     enableSorting: true,
     enableColumnFilter: true,
   }),
   columnHelper.accessor("name", {
-    cell: (info) => info.getValue().toString(),
+    cell: (info) => info.getValue()?.toString(),
     header: "Product Name",
     enableSorting: true,
     enableColumnFilter: true,

@@ -69,9 +69,13 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
                 <IconEye stroke={1.5} />
               </button>
             )}
+            {/* TODO: Add delete action and pass it to the modal */}
             {deleteAction && (
               <button
-                onClick={() => deleteAction(row.original)}
+                onClick={() => {
+                  deleteAction(row.original);
+                  console.log(row.original);
+                }}
                 className="text-dark-secondary hover:text-red"
               >
                 <IconTrash stroke={1.5} />
@@ -79,6 +83,7 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
             )}
           </div>
         ),
+        enableSorting: false,
       } as ColumnDef<T>,
     ],
     state: {
@@ -149,7 +154,9 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
                   <th key={header.id} className="px-4 py-2 font-bold">
                     {header.isPlaceholder ? null : (
                       <div className="flex flex-col justify-center">
-                        <div className="flex justify-between">
+                        <div
+                          className={`flex ${header.column.getCanSort() ? "justify-between" : "justify-center"}`}
+                        >
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
@@ -158,15 +165,17 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
                           <button
                             onClick={header.column.getToggleSortingHandler()}
                           >
-                            {header.column.getIsSorted() ? (
-                              header.column.getIsSorted() === "asc" ? (
-                                <IconChevronUp />
+                            {header.column.getCanSort() ? (
+                              header.column.getIsSorted() ? (
+                                header.column.getIsSorted() === "asc" ? (
+                                  <IconChevronUp />
+                                ) : (
+                                  <IconChevronDown />
+                                )
                               ) : (
-                                <IconChevronDown />
+                                <IconSelector />
                               )
-                            ) : (
-                              <IconSelector />
-                            )}
+                            ) : null}
                           </button>
                         </div>
 

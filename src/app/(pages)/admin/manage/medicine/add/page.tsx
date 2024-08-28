@@ -1,14 +1,15 @@
+import AddMedicine from "@/components/Admin/Manage/Medicine/AddMedicine";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
+
+export const metadata = getAdminMetadata("Add Medicine");
 
 function AdminAddMedicine() {
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs parentPage="Manage" pageName="Medicine" />
-      <div className="mx-20 w-auto">
-        <h1 className="mb-5 text-heading-1 font-bold">Medicine List</h1>
-        
-      </div>
+      <AdminBreadcrumbs parentPage="Manage" subPage="Medicine" pageName="Add" />
+      <AddMedicine />
     </DefaultLayout>
   );
 }

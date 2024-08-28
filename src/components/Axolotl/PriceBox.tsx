@@ -33,7 +33,7 @@ const PriceBox = ({
           aria-label="Price"
           type="text"
           placeholder={placeholder}
-          value={value?.toString()}
+          value={value === 0 ? "" : value?.toString()}
           onChange={onChange}
           disabled={disabled}
           className={`w-full rounded-r-md border border-gray-1 bg-white px-2 py-2 font-normal text-dark outline-none transition ${
