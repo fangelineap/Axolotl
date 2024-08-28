@@ -195,8 +195,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     if (error !== null && error !== undefined) {
       await cancelUploadAdminToStorage(pathMedicine as string);
 
-      console.log(error);
-
       toast.error("Failed to save medicine. Uploaded photo has been deleted.", {
         position: "bottom-right",
       });
