@@ -1,8 +1,8 @@
 "use server";
 
 import createSupabaseServerClient from "@/app/lib/server";
-import { unstable_noStore } from "next/cache";
-import { AdminMedicineTable } from "../table/data";
+import { revalidatePath, unstable_noStore } from "next/cache";
+import { AdminMedicineTable } from '../table/data';
 import { createBrowserClient } from "@supabase/ssr";
 
 export async function addAdminMedicine(form: AdminMedicineTable) {
@@ -43,32 +43,39 @@ export async function getAdminMedicine() {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.from("medicine").select("*");
 
-  if (error) {
-    console.error("Error fetching data:", error);
-    return { data: [], error };
+  try {
+    const { data, error } = await supabase.from("medicine").select("*");
+
+    if (error) {
+      console.error("Error fetching medicine data:", error.message);
+      return [];
+    }
+
+    return data as AdminMedicineTable[];
+  } catch (error) {
+    return [];
   }
-
-  return { data, error: null };
 }
 
 export async function getAdminMedicineById(uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("medicine")
-    .select("*")
-    .eq("uuid", uuid)
-    .single();
 
-  if (error) {
+  try {
+    const { data, error } = await supabase
+      .from("medicine")
+      .select("*")
+      .eq("uuid", uuid)
+      .single();
+
+    return data;
+  } catch (error) {
     console.error("Error fetching data:", error);
+
     return { data: [], error };
   }
-
-  return data;
 }
 
 export async function updateAdminMedicineById(form: AdminMedicineTable) {
@@ -104,8 +111,29 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
     return { data, error: null };
   } catch (error) {
     console.error("Error fetching data:", error);
+
     return { data: null, error: { name: "UpdateError", message: error } };
   }
 }
 
-export async function deleteAdminMedicine() {}
+export async function deleteAdminMedicine(uuid: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("medicine")
+      .delete()
+      .eq("uuid", uuid)
+      .single();
+
+    revalidatePath("/admin/manage/medicine");
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+
+    return { data: null, error: { name: "DeleteError", message: error } };
+  }
+}

@@ -3,16 +3,18 @@
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import PriceBox from "@/components/Axolotl/PriceBox";
+import { Skeleton } from "@mui/material";
 import { IconBan } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 interface ViewMedicineProps {
   medicine: AdminMedicineTable;
 }
 
 function ViewMedicine(data: ViewMedicineProps) {
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const formatDate = new Intl.DateTimeFormat("en-US", {
@@ -33,7 +35,9 @@ function ViewMedicine(data: ViewMedicineProps) {
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-lg font-semibold">Product Photo</h1>
             {data.medicine.medicine_photo ? (
-              <div className={`flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${data.medicine.medicine_photo ? "bg-white" : "bg-kalbe-ultraLight"}`}>
+              <div
+                className={`flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${data.medicine.medicine_photo ? "bg-white" : "bg-kalbe-ultraLight"}`}
+              >
                 <Image
                   src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(data.medicine.medicine_photo)}`}
                   alt="Medicine Photo"
@@ -41,6 +45,7 @@ function ViewMedicine(data: ViewMedicineProps) {
                   width={200}
                   height={200}
                   layout="responsive"
+                  onLoadingComplete={() => setLoading(false)}
                 />
               </div>
             ) : (
@@ -108,7 +113,7 @@ function ViewMedicine(data: ViewMedicineProps) {
               </button>
               <button
                 onClick={() => router.back()}
-                className="w-full rounded-[4px] bg-gray-cancel py-2 text-lg font-semibold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                className="w-full rounded-[4px] border border-gray-cancel bg-gray-cancel py-2 text-lg font-semibold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
               >
                 Go back
               </button>
