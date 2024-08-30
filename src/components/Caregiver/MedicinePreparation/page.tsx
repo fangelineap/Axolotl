@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useDropzone, FileRejection } from "react-dropzone";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -67,12 +69,26 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   } | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
 
+  const [isAddNewMedicineModalOpen, setIsAddNewMedicineModalOpen] =
+    useState<boolean>(false);
+  const [newMedicine, setNewMedicine] = useState<{
+    name: string;
+    type: string;
+    price: string;
+    quantity: number;
+  }>({
+    name: "",
+    type: "Branded",
+    price: "",
+    quantity: 1,
+  });
+
   // Dummy data for the medication list
   const medicineList = [
-    { name: "Propofol", type: "Branded", price: "Rp. 10.000" },
-    { name: "Profertil", type: "Branded", price: "Rp. 15.000" },
-    { name: "Pronicy", type: "Branded", price: "Rp. 20.000" },
-    { name: "Panadol", type: "Branded", price: "Rp. 15.000" },
+    { name: "Propofol", type: "Branded", price: "10.000" },
+    { name: "Profertil", type: "Branded", price: "15.000" },
+    { name: "Pronicy", type: "Branded", price: "20.000" },
+    { name: "Panadol", type: "Branded", price: "15.000" },
   ];
 
   const handleMedicineSelect = (medicine: {
@@ -104,7 +120,35 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   };
 
   const handleAddNewMedicine = () => {
-    alert("Feature to add a new medicine is not implemented yet.");
+    setIsAddNewMedicineModalOpen(true);
+  };
+
+  const resetFormNewMedicine = () => {
+    setNewMedicine({ name: "", type: "Branded", price: "", quantity: 1 });
+    setIsAddNewMedicineModalOpen(false);
+  };
+
+  const handleSaveNewMedicine = () => {
+    if (!newMedicine.name || !newMedicine.price) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    // Add the new medicine to the medicine list
+    setSelectedMedications((prev) => [
+      ...prev,
+      {
+        quantity: newMedicine.quantity,
+        name: newMedicine.name,
+        price: newMedicine.price,
+      },
+    ]);
+
+    parseInt(newMedicine.price.replace(/Rp\.\s/g, "").replace(/\./g, "")) *
+      newMedicine.quantity;
+    // Close the modal and reset the new medicine form
+    setIsAddNewMedicineModalOpen(false);
+    setNewMedicine({ name: "", type: "Branded", price: "", quantity: 1 });
   };
 
   useEffect(() => {
@@ -145,21 +189,56 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
 
+  const handleDecreaseQuantity = (index: number) => {
+    setSelectedMedications((prev) =>
+      prev.map((med, i) =>
+        i === index ? { ...med, quantity: Math.max(med.quantity - 1, 1) } : med,
+      ),
+    );
+  };
+
+  const handleIncreaseQuantity = (index: number) => {
+    setSelectedMedications((prev) =>
+      prev.map((med, i) =>
+        i === index ? { ...med, quantity: med.quantity + 1 } : med,
+      ),
+    );
+  };
+
+  const handleRemoveMedicine = (index: number) => {
+    setSelectedMedications((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Updated onDrop function with additional checks
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUploadedImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-    setErrorMessage(""); // Clear any previous error messages
+    if (acceptedFiles.length > 0) {
+      const file = acceptedFiles[0];
+
+      if (file && file instanceof Blob) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setUploadedImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+        setErrorMessage(""); // Clear any previous error messages
+      } else {
+        toast.error("Error reading file. Please try again.");
+      }
+    }
   }, []);
 
   const onDropRejected = useCallback((fileRejections: FileRejection[]) => {
-    // Handle rejected files and set an error message
-    setErrorMessage(
-      "File does not match. Please upload a file with type .JPG or .PNG.",
-    );
+    console.log("Rejected files:", fileRejections);
+    fileRejections.forEach((file) => {
+      if (file.errors.some((e) => e.code === "file-invalid-type")) {
+        toast.warning(
+          "File type not supported. Please upload a JPG or PNG file.",
+          {
+            position: "top-right",
+          },
+        );
+      }
+    });
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -349,25 +428,64 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 <tr className="bg-green-light text-white">
                   <th className="rounded-tl-lg p-2 text-left">Quantity</th>
                   <th className="p-2 text-left">Name</th>
-                  <th className="rounded-tr-lg p-2 text-right">Price</th>
+                  <th className=" p-2 text-right">Price</th>
+                  {selectedMedications.length > 0 && (
+                    <th className="rounded-tr-lg p-2 text-right">Action</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {selectedMedications.map((med, index) => (
                   <tr key={index}>
                     <td className="border-primary p-2 text-left">
-                      {med.quantity}
+                      <div className="flex items-center">
+                        <button
+                          className="flex h-8 w-8 items-center justify-center rounded-full border"
+                          onClick={() => handleDecreaseQuantity(index)}
+                        >
+                          -
+                        </button>
+                        <span className="mx-4">{med.quantity}</span>
+                        <button
+                          className="flex h-8 w-8 items-center justify-center rounded-full border"
+                          onClick={() => handleIncreaseQuantity(index)}
+                        >
+                          +
+                        </button>
+                      </div>
                     </td>
                     <td className="border-primary p-2">{med.name}</td>
                     <td className="border-primary p-2 text-right">
-                      {med.price}
+                      Rp. {med.price}
                     </td>
+                    {selectedMedications.length > 0 && (
+                      <td className="border-primary p-2 text-right">
+                        <button onClick={() => handleRemoveMedicine(index)}>
+                          <svg
+                            width="40"
+                            height="40"
+                            viewBox="0 0 40 40"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M11.6663 29.9991C11.3367 29.999 11.0146 29.9012 10.7405 29.7181C10.4665 29.5349 10.253 29.2746 10.1268 28.9701C10.0007 28.6656 9.96773 28.3306 10.032 28.0073C10.0963 27.6841 10.255 27.3871 10.488 27.154L27.1546 10.4874C27.469 10.1838 27.89 10.0158 28.327 10.0196C28.764 10.0234 29.182 10.1987 29.491 10.5077C29.8 10.8167 29.9753 11.2347 29.9791 11.6717C29.9829 12.1087 29.8149 12.5297 29.5113 12.8441L12.8446 29.5107C12.6901 29.6657 12.5064 29.7886 12.3042 29.8724C12.102 29.9563 11.8852 29.9993 11.6663 29.9991Z"
+                              fill="#EE4D4D"
+                            />
+                            <path
+                              d="M28.3334 29.9991C28.1145 29.9993 27.8977 29.9563 27.6955 29.8724C27.4933 29.7886 27.3096 29.6657 27.155 29.5107L10.4884 12.8441C10.1848 12.5297 10.0168 12.1087 10.0206 11.6717C10.0244 11.2347 10.1997 10.8167 10.5087 10.5077C10.8177 10.1987 11.2357 10.0234 11.6727 10.0196C12.1097 10.0158 12.5307 10.1838 12.845 10.4874L29.5117 27.154C29.7447 27.3871 29.9034 27.6841 29.9677 28.0073C30.0319 28.3306 29.9989 28.6656 29.8728 28.9701C29.7467 29.2746 29.5331 29.5349 29.2591 29.7181C28.9851 29.9012 28.6629 29.999 28.3334 29.9991Z"
+                              fill="#EE4D4D"
+                            />
+                          </svg>
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
                 {/* Summary Rows */}
                 <tr>
                   <td
-                    colSpan={2}
+                    colSpan={selectedMedications.length > 0 ? 3 : 2}
                     className="border-t border-primary p-2 text-left font-bold"
                   >
                     Total Price
@@ -378,7 +496,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 </tr>
                 <tr>
                   <td
-                    colSpan={2}
+                    colSpan={selectedMedications.length > 0 ? 3 : 2}
                     className="border-primary p-2 text-left font-bold"
                   >
                     Delivery Fee
@@ -389,7 +507,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 </tr>
                 <tr>
                   <td
-                    colSpan={2}
+                    colSpan={selectedMedications.length > 0 ? 3 : 2}
                     className="rounded-bl-lg border-primary p-2 text-left font-bold"
                   >
                     Total Charge
@@ -436,7 +554,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           ) : (
             <div
               {...getRootProps()}
-              className="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg  border-2 border-kalbe-light bg-green-50 hover:bg-green-100"
+              className="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-kalbe-light bg-green-50 hover:bg-green-100"
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center justify-center">
@@ -460,6 +578,13 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             </div>
           )}
         </div>
+        <button
+          className="mt-4 w-full rounded bg-gray-500 py-2 font-bold text-white hover:bg-gray-700"
+          onClick={() => alert("Order Finished!")}
+        >
+          Finish Order
+        </button>
+        <ToastContainer />
       </div>
 
       {/* Modal for Adding Medicine */}
@@ -543,6 +668,112 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               <button
                 className="rounded bg-green-500 px-4 py-2 text-white"
                 onClick={handleAddMedicine}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Adding New Medicine */}
+      {isAddNewMedicineModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-lg rounded-lg bg-white p-6">
+            <h2 className="mb-4 text-center text-xl font-bold text-green-600">
+              Add New Medicine
+            </h2>
+            <div className="mb-4">
+              <div className="mb-2">
+                <label className="block text-sm font-medium">Name</label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full rounded border p-2"
+                  value={newMedicine.name}
+                  onChange={(e) =>
+                    setNewMedicine({ ...newMedicine, name: e.target.value })
+                  }
+                />
+              </div>
+              <div className="mb-2">
+                <label className="block text-sm font-medium">Type</label>
+                <select
+                  className="mt-1 block w-full rounded border p-2"
+                  value={newMedicine.type}
+                  onChange={(e) =>
+                    setNewMedicine({ ...newMedicine, type: e.target.value })
+                  }
+                >
+                  <option value="Branded">Branded</option>
+                  <option value="Generic">Generic</option>
+                </select>
+              </div>
+              <div className="mb-4 flex items-center">
+                <div className="w-1/2">
+                  <label className="block text-sm font-medium">Quantity</label>
+                  <div className="mt-1 flex items-center">
+                    <button
+                      className="flex h-8 w-8 items-center justify-center rounded-full border"
+                      onClick={() =>
+                        setNewMedicine((prev) => ({
+                          ...prev,
+                          quantity: prev.quantity > 1 ? prev.quantity - 1 : 1,
+                        }))
+                      }
+                    >
+                      -
+                    </button>
+                    <span className="mx-4">{newMedicine.quantity}</span>
+                    <button
+                      className="flex h-8 w-8 items-center justify-center rounded-full border"
+                      onClick={() =>
+                        setNewMedicine((prev) => ({
+                          ...prev,
+                          quantity: prev.quantity + 1,
+                        }))
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                {/* Periksa lagi bagian price masih ga bener buat show Rp.*/}
+                <div className="w-1/2 pl-4">
+                  <label className="block text-sm font-medium">Price</label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full rounded border p-2"
+                    placeholder="Rp. 0"
+                    value={`${newMedicine.price}`}
+                    onChange={(e) => {
+                      // Remove non-numeric characters except for decimal point
+                      const numericValue = e.target.value.replace(/[^\d]/g, "");
+                      setNewMedicine((prev) => ({
+                        ...prev,
+                        price: numericValue,
+                      }));
+                    }}
+                    onFocus={(e) => {
+                      // Move cursor after "Rp. " when input is focused
+                      e.target.setSelectionRange(4, 4);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                className="rounded bg-gray-500 px-4 py-2 text-white"
+                onClick={() => {
+                  resetFormNewMedicine(); // Reset the form fields
+                  setIsAddNewMedicineModalOpen(false); // Close the modal
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="rounded bg-green-500 px-4 py-2 text-white"
+                onClick={handleSaveNewMedicine}
               >
                 Save
               </button>
