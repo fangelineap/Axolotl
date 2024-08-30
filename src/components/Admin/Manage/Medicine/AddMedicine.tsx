@@ -20,6 +20,8 @@ function AddMedicine() {
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
     null,
   );
+  const [isDragging, setIsDragging] = useState(false);
+
   const [formData, setFormData] = useState<AdminMedicineTable>({
     name: "",
     type: "",
@@ -88,6 +90,34 @@ function AddMedicine() {
     if (selectedFile) {
       setMedicinePhoto(selectedFile);
     }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const selectedFile = e.dataTransfer.files[0];
+    if (selectedFile) {
+      if (
+        selectedFile.type === "image/png" ||
+        selectedFile.type === "image/jpeg" ||
+        selectedFile.type === "image/jpg"
+      ) {
+        setMedicinePhoto(selectedFile);
+      } else {
+        toast.warning("Invalid file type. Only JPG and PNG are allowed.", {
+          position: "bottom-right",
+        });
+      }
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
   };
 
   async function uploadAdminToStorage(
@@ -201,7 +231,8 @@ function AddMedicine() {
     setTimeout(() => {
       router.refresh();
       router.replace(`/admin/manage/medicine/`);
-    }, 3000);
+      router.refresh();
+    }, 1500);
   };
 
   return (
@@ -218,7 +249,10 @@ function AddMedicine() {
               <h1 className="text-lg font-semibold">Product Photo</h1>
               <div
                 id="FileUpload"
-                className={`relative flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${medicinePhoto ? "bg-white" : "bg-kalbe-ultraLight"}`}
+                className={`relative flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${medicinePhoto ? "bg-white" : "bg-kalbe-ultraLight"} ${isDragging ? "border-4 border-dashed" : ""}`}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
               >
                 <input
                   aria-label="Upload Photo"
@@ -239,11 +273,19 @@ function AddMedicine() {
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray p-2">
-                      <IconUpload size={32} className="mb-2 text-primary" />
-                    </div>
-                    <h1 className="font-medium">Drop files here to upload</h1>
-                    <p className="text-dark-secondary">JPG & PNG</p>
+                    {isDragging ? (
+                      <h1 className="text-lg font-medium">Release to upload</h1>
+                    ) : (
+                      <>
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray p-2">
+                          <IconUpload size={32} className="mb-2 text-primary" />
+                        </div>
+                        <h1 className="font-medium">
+                          Drop files here to upload
+                        </h1>
+                        <p className="text-dark-secondary">JPG & PNG</p>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -301,13 +343,13 @@ function AddMedicine() {
                 />
                 <button
                   onClick={() => router.replace("/admin/manage/medicine")}
-                  className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-light"
+                  className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-full rounded-[4px] bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-veryLight hover:text-primary"
+                  className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-veryLight hover:text-primary"
                 >
                   Add Medicine
                 </button>

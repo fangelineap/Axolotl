@@ -52,7 +52,7 @@ const config: Config = {
         stroke: "#DADADA",
         "stroke-dark": "#BABABA",
         dark: {
-          DEFAULT: "#111928", // Black Primary
+          DEFAULT: "#000000", // Black Primary
           secondary: "#777777", // Text Secondary
           2: "#1F2A37",
           3: "#374151",
@@ -94,7 +94,7 @@ const config: Config = {
         red: {
           DEFAULT: "#EE4D4D", // Kalbe Danger
           dark: "#EE4D4D",
-          hover: "#F7CAD0",
+          hover: "#FBE3E4",
           light: {
             DEFAULT: "#FBE3E4", // BG Kalbe Danger
             2: "#F89090",

@@ -69,7 +69,6 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
                 <IconEye stroke={1.5} />
               </button>
             )}
-            {/* TODO: Add delete action and pass it to the modal */}
             {deleteAction && (
               <button
                 onClick={() => {
@@ -119,7 +118,7 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
         <div className="flex w-full items-center justify-between md:w-auto">
           {pathName === "/admin/manage/medicine" && (
             <button
-              className="mr-5 rounded-md bg-primary p-2 text-white"
+              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-veryLight hover:text-primary"
               onClick={() => router.push(`${pathName}/add`)}
             >
               Add Medicine
@@ -201,28 +200,42 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b border-gray-1 hover:bg-gray">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-2">
-                    <div
-                      className="truncate"
-                      style={{
-                        display: "-webkit-box",
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </div>
-                  </td>
-                ))}
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="border-b border-gray-1 hover:bg-gray"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-2">
+                      <div
+                        className="truncate"
+                        style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={table.getAllColumns().length}
+                  className="px-4 py-10 text-center text-lg"
+                >
+                  There is no data to display.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
