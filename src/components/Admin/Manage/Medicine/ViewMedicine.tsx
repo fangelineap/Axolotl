@@ -112,7 +112,7 @@ function ViewMedicine(data: ViewMedicineProps) {
                 Update Medicine
               </button>
               <button
-                onClick={() => router.back()}
+                onClick={() => router.replace("/admin/manage/medicine")}
                 className="w-full rounded-[4px] border border-gray-cancel bg-gray-cancel py-2 text-lg font-semibold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
               >
                 Go back

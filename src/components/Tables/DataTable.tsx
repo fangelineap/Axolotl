@@ -1,5 +1,3 @@
-// datatable.tsx
-import { Pagination } from "@mui/material";
 import {
   IconChevronDown,
   IconChevronUp,
@@ -29,6 +27,7 @@ interface DataTableProps<T extends { id?: number; uuid?: string }> {
   showAction?: (row: T) => void;
   deleteAction?: (rowData: T) => void;
   basePath?: string;
+  initialSorting?: ColumnSort[];
 }
 
 export function DataTable<T extends { id?: number; uuid?: string }>({
@@ -37,10 +36,11 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
   showAction,
   deleteAction,
   basePath,
+  initialSorting = []
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
-  const [sorting, setSorting] = useState<ColumnSort[]>([]);
+  const [sorting, setSorting] = useState<ColumnSort[]>(initialSorting);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
   const pathName = usePathname();
   const router = useRouter();

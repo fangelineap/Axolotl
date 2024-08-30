@@ -8,7 +8,6 @@ import SelectMedicineTypes from "@/components/Axolotl/SelectMedicineTypes";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { createBrowserClient } from "@supabase/ssr";
 import { IconUpload } from "@tabler/icons-react";
-import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -174,7 +173,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
   }
 
-  // TODO: There's a bug here. When you update the data without changing the photo, it'll show an error although it works. So it's a FE Problem.
   const handleFileUpload = async (medicinePhoto: File) => {
     try {
       const name = uuidv7();
@@ -199,13 +197,20 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
   const saveUpdatedMedicine = async (form: FormData) => {
     if (validateForm(form) == false) return;
 
-    const pathMedicine = await handleFileUpload(medicinePhoto as File);
+    let pathMedicine: string | undefined = undefined;
 
-    if (pathMedicine?.length === 0 && pathMedicine === undefined) {
-      toast.error("Something went wrong. Please try again", {
-        position: "bottom-right",
-      });
-      return;
+    if (medicinePhoto && typeof medicinePhoto !== "string") {
+      // Only upload if medicinePhoto is a new file
+      pathMedicine = await handleFileUpload(medicinePhoto as File);
+
+      if (!pathMedicine) {
+        toast.error("Something went wrong. Please try again", {
+          position: "bottom-right",
+        });
+        return;
+      }
+    } else {
+      pathMedicine = medicine.medicine_photo;
     }
 
     // Update the medicine in the database
@@ -237,10 +242,8 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     });
 
     setTimeout(() => {
-      router.refresh();
-      router.replace(`/admin/manage/medicine/${medicine.uuid}`);
-      router.refresh();
-    }, 1500);
+      window.location.href = `/admin/manage/medicine/${medicine.uuid}`;
+    }, 1000);
   };
 
   return (
@@ -293,9 +296,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                 ) : (
                   <div className="flex flex-col items-center justify-center">
                     {isDragging ? (
-                      <h1 className="text-lg font-medium">
-                        Release to upload
-                      </h1>
+                      <h1 className="text-lg font-medium">Release to upload</h1>
                     ) : (
                       <>
                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray p-2">

@@ -1,17 +1,18 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { AdminMedicineTable } from "./data";
-import { Box } from "@mui/material";
 
 const columnHelper = createColumnHelper<AdminMedicineTable>();
 export const columns = [
   columnHelper.accessor("uuid", {
     cell: (info) => info.getValue()?.toString(),
+    id: "Product ID",
     header: "Product ID",
     enableSorting: true,
     enableColumnFilter: true,
   }),
   columnHelper.accessor("name", {
     cell: (info) => info.getValue()?.toString(),
+    id: "name",
     header: "Product Name",
     enableSorting: true,
     enableColumnFilter: true,
@@ -38,6 +39,7 @@ export const columns = [
         </div>
       );
     },
+    id: "Product Type",
     header: "Product Type",
     enableSorting: true,
     enableColumnFilter: true,
@@ -52,6 +54,7 @@ export const columns = [
 
       return <p>{formatted}</p>;
     },
+    id: "Product Price",
     header: "Product Price",
     enableSorting: true,
     enableColumnFilter: true,
