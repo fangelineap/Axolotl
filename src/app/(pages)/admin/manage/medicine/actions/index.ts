@@ -3,7 +3,6 @@
 import createSupabaseServerClient from "@/app/lib/server";
 import { revalidatePath, unstable_noStore } from "next/cache";
 import { AdminMedicineTable } from '../table/data';
-import { createBrowserClient } from "@supabase/ssr";
 
 export async function addAdminMedicine(form: AdminMedicineTable) {
   unstable_noStore();

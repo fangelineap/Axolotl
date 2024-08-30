@@ -30,11 +30,15 @@ const SignIn = ({ searchParams }: any) => {
       }
 
       if (userData[0].role == "Nurse" || userData[0].role == "Midwife") {
-        redirect(
-          `/auth/register/createaccount/personalinformation/review?role=Caregiver`,
-        );
-      } else if (userData[0].role == "Patient") {
+        redirect("/caregiver");
+      }
+
+      if (userData[0].role == "Admin") {
         redirect("/admin");
+      }
+
+      if (userData[0].role == "Patient") {
+        redirect("/patient");
       }
     }
   };

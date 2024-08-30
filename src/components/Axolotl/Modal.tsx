@@ -1,6 +1,6 @@
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import { Modal } from "@mui/material";
-import { IconHash, IconMedicineSyrup, IconX } from "@tabler/icons-react";
+import { IconHash, IconMail, IconMedicineSyrup, IconUserCircle, IconX } from "@tabler/icons-react";
 import React from "react";
 
 interface ConfirmationModalProps {
@@ -11,6 +11,7 @@ interface ConfirmationModalProps {
   question: string;
   action?: "delete" | "confirm" | "skip";
   medicine?: AdminMedicineTable | null;
+  approval?: string;
 }
 
 function AxolotlModal({
@@ -21,6 +22,7 @@ function AxolotlModal({
   question,
   action,
   medicine,
+  approval,
 }: ConfirmationModalProps) {
   return (
     <Modal open={isOpen} onClose={onClose}>
@@ -36,7 +38,9 @@ function AxolotlModal({
             <p className="text-xl text-dark-secondary">{question}</p>
             {medicine && (
               <div className="flex flex-col gap-2">
-                <h3 className="font-medium text-xl text-black">{medicine.name}</h3>
+                <h3 className="text-xl font-medium text-black">
+                  {medicine.name}
+                </h3>
                 <div className="flex gap-2">
                   <IconHash className="text-dark-secondary" stroke={1} />
                   <p className="text-dark-secondary">{medicine.uuid}</p>
@@ -47,6 +51,24 @@ function AxolotlModal({
                     stroke={1}
                   />
                   <p className="text-dark-secondary">{medicine.type}</p>
+                </div>
+              </div>
+            )}
+            {approval && (
+              <div className="flex flex-col gap-2">
+                <h3 className="text-xl font-medium text-black">
+                  Barry Allen, A.Md.Kep.
+                </h3>
+                <div className="flex gap-2">
+                  <IconMail className="text-dark-secondary" stroke={1} />
+                  <p className="text-dark-secondary">barry.allen@axolotl.com</p>
+                </div>
+                <div className="flex gap-2">
+                  <IconUserCircle
+                    className="text-dark-secondary"
+                    stroke={1}
+                  />
+                  <p className="text-dark-secondary">Nurse</p>
                 </div>
               </div>
             )}
@@ -65,6 +87,38 @@ function AxolotlModal({
                   onClick={onConfirm}
                 >
                   Yes, I&apos;m sure
+                </button>
+              </>
+            )}
+            {action === "confirm" && (
+              <>
+                <button
+                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                  onClick={onClose}
+                >
+                  No, cancel
+                </button>
+                <button
+                  className="hover:bg-kalbe-veryLight-red-hover w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
+                  onClick={onConfirm}
+                >
+                  Yes, I&apos;m sure
+                </button>
+              </>
+            )}
+            {action === "skip" && (
+              <>
+                <button
+                  className="w-1/4 rounded-md border border-red px-3 py-2 font-bold text-red hover:bg-red-hover"
+                  onClick={onClose}
+                >
+                  Not sure
+                </button>
+                <button
+                  className="hover:bg-kalbe-veryLight-red-hover w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
+                  onClick={onConfirm}
+                >
+                  Yup, skip it
                 </button>
               </>
             )}

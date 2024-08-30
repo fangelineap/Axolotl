@@ -1,8 +1,8 @@
 "use client";
 
 import { DataTable } from "@/components/Tables/DataTable";
-import React, { useEffect, useMemo, useState } from "react";
-import { AdminMedicineTable, data } from "./data";
+import React, { useState } from "react";
+import { AdminMedicineTable } from "./data";
 import { columns } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/Modal";
