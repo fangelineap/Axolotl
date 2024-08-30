@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import React from "react";
 import ManageApprovalTable from "./table/ManageApprovalTable";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import { getAdminApproval } from "./actions";
 
 export const metadata: Metadata = {
   title: "Axolotl - Admin Manage Approval",

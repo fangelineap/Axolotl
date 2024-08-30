@@ -59,7 +59,7 @@ function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
         columns={columns as ColumnDef<AdminMedicineTable>[]}
         showAction={(row: AdminMedicineTable) => row}
         deleteAction={(row: AdminMedicineTable) => handleDeleteClick(row)}
-        initialSorting={[{ id: "name", desc: false }]}
+        initialSorting={[{ id: "Medicine Name", desc: false }]}
       />
 
       <AxolotlModal

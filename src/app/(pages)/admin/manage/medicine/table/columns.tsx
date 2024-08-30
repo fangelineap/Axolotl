@@ -5,15 +5,15 @@ const columnHelper = createColumnHelper<AdminMedicineTable>();
 export const columns = [
   columnHelper.accessor("uuid", {
     cell: (info) => info.getValue()?.toString(),
-    id: "Product ID",
-    header: "Product ID",
+    id: "Medicine ID",
+    header: "Medicine ID",
     enableSorting: true,
     enableColumnFilter: true,
   }),
   columnHelper.accessor("name", {
     cell: (info) => info.getValue()?.toString(),
-    id: "name",
-    header: "Product Name",
+    id: "Medicine Name",
+    header: "Medicine Name",
     enableSorting: true,
     enableColumnFilter: true,
   }),
@@ -39,10 +39,11 @@ export const columns = [
         </div>
       );
     },
-    id: "Product Type",
-    header: "Product Type",
+    id: "Medicine Type",
+    header: "Medicine Type",
     enableSorting: true,
     enableColumnFilter: true,
+    filterFn: "equals",
   }),
   columnHelper.accessor("price", {
     cell: (info) => {
@@ -54,8 +55,8 @@ export const columns = [
 
       return <p>{formatted}</p>;
     },
-    id: "Product Price",
-    header: "Product Price",
+    id: "Medicine Price",
+    header: "Medicine Price",
     enableSorting: true,
     enableColumnFilter: true,
   }),

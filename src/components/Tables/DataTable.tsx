@@ -20,8 +20,9 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import CustomPagination from "../Pagination/Pagination";
+import SelectDataTable from "../Axolotl/SelectDataTable";
 
-interface DataTableProps<T extends { id?: number; uuid?: string }> {
+interface DataTableProps<T extends { id?: number | string; uuid?: string }> {
   data: T[];
   columns: ColumnDef<T>[];
   showAction?: (row: T) => void;
@@ -30,13 +31,13 @@ interface DataTableProps<T extends { id?: number; uuid?: string }> {
   initialSorting?: ColumnSort[];
 }
 
-export function DataTable<T extends { id?: number; uuid?: string }>({
+export function DataTable<T extends { id?: number | string; uuid?: string }>({
   data,
   columns,
   showAction,
   deleteAction,
   basePath,
-  initialSorting = []
+  initialSorting = [],
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
@@ -179,18 +180,52 @@ export function DataTable<T extends { id?: number; uuid?: string }>({
                         </div>
 
                         {header.column.getCanFilter() ? (
-                          <input
-                            type="text"
-                            placeholder={`Search ${header.column.id}`}
-                            value={
-                              (header.column.getFilterValue() as string) || "" // Use getFilterValue method from the column API
-                            }
-                            onChange={
-                              (e) =>
-                                header.column.setFilterValue(e.target.value) // Directly use setFilterValue method from the column API
-                            }
-                            className="mt-2 w-full rounded border border-gray-1 p-2 text-sm font-normal focus:border-primary focus:outline-none"
-                          />
+                          header.column.id === "Status" ? (
+                            <SelectDataTable
+                              title="Status"
+                              options={["Verified", "Unverified", "Rejected"]}
+                              value={
+                                (header.column.getFilterValue() as string) || ""
+                              }
+                              onChange={(value) =>
+                                header.column.setFilterValue(value)
+                              }
+                            />
+                          ) : header.column.id === "Role" ? (
+                            <SelectDataTable
+                              title="Role"
+                              options={["Admin", "Nurse", "Midwife", "Patient"]}
+                              value={
+                                (header.column.getFilterValue() as string) || ""
+                              }
+                              onChange={(value) =>
+                                header.column.setFilterValue(value)
+                              }
+                            />
+                          ) : header.column.id === "Medicine Type" ? (
+                            <SelectDataTable
+                              title="Medicine Type"
+                              options={["Generic", "Branded"]}
+                              value={
+                                (header.column.getFilterValue() as string) || ""
+                              }
+                              onChange={(value) =>
+                                header.column.setFilterValue(value)
+                              }
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              placeholder={`Search ${header.column.id}`}
+                              value={
+                                (header.column.getFilterValue() as string) || ""
+                              }
+                              onChange={(e) =>
+                                header.column.setFilterValue(e.target.value)
+                              }
+                              className="mt-2 w-full rounded border border-gray-1 p-2 text-sm font-normal focus:border-primary focus:outline-none"
+                            />
+                          )
                         ) : null}
                       </div>
                     )}
