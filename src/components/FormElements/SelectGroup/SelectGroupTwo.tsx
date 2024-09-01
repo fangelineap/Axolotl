@@ -12,9 +12,9 @@ interface CustomProps {
 const SelectGroupTwo: React.FC<CustomProps> = ({
   customClasses,
   label,
-  content=["One", "Two"],
+  content = ["One", "Two"],
   required,
-  name
+  name,
 }: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
@@ -25,13 +25,18 @@ const SelectGroupTwo: React.FC<CustomProps> = ({
 
   const getContent = () => {
     let res: any = [];
-    content.forEach(str => {
-      res.push(<option value={str} className="text-dark-5 dark:text-dark-6 bg-kalbe-proLight">
+    content.forEach((str) => {
+      res.push(
+        <option
+          value={str}
+          className="bg-kalbe-proLight text-dark-5 dark:text-dark-6"
+        >
           {str}
-        </option>)
+        </option>,
+      );
     });
 
-    return (res);
+    return res;
   };
 
   return (
@@ -64,7 +69,7 @@ const SelectGroupTwo: React.FC<CustomProps> = ({
         </span> */}
 
         <select
-        name={name}
+          name={name}
           value={selectedOption}
           onChange={(e) => {
             setSelectedOption(e.target.value);

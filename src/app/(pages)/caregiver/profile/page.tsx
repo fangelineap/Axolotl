@@ -10,17 +10,24 @@ import Image from "next/image";
 
 const CaregiverProfile = () => {
   const router = useRouter();
-  const [profileData, setProfileData] = useState({
-    phoneNumber: "",
-    birthdate: "",
-    address: "",
+
+  // Dummy data for initial profile state
+  const initialProfileData = {
+    phoneNumber: "+62 08123456789",
+    birthdate: "1990-01-01", // ISO string format for date
+    address: "Jl. Lorem Ipsum, Malang City, East Java, Indonesia",
     startDay: "Monday",
     endDay: "Friday",
     startTime: "18:30",
     endTime: "21:00",
-  });
+  };
 
-  const handleInputChange = (e) => {
+  const [profileData, setProfileData] = useState(initialProfileData);
+  const [isEditing, setIsEditing] = useState(false); // State to track if the profile is in edit mode
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setProfileData({
       ...profileData,
@@ -28,10 +35,21 @@ const CaregiverProfile = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleDateChange = (date: Date | null) => {
+    setProfileData({
+      ...profileData,
+      birthdate: date?.toISOString().split("T")[0] ?? "",
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Profile data submitted:", profileData);
-    // Further logic to handle the form submission can be added here
+    setIsEditing(false); // Exit edit mode after submitting
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true); // Enter edit mode when "Edit Profile" is clicked
   };
 
   return (
@@ -52,9 +70,14 @@ const CaregiverProfile = () => {
           <div>
             <h2 className="text-2xl font-bold">Barry Allen</h2>
             <p className="text-gray-500">barry.allen@axolotl.com</p>
-            <button className="mt-2 rounded-lg bg-kalbe-light px-4 py-2 font-bold text-white">
-              Edit Profile
-            </button>
+            {!isEditing ? (
+              <button
+                className="mt-2 rounded-lg bg-kalbe-light px-4 py-2 font-bold text-white"
+                onClick={handleEditClick}
+              >
+                Edit Profile
+              </button>
+            ) : null}
           </div>
         </div>
 
@@ -72,9 +95,11 @@ const CaregiverProfile = () => {
                 name="phoneNumber"
                 label="Phone Number"
                 type="text"
+                placeholder="Enter your phone number"
                 value={profileData.phoneNumber}
                 onChange={handleInputChange}
                 required
+                disabled={!isEditing} // Disable input if not editing
               />
             </div>
 
@@ -83,10 +108,9 @@ const CaregiverProfile = () => {
                 name="birthdate"
                 label="Birthdate"
                 value={profileData.birthdate}
-                onChange={(date) =>
-                  setProfileData({ ...profileData, birthdate: date })
-                }
+                onChange={handleDateChange}
                 required
+                disabled={!isEditing} // Disable input if not editing
               />
             </div>
 
@@ -99,6 +123,7 @@ const CaregiverProfile = () => {
                 value={profileData.address}
                 onChange={handleInputChange}
                 required
+                disabled={!isEditing} // Disable input if not editing
               />
             </div>
           </div>
@@ -128,6 +153,7 @@ const CaregiverProfile = () => {
                   value={profileData.startDay}
                   onChange={handleInputChange}
                   required
+                  disabled={!isEditing} // Disable input if not editing
                 />
               </div>
               <div className="flex-1">
@@ -146,6 +172,7 @@ const CaregiverProfile = () => {
                   value={profileData.endDay}
                   onChange={handleInputChange}
                   required
+                  disabled={!isEditing} // Disable input if not editing
                 />
               </div>
             </div>
@@ -159,6 +186,7 @@ const CaregiverProfile = () => {
                   value={profileData.startTime}
                   onChange={handleInputChange}
                   required
+                  disabled={!isEditing} // Disable input if not editing
                 />
               </div>
               <div className="flex-1">
@@ -169,6 +197,7 @@ const CaregiverProfile = () => {
                   value={profileData.endTime}
                   onChange={handleInputChange}
                   required
+                  disabled={!isEditing} // Disable input if not editing
                 />
               </div>
             </div>
@@ -176,21 +205,26 @@ const CaregiverProfile = () => {
         </form>
 
         {/* Submit Buttons */}
-        <div className="mt-8 flex justify-start gap-4 sm:flex-row">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="rounded-lg bg-gray-200 px-4 py-2 font-bold text-gray-600"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="rounded-lg bg-kalbe-light px-4 py-2 font-bold text-white"
-          >
-            Save
-          </button>
-        </div>
+        {isEditing && (
+          <div className="mt-8 flex justify-start gap-4 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditing(false); // Cancel editing and revert changes
+                setProfileData(initialProfileData); // Reset to initial data
+              }}
+              className="rounded-lg bg-gray-200 px-4 py-2 font-bold text-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-kalbe-light px-4 py-2 font-bold text-white"
+            >
+              Save
+            </button>
+          </div>
+        )}
       </div>
     </DefaultLayout>
   );
