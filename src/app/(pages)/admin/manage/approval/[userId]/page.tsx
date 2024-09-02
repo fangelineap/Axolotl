@@ -3,6 +3,7 @@ import React from "react";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { AdminApprovalTable } from "../table/data";
 import { getAdminApprovalById, getAdminCaregiverDataById } from "../actions";
+import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
 
 interface ApprovalPageProps {
   params: { userId: string };
@@ -19,8 +20,8 @@ async function fetchCaregiverDetails(caregiver_id: string) {
 }
 
 export async function generateMetadata({ params }: ApprovalPageProps) {
-  const caregiver = await fetchData({ params });
-  const response = await fetchCaregiverDetails(caregiver.caregiver_id);
+  const rawData = await fetchData({ params });
+  const response = await fetchCaregiverDetails(rawData.caregiver_id);
 
   if (!response) {
     return {
@@ -36,9 +37,10 @@ export async function generateMetadata({ params }: ApprovalPageProps) {
 }
 
 async function AdminShowMedicine({ params }: ApprovalPageProps) {
-  const caregiver = await fetchData({ params });
+  const rawData = await fetchData({ params });
+  const response = await fetchCaregiverDetails(rawData.caregiver_id);
 
-  if (!caregiver) {
+  if (!rawData) {
     return (
       <DefaultLayout>
         <div className="mx-20 h-[75vh] w-auto flex items-center justify-center">
@@ -55,6 +57,7 @@ async function AdminShowMedicine({ params }: ApprovalPageProps) {
         subPage="Approval"
         pageName="Profile"
       />
+      <ViewApproval caregiver={response} />
     </DefaultLayout>
   );
 }

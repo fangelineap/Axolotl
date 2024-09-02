@@ -99,7 +99,7 @@ function AxolotlModal({
                   No, cancel
                 </button>
                 <button
-                  className="hover:bg-kalbe-veryLight-red-hover w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
+                  className="hover:bg-kalbe-ultraLight w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
                   onClick={onConfirm}
                 >
                   Yes, I&apos;m sure
@@ -115,7 +115,7 @@ function AxolotlModal({
                   Not sure
                 </button>
                 <button
-                  className="hover:bg-kalbe-veryLight-red-hover w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
+                  className="hover:bg-kalbe-ultraLight w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
                   onClick={onConfirm}
                 >
                   Yup, skip it

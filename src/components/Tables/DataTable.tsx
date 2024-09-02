@@ -119,7 +119,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
         <div className="flex w-full items-center justify-between md:w-auto">
           {pathName === "/admin/manage/medicine" && (
             <button
-              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-veryLight hover:text-primary"
+              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-ultraLight hover:text-primary"
               onClick={() => router.push(`${pathName}/add`)}
             >
               Add Medicine

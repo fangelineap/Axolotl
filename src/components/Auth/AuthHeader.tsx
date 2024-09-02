@@ -112,7 +112,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="text-black dark:text-white">
             {pathname.includes("signin") ? (
               <Link href="/auth/register">
-                <button className="rounded border border-kalbe-light px-4 py-2 text-primary hover:bg-kalbe-veryLight">
+                <button className="rounded border border-kalbe-light px-4 py-2 text-primary hover:bg-kalbe-ultraLight">
                   Register
                 </button>
               </Link>

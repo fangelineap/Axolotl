@@ -349,7 +349,7 @@ function AddMedicine() {
                 </button>
                 <button
                   type="submit"
-                  className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-veryLight hover:text-primary"
+                  className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary"
                 >
                   Add Medicine
                 </button>

@@ -56,7 +56,7 @@ export const columns = [
         <div className="grid gap-5">
           {role === "Nurse" ? (
             <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-yellow-light-4 px-3 py-1">
+              <div className="rounded-3xl bg-yellow-light px-3 py-1">
                 <p className="font-bold text-yellow">{role}</p>
               </div>
             </div>
