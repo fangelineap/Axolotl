@@ -36,9 +36,10 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
   if (!medicine) {
     return (
       <DefaultLayout>
-        <div className="mx-20 h-auto w-auto">
-          <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
-          <p>No medicine details found.</p>
+        <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
+          <h1 className="mb-5 text-heading-1 font-bold">
+            Something went wrong
+          </h1>
         </div>
       </DefaultLayout>
     );

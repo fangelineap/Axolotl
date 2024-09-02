@@ -470,3 +470,41 @@ input[type="search"]::-webkit-search-cancel-button {
 input::placeholder {
   @apply text-dark-secondary;
 }
+
+.custom-bg {
+  background: url('/images/background/ellipse.svg');
+  background-size: 750px 750px; /* Initial size for larger screens */
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-size 0.5s ease, opacity 0.5s ease; /* Smooth transition for background size and opacity */
+  opacity: 1; /* Default opacity */
+}
+
+/* Media query to hide the background on screens smaller than 900px */
+@media (max-width: 899px) {
+  .custom-bg {
+    opacity: 0; /* Fade out the background smoothly */
+    background-size: 0px 0px; /* Optionally, reduce the size to ensure it's fully hidden */
+  }
+}
+
+/* Media query for responsive resizing on medium-sized screens */
+@media (min-width: 900px) and (max-width: 1200px) {
+  .custom-bg {
+    background-size: 500px 500px; /* Adjust background size for medium screens */
+  }
+}
+
+/* Additional media query for further resizing on smaller large screens */
+@media (min-width: 1201px) and (max-width: 1400px) {
+  .custom-bg {
+    background-size: 600px 600px; /* Slightly smaller size for screens between 1201px and 1400px */
+  }
+}
+
+/* Default size for larger screens */
+@media (min-width: 1401px) {
+  .custom-bg {
+    background-size: 750px 750px; /* Original size for large screens */
+  }
+}

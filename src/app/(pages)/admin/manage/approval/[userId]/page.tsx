@@ -41,9 +41,8 @@ async function AdminShowMedicine({ params }: ApprovalPageProps) {
   if (!caregiver) {
     return (
       <DefaultLayout>
-        <div className="mx-20 h-auto w-auto">
-          <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
-          <p>No user profile found.</p>
+        <div className="mx-20 h-[75vh] w-auto flex items-center justify-center">
+          <h1 className="mb-5 text-heading-1 font-bold">Something went wrong</h1>
         </div>
       </DefaultLayout>
     );

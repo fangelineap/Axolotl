@@ -90,71 +90,69 @@ const GuestHeader: React.FC<HeaderProps> = ({
           </h5>
         </div>
 
-        <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
-          <div className="mr-10 hidden lg:block">
-            <div className="cursor-pointer rounded-md p-2 dark:hidden">
-              <Image
-                width={175}
-                height={175}
-                src={"/images/logo/axolotl.svg"}
-                alt="Logo"
-              />
+        <div className="flex items-center justify-between w-full">
+          <div className="hidden lg:flex lg:w-full lg:items-center">
+            <div className="mr-10 hidden lg:block">
+              <div className="cursor-pointer rounded-md p-2 dark:hidden">
+                <Image
+                  width={175}
+                  height={175}
+                  src={"/images/logo/axolotl.svg"}
+                  alt="Logo"
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex flex-grow justify-center">
-            <ul className="flex items-center gap-10 py-3 text-xl">
-              <li>
-                <Link href="/">
-                  <div
-                    className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/")
-                        ? "font-bold text-kalbe-light"
-                        : ""
-                    }`}
-                  >
-                    Home
-                  </div>
-                </Link>
-              </li>
-              <li>
-                <Link href="/guest/about">
-                  <div
-                    className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/guest/about")
-                        ? "font-bold text-kalbe-light"
-                        : ""
-                    }`}
-                  >
-                    About
-                  </div>
-                </Link>
-              </li>
-              <li>
-                <Link href="/guest/careers">
-                  <div
-                    className={`text-black hover:text-kalbe-light dark:text-white ${
-                      isActive("/guest/careers")
-                        ? "font-bold text-kalbe-light"
-                        : ""
-                    }`}
-                  >
-                    Careers
-                  </div>
-                </Link>
-              </li>
-              <li
-                className="relative"
-                ref={dropdownRef}
-                onClick={toggleDropdown}
-              >
-                <div
-                  className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
-                    dropdownOpen ? "font-bold text-kalbe-light" : ""
-                  }`}
+            <div className="flex items-center justify-center w-full">
+              <ul className="flex items-center gap-10 py-3 text-xl">
+                <li>
+                  <Link href="/">
+                    <div
+                      className={`text-black hover:text-kalbe-light dark:text-white ${
+                        isActive("/") ? "font-bold text-kalbe-light" : ""
+                      }`}
+                    >
+                      Home
+                    </div>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/guest/about">
+                    <div
+                      className={`text-black hover:text-kalbe-light dark:text-white ${
+                        isActive("/guest/about")
+                          ? "font-bold text-kalbe-light"
+                          : ""
+                      }`}
+                    >
+                      About
+                    </div>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/guest/careers">
+                    <div
+                      className={`text-black hover:text-kalbe-light dark:text-white ${
+                        isActive("/guest/careers")
+                          ? "font-bold text-kalbe-light"
+                          : ""
+                      }`}
+                    >
+                      Careers
+                    </div>
+                  </Link>
+                </li>
+                <li
+                  className="relative"
+                  ref={dropdownRef}
+                  onClick={toggleDropdown}
                 >
-                  <div className="flex">
-                    <div className="flex-none">Health Services</div>
-                    <div className="ml-2 mt-1 flex-none">
+                  <div
+                    className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
+                      dropdownOpen ? "text-kalbe-light" : ""
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <p>Health Services</p>
                       <Image
                         src={"/images/icon/icon-arrow-down.svg"}
                         alt="Arrow Down"
@@ -163,37 +161,37 @@ const GuestHeader: React.FC<HeaderProps> = ({
                       />
                     </div>
                   </div>
-                </div>
-                {dropdownOpen && (
-                  <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
-                    <li className="border-b border-gray-200 dark:border-gray-700">
-                      <Link href="/guest/health-services/nurses">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
-                          Nurses
-                        </div>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/guest/health-services/midwives">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
-                          Midwives
-                        </div>
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="ml-auto">
-          <Link href="/auth/signin">
-            <div className="text-black dark:text-white">
-              <button className="rounded bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-medium">
-                Login
-              </button>
+                  {dropdownOpen && (
+                    <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
+                      <li className="border-b border-gray-200 dark:border-gray-700">
+                        <Link href="/auth/signin">
+                          <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
+                            Nurses
+                          </div>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/auth/signin">
+                          <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
+                            Midwives
+                          </div>
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              </ul>
             </div>
-          </Link>
+          </div>
+          <div className="ml-auto">
+            <Link href="/auth/signin">
+              <div className="text-black dark:text-white">
+                <button className="rounded bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-medium">
+                  Login
+                </button>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
       {sidebarOpen && (
@@ -226,9 +224,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 <Link href="/">
                   <div
                     className={`block text-black dark:text-white ${
-                      isActive("/")
-                        ? "font-bold text-kalbe-light"
-                        : ""
+                      isActive("/") ? "font-bold text-kalbe-light" : ""
                     }`}
                   >
                     Home
