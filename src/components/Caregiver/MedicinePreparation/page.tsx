@@ -9,6 +9,7 @@ import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectG
 import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
 import { FaSearch } from "react-icons/fa";
+import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -387,14 +388,12 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
 
           <div className="mt-2">
-            <div className="rounded-lg border border-green-300">
-              <div className="rounded-t-lg bg-green-light py-2 text-center text-white">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className=" w-full rounded-t-md border border-primary bg-green-light py-2 text-white">
                 <p className="font-bold">Conjecture</p>
               </div>
-              <div className="bg-white py-2 text-center">
-                <p className="font-bold text-primary">
-                  {medicalDetails.conjectures}
-                </p>
+              <div className="w-full rounded-b-md border border-primary py-2 font-bold text-primary">
+                <p>{medicalDetails.conjectures}</p>
               </div>
             </div>
           </div>
@@ -489,9 +488,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <table className="w-full table-auto text-sm">
               <thead>
                 <tr className="bg-green-light text-white">
-                  <th className="rounded-tl-lg p-2 text-left">Quantity</th>
+                  <th className="p-2 text-left">Quantity</th>
                   <th className="p-2 text-left">Name</th>
-                  <th className=" p-2 text-right">Price</th>
+                  <th className="p-2 text-right">Price</th>
                   {selectedMedications.length > 0 && (
                     <th className="rounded-tr-lg p-2 text-right">Action</th>
                   )}
@@ -501,19 +500,13 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 {selectedMedications.map((med, index) => (
                   <tr key={index}>
                     <td className="border-primary p-2 text-left">
-                      <div className="flex items-center">
-                        <button
-                          className="flex h-8 w-8 items-center justify-center rounded-full border"
-                          onClick={() => handleDecreaseQuantity(index)}
-                        >
-                          -
+                      <div className="flex w-1/2 justify-between p-2 text-primary">
+                        <button onClick={() => handleDecreaseQuantity(index)}>
+                          <IconCircleMinus size={25} />
                         </button>
-                        <span className="mx-4">{med.quantity}</span>
-                        <button
-                          className="flex h-8 w-8 items-center justify-center rounded-full border"
-                          onClick={() => handleIncreaseQuantity(index)}
-                        >
-                          +
+                        <h1 className="text-lg text-black">{med.quantity}</h1>
+                        <button onClick={() => handleIncreaseQuantity(index)}>
+                          <IconCirclePlus size={25} />
                         </button>
                       </div>
                     </td>
@@ -524,22 +517,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                     {selectedMedications.length > 0 && (
                       <td className="border-primary p-2 text-right">
                         <button onClick={() => handleRemoveMedicine(index)}>
-                          <svg
-                            width="40"
-                            height="40"
-                            viewBox="0 0 40 40"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M11.6663 29.9991C11.3367 29.999 11.0146 29.9012 10.7405 29.7181C10.4665 29.5349 10.253 29.2746 10.1268 28.9701C10.0007 28.6656 9.96773 28.3306 10.032 28.0073C10.0963 27.6841 10.255 27.3871 10.488 27.154L27.1546 10.4874C27.469 10.1838 27.89 10.0158 28.327 10.0196C28.764 10.0234 29.182 10.1987 29.491 10.5077C29.8 10.8167 29.9753 11.2347 29.9791 11.6717C29.9829 12.1087 29.8149 12.5297 29.5113 12.8441L12.8446 29.5107C12.6901 29.6657 12.5064 29.7886 12.3042 29.8724C12.102 29.9563 11.8852 29.9993 11.6663 29.9991Z"
-                              fill="#EE4D4D"
-                            />
-                            <path
-                              d="M28.3334 29.9991C28.1145 29.9993 27.8977 29.9563 27.6955 29.8724C27.4933 29.7886 27.3096 29.6657 27.155 29.5107L10.4884 12.8441C10.1848 12.5297 10.0168 12.1087 10.0206 11.6717C10.0244 11.2347 10.1997 10.8167 10.5087 10.5077C10.8177 10.1987 11.2357 10.0234 11.6727 10.0196C12.1097 10.0158 12.5307 10.1838 12.845 10.4874L29.5117 27.154C29.7447 27.3871 29.9034 27.6841 29.9677 28.0073C30.0319 28.3306 29.9989 28.6656 29.8728 28.9701C29.7467 29.2746 29.5331 29.5349 29.2591 29.7181C28.9851 29.9012 28.6629 29.999 28.3334 29.9991Z"
-                              fill="#EE4D4D"
-                            />
-                          </svg>
+                          <div className="flex items-center justify-center text-red">
+                            <IconX size={30} />
+                          </div>
                         </button>
                       </td>
                     )}
@@ -599,7 +579,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <p className="mb-2 text-center text-red-500">{errorMessage}</p>
           )}
           {uploadedImage ? (
-            <div className="mt-4 inline-block rounded-lg border p-4">
+            <div className="mt-4 flex flex-col gap-3 rounded-lg border p-4">
               <Image
                 src={uploadedImage}
                 alt="Uploaded Proof of Service"
@@ -608,7 +588,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 height={350}
               />
               <button
-                className="mt-4 w-full rounded bg-gray-500 py-2 text-white"
+                className="w-full rounded-[4px] border border-yellow-dark py-2  font-semibold text-yellow-dark hover:bg-yellow-light"
                 onClick={() => setUploadedImage(null)}
               >
                 Change Image
@@ -642,7 +622,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           )}
         </div>
         <button
-          className="mt-4 w-full rounded bg-gray-500 py-2 font-bold text-white hover:bg-gray-700"
+          className="mt-4 w-full rounded border border-primary bg-primary py-2 text-lg font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
           onClick={() => alert("Order Finished!")}
         >
           Finish Order

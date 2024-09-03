@@ -6,7 +6,10 @@ interface InputGroupProps {
   type: string;
   placeholder: string;
   required?: boolean;
-  name: string;
+  name?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const InputGroup: React.FC<InputGroupProps> = ({

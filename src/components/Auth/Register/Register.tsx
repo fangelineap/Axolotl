@@ -41,6 +41,8 @@ const RegisterComponent = () => {
                     src="/images/user/caregiver.png"
                     className={`h-[60px] rounded-full border ${role === "Caregiver" ? "bg-kalbe-veryLight" : ""}`}
                     alt="Caregiver"
+                    width={60}
+                    height={60}
                   />
                   <div className="flex flex-col">
                     <h2 className="font-semibold">Caregiver</h2>
@@ -54,6 +56,8 @@ const RegisterComponent = () => {
                     src="/images/icon/icon-done.svg"
                     className="rounded-full border bg-kalbe-veryLight"
                     alt="Checked Logo"
+                    width={30}
+                    height={30}
                   />
                 )}
               </div>
@@ -66,10 +70,12 @@ const RegisterComponent = () => {
                 className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${role == "Patient" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
               >
                 <div className="flex items-center justify-start gap-7">
-                  <img
+                  <Image
                     src="/images/user/patient.png"
                     className={`h-[60px] rounded-full border ${role === "Patient" ? "bg-kalbe-veryLight" : ""}`}
                     alt="Patient"
+                    height={60}
+                    width={60}
                   />
                   <div className="flex flex-col">
                     <h2 className="font-semibold">Patient</h2>
@@ -77,10 +83,12 @@ const RegisterComponent = () => {
                   </div>
                 </div>
                 {role === "Patient" ? (
-                  <img
+                  <Image
                     src="/images/icon/icon-done.svg"
                     className="rounded-full border bg-kalbe-veryLight"
                     alt="Checked Logo"
+                    width={30}
+                    height={30}
                   />
                 ) : (
                   ""

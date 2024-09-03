@@ -5,12 +5,9 @@ import React, { useState } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
 import SelectGroupTwo from "@/components/FormElements/SelectGroup/SelectGroupTwo";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const CaregiverProfile = () => {
-  const router = useRouter();
-
   // Dummy data for initial profile state
   const initialProfileData = {
     phoneNumber: "+62 08123456789",
@@ -187,6 +184,7 @@ const CaregiverProfile = () => {
                   onChange={handleInputChange}
                   required
                   disabled={!isEditing} // Disable input if not editing
+                  placeholder="Start Time"
                 />
               </div>
               <div className="flex-1">
@@ -198,6 +196,7 @@ const CaregiverProfile = () => {
                   onChange={handleInputChange}
                   required
                   disabled={!isEditing} // Disable input if not editing
+                  placeholder="End Time"
                 />
               </div>
             </div>

@@ -92,7 +92,9 @@ const Home: React.FC = () => {
     },
   };
 
-  const CustomLeftArrow = ({ onClick }) => (
+  const CustomLeftArrow: React.FC<{
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }> = ({ onClick }) => (
     <button
       className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 transform items-center justify-center rounded-full bg-gray-800 bg-opacity-50 text-white"
       onClick={onClick}
@@ -101,7 +103,9 @@ const Home: React.FC = () => {
     </button>
   );
 
-  const CustomRightArrow = ({ onClick }) => (
+  const CustomRightArrow: React.FC<{
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  }> = ({ onClick }) => (
     <button
       className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 transform items-center justify-center rounded-full bg-gray-800 bg-opacity-50 text-white"
       onClick={onClick}
@@ -162,7 +166,10 @@ const Home: React.FC = () => {
               <div className="p-4">
                 <h3 className="text-lg font-bold">{service.title}</h3>
                 {service.features.map((feature, i) => (
-                  <ul className="mt-2 ml-4 text-sm text-gray-600 list-disc list-outside" key={i}>
+                  <ul
+                    className="ml-4 mt-2 list-outside list-disc text-sm text-gray-600"
+                    key={i}
+                  >
                     <li className="mt-1">{feature}</li>
                   </ul>
                 ))}

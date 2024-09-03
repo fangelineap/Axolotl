@@ -7,6 +7,9 @@ interface CustomProps {
   content: string[];
   required: boolean;
   name: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const SelectGroupTwo: React.FC<CustomProps> = ({

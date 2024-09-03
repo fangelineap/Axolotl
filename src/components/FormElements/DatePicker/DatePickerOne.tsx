@@ -2,13 +2,21 @@ import flatpickr from "flatpickr";
 import { useEffect } from "react";
 
 interface CustomProps {
-  customClasses?: string,
-  label: string,
-  required?: boolean
-  name: string
+  customClasses?: string;
+  label: string;
+  required?: boolean;
+  name: string;
+  value?: string;
+  onChange?: (date: Date | null) => void;
+  disabled?: boolean;
 }
 
-const DatePickerOne = ({customClasses, label, required, name}: CustomProps) => {
+const DatePickerOne = ({
+  customClasses,
+  label,
+  required,
+  name,
+}: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
     flatpickr(".form-datepicker", {
@@ -30,7 +38,7 @@ const DatePickerOne = ({customClasses, label, required, name}: CustomProps) => {
       </label>
       <div className="relative">
         <input
-        name={name}
+          name={name}
           className="form-datepicker w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5 py-3 font-normal outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary"
           placeholder="mm/dd/yyyy"
           data-class="flatpickr-right"
