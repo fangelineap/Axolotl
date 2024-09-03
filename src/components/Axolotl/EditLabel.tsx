@@ -33,7 +33,7 @@ const EditLabel = ({
         value={value}
         disabled={disabled}
         onChange={onChange}
-        className={`w-[75%] rounded-[7px] border-[1.5px] border-gray-1 bg-white px-5 py-2 text-dark outline-none transition focus:border-primary active:border-primary ${
+        className={`w-[75%] rounded-[5px] border-[1.5px] border-gray-1 bg-white px-5 py-2 text-dark outline-none transition focus:border-primary active:border-primary ${
           disabled
             ? "disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary"
             : "bg-white"

@@ -1,5 +1,9 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import ApprovalButtons from "@/components/Axolotl/ApprovalButtons";
+import DisabledLabel from "@/components/Axolotl/DisabledLabel";
+import DownloadLicenses from "@/components/Axolotl/DownloadLicenses";
+import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
 import { USER_AUTH_SCHEMA } from "@/types/axolotl";
 import Image from "next/image";
 import React from "react";
@@ -22,14 +26,36 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   const cg_full_name =
     caregiver.user.first_name + " " + caregiver.user.last_name;
 
-  const formatVerifiedAtDate = new Intl.DateTimeFormat("en-US", {
+  // Create reusable date formatters
+  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-  }).format(new Date(caregiver.updated_at));
+  });
+
+  const dateFormatter = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  // Helper function to format dates
+  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
+    formatter.format(new Date(date));
+
+  // Use the formatters
+  const formattedVerifiedAtDate = formatDate(
+    caregiver.updated_at,
+    dateTimeFormatter,
+  );
+  const formattedBirthDate = formatDate(
+    caregiver.user.birthdate,
+    dateFormatter,
+  );
 
   return (
     <div className="mx-20 h-auto w-auto">
@@ -77,7 +103,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                       Verified on:{" "}
                       <span className="font-medium">
                         {" "}
-                        {formatVerifiedAtDate}
+                        {formattedVerifiedAtDate}
                       </span>
                     </p>
                   </div>
@@ -94,10 +120,48 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
         {/* User Profile Section */}
         <div className="flex w-full flex-col gap-5 lg:flex-row lg:justify-between">
           {/* First Column */}
-          <div className="flex w-full flex-col">
-            <h1 className="text-heading-6 font-bold text-primary">
+          <div className="flex w-full flex-col gap-2">
+            <h1 className="mb-3 text-heading-6 font-bold text-primary">
               User Personal Data
             </h1>
+            <div className="flex w-full gap-5">
+              <DisabledLabel
+                label="First Name"
+                value={caregiver.user.first_name}
+                horizontal={false}
+                type="text"
+              />
+              <DisabledLabel
+                label="Last Name"
+                value={caregiver.user.last_name}
+                horizontal={false}
+                type="text"
+              />
+            </div>
+            <div className="flex w-full gap-5">
+              <DisabledLabel
+                label="Email"
+                value={cg_user_data?.email}
+                horizontal={false}
+                type="text"
+              />
+              <PhoneNumberBox
+                placeholder="081XXXXXXXX"
+                value={Number(caregiver.user.phone_number)}
+              />
+            </div>
+            <DisabledLabel
+              label="Birthdate"
+              value={formattedBirthDate}
+              horizontal={false}
+              type="text"
+            />
+            <DisabledLabel
+              label="Address"
+              value={caregiver.user.address}
+              horizontal={false}
+              type="text"
+            />
           </div>
 
           {/* Center Divider */}
@@ -106,32 +170,66 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
           </div>
 
           {/* Second Column */}
-          <div className="flex w-full flex-col">
-            <h1 className="text-heading-6 font-bold text-primary">
-              User Working Experiences
-            </h1>
-            <h1 className="text-heading-6 font-bold text-primary">
-              User Licences
-            </h1>
+          <div className="flex w-full flex-col gap-5">
+            <div className="flex w-full flex-col gap-2">
+              <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                User Working Experiences
+              </h1>
+              <div className="flex w-full gap-5">
+                <DisabledLabel
+                  label="Employment Type"
+                  value={caregiver.employment_type}
+                  horizontal={false}
+                  type="text"
+                />
+                <DisabledLabel
+                  label="Work Experiences"
+                  value={caregiver.work_experiences.toString()}
+                  horizontal={false}
+                  type="text"
+                  isWorkingExperiences={true}
+                />
+              </div>
+              <DisabledLabel
+                label="Workplace"
+                value={caregiver.workplace}
+                horizontal={false}
+                type="text"
+              />
+            </div>
+            <div className="flex w-full flex-col gap-2">
+              <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                User Licences
+              </h1>
+              <div className="grid grid-cols-2 gap-5">
+                <DownloadLicenses
+                  licenseTitle="Curriculum Vitae"
+                  downloadLink=""
+                />
+                <DownloadLicenses
+                  licenseTitle="Degree Certificate"
+                  downloadLink=""
+                />
+                <DownloadLicenses
+                  licenseTitle="Surat Tanda Registrasi"
+                  downloadLink=""
+                />
+                <DownloadLicenses
+                  licenseTitle="Surat Izin Praktik"
+                  downloadLink=""
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Button Group */}
-        <div className="flex w-full items-center justify-end">
+        <div className="mt-5 flex w-full items-center justify-end">
           <div className="flex w-1/4 items-center justify-end gap-5">
             {caregiver.status === "Unverified" ? (
-              <div className="flex w-full items-center justify-center gap-2">
-                <button className="w-full rounded-md border border-red p-2 font-bold text-red hover:bg-red-hover">
-                  Reject
-                </button>
-                <button className="w-full rounded-md border border-primary bg-primary p-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary">
-                  Approve
-                </button>
-              </div>
+              <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
             ) : (
-              <button className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel">
-                Go back
-              </button>
+              <ApprovalButtons status={caregiver.status} />
             )}
           </div>
         </div>

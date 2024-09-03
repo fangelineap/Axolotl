@@ -1,17 +1,24 @@
+import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import { Modal } from "@mui/material";
-import { IconHash, IconMail, IconMedicineSyrup, IconUserCircle, IconX } from "@tabler/icons-react";
+import {
+  IconHash,
+  IconMail,
+  IconMedicineSyrup,
+  IconUserCircle,
+  IconX,
+} from "@tabler/icons-react";
 import React from "react";
 
-interface ConfirmationModalProps {
+interface AxolotlModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
   question: string;
-  action?: "delete" | "confirm" | "skip";
+  action?: "delete" | "reject" | "confirm" | "skip" | "approve";
   medicine?: AdminMedicineTable | null;
-  approval?: string;
+  approval?: AdminApprovalTable | null;
 }
 
 function AxolotlModal({
@@ -23,7 +30,10 @@ function AxolotlModal({
   action,
   medicine,
   approval,
-}: ConfirmationModalProps) {
+}: AxolotlModalProps) {
+  const cg_full_name =
+    approval?.user.first_name + " " + approval?.user.last_name;
+
   return (
     <Modal open={isOpen} onClose={onClose}>
       <div className="flex min-h-screen items-center justify-center font-normal">
@@ -57,55 +67,50 @@ function AxolotlModal({
             {approval && (
               <div className="flex flex-col gap-2">
                 <h3 className="text-xl font-medium text-black">
-                  Barry Allen, A.Md.Kep.
+                  {cg_full_name}
                 </h3>
                 <div className="flex gap-2">
-                  <IconMail className="text-dark-secondary" stroke={1} />
-                  <p className="text-dark-secondary">barry.allen@axolotl.com</p>
-                </div>
-                <div className="flex gap-2">
-                  <IconUserCircle
-                    className="text-dark-secondary"
-                    stroke={1}
-                  />
-                  <p className="text-dark-secondary">Nurse</p>
+                  <IconUserCircle className="text-dark-secondary" stroke={1} />
+                  <p className="text-dark-secondary">{approval.user.role}</p>
                 </div>
               </div>
             )}
           </div>
           <div className="flex justify-center gap-4">
-            {action === "delete" && (
-              <>
-                <button
-                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
-                  onClick={onClose}
-                >
-                  No, cancel
-                </button>
-                <button
-                  className="w-1/4 rounded-md border border-red bg-red px-3 py-2 font-bold text-white hover:bg-red-hover hover:text-red"
-                  onClick={onConfirm}
-                >
-                  Yes, I&apos;m sure
-                </button>
-              </>
-            )}
-            {action === "confirm" && (
-              <>
-                <button
-                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
-                  onClick={onClose}
-                >
-                  No, cancel
-                </button>
-                <button
-                  className="hover:bg-kalbe-ultraLight w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
-                  onClick={onConfirm}
-                >
-                  Yes, I&apos;m sure
-                </button>
-              </>
-            )}
+            {action === "delete" ||
+              (action === "reject" && (
+                <>
+                  <button
+                    className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                    onClick={onClose}
+                  >
+                    No, cancel
+                  </button>
+                  <button
+                    className="w-1/4 rounded-md border border-red bg-red px-3 py-2 font-bold text-white hover:bg-red-hover hover:text-red"
+                    onClick={onConfirm}
+                  >
+                    Yes, I&apos;m sure
+                  </button>
+                </>
+              ))}
+            {action === "confirm" ||
+              (action === "approve" && (
+                <>
+                  <button
+                    className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                    onClick={onClose}
+                  >
+                    No, cancel
+                  </button>
+                  <button
+                    className="w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
+                    onClick={onConfirm}
+                  >
+                    Yes, I&apos;m sure
+                  </button>
+                </>
+              ))}
             {action === "skip" && (
               <>
                 <button
@@ -115,7 +120,7 @@ function AxolotlModal({
                   Not sure
                 </button>
                 <button
-                  className="hover:bg-kalbe-ultraLight w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:text-primary"
+                  className="w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
                   onClick={onConfirm}
                 >
                   Yup, skip it
