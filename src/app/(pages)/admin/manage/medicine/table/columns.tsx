@@ -45,19 +45,23 @@ export const columns = [
     enableColumnFilter: true,
     filterFn: "equals",
   }),
-  columnHelper.accessor("price", {
-    cell: (info) => {
-      const price = info.getValue();
-      const formatted = new Intl.NumberFormat("id-ID", {
+  columnHelper.accessor(
+    (row) => {
+      const price = row.price;
+      return new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
       }).format(price);
-
-      return <p>{formatted}</p>;
     },
-    id: "Medicine Price",
-    header: "Medicine Price",
-    enableSorting: true,
-    enableColumnFilter: true,
-  }),
+    {
+      id: "Medicine Price",
+      cell: (info) => {
+        const formattedPrice = info.getValue();
+        return <p>{formattedPrice}</p>;
+      },
+      header: "Medicine Price",
+      enableSorting: true,
+      enableColumnFilter: true,
+    },
+  ),
 ];

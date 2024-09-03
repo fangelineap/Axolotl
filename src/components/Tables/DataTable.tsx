@@ -16,6 +16,7 @@ import {
   ColumnFilter,
   ColumnSort,
   getPaginationRowModel,
+  FilterFn,
 } from "@tanstack/react-table";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -45,6 +46,16 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
   const pathName = usePathname();
   const router = useRouter();
+
+  const globalFilterFn: FilterFn<T> = (row, columnId, filterValue) => {
+    const columnValue = row.getValue(columnId);
+    
+    // Convert column value to string and search it case-insensitively
+    const searchValue = String(columnValue).toLowerCase();
+    const filterText = String(filterValue).toLowerCase();
+  
+    return searchValue.includes(filterText);
+  };
 
   const table = useReactTable({
     data,
@@ -95,6 +106,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
+    globalFilterFn,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),

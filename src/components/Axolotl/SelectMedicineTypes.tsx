@@ -60,7 +60,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
             setSelectedOption(e.target.value);
             changeTextColor();
           }}
-          className={`relative z-10 w-full cursor-pointer appearance-none rounded-[7px] border-[1.5px] border-gray-1 bg-transparent bg-white  py-2 pl-5 pr-11.5 transition  focus:border-primary focus-visible:outline-none active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
+          className={`relative z-10 w-full cursor-pointer appearance-none rounded-[7px] border-[1.5px] border-gray-1 bg-transparent bg-white py-2 pl-3 pr-11.5 transition  focus:border-primary focus-visible:outline-none active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
             isOptionSelected
               ? "text-dark dark:text-white"
               : "text-dark-secondary"
