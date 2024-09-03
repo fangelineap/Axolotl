@@ -42,6 +42,7 @@ function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
 
         router.refresh();
       } catch (error) {
+        console.log(error)
         toast.error("Failed to delete medicine. Please try again.", {
           position: "bottom-right",
         });

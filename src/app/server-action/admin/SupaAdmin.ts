@@ -1,6 +1,5 @@
 "use server";
 
-import createSupabaseServerClient from "@/app/lib/server";
 import { createClient } from "@supabase/supabase-js";
 
 async function getAdminAuthClient() {

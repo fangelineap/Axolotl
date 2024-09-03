@@ -3,7 +3,6 @@ import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/da
 import { Modal } from "@mui/material";
 import {
   IconHash,
-  IconMail,
   IconMedicineSyrup,
   IconUserCircle,
   IconX,
