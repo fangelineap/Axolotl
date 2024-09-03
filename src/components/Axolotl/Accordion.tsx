@@ -56,7 +56,7 @@ const Accordion = ({
           </div>
           <div className="grid grid-flow-col grid-rows-5 justify-start gap-3 gap-x-20">
             {symptoms.map((symptom) => (
-              <div>
+              <div key={symptom}>
                 <label
                   htmlFor={`checkbox-${symptom}`}
                   className="flex cursor-pointer select-none items-center text-body-sm font-medium"

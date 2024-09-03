@@ -8,16 +8,34 @@ import {
   IconCircleMinus,
   IconCirclePlus,
   IconCirclePlusFilled,
-  IconCircleX,
   IconCircleXFilled,
-  IconX,
 } from "@tabler/icons-react";
-import React, { useState } from "react";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 
 const PlacingOrder = () => {
   const [concern, setConcern] = useState<string>("");
   const [selectedAll, setSelectedAll] = useState<string[]>([]);
   const [days, setDays] = useState<number>(0);
+
+  const [isActive, setIsActive] = useState(false);
+  const [seconds, setSeconds] = useState(3600);
+
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds((prevSeconds) => prevSeconds - 1);
+      }, 1000);
+    } else if (!isActive && seconds !== 0) {
+      () => clearInterval(interval as NodeJS.Timeout);
+    }
+
+    return () => clearInterval(interval as NodeJS.Timeout);
+  }, [isActive, seconds]);
 
   return (
     <DefaultLayout>
@@ -169,7 +187,7 @@ const PlacingOrder = () => {
               </h1>
               <div className="mb-3 grid grid-flow-row grid-cols-4 gap-2">
                 {selectedAll.map((selected, index) => (
-                  <div className="flex items-center justify-between gap-2 rounded-full border-2 border-primary bg-white px-2 py-1 text-primary">
+                  <div key={selected} className="flex items-center justify-between gap-2 rounded-full border-2 border-primary bg-white px-2 py-1 text-primary">
                     <h1 className="font-medium">{selected}</h1>
                     <button
                       onClick={() => {
@@ -218,68 +236,154 @@ const PlacingOrder = () => {
             <div className="rounded-md border-[1px] border-stroke bg-white py-2">
               <div className="p-3">
                 <h1 className="text-center text-lg font-bold text-primary">
-                  Order Summary
+                  {isActive ? "Service Payment" : "Order Summary"}
                 </h1>
               </div>
-              <div className="px-5 py-2">
-                <div className="flex items-center rounded-md border-[1px] border-stroke p-3 gap-3 my-3">
-                  <img
-                    src="/images/user/caregiver.png"
-                    height={60}
-                    width={60}
-                    className="rounded-full bg-kalbe-veryLight"
-                    alt="CG pfp"
-                  />
-                  <h1>Strawberry Shortcake, A.Md.Kep.</h1>
-                </div>
-                <DisabledLabel
-                  horizontal={false}
-                  label="Service Type"
-                  type="text"
-                  value="After Care"
-                />
-                <DisabledLabel
-                  horizontal={false}
-                  label="Service For"
-                  type="text"
-                  value="Wound Treatment"
-                />
-                <div>
-                  <label className="font-medium text-dark dark:text-white">
-                    Days of Visit
-                  </label>
-                  <div className="my-2 flex justify-between rounded-full border-[1px] border-stroke p-2 text-primary">
+              {isActive ? (
+                <>
+                  <div className="px-5 py-2">
+                    <div className="flex flex-col items-center justify-center rounded-md border-[0.5px] border-red bg-red-light px-3 py-1 text-red">
+                      <h1 className="text-center text-lg font-semibold">
+                        Your transaction will be automatically terminated in
+                      </h1>
+                      <h1 className="text-lg font-semibold">
+                        {Math.floor(seconds / 3600)}:{Math.floor(seconds / 60) == 60 ? "00" : Math.floor(seconds / 60)}:
+                        {seconds % 60 == 0 ? "00" : seconds % 60}
+                      </h1>
+                    </div>
+                    <div className="mb-1 mt-3 flex justify-between">
+                      <h1 className="font-semibold text-stroke-dark">
+                        Service Fee
+                      </h1>
+                      <h1>Rp. 500.000</h1>
+                    </div>
+                    <div className="flex justify-between">
+                      <h1 className="font-semibold text-stroke-dark">
+                        Total Days
+                      </h1>
+                      <h1>{days}x visit</h1>
+                    </div>
+                    <div className="flex justify-center">
+                      <div className="my-5 h-[0.5px] w-full bg-primary"></div>
+                    </div>
+                    <div className="mb-3 flex justify-between">
+                      <h1 className="font-semibold text-stroke-dark">
+                        Total Charge
+                      </h1>
+                      <h1 className="text-lg font-bold">Rp. 500.000</h1>
+                    </div>
+                    <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">
+                      <h1 className="mb-1 text-lg font-semibold">
+                        Virtual Account Number
+                      </h1>
+                      <h1>12345-67890-87654</h1>
+                      <button
+                        className={`my-3 rounded-md ${copied ? 'disabled bg-gray-cancel' : 'bg-primary'} px-3 py-1 font-semibold text-white`}
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(
+                              "12345-67890-87654",
+                            );
+                            setCopied(true)
+                          } catch (error) {
+                            console.log("error");
+                          }
+                        }}
+                      >
+                        {copied ? 'Copied' : 'Copy to clipboard'}
+                      </button>
+                    </div>
+                    <div>
+                        <h1 className="font-bold text-lg mb-2">Payment Status</h1>
+                    <div className="border-primary bg-kalbe-ultraLight px-5 py-2 border-[1px] rounded-md">
+                      <h1 className="text-lg font-semibold text-primary text-center">Verified</h1>
+                    </div>
+                    </div>
+                    <div className="flex w-full justify-center mt-5 mb-5">
+                      {copied ? (
+                      <button
+                        type="button"
+                        className={`w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90`}
+                        onClick={() => setIsActive(true)}
+                      >
+                        Continue
+                      </button>
+                      ) : (
+                        <button
+                        type="button"
+                        disabled
+                        className={`w-full rounded-sm bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90`}
+                        onClick={() => setIsActive(true)}
+                      >
+                        Continue
+                      </button>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="px-5 py-2">
+                    <div className="my-3 flex items-center gap-3 rounded-md border-[1px] border-stroke p-3">
+                      <Image
+                        src="/images/user/caregiver.png"
+                        height={60}
+                        width={60}
+                        className="rounded-full bg-kalbe-veryLight"
+                        alt="CG pfp"
+                      />
+                      <h1>Strawberry Shortcake, A.Md.Kep.</h1>
+                    </div>
+                    <DisabledLabel
+                      horizontal={false}
+                      label="Service Type"
+                      type="text"
+                      value="After Care"
+                    />
+                    <DisabledLabel
+                      horizontal={false}
+                      label="Service For"
+                      type="text"
+                      value="Wound Treatment"
+                    />
+                    <div>
+                      <label className="font-medium text-dark dark:text-white">
+                        Days of Visit
+                      </label>
+                      <div className="my-2 flex justify-between rounded-full border-[1px] border-stroke p-2 text-primary">
+                        <button
+                          onClick={() => {
+                            if (days > 0) {
+                              setDays(days - 1);
+                            }
+                          }}
+                        >
+                          <IconCircleMinus size={30} />
+                        </button>
+                        <h1 className="text-lg text-black">{days}</h1>
+                        <button onClick={() => setDays(days + 1)}>
+                          <IconCirclePlus size={30} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between px-5 py-3">
+                    <h1 className="text-lg font-semibold">Sub Total: </h1>
+                    <h1 className="text-lg font-extrabold">Rp.1.500.000</h1>
+                  </div>
+                  <div className="flex w-full justify-center px-5">
                     <button
-                      onClick={() => {
-                        if (days > 0) {
-                          setDays(days - 1);
-                        }
-                      }}
+                      type="button"
+                      className="mb-5 w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
+                      onClick={() => setIsActive(true)}
                     >
-                      <IconCircleMinus size={30} />
-                    </button>
-                    <h1 className="text-lg text-black">{days}</h1>
-                    <button onClick={() => setDays(days + 1)}>
-                      <IconCirclePlus size={30} />
+                      Pay
                     </button>
                   </div>
-                </div>
-              </div>
-              <div className="flex justify-between px-5 py-3">
-                <h1 className="text-lg font-semibold">Sub Total: </h1>
-                <h1 className="text-lg font-extrabold">Rp.1.500.000</h1>
-              </div>
-              <div className="flex w-full justify-center px-5">
-                <button
-                  type="button"
-                  className="mb-5 w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
-                >
-                  Pay
-                </button>
-              </div>
+                </>
+              )}
             </div>
           </div>
-          <div className=""></div>
         </div>
       </div>
     </DefaultLayout>

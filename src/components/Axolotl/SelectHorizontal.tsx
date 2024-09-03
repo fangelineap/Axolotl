@@ -41,7 +41,7 @@ const SelectHorizontal = ({
           {placeholder}
         </option>
         {options.map((opt) => (
-          <option value={opt} className="text-dark-6">
+          <option key={opt} value={opt} className="text-dark-6">
             {opt}
           </option>
         ))}

@@ -160,14 +160,14 @@ const PatientHeader: React.FC<HeaderProps> = ({
                 {dropdownOpen && (
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
                     <li className="border-b border-gray-200 dark:border-gray-700">
-                      <Link href="/guest/health-services/nurses">
+                      <Link href="/patient/health-services?caregiver=Nurse">
                         <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
                           Nurses
                         </div>
                       </Link>
                     </li>
                     <li>
-                      <Link href="/guest/health-services/midwives">
+                      <Link href="/patient/health-services?caregiver=Midwife">
                         <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
                           Midwives
                         </div>

@@ -3,6 +3,7 @@
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import Image from "next/image";
 import React, { useState } from "react";
 
 const OrderCaregiver = () => {
@@ -15,7 +16,7 @@ const OrderCaregiver = () => {
         <div className="mt-6 flex h-[100%] w-[85%] flex-col justify-between gap-7 lg:flex-row">
           <div className="p-3 lg:w-[65%]">
             <div className="flex items-start gap-10">
-              <img
+              <Image
                 src="/images/user/caregiver.png"
                 height={100}
                 width={100}
@@ -35,7 +36,7 @@ const OrderCaregiver = () => {
                       Work Schedule
                     </h1>
                     <div className="mb-1 flex gap-2">
-                      <img
+                      <Image
                         src="/images/icon/icon-calendar-patient.svg"
                         height={24}
                         width={24}
@@ -44,7 +45,7 @@ const OrderCaregiver = () => {
                       <h1>Monday - Saturday</h1>
                     </div>
                     <div className="flex gap-2">
-                      <img
+                      <Image
                         src="/images/icon/icon-clock-outline.svg"
                         height={24}
                         width={24}
@@ -53,7 +54,7 @@ const OrderCaregiver = () => {
                       <h1>18.30 - 20.30</h1>
                     </div>
                   </div>
-                  <img
+                  <Image
                     src="/images/icon/icon-done-outlined.svg"
                     height={70}
                     width={70}
@@ -69,7 +70,7 @@ const OrderCaregiver = () => {
             <div className="flex flex-col gap-3">
               <h1 className="text-lg font-extrabold">About</h1>
               <div className="flex items-start gap-3">
-                <img
+                <Image
                   src="/images/icon/education-outline.svg"
                   height={35}
                   width={35}
@@ -83,7 +84,7 @@ const OrderCaregiver = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <img
+                <Image
                   src="/images/icon/icon-building.svg"
                   height={35}
                   width={35}
@@ -97,7 +98,7 @@ const OrderCaregiver = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <img
+                <Image
                   src="/images/icon/icon-id-card-outline.svg"
                   height={35}
                   width={35}
@@ -111,7 +112,7 @@ const OrderCaregiver = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <img
+                <Image
                   src="/images/icon/icon-sertificate-line.svg"
                   height={35}
                   width={35}

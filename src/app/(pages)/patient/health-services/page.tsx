@@ -1,12 +1,66 @@
 "use client";
 
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React, { useState } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 
-const page = () => {
+interface User {}
+
+const page = ({ searchParams }: any) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
+  const [caregiver, setCaregiver] = useState<any[]>([]);
+  const [filtered, setFiltered] = useState<any[]>([]);
+  const [profilePhoto, setProfilePhoto] = useState<any[]>([]);
+  const [rating, setRating] = useState<number[]>([]);
 
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
+
+  const getProfilePhoto = (profile_photo: string) => {
+    const { data } = supabase.storage
+      .from("profile_photo")
+      .getPublicUrl(profile_photo);
+
+    if (data) {
+      setProfilePhoto((prev) => [...prev, data.publicUrl]);
+    }
+  };
+
+  const getUser = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("*, caregiver(*)")
+      .eq("role", searchParams.caregiver);
+    if (data) {
+      data.forEach((user) => {
+        getProfilePhoto(user.caregiver[0].profile_photo);
+      });
+      setCaregiver(data);
+    }
+  };
+
+  useEffect(() => {
+    if (searchParams.caregiver) {
+      getUser();
+    }
+  }, [searchParams.caregiver]);
+
+  useEffect(() => {
+    if(rating.length > 0) {
+      rating.forEach(rate => {
+        
+      });
+    }
+  }, [rating])
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center justify-center">
@@ -55,7 +109,7 @@ const page = () => {
             </div>
           </div>
           <div className="flex justify-end md:relative">
-            <img
+            <Image
               className="w-200 h-56 rounded-br-md md:absolute md:bottom-0 md:right-0"
               src="/images/freepik/patient-health-services.svg"
               alt=""
@@ -81,7 +135,7 @@ const page = () => {
                   className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${location === "Malang" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                 >
                   <div className="flex items-center justify-start gap-7">
-                    <img
+                    <Image
                       src={`${location === "Malang" ? "/images/icon/icon-done.svg" : "/images/icon/icon-done-not-filled.svg"}`}
                       className={`rounded-full border ${location === "Malang" ? "bg-kalbe-veryLight" : "bg-white"}`}
                       alt="Checked Logo"
@@ -102,7 +156,7 @@ const page = () => {
                   className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${location === "Bali" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                 >
                   <div className="flex items-center justify-start gap-7">
-                    <img
+                    <Image
                       src={`${location === "Bali" ? "/images/icon/icon-done.svg" : "/images/icon/icon-done-not-filled.svg"}`}
                       className={`rounded-full border ${location === "Bali" ? "bg-kalbe-veryLight" : "bg-white"}`}
                       alt="Checked Logo"
@@ -135,6 +189,18 @@ const page = () => {
                       className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
                       id="checkbox"
                       name="rating4to5"
+                      onChange={() => {
+                        const index = rating.indexOf(4);
+                        if (index === -1) {
+                          setRating((prev) => [...prev, 4]);
+                        } else {
+                          setRating((prev) => prev.filter((i) => i !== 4));
+
+                          if(rating) {
+                            console.log('rating', rating)
+                          }
+                        }
+                      }}
                     />
                     <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
                       <svg
@@ -154,7 +220,7 @@ const page = () => {
                     </span>
                   </label>
                   <label htmlFor="Rating4to5" className="flex gap-2">
-                    <img
+                    <Image
                       src="/images/logo/star.svg"
                       height={20}
                       width={20}
@@ -173,6 +239,18 @@ const page = () => {
                       className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
                       id="checkbox"
                       name="rating3to4"
+                      onChange={() => {
+                        const index = rating.indexOf(3);
+                        if (index === -1) {
+                          setRating((prev) => [...prev, 3]);
+                        } else {
+                          setRating((prev) => prev.filter((i) => i !== 3));
+
+                          if(rating) {
+                            console.log('rating', rating)
+                          }
+                        }
+                      }}
                     />
                     <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
                       <svg
@@ -192,7 +270,7 @@ const page = () => {
                     </span>
                   </label>
                   <label htmlFor="Rating4to5" className="flex gap-2">
-                    <img
+                    <Image
                       src="/images/logo/star.svg"
                       height={20}
                       width={20}
@@ -211,6 +289,18 @@ const page = () => {
                       className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
                       id="checkbox"
                       name="rating2to3"
+                      onChange={() => {
+                        const index = rating.indexOf(2);
+                        if (index === -1) {
+                          setRating((prev) => [...prev, 2]);
+                        } else {
+                          setRating((prev) => prev.filter((i) => i !== 2));
+
+                          if(rating) {
+                            console.log('rating', rating)
+                          }
+                        }
+                      }}
                     />
                     <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
                       <svg
@@ -230,7 +320,7 @@ const page = () => {
                     </span>
                   </label>
                   <label htmlFor="Rating4to5" className="flex gap-2">
-                    <img
+                    <Image
                       src="/images/logo/star.svg"
                       height={20}
                       width={20}
@@ -249,6 +339,18 @@ const page = () => {
                       className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
                       id="checkbox"
                       name="rating1to2"
+                      onChange={() => {
+                        const index = rating.indexOf(1);
+                        if (index === -1) {
+                          setRating((prev) => [...prev, 1]);
+                        } else {
+                          setRating((prev) => prev.filter((i) => i !== 1));
+
+                          if(rating) {
+                            console.log('rating', rating)
+                          }
+                        }
+                      }}
                     />
                     <span className="pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
                       <svg
@@ -268,7 +370,7 @@ const page = () => {
                     </span>
                   </label>
                   <label htmlFor="Rating4to5" className="flex gap-2">
-                    <img
+                    <Image
                       src="/images/logo/star.svg"
                       height={20}
                       width={20}
@@ -283,14 +385,76 @@ const page = () => {
           <div className="lg:w-[65%]">
             <h1 className="p-3 text-lg font-semibold">Choose Your Caregiver</h1>
             <div className="p-3">
-              <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+              {caregiver?.map((cg, index) => (
+                <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+                  <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                    <Image
+                      src={profilePhoto![index]}
+                      height={100}
+                      width={100}
+                      className="h-[100px] w-[100px] rounded-full object-cover"
+                      alt="CG pfp"
+                    />
+                    <div className="flex w-full items-center gap-5">
+                      <div className="w-[70%]">
+                        <h1 className="mb-2 font-semibold">
+                          {cg.first_name + " " + cg.last_name}
+                          {/* Strawberry Shortcake, A.Md.Kep. */}
+                        </h1>
+                        <div className="mb-2 flex gap-2">
+                          <Image
+                            src="/images/logo/building.svg"
+                            height={20}
+                            width={20}
+                            alt="Building Logo"
+                          />
+                          <h1 className="text-sm text-dark-secondary">
+                            {cg.caregiver[0].workplace}
+                          </h1>
+                        </div>
+                        <div className="flex gap-4">
+                          <div className="flex gap-2">
+                            <Image
+                              src="/images/logo/briefcase.svg"
+                              height={20}
+                              width={20}
+                              alt="Briefcase Logo"
+                            />
+                            <h1 className="text-sm text-dark-secondary">
+                              {cg.caregiver[0].work_experiences + " years"}
+                            </h1>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Image
+                              src="/images/logo/star.svg"
+                              height={20}
+                              width={20}
+                              alt="Star Logo"
+                            />
+                            <h1 className="text-sm text-dark-secondary">
+                              {cg.caregiver[0].rate}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="h-25 w-[0.5px] bg-primary"></div>
+                      <div className="flex w-[30%] justify-end">
+                        <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                          Book Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {/* <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
                 <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <img
+                  <Image
                     src="/images/user/caregiver.png"
                     height={100}
                     width={100}
                     className="rounded-full"
-                    alt="CG pfp"
+                    alt=""
                   />
                   <div className="flex w-full items-center gap-5">
                     <div className="w-[70%]">
@@ -298,7 +462,7 @@ const page = () => {
                         Strawberry Shortcake, A.Md.Kep.
                       </h1>
                       <div className="mb-2 flex gap-2">
-                        <img
+                        <Image
                           src="/images/logo/building.svg"
                           height={20}
                           width={20}
@@ -310,7 +474,7 @@ const page = () => {
                       </div>
                       <div className="flex gap-4">
                         <div className="flex gap-2">
-                          <img
+                          <Image
                             src="/images/logo/briefcase.svg"
                             height={20}
                             width={20}
@@ -321,7 +485,7 @@ const page = () => {
                           </h1>
                         </div>
                         <div className="flex items-center gap-2">
-                          <img
+                          <Image
                             src="/images/logo/star.svg"
                             height={20}
                             width={20}
@@ -342,7 +506,7 @@ const page = () => {
               </div>
               <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
                 <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <img
+                  <Image
                     src="/images/user/caregiver.png"
                     height={100}
                     width={100}
@@ -355,7 +519,7 @@ const page = () => {
                         Strawberry Shortcake, A.Md.Kep.
                       </h1>
                       <div className="mb-2 flex gap-2">
-                        <img
+                        <Image
                           src="/images/logo/building.svg"
                           height={20}
                           width={20}
@@ -367,7 +531,7 @@ const page = () => {
                       </div>
                       <div className="flex gap-4">
                         <div className="flex gap-2">
-                          <img
+                          <Image
                             src="/images/logo/briefcase.svg"
                             height={20}
                             width={20}
@@ -378,64 +542,7 @@ const page = () => {
                           </h1>
                         </div>
                         <div className="flex items-center gap-2">
-                          <img
-                            src="/images/logo/star.svg"
-                            height={20}
-                            width={20}
-                            alt="Star Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">4.5</h1>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="h-25 w-[0.5px] bg-primary"></div>
-                    <div className="flex w-[30%] justify-end">
-                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
-                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <img
-                    src="/images/user/caregiver.png"
-                    height={100}
-                    width={100}
-                    className="rounded-full"
-                    alt=""
-                  />
-                  <div className="flex w-full items-center gap-5">
-                    <div className="w-[70%]">
-                      <h1 className="mb-2 font-semibold">
-                        Strawberry Shortcake, A.Md.Kep.
-                      </h1>
-                      <div className="mb-2 flex gap-2">
-                        <img
-                          src="/images/logo/building.svg"
-                          height={20}
-                          width={20}
-                          alt="Building Logo"
-                        />
-                        <h1 className="text-sm text-dark-secondary">
-                          RS Axolotl Malang, Malang City, East Java
-                        </h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <div className="flex gap-2">
-                          <img
-                            src="/images/logo/briefcase.svg"
-                            height={20}
-                            width={20}
-                            alt="Briefcase Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">
-                            10 years
-                          </h1>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <img
+                          <Image
                             src="/images/logo/star.svg"
                             height={20}
                             width={20}
@@ -456,7 +563,7 @@ const page = () => {
               </div>
               <div className="flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
                 <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <img
+                  <Image
                     src="/images/user/caregiver.png"
                     height={100}
                     width={100}
@@ -469,7 +576,7 @@ const page = () => {
                         Strawberry Shortcake, A.Md.Kep.
                       </h1>
                       <div className="mb-2 flex gap-2">
-                        <img
+                        <Image
                           src="/images/logo/building.svg"
                           height={20}
                           width={20}
@@ -481,7 +588,7 @@ const page = () => {
                       </div>
                       <div className="flex gap-4">
                         <div className="flex gap-2">
-                          <img
+                          <Image
                             src="/images/logo/briefcase.svg"
                             height={20}
                             width={20}
@@ -492,7 +599,7 @@ const page = () => {
                           </h1>
                         </div>
                         <div className="flex items-center gap-2">
-                          <img
+                          <Image
                             src="/images/logo/star.svg"
                             height={20}
                             width={20}
@@ -510,9 +617,9 @@ const page = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
-            <div className="p-3 flex justify-between">
+            <div className="flex justify-between p-3">
               <p>Showing 1 to 4 of 16 entries</p>
               <nav aria-label="Page navigation example">
                 <ul className="flex h-8 items-center -space-x-px text-sm">
