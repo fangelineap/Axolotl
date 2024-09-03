@@ -44,3 +44,5 @@ export type PATIENT = {
   updated_at: Date;
   patient_id: string;
 };
+
+export type USER_AUTH_SCHEMA = USER & { email: string };

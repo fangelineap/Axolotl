@@ -1,4 +1,6 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
+import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import { USER_AUTH_SCHEMA } from "@/types/axolotl";
 import Image from "next/image";
 import React from "react";
 
@@ -6,9 +8,20 @@ interface ViewApprovalProps {
   caregiver: AdminApprovalTable;
 }
 
-function ViewApproval({ caregiver }: ViewApprovalProps) {
+async function getUserData(caregiver_id: string) {
+  const response = await getUserAuthSchema(caregiver_id);
+  if (!response) {
+    return null;
+  }
+  return response as unknown as USER_AUTH_SCHEMA;
+}
+
+async function ViewApproval({ caregiver }: ViewApprovalProps) {
+  const cg_user_data = await getUserData(caregiver.caregiver_id);
+
   const cg_full_name =
     caregiver.user.first_name + " " + caregiver.user.last_name;
+
   const formatVerifiedAtDate = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
@@ -107,11 +120,12 @@ function ViewApproval({ caregiver }: ViewApprovalProps) {
         <div className="flex w-full items-center justify-end">
           <div className="flex w-1/4 items-center justify-end gap-5">
             {caregiver.status === "Unverified" ? (
-              <div className="flex items-center justify-center gap-2 w-full">
+              <div className="flex w-full items-center justify-center gap-2">
                 <button className="w-full rounded-md border border-red p-2 font-bold text-red hover:bg-red-hover">
                   Reject
                 </button>
-                <button className="w-full hover:bg-kalbe-ultraLight rounded-md border border-primary bg-primary p-2 font-bold text-white hover:text-primary">Approve
+                <button className="w-full rounded-md border border-primary bg-primary p-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary">
+                  Approve
                 </button>
               </div>
             ) : (
