@@ -23,10 +23,11 @@ export type CAREGIVER = {
   sip: string;
   degree_certificate: string;
   status: "Unverified" | "Verified" | "Rejected";
+  reviewed_at: Date;
   created_at: Date;
   updated_at: Date;
   caregiver_id: string;
-  notes?: string[];
+  notes?: string;
 };
 
 export type PATIENT = {

@@ -1,18 +1,16 @@
 "use client";
 
-import { getCaregiver } from "@/app/server-action/auth";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { USER } from "@/types/axolotl";
 import { createBrowserClient } from "@supabase/ssr";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Review = ({ searchParams }: any) => {
   const [status, setStatus] = useState<
     "Verified" | "Unverified" | "Rejected" | ""
   >("");
-  const [notes, setNotes] = useState<string[]>([]);
+  const [notes, setNotes] = useState<string>("");
 
   const router = useRouter();
 
@@ -164,7 +162,7 @@ const Review = ({ searchParams }: any) => {
                       Caregiver
                     </span>
                   </p>
-                  <p>Let's visit your homepage</p>
+                  <p>Let&apos;s visit your homepage</p>
                 </>
               ) : (
                 status == "Rejected" && (
@@ -174,11 +172,7 @@ const Review = ({ searchParams }: any) => {
                       <span className="font-semibold text-red">Caregiver</span>
                     </p>
                     <p className="mt-3 text-dark-secondary">Notes:</p>
-                    <ul className="list-disc text-dark-secondary">
-                        {notes.map(note => (
-                            <li>{note}</li>
-                        ))}
-                    </ul>
+                    <p>{notes}</p>
                   </>
                 )
               )}

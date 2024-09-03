@@ -118,3 +118,56 @@ export async function getAdminApprovalById(caregiver_id: string) {
     return [];
   }
 }
+
+export async function approveCaregiver(caregiver_id: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("caregiver")
+      .update({
+        status: "Verified",
+        reviewed_at: new Date(),
+      })
+      .eq("caregiver_id", caregiver_id)
+      .single();
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+    return { data: null, error };
+  }
+}
+
+export async function rejectCaregiver(caregiver_id: string, notes: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("caregiver")
+      .update({
+        status: "Rejected",
+        reviewed_at: new Date(),
+        notes: notes,
+      })
+      .eq("caregiver_id", caregiver_id)
+      .single();
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+    return { data: null, error };
+  }
+}

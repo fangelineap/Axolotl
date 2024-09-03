@@ -6,6 +6,7 @@ import React from "react";
 import PasswordInput from "../../component/PasswordInput";
 import { registerWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
+import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
 
 const CreateAccount = ({ searchParams }: any) => {
   console.log("Role ", searchParams.role);
@@ -131,23 +132,22 @@ const CreateAccount = ({ searchParams }: any) => {
                 />
 
                 <div className="w-full xl:w-1/2">
-                  <label
-                    className="mb-3 block text-body-sm font-medium text-dark dark:text-white"
-                    htmlFor="phoneNumber"
-                  >
-                    Phone Number<span className="ml-1 text-red">*</span>
-                  </label>
-                  <div className="flex w-full items-center">
-                    <label className="rounded-l-md border border-r-0 border-gray-1 bg-gray px-2 py-3 font-normal text-dark-secondary focus:border-primary focus-visible:outline-none dark:text-white">
-                      +62
+                  <div className="mb-3 flex w-full flex-col gap-2">
+                    <label className="font-medium">
+                      Phone Number <span className="ml-1 text-red">*</span>
                     </label>
-                    <input
-                      className="w-full rounded-r-md border border-gray-1 bg-white px-2 py-3 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
-                      type="text"
-                      name="phoneNumber"
-                      id="phoneNumber"
-                      placeholder="8XXXXXXXXXX"
-                    />
+                    <div className="flex w-full items-center">
+                      <label className="rounded-l-md border border-r-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+                        +62
+                      </label>
+                      <input
+                        className="w-full rounded-r-md border border-gray-1 bg-white p-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                        type="text"
+                        name="phoneNumber"
+                        id="phoneNumber"
+                        placeholder="8XXXXXXXXXX"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

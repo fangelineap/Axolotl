@@ -1,45 +1,89 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import AxolotlModal from "./AxolotlModal";
+import AxolotlRejectionModal from "./AxolotlRejectionModal";
+import { approveCaregiver, rejectCaregiver } from "@/app/(pages)/admin/manage/approval/actions";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ApprovalButtonsProps {
   status: string;
-  caregiver?: AdminApprovalTable;
+  caregiver: AdminApprovalTable;
 }
 
 function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
-  const [openModal, setOpenModal] = useState(false);
-  const [action, setAction] = useState<"delete" | "reject" | "confirm" | "skip" | "approve">("delete");
+  const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
+  const [openRejectionNotesModal, setOpenRejectionNotesModal] = useState(false);
+  const [action, setAction] = useState<
+    "delete" | "reject" | "confirm" | "skip" | "approve"
+  >("reject");
   const router = useRouter();
 
   const handleModalClose = () => {
-    setOpenModal(false);
+    setOpenConfirmationModal(false);
+    setOpenRejectionNotesModal(false);
   };
 
-  const handleModalConfirm = async () => {
-    try {
-      if (action === "reject") {
-        // Placeholder for the reject functionality
-        // await rejectCaregiver(caregiver?.uuid);
+  const handleConfirmationModal = async () => {
+    if (action === "reject") {
+      setOpenConfirmationModal(false);
+      setOpenRejectionNotesModal(true);
+    } else {
+      try {
+        const { data, error } = await approveCaregiver(caregiver.caregiver_id);
 
-        toast.success("Caregiver rejected successfully", {
-          position: "bottom-right",
-        });
-      } else {
-        // Placeholder for the approve functionality
-        // await approveCaregiver(caregiver?.uuid);
+        if (error !== null && error !== undefined) {
+          toast.error("Something went wrong.", {
+            position: "bottom-right",
+          });
+          return;
+        }
 
         toast.success("Caregiver approved successfully", {
           position: "bottom-right",
         });
+
+        setTimeout(() => {
+          router.refresh();
+        }, 1000);
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to perform the action. Please try again.", {
+          position: "bottom-right",
+        });
+      } finally {
+        handleModalClose();
+      }
+    }
+  };
+
+  const handleRejectionModal = async (notes: string) => {
+    try {
+      const { data, error } = await rejectCaregiver(
+        caregiver.caregiver_id,
+        notes,
+      );
+
+      if (error !== null && error !== undefined) {
+        toast.error("Something went wrong." + error, {
+          position: "bottom-right",
+        });
+        return;
       }
 
-      router.refresh();
+      toast.success("Caregiver rejected successfully", {
+        position: "bottom-right",
+      });
+
+      setTimeout(() => {
+        router.refresh();
+      }, 1000);
     } catch (error) {
+      console.error(error);
       toast.error("Failed to perform the action. Please try again.", {
         position: "bottom-right",
       });
@@ -50,16 +94,17 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
 
   const handleReject = () => {
     setAction("reject");
-    setOpenModal(true);
+    setOpenConfirmationModal(true);
   };
 
   const handleApprove = () => {
     setAction("approve");
-    setOpenModal(true);
+    setOpenConfirmationModal(true);
   };
 
   return (
     <div className="flex w-full items-center justify-end">
+      <ToastContainer />
       {status === "Unverified" ? (
         <div className="flex w-full items-center justify-center gap-5">
           <button
@@ -85,13 +130,19 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       )}
 
       <AxolotlModal
-        isOpen={openModal}
+        isOpen={openConfirmationModal}
         onClose={handleModalClose}
-        onConfirm={handleModalConfirm}
+        onConfirm={handleConfirmationModal}
         title="Confirmation"
         question={`Are you sure you want to ${action} this caregiver?`}
         action={action}
         approval={caregiver}
+      />
+
+      <AxolotlRejectionModal
+        isOpen={openRejectionNotesModal}
+        onClose={handleModalClose}
+        onReject={handleRejectionModal}
       />
     </div>
   );

@@ -125,7 +125,9 @@ const PersonalInformation = ({ searchParams }: any) => {
         }
 
         setLoading(false);
-        router.push(`/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`);
+        router.push(
+          `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`,
+        );
       }
     } else if (searchParams.role == "Patient") {
       // form validation
@@ -547,18 +549,18 @@ const PersonalInformation = ({ searchParams }: any) => {
                             Work Experiences
                             <span className="ml-1 text-red">*</span>
                           </label>
-                          <div className="relative w-full">
-                            <span className="absolute right-[0.5px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.1px]">
-                              year
-                            </span>
+                          <div className="flex w-full items-center">
                             <input
-                              className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent py-3 pl-5.5 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                              className="w-full rounded-l-[7px] border-[1.5px] border-stroke bg-transparent py-2 px-3 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                               type="number"
                               name="workExperiences"
                               id="workExperiences"
                               placeholder="0"
                               required
                             />
+                            <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+                              year
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -827,7 +829,7 @@ const PersonalInformation = ({ searchParams }: any) => {
               <div className="mt-5.5 flex items-center justify-center gap-3">
                 <button
                   onClick={() => router.back()}
-                  className="bg-gray-cancel-hover w-1/4 rounded-[7px] p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
+                  className="w-1/4 rounded-[7px] bg-gray-cancel-hover p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
                 >
                   Back
                 </button>
@@ -917,8 +919,8 @@ const PersonalInformation = ({ searchParams }: any) => {
                   onClick={(e) => {
                     e.preventDefault();
                     setFinished(false);
-                    if(searchParams.role == 'Patient') {
-                      router.push('/patient');
+                    if (searchParams.role == "Patient") {
+                      router.push("/patient");
                     }
                   }}
                 >

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";

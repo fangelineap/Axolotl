@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import GuestPage from "../components/Axolotl/Home/GuestPage";
 

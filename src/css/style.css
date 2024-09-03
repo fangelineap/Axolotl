@@ -472,11 +472,13 @@ input::placeholder {
 }
 
 .custom-bg {
-  background: url('/images/background/ellipse.svg');
+  background: url("/images/background/ellipse.svg");
   background-size: 750px 750px; /* Initial size for larger screens */
   background-repeat: no-repeat;
   background-position: center;
-  transition: background-size 0.5s ease, opacity 0.5s ease; /* Smooth transition for background size and opacity */
+  transition:
+    background-size 0.5s ease,
+    opacity 0.5s ease; /* Smooth transition for background size and opacity */
   opacity: 1; /* Default opacity */
 }
 
@@ -507,4 +509,16 @@ input::placeholder {
   .custom-bg {
     background-size: 750px 750px; /* Original size for large screens */
   }
+}
+
+.truncate-text {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
 }

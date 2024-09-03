@@ -6,6 +6,7 @@ interface PhoneNumberBoxProps {
   placeholder: string;
   name?: string;
   required?: boolean;
+  id?:string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -16,6 +17,7 @@ const PhoneNumberBox = ({
   placeholder,
   name,
   required,
+  id
 }: PhoneNumberBoxProps) => {
   return (
     <div className="mb-3 flex flex-col w-full gap-2">
@@ -31,6 +33,7 @@ const PhoneNumberBox = ({
           name={name}
           aria-label="Phone Number"
           type="text"
+          id={id}
           placeholder={placeholder}
           value={value === 0 ? "" : value?.toString()}
           onChange={onChange}

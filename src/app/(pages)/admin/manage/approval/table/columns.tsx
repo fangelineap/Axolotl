@@ -3,6 +3,15 @@ import { AdminApprovalTable } from "./data";
 
 const columnHelper = createColumnHelper<AdminApprovalTable>();
 
+// Control the order of the status column (Unverified => Verified => Rejected)
+const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
+  const order: { [key: string]: number } = { Unverified: 0, Verified: 1, Rejected: 2 };
+  const statusA = rowA.getValue(columnId);
+  const statusB = rowB.getValue(columnId);
+
+  return order[statusA] - order[statusB];
+};
+
 export const columns = [
   columnHelper.accessor("caregiver_id", {
     cell: (info) => {
@@ -110,6 +119,7 @@ export const columns = [
     header: "Status",
     enableSorting: true,
     enableColumnFilter: true,
+    sortingFn: customStatusSort,
     filterFn: "equals",
   }),
 ];

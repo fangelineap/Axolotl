@@ -48,8 +48,8 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
     formatter.format(new Date(date));
 
   // Use the formatters
-  const formattedVerifiedAtDate = formatDate(
-    caregiver.updated_at,
+  const formattedReviewDate = formatDate(
+    caregiver.reviewed_at,
     dateTimeFormatter,
   );
   const formattedBirthDate = formatDate(
@@ -103,13 +103,19 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                       Verified on:{" "}
                       <span className="font-medium">
                         {" "}
-                        {formattedVerifiedAtDate}
+                        {formattedReviewDate}
                       </span>
                     </p>
                   </div>
                 ) : (
                   <div className="rounded-md border border-red bg-red-light p-2">
-                    <p className="font-bold text-red">Rejected</p>
+                    <p className="font-bold text-red">
+                      Rejected on:{" "}
+                      <span className="font-medium">
+                        {" "}
+                        {formattedReviewDate}
+                      </span>
+                    </p>
                   </div>
                 )}
               </div>
@@ -204,32 +210,54 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
               <div className="grid grid-cols-2 gap-5">
                 <DownloadLicenses
                   licenseTitle="Curriculum Vitae"
-                  downloadLink=""
+                  fileLink={caregiver.cv}
+                  cv
                 />
                 <DownloadLicenses
                   licenseTitle="Degree Certificate"
-                  downloadLink=""
+                  fileLink={caregiver.degree_certificate}
+                  degree_certificate
                 />
                 <DownloadLicenses
                   licenseTitle="Surat Tanda Registrasi"
-                  downloadLink=""
+                  fileLink={caregiver.str}
+                  str
                 />
                 <DownloadLicenses
                   licenseTitle="Surat Izin Praktik"
-                  downloadLink=""
+                  fileLink={caregiver.sip}
+                  sip
                 />
               </div>
             </div>
           </div>
         </div>
 
+        {/* Rejection Notes */}
+        {caregiver.status === "Rejected" && (
+          <div className="mt-3 flex w-full flex-col justify-center gap-2">
+            <h1 className="mb-3 text-heading-6 font-bold text-primary">
+              Rejection Notes
+            </h1>
+            <textarea
+              title="Rejection Notes"
+              value={caregiver.notes}
+              disabled
+              className="h-20 w-full rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
+            />
+          </div>
+        )}
+
         {/* Button Group */}
         <div className="mt-5 flex w-full items-center justify-end">
           <div className="flex w-1/4 items-center justify-end gap-5">
             {caregiver.status === "Unverified" ? (
-              <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
+              <ApprovalButtons
+                status={caregiver.status}
+                caregiver={caregiver}
+              />
             ) : (
-              <ApprovalButtons status={caregiver.status} />
+              <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
             )}
           </div>
         </div>
