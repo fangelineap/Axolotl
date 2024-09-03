@@ -76,40 +76,38 @@ function AxolotlModal({
             )}
           </div>
           <div className="flex justify-center gap-4">
-            {action === "delete" ||
-              (action === "reject" && (
-                <>
-                  <button
-                    className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
-                    onClick={onClose}
-                  >
-                    No, cancel
-                  </button>
-                  <button
-                    className="w-1/4 rounded-md border border-red bg-red px-3 py-2 font-bold text-white hover:bg-red-hover hover:text-red"
-                    onClick={onConfirm}
-                  >
-                    Yes, I&apos;m sure
-                  </button>
-                </>
-              ))}
-            {action === "confirm" ||
-              (action === "approve" && (
-                <>
-                  <button
-                    className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
-                    onClick={onClose}
-                  >
-                    No, cancel
-                  </button>
-                  <button
-                    className="w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
-                    onClick={onConfirm}
-                  >
-                    Yes, I&apos;m sure
-                  </button>
-                </>
-              ))}
+            {(action === "delete" || action === "reject") && (
+              <>
+                <button
+                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                  onClick={onClose}
+                >
+                  No, cancel
+                </button>
+                <button
+                  className="w-1/4 rounded-md border border-red bg-red px-3 py-2 font-bold text-white hover:bg-red-hover hover:text-red"
+                  onClick={onConfirm}
+                >
+                  Yes, I&apos;m sure
+                </button>
+              </>
+            )}
+            {(action === "confirm" || action === "approve") && (
+              <>
+                <button
+                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                  onClick={onClose}
+                >
+                  No, cancel
+                </button>
+                <button
+                  className="w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
+                  onClick={onConfirm}
+                >
+                  Yes, I&apos;m sure
+                </button>
+              </>
+            )}
             {action === "skip" && (
               <>
                 <button
