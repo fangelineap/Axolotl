@@ -15,13 +15,13 @@ const AdminBreadcrumbs = ({
     <div className="mb-6 ml-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
       <nav>
         <ol className="flex items-center gap-2">
-          <li className="font-medium m-0 p-0">
+          <li className="m-0 p-0 font-medium">
             <Link href="/admin">Home /</Link>
           </li>
-          <li className="font-medium m-0 p-0">
+          <li className="m-0 p-0 font-medium">
             {parentPage && `${parentPage} / `}
             {subPage && `${subPage} / `}
-            <span className={subPage ? "text-primary" : ""}>{pageName}</span>
+            <span className="text-primary">{pageName}</span>
           </li>
         </ol>
       </nav>

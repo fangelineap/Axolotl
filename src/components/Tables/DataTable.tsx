@@ -49,11 +49,11 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
 
   const globalFilterFn: FilterFn<T> = (row, columnId, filterValue) => {
     const columnValue = row.getValue(columnId);
-    
+
     // Convert column value to string and search it case-insensitively
     const searchValue = String(columnValue).toLowerCase();
     const filterText = String(filterValue).toLowerCase();
-  
+
     return searchValue.includes(filterText);
   };
 
@@ -131,10 +131,18 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
         <div className="flex w-full items-center justify-between md:w-auto">
           {pathName === "/admin/manage/medicine" && (
             <button
-              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-ultraLight hover:text-primary"
+              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-ultraLight hover:text-primary font-medium"
               onClick={() => router.push(`${pathName}/add`)}
             >
               Add Medicine
+            </button>
+          )}
+          {pathName === "/admin/manage/user" && (
+            <button
+              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-ultraLight hover:text-primary font-medium"
+              onClick={() => router.push(`${pathName}/add`)}
+            >
+              Add User
             </button>
           )}
           <label className="mr-2">Items per page:</label>
