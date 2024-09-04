@@ -1,13 +1,11 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { Metadata } from "next";
 import React from "react";
 import ManageApprovalTable from "./table/ManageApprovalTable";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { getAdminApproval } from "./actions";
+import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 
-export const metadata: Metadata = {
-  title: "Axolotl - Admin Manage Approval",
-};
+export const metadata = getAdminMetadata("Manage Approval");
 
 async function AdminManageApproval() {
   const data = await getAdminApproval();

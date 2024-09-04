@@ -1,4 +1,4 @@
-export interface AdminMedicineTable {
+export type AdminMedicineTable = {
   uuid?: string;
   name: string;
   type: string;
