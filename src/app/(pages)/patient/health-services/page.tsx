@@ -5,13 +5,46 @@ import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-interface User {}
+type Caregiver = {
+  id: string;
+  profile_photo: string;
+  employment_type: string;
+  workplace: string;
+  work_experiences: number;
+  cv: string;
+  str: string;
+  sip: string;
+  degree_certificate: string;
+  status: string;
+  reviewed_at: Date;
+  created_at: Date;
+  updated_at: Date;
+  caregiver_id: string;
+  notes: string[];
+  rate: number;
+  user_id: string;
+};
 
-const page = ({ searchParams }: any) => {
+type User = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  address: string;
+  gender: string;
+  birthdate: Date;
+  created_at: Date;
+  updated_at: Date;
+  user_id: string;
+  role: string;
+  caregiver: Caregiver[];
+};
+
+const Page = ({ searchParams }: any) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
-  const [caregiver, setCaregiver] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
+  const [caregiver, setCaregiver] = useState<User[]>([]);
+  const [filtered, setFiltered] = useState<User[]>([]);
   const [profilePhoto, setProfilePhoto] = useState<any[]>([]);
   const [rating, setRating] = useState<number[]>([]);
 
@@ -26,6 +59,7 @@ const page = ({ searchParams }: any) => {
       .getPublicUrl(profile_photo);
 
     if (data) {
+      console.log("profile photo", data);
       setProfilePhoto((prev) => [...prev, data.publicUrl]);
     }
   };
@@ -33,18 +67,31 @@ const page = ({ searchParams }: any) => {
   const getUser = async () => {
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      },
     );
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("users")
       .select("*, caregiver(*)")
       .eq("role", searchParams.caregiver);
     if (data) {
-      data.forEach((user) => {
-        getProfilePhoto(user.caregiver[0].profile_photo);
+      console.log("users", data[0].caregiver[0].profile_photo);
+      data.forEach((user: User) => {
+        try {
+          console.log("user", user.caregiver[0]?.profile_photo);
+          getProfilePhoto(user.caregiver[0]?.profile_photo);
+        } catch (error) {
+          console.log("error while fetching profile photo", error);
+        }
       });
       setCaregiver(data);
+      setFiltered(data);
     }
   };
 
@@ -55,12 +102,35 @@ const page = ({ searchParams }: any) => {
   }, [searchParams.caregiver]);
 
   useEffect(() => {
-    if(rating.length > 0) {
-      rating.forEach(rate => {
-        
+    if(rating.length === 0) {
+      setFiltered(caregiver);
+    }
+
+    if (rating.length > 0) {
+      setFiltered([]);
+      rating.forEach((rate) => {
+        caregiver.forEach(cg => {
+          if(cg.caregiver[0].rate >= rate && cg.caregiver[0].rate <= rate + 1) {
+            const index = filtered.indexOf(cg);
+
+            console.log('index', index)
+
+            if(index == -1) {
+              setFiltered(prev => [...prev, cg]);
+              // filtered.splice(index, 1);
+            }
+            else {
+              console.log('should be spliced')
+            }
+          }
+        });
       });
     }
-  }, [rating])
+  }, [rating]);
+
+  console.log('rating', rating)
+  console.log('filtered', filtered)
+
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center justify-center">
@@ -110,6 +180,8 @@ const page = ({ searchParams }: any) => {
           </div>
           <div className="flex justify-end md:relative">
             <Image
+              width={200}
+              height={200}
               className="w-200 h-56 rounded-br-md md:absolute md:bottom-0 md:right-0"
               src="/images/freepik/patient-health-services.svg"
               alt=""
@@ -136,6 +208,8 @@ const page = ({ searchParams }: any) => {
                 >
                   <div className="flex items-center justify-start gap-7">
                     <Image
+                      width={30}
+                      height={30}
                       src={`${location === "Malang" ? "/images/icon/icon-done.svg" : "/images/icon/icon-done-not-filled.svg"}`}
                       className={`rounded-full border ${location === "Malang" ? "bg-kalbe-veryLight" : "bg-white"}`}
                       alt="Checked Logo"
@@ -157,6 +231,8 @@ const page = ({ searchParams }: any) => {
                 >
                   <div className="flex items-center justify-start gap-7">
                     <Image
+                      width={30}
+                      height={30}
                       src={`${location === "Bali" ? "/images/icon/icon-done.svg" : "/images/icon/icon-done-not-filled.svg"}`}
                       className={`rounded-full border ${location === "Bali" ? "bg-kalbe-veryLight" : "bg-white"}`}
                       alt="Checked Logo"
@@ -196,8 +272,8 @@ const page = ({ searchParams }: any) => {
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 4));
 
-                          if(rating) {
-                            console.log('rating', rating)
+                          if (rating) {
+                            console.log("rating", rating);
                           }
                         }
                       }}
@@ -246,8 +322,8 @@ const page = ({ searchParams }: any) => {
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 3));
 
-                          if(rating) {
-                            console.log('rating', rating)
+                          if (rating) {
+                            console.log("rating", rating);
                           }
                         }
                       }}
@@ -296,8 +372,8 @@ const page = ({ searchParams }: any) => {
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 2));
 
-                          if(rating) {
-                            console.log('rating', rating)
+                          if (rating) {
+                            console.log("rating", rating);
                           }
                         }
                       }}
@@ -346,8 +422,8 @@ const page = ({ searchParams }: any) => {
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 1));
 
-                          if(rating) {
-                            console.log('rating', rating)
+                          if (rating) {
+                            console.log("rating", rating);
                           }
                         }
                       }}
@@ -386,7 +462,10 @@ const page = ({ searchParams }: any) => {
             <h1 className="p-3 text-lg font-semibold">Choose Your Caregiver</h1>
             <div className="p-3">
               {caregiver?.map((cg, index) => (
-                <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
+                <div
+                  key={index}
+                  className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3"
+                >
                   <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
                     <Image
                       src={profilePhoto![index]}
@@ -409,7 +488,7 @@ const page = ({ searchParams }: any) => {
                             alt="Building Logo"
                           />
                           <h1 className="text-sm text-dark-secondary">
-                            {cg.caregiver[0].workplace}
+                            {cg.caregiver[0]?.workplace}
                           </h1>
                         </div>
                         <div className="flex gap-4">
@@ -421,7 +500,7 @@ const page = ({ searchParams }: any) => {
                               alt="Briefcase Logo"
                             />
                             <h1 className="text-sm text-dark-secondary">
-                              {cg.caregiver[0].work_experiences + " years"}
+                              {cg.caregiver[0]?.work_experiences + " years"}
                             </h1>
                           </div>
                           <div className="flex items-center gap-2">
@@ -432,7 +511,7 @@ const page = ({ searchParams }: any) => {
                               alt="Star Logo"
                             />
                             <h1 className="text-sm text-dark-secondary">
-                              {cg.caregiver[0].rate}
+                              {cg.caregiver[0]?.rate}
                             </h1>
                           </div>
                         </div>
@@ -447,177 +526,6 @@ const page = ({ searchParams }: any) => {
                   </div>
                 </div>
               ))}
-              {/* <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
-                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <Image
-                    src="/images/user/caregiver.png"
-                    height={100}
-                    width={100}
-                    className="rounded-full"
-                    alt=""
-                  />
-                  <div className="flex w-full items-center gap-5">
-                    <div className="w-[70%]">
-                      <h1 className="mb-2 font-semibold">
-                        Strawberry Shortcake, A.Md.Kep.
-                      </h1>
-                      <div className="mb-2 flex gap-2">
-                        <Image
-                          src="/images/logo/building.svg"
-                          height={20}
-                          width={20}
-                          alt="Building Logo"
-                        />
-                        <h1 className="text-sm text-dark-secondary">
-                          RS Axolotl Malang, Malang City, East Java
-                        </h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <div className="flex gap-2">
-                          <Image
-                            src="/images/logo/briefcase.svg"
-                            height={20}
-                            width={20}
-                            alt="Briefcase Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">
-                            10 years
-                          </h1>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Image
-                            src="/images/logo/star.svg"
-                            height={20}
-                            width={20}
-                            alt="Star Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">4.5</h1>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="h-25 w-[0.5px] bg-primary"></div>
-                    <div className="flex w-[30%] justify-end">
-                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
-                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <Image
-                    src="/images/user/caregiver.png"
-                    height={100}
-                    width={100}
-                    className="rounded-full"
-                    alt=""
-                  />
-                  <div className="flex w-full items-center gap-5">
-                    <div className="w-[70%]">
-                      <h1 className="mb-2 font-semibold">
-                        Strawberry Shortcake, A.Md.Kep.
-                      </h1>
-                      <div className="mb-2 flex gap-2">
-                        <Image
-                          src="/images/logo/building.svg"
-                          height={20}
-                          width={20}
-                          alt="Building Logo"
-                        />
-                        <h1 className="text-sm text-dark-secondary">
-                          RS Axolotl Malang, Malang City, East Java
-                        </h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <div className="flex gap-2">
-                          <Image
-                            src="/images/logo/briefcase.svg"
-                            height={20}
-                            width={20}
-                            alt="Briefcase Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">
-                            10 years
-                          </h1>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Image
-                            src="/images/logo/star.svg"
-                            height={20}
-                            width={20}
-                            alt="Star Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">4.5</h1>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="h-25 w-[0.5px] bg-primary"></div>
-                    <div className="flex w-[30%] justify-end">
-                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3">
-                <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                  <Image
-                    src="/images/user/caregiver.png"
-                    height={100}
-                    width={100}
-                    className="rounded-full"
-                    alt=""
-                  />
-                  <div className="flex w-full items-center gap-5">
-                    <div className="w-[70%]">
-                      <h1 className="mb-2 font-semibold">
-                        Strawberry Shortcake, A.Md.Kep.
-                      </h1>
-                      <div className="mb-2 flex gap-2">
-                        <Image
-                          src="/images/logo/building.svg"
-                          height={20}
-                          width={20}
-                          alt="Building Logo"
-                        />
-                        <h1 className="text-sm text-dark-secondary">
-                          RS Axolotl Malang, Malang City, East Java
-                        </h1>
-                      </div>
-                      <div className="flex gap-4">
-                        <div className="flex gap-2">
-                          <Image
-                            src="/images/logo/briefcase.svg"
-                            height={20}
-                            width={20}
-                            alt="Briefcase Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">
-                            10 years
-                          </h1>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Image
-                            src="/images/logo/star.svg"
-                            height={20}
-                            width={20}
-                            alt="Star Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">4.5</h1>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="h-25 w-[0.5px] bg-primary"></div>
-                    <div className="flex w-[30%] justify-end">
-                      <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </div>
             <div className="flex justify-between p-3">
               <p>Showing 1 to 4 of 16 entries</p>
@@ -720,4 +628,4 @@ const page = ({ searchParams }: any) => {
   );
 };
 
-export default page;
+export default Page;

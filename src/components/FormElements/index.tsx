@@ -88,7 +88,7 @@ const FormElements = () => {
               </h3>
             </div>
             <div className="flex flex-col gap-5.5 p-6.5">
-              <DatePickerOne />
+              <DatePickerOne label="Date" name="date" />
               <DatePickerTwo />
             </div>
           </div>
@@ -193,7 +193,7 @@ const FormElements = () => {
               </h3>
             </div>
             <div className="flex flex-col gap-5.5 p-6.5">
-              <SelectGroupTwo />
+              <SelectGroupTwo content={["Option 1", "Option 2", "Option 3"]} label="Select" name="selectgrouptwo" required={true} />
               <MultiSelect id="multiSelect" />
             </div>
           </div>
