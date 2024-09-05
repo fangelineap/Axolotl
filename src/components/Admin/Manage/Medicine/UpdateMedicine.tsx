@@ -280,7 +280,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                     <Image
                       src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(medicine.medicine_photo ?? "")}`}
                       alt="Medicine Photo"
-                      className="max-w-[80%] rounded-xl border border-primary"
+                      className="max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain"
                       width={200}
                       height={200}
                       layout="responsive"
@@ -289,7 +289,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                     <Image
                       src={URL.createObjectURL(medicinePhoto)}
                       alt="Medicine Photo"
-                      className="w-[90%] rounded-xl border border-primary"
+                      className="max-h-[25%] max-w-[90%] rounded-xl border border-primary object-contain"
                       width={200}
                       height={200}
                     />

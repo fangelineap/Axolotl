@@ -53,14 +53,14 @@ export const columns = [
             </div>
           ) : role === "Midwife" ? (
             <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-red-light px-3 py-1">
-                <p className="font-bold text-red">{role}</p>
+              <div className="rounded-3xl bg-blue-light px-3 py-1">
+                <p className="font-bold text-blue">{role}</p>
               </div>
             </div>
           ) : role === "Admin" ? (
             <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-blue-light px-3 py-1">
-                <p className="font-bold text-blue">{role}</p>
+              <div className="rounded-3xl bg-red-light px-3 py-1">
+                <p className="font-bold text-red">{role}</p>
               </div>
             </div>
           ) : (

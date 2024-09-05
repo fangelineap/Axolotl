@@ -26,7 +26,7 @@ export async function getAdminApproval() {
         const { data: user, error: userError } = await supabase
           .from("users")
           .select("*")
-          .eq("user_id", caregiver.caregiver_id)
+          .eq("id", caregiver.caregiver_id)
           .single();
 
         if (userError) {
@@ -98,7 +98,7 @@ export async function getAdminApprovalById(caregiver_id: string) {
     const { data: user, error: userError } = await supabase
       .from("users")
       .select("*")
-      .eq("user_id", caregivers.caregiver_id)
+      .eq("id", caregivers.caregiver_id)
       .single();
 
     if (userError) {

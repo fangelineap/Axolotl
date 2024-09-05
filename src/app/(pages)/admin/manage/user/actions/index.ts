@@ -12,12 +12,14 @@ export async function getAllUsers() {
   try {
     const { data, error } = await supabase.from("users").select("*");
 
+    const filterData = data?.filter((user: AdminUserTable) => user.user_id !== null);
+
     if (error) {
       console.error("Error fetching data:", error.message);
       return [];
     }
 
-    return data as AdminUserTable[];
+    return filterData as AdminUserTable[];
   } catch (error) {
     console.error("An unexpected error occurred:", error);
     return [];

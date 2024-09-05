@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
@@ -7,14 +6,13 @@ import PriceBox from "@/components/Axolotl/PriceBox";
 import { IconBan } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 
 interface ViewMedicineProps {
   medicine: AdminMedicineTable;
 }
 
 function ViewMedicine(data: ViewMedicineProps) {
-  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const formatDate = new Intl.DateTimeFormat("en-US", {
@@ -29,23 +27,23 @@ function ViewMedicine(data: ViewMedicineProps) {
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
       {/* Container */}
-      <div className="flex flex-col justify-between lg:flex-row">
+      <div className="flex flex-col justify-between gap-2 lg:flex-row lg:gap-0">
         {/* Left Side */}
         <div className="w-[100%] lg:mr-11 lg:w-[65%]">
           <div className="mb-4 flex flex-col gap-2">
             <h1 className="text-lg font-semibold">Product Photo</h1>
             {data.medicine.medicine_photo ? (
               <div
-                className={`flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${data.medicine.medicine_photo ? "bg-white" : "bg-kalbe-ultraLight"}`}
+                className={`flex h-auto min-h-65 w-full appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${data.medicine.medicine_photo ? "bg-white" : "bg-kalbe-ultraLight"}`}
               >
                 <Image
                   src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(data.medicine.medicine_photo)}`}
                   alt="Medicine Photo"
-                  className="max-w-[80%] rounded-xl border border-primary"
+                  className="max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain"
                   width={200}
                   height={200}
                   layout="responsive"
-                  onLoadingComplete={() => setLoading(false)}
+                  priority
                 />
               </div>
             ) : (

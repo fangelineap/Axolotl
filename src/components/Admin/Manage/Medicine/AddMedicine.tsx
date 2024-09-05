@@ -268,7 +268,7 @@ function AddMedicine() {
                   <Image
                     src={URL.createObjectURL(medicinePhoto as Blob)}
                     alt="Medicine Photo"
-                    className="w-[90%] rounded-xl border border-primary"
+                    className="max-h-[25%] max-w-[90%] rounded-xl border border-primary object-contain"
                     width={200}
                     height={200}
                   />
