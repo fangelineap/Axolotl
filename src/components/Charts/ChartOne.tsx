@@ -86,7 +86,7 @@ const ChartOne: React.FC = () => {
       },
       y: {
         title: {
-          formatter: function (e) {
+          formatter: function (_e) {
             return "";
           },
         },

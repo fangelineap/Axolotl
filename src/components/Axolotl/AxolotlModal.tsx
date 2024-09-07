@@ -1,4 +1,3 @@
-import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
 import { Modal } from "@mui/material";
@@ -18,7 +17,6 @@ interface AxolotlModalProps {
   question: string;
   action?: "delete" | "reject" | "confirm" | "skip" | "approve";
   medicine?: AdminMedicineTable | null;
-  approval?: AdminApprovalTable | null;
   user?: AdminUserTable | null;
 }
 
@@ -30,11 +28,8 @@ function AxolotlModal({
   question,
   action,
   medicine,
-  approval,
   user,
 }: AxolotlModalProps) {
-  const cg_full_name =
-    approval?.user.first_name + " " + approval?.user.last_name;
   const user_full_name = user?.first_name + " " + user?.last_name;
 
   return (
@@ -64,17 +59,6 @@ function AxolotlModal({
                     stroke={1}
                   />
                   <p className="text-dark-secondary">{medicine.type}</p>
-                </div>
-              </div>
-            )}
-            {approval && (
-              <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-medium text-black">
-                  {cg_full_name}
-                </h3>
-                <div className="flex gap-2">
-                  <IconUserCircle className="text-dark-secondary" stroke={1} />
-                  <p className="text-dark-secondary">{approval.user.role}</p>
                 </div>
               </div>
             )}

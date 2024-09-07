@@ -135,7 +135,6 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         title="Confirmation"
         question={`Are you sure you want to ${action} this caregiver?`}
         action={action}
-        approval={caregiver}
       />
 
       <AxolotlRejectionModal

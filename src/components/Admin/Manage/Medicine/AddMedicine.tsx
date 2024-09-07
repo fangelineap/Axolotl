@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { uuidv7 } from "uuidv7";
+import "react-toastify/dist/ReactToastify.css";
 
 function AddMedicine() {
   const router = useRouter();

@@ -10,39 +10,19 @@ export async function getAdminApproval() {
   const supabase = await createSupabaseServerClient();
 
   try {
-    // Fetch caregivers data
-    const { data: caregivers, error: caregiverError } = await supabase
+    const { data: caregivers, error } = await supabase
       .from("caregiver")
-      .select("*");
+      .select("*, users(*)");
 
-    if (caregiverError) {
-      console.error("Error fetching caregivers data:", caregiverError.message);
+    if (error) {
+      console.error("Error fetching caregivers data:", error.message);
       return [];
     }
 
-    // Fetch corresponding user data for each caregiver_id
-    const detailedData = await Promise.all(
-      caregivers.map(async (caregiver: AdminApprovalTable) => {
-        const { data: user, error: userError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", caregiver.caregiver_id)
-          .single();
+    // Directly cast caregivers to the expected AdminApprovalTable[] type
+    const userWithCaregiver: AdminApprovalTable[] = caregivers ?? [];
 
-        if (userError) {
-          console.error(
-            `Error fetching user data for caregiver_id ${caregiver.caregiver_id}:`,
-            userError.message,
-          );
-          return { ...caregiver, user: null };
-        }
-
-        // Combine caregiver data with user data
-        return { ...caregiver, user };
-      }),
-    );
-
-    return detailedData as AdminApprovalTable[];
+    return userWithCaregiver;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
     return [];

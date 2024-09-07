@@ -9,6 +9,7 @@ import AxolotlModal from "@/components/Axolotl/AxolotlModal";
 import { deleteAdminMedicine } from "../actions";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ManageMedicineTableProps {
   initialData: AdminMedicineTable[];
