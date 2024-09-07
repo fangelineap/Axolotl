@@ -28,6 +28,7 @@ export type CAREGIVER = {
   updated_at: Date;
   caregiver_id: string;
   notes?: string;
+  rate?: number;
 };
 
 export type PATIENT = {

@@ -5,11 +5,11 @@ import { AdminApprovalTable } from "../table/data";
 import { getAdminApprovalById, getAdminCaregiverDataById } from "../actions";
 import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
 
-interface ApprovalPageProps {
+interface AdminShowApprovalProps {
   params: { userId: string };
 }
 
-async function fetchData({ params }: ApprovalPageProps) {
+async function fetchData({ params }: AdminShowApprovalProps) {
   const response = await getAdminCaregiverDataById(Number(params.userId));
   return response as AdminApprovalTable;
 }
@@ -19,7 +19,7 @@ async function fetchCaregiverDetails(caregiver_id: string) {
   return response as AdminApprovalTable;
 }
 
-export async function generateMetadata({ params }: ApprovalPageProps) {
+export async function generateMetadata({ params }: AdminShowApprovalProps) {
   const rawData = await fetchData({ params });
   const response = await fetchCaregiverDetails(rawData.caregiver_id);
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: ApprovalPageProps) {
   };
 }
 
-async function AdminShowMedicine({ params }: ApprovalPageProps) {
+async function AdminShowApproval({ params }: AdminShowApprovalProps) {
   const rawData = await fetchData({ params });
   const response = await fetchCaregiverDetails(rawData.caregiver_id);
 
@@ -62,4 +62,4 @@ async function AdminShowMedicine({ params }: ApprovalPageProps) {
   );
 }
 
-export default AdminShowMedicine;
+export default AdminShowApproval;

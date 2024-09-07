@@ -21,7 +21,7 @@ async function getUserData(caregiver_id: string) {
 }
 
 async function ViewApproval({ caregiver }: ViewApprovalProps) {
-  const cg_user_data = await getUserData(caregiver.caregiver_id);
+  const cg_user_data = await getUserData(caregiver.user.user_id);
 
   const cg_full_name =
     caregiver.user.first_name + " " + caregiver.user.last_name;
@@ -85,8 +85,8 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                     </p>
                   </div>
                 ) : (
-                  <div className="rounded-md border border-red bg-red-light p-2">
-                    <p className="font-bold text-red">{caregiver.user.role}</p>
+                  <div className="rounded-md border border-blue bg-blue-light p-2">
+                    <p className="font-bold text-blue">{caregiver.user.role}</p>
                   </div>
                 )}
               </div>

@@ -15,9 +15,12 @@ const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
 export const columns = [
   columnHelper.accessor("caregiver_id", {
     cell: (info) => {
-      const uuid = info.getValue()?.toString();
-      const truncatedUuid = uuid ? `${uuid.slice(0, 16)}...` : "";
-      return truncatedUuid;
+      const user_id = info.getValue()?.toString();
+      return (
+        <div className="flex items-center justify-center text-center">
+          <p>{user_id}</p>
+        </div>
+      )
     },
     id: "User ID",
     header: "User ID",
@@ -64,7 +67,7 @@ export const columns = [
       const role = info.getValue();
 
       return (
-        <div className="grid gap-5">
+        <div>
           {role === "Nurse" ? (
             <div className="flex items-center justify-center">
               <div className="rounded-3xl bg-yellow-light px-3 py-1">
@@ -73,8 +76,8 @@ export const columns = [
             </div>
           ) : (
             <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-red-light px-3 py-1">
-                <p className="font-bold text-red">{role}</p>
+              <div className="rounded-3xl bg-blue-light px-3 py-1">
+                <p className="font-bold text-blue">{role}</p>
               </div>
             </div>
           )}
@@ -92,10 +95,10 @@ export const columns = [
       const type = info.getValue();
 
       return (
-        <div className="grid gap-5">
+        <div>
           {type === "Verified" ? (
             <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-green-light-4 px-3 py-1">
+              <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
                 <p className="font-bold text-primary">{type}</p>
               </div>
             </div>
