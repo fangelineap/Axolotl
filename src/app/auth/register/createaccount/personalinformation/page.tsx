@@ -101,33 +101,41 @@ const PersonalInformation = ({ searchParams }: any) => {
       const pathStr = await uploadToStorage("str", str);
 
       if (pathProfile && pathCv && pathCertificate && pathSip && pathStr) {
-        const { data: insertData, error: insertError } = await supabase
-          .from("caregiver")
-          .insert({
-            profile_photo: pathProfile,
-            employment_type: form.get("employmentType"),
-            workplace: form.get("workplace"),
-            work_experiences: form.get("workExperiences"),
-            status: "Unverified",
-            caregiver_id: sessionData.session?.user.id,
-            cv: pathCv,
-            degree_certificate: pathCertificate,
-            sip: pathSip,
-            str: pathStr,
-          });
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select()
+          .eq("user_id", sessionData.session?.user.id);
 
-        if (insertError) {
+          console.log('user data', userData);
+        if (userData) {
+          const { data: insertData, error: insertError } = await supabase
+            .from("caregiver")
+            .insert({
+              profile_photo: pathProfile,
+              employment_type: form.get("employmentType"),
+              workplace: form.get("workplace"),
+              work_experiences: form.get("workExperiences"),
+              status: "Unverified",
+              user_id: userData[0].id,
+              cv: pathCv,
+              degree_certificate: pathCertificate,
+              sip: pathSip,
+              str: pathStr,
+            });
+
+          if (insertError) {
+            setLoading(false);
+            toast.error("An error occured while uploading your data", {
+              position: "bottom-right",
+            });
+            return;
+          }
+
           setLoading(false);
-          toast.error("An error occured while uploading your data", {
-            position: "bottom-right",
-          });
-          return;
+          router.push(
+            `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`,
+          );
         }
-
-        setLoading(false);
-        router.push(
-          `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`,
-        );
       }
     } else if (searchParams.role == "Patient") {
       // form validation
@@ -137,26 +145,33 @@ const PersonalInformation = ({ searchParams }: any) => {
         return;
       }
 
-      const { data, error } = await supabase.from("patient").insert({
-        blood_type: blood,
-        height: form.get("height"),
-        weight: form.get("weight"),
-        is_smoking: form.get("isSmoking"),
-        allergies: form.get("allergies"),
-        current_medication: form.get("medication"),
-        med_freq_times: form.get("medicineQuantity"),
-        med_freq_day: form.get("medicineFrequency"),
-        illness_history: form.get("illnessHistory"),
-        patient_id: sessionData.session?.user.id,
-      });
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select()
+        .eq("user_id", sessionData.session?.user.id);
 
-      if (error) {
-        return;
+      if (userData) {
+        const { data, error } = await supabase.from("patient").insert({
+          blood_type: blood,
+          height: form.get("height"),
+          weight: form.get("weight"),
+          is_smoking: form.get("isSmoking"),
+          allergies: form.get("allergies"),
+          current_medication: form.get("medication"),
+          med_freq_times: form.get("medicineQuantity"),
+          med_freq_day: form.get("medicineFrequency"),
+          illness_history: form.get("illnessHistory"),
+          user_id: userData[0].id,
+        });
+
+        if (error) {
+          return;
+        }
+
+        console.log("created");
+        setLoading(false);
+        setFinished(true);
       }
-
-      console.log("created");
-      setLoading(false);
-      setFinished(true);
     }
   };
 
@@ -551,7 +566,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                           </label>
                           <div className="flex w-full items-center">
                             <input
-                              className="w-full rounded-l-[7px] border-[1.5px] border-stroke bg-transparent py-2 px-3 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                              className="w-full rounded-l-[7px] border-[1.5px] border-stroke bg-transparent px-3 py-2 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                               type="number"
                               name="workExperiences"
                               id="workExperiences"

@@ -19,7 +19,6 @@ type Caregiver = {
   reviewed_at: Date;
   created_at: Date;
   updated_at: Date;
-  caregiver_id: string;
   notes: string[];
   rate: number;
   user_id: string;
@@ -47,6 +46,13 @@ const Page = ({ searchParams }: any) => {
   const [filtered, setFiltered] = useState<User[]>([]);
   const [profilePhoto, setProfilePhoto] = useState<any[]>([]);
   const [rating, setRating] = useState<number[]>([]);
+  const [pagination, setPagination] = useState({
+    pageIndex: 1,
+    pageSize:
+      filtered.length > 0
+        ? Math.ceil(filtered.length / 5)
+        : Math.ceil(caregiver.length / 5),
+  });
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -59,77 +65,80 @@ const Page = ({ searchParams }: any) => {
       .getPublicUrl(profile_photo);
 
     if (data) {
-      console.log("profile photo", data);
       setProfilePhoto((prev) => [...prev, data.publicUrl]);
     }
   };
 
-  const getUser = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      },
-    );
-
-    const { data } = await supabase
-      .from("users")
-      .select("*, caregiver(*)")
-      .eq("role", searchParams.caregiver);
-    if (data) {
-      console.log("users", data[0].caregiver[0].profile_photo);
-      data.forEach((user: User) => {
-        try {
-          console.log("user", user.caregiver[0]?.profile_photo);
-          getProfilePhoto(user.caregiver[0]?.profile_photo);
-        } catch (error) {
-          console.log("error while fetching profile photo", error);
-        }
-      });
-      setCaregiver(data);
-      setFiltered(data);
-    }
-  };
-
   useEffect(() => {
+    const getUser = async () => {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!,
+        {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false,
+          },
+        },
+      );
+
+      const { data } = await supabase
+        .from("users")
+        .select("*, caregiver(*)")
+        .eq("role", searchParams.caregiver);
+      if (data) {
+        data.forEach((user: User) => {
+          try {
+            getProfilePhoto(user.caregiver[0]?.profile_photo);
+          } catch (error) {}
+        });
+        setCaregiver(data);
+        setPagination((prev) => ({
+          ...prev,
+          pageSize: Math.ceil(data.length / 5),
+        }));
+      }
+    };
+
     if (searchParams.caregiver) {
       getUser();
     }
   }, [searchParams.caregiver]);
 
   useEffect(() => {
-    if(rating.length === 0) {
-      setFiltered(caregiver);
-    }
-
+    let filteredCG: User[] = [];
     if (rating.length > 0) {
-      setFiltered([]);
       rating.forEach((rate) => {
-        caregiver.forEach(cg => {
-          if(cg.caregiver[0].rate >= rate && cg.caregiver[0].rate <= rate + 1) {
-            const index = filtered.indexOf(cg);
+        caregiver.forEach((cg) => {
+          if (
+            cg.caregiver[0].rate >= rate &&
+            cg.caregiver[0].rate <= rate + 1
+          ) {
+            const index = filteredCG.findIndex((f) => f.id == cg.id);
 
-            console.log('index', index)
-
-            if(index == -1) {
-              setFiltered(prev => [...prev, cg]);
+            if (index == -1) {
+              if (cg.address.includes(location)) {
+                filteredCG.push(cg);
+              }
               // filtered.splice(index, 1);
-            }
-            else {
-              console.log('should be spliced')
             }
           }
         });
       });
-    }
-  }, [rating]);
+    } else {
+      caregiver.forEach((cg) => {
+        const index = filteredCG.findIndex((f) => f.id == cg.id);
 
-  console.log('rating', rating)
-  console.log('filtered', filtered)
+        if (index == -1) {
+          if (cg.address.includes(location)) {
+            filteredCG.push(cg);
+          }
+        }
+      });
+    }
+
+    setFiltered(filteredCG);
+  }, [rating, location]);
 
   return (
     <DefaultLayout>
@@ -271,10 +280,6 @@ const Page = ({ searchParams }: any) => {
                           setRating((prev) => [...prev, 4]);
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 4));
-
-                          if (rating) {
-                            console.log("rating", rating);
-                          }
                         }
                       }}
                     />
@@ -321,10 +326,6 @@ const Page = ({ searchParams }: any) => {
                           setRating((prev) => [...prev, 3]);
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 3));
-
-                          if (rating) {
-                            console.log("rating", rating);
-                          }
                         }
                       }}
                     />
@@ -371,10 +372,6 @@ const Page = ({ searchParams }: any) => {
                           setRating((prev) => [...prev, 2]);
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 2));
-
-                          if (rating) {
-                            console.log("rating", rating);
-                          }
                         }
                       }}
                     />
@@ -421,10 +418,6 @@ const Page = ({ searchParams }: any) => {
                           setRating((prev) => [...prev, 1]);
                         } else {
                           setRating((prev) => prev.filter((i) => i !== 1));
-
-                          if (rating) {
-                            console.log("rating", rating);
-                          }
                         }
                       }}
                     />
@@ -460,81 +453,179 @@ const Page = ({ searchParams }: any) => {
           </div>
           <div className="lg:w-[65%]">
             <h1 className="p-3 text-lg font-semibold">Choose Your Caregiver</h1>
-            <div className="p-3">
-              {caregiver?.map((cg, index) => (
-                <div
-                  key={index}
-                  className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3"
-                >
-                  <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                    <Image
-                      src={profilePhoto![index]}
-                      height={100}
-                      width={100}
-                      className="h-[100px] w-[100px] rounded-full object-cover"
-                      alt="CG pfp"
-                    />
-                    <div className="flex w-full items-center gap-5">
-                      <div className="w-[70%]">
-                        <h1 className="mb-2 font-semibold">
-                          {cg.first_name + " " + cg.last_name}
-                          {/* Strawberry Shortcake, A.Md.Kep. */}
-                        </h1>
-                        <div className="mb-2 flex gap-2">
-                          <Image
-                            src="/images/logo/building.svg"
-                            height={20}
-                            width={20}
-                            alt="Building Logo"
-                          />
-                          <h1 className="text-sm text-dark-secondary">
-                            {cg.caregiver[0]?.workplace}
-                          </h1>
-                        </div>
-                        <div className="flex gap-4">
-                          <div className="flex gap-2">
-                            <Image
-                              src="/images/logo/briefcase.svg"
-                              height={20}
-                              width={20}
-                              alt="Briefcase Logo"
-                            />
-                            <h1 className="text-sm text-dark-secondary">
-                              {cg.caregiver[0]?.work_experiences + " years"}
+            <div className="px-3">
+              {rating.length > 0 || location ? (
+                filtered.length > 0 ? (
+                  filtered?.map((cg, index) => (
+                    <div
+                      key={index}
+                      className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3"
+                    >
+                      <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                        <Image
+                          src={profilePhoto![index]}
+                          height={100}
+                          width={100}
+                          className="h-[100px] w-[100px] rounded-full object-cover"
+                          alt="CG pfp"
+                        />
+                        <div className="flex w-full items-center gap-5">
+                          <div className="w-[70%]">
+                            <h1 className="mb-2 font-semibold">
+                              {cg.first_name + " " + cg.last_name}
+                              {/* Strawberry Shortcake, A.Md.Kep. */}
                             </h1>
+                            <div className="mb-2 flex gap-2">
+                              <Image
+                                src="/images/logo/building.svg"
+                                height={20}
+                                width={20}
+                                alt="Building Logo"
+                              />
+                              <h1 className="text-sm text-dark-secondary">
+                                {cg.caregiver[0]?.workplace}
+                              </h1>
+                            </div>
+                            <div className="flex gap-4">
+                              <div className="flex gap-2">
+                                <Image
+                                  src="/images/logo/briefcase.svg"
+                                  height={20}
+                                  width={20}
+                                  alt="Briefcase Logo"
+                                />
+                                <h1 className="text-sm text-dark-secondary">
+                                  {cg.caregiver[0]?.work_experiences + " years"}
+                                </h1>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Image
+                                  src="/images/logo/star.svg"
+                                  height={20}
+                                  width={20}
+                                  alt="Star Logo"
+                                />
+                                <h1 className="text-sm text-dark-secondary">
+                                  {cg.caregiver[0]?.rate}
+                                </h1>
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Image
-                              src="/images/logo/star.svg"
-                              height={20}
-                              width={20}
-                              alt="Star Logo"
-                            />
-                            <h1 className="text-sm text-dark-secondary">
-                              {cg.caregiver[0]?.rate}
-                            </h1>
+                          <div className="h-25 w-[0.5px] bg-primary"></div>
+                          <div className="flex w-[30%] justify-end">
+                            <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                              Book Now
+                            </button>
                           </div>
                         </div>
                       </div>
-                      <div className="h-25 w-[0.5px] bg-primary"></div>
-                      <div className="flex w-[30%] justify-end">
-                        <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
-                          Book Now
-                        </button>
+                    </div>
+                  ))
+                ) : (
+                  <div>There's no data</div>
+                )
+              ) : (
+                caregiver.map((cg, index) => (
+                  <div
+                    key={index}
+                    className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3"
+                  >
+                    <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
+                      <Image
+                        src={profilePhoto![index]}
+                        height={100}
+                        width={100}
+                        className="h-[100px] w-[100px] rounded-full object-cover"
+                        alt="CG pfp"
+                      />
+                      <div className="flex w-full items-center gap-5">
+                        <div className="w-[70%]">
+                          <h1 className="mb-2 font-semibold">
+                            {cg.first_name + " " + cg.last_name}
+                            {/* Strawberry Shortcake, A.Md.Kep. */}
+                          </h1>
+                          <div className="mb-2 flex gap-2">
+                            <Image
+                              src="/images/logo/building.svg"
+                              height={20}
+                              width={20}
+                              alt="Building Logo"
+                            />
+                            <h1 className="text-sm text-dark-secondary">
+                              {cg.caregiver[0]?.workplace}
+                            </h1>
+                          </div>
+                          <div className="flex gap-4">
+                            <div className="flex gap-2">
+                              <Image
+                                src="/images/logo/briefcase.svg"
+                                height={20}
+                                width={20}
+                                alt="Briefcase Logo"
+                              />
+                              <h1 className="text-sm text-dark-secondary">
+                                {cg.caregiver[0]?.work_experiences + " years"}
+                              </h1>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src="/images/logo/star.svg"
+                                height={20}
+                                width={20}
+                                alt="Star Logo"
+                              />
+                              <h1 className="text-sm text-dark-secondary">
+                                {cg.caregiver[0]?.rate}
+                              </h1>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="h-25 w-[0.5px] bg-primary"></div>
+                        <div className="flex w-[30%] justify-end">
+                          <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                            Book Now
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div className="flex justify-between p-3">
-              <p>Showing 1 to 4 of 16 entries</p>
+              <p>
+                Showing {(pagination.pageIndex - 1) * 5 + 1} to{" "}
+                {filtered.length > 0
+                  ? `
+    ${
+      filtered.length > 5 ? (pagination.pageIndex - 1) * 5 + 5 : filtered.length
+    }
+  of ${filtered.length} entries
+    `
+                  : `
+    ${
+      caregiver.length > 5
+        ? (pagination.pageIndex - 1) * 5 + 5
+        : caregiver.length
+    }
+  of ${caregiver.length} entries
+    `}
+              </p>
               <nav aria-label="Page navigation example">
                 <ul className="flex h-8 items-center -space-x-px text-sm">
                   <li>
                     <a
-                      href="#"
-                      className="ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                      onClick={() => {
+                        if (pagination.pageIndex - 1 > 0) {
+                          setPagination({
+                            ...pagination,
+                            pageIndex: pagination.pageIndex - 1,
+                          });
+                        }
+                      }}
+                      className={`${pagination.pageIndex === 1 && "disabled"} ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3 leading-tight
+                       text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400
+                        dark:hover:bg-gray-700 dark:hover:text-white`}
                     >
                       <span className="sr-only">Previous</span>
                       <svg
@@ -554,51 +645,84 @@ const Page = ({ searchParams }: any) => {
                       </svg>
                     </a>
                   </li>
-                  <li>
+                  {pagination.pageIndex > 3 ? (
+                    <>
+                      {[...Array(2)].map((_, index) => (
+                        <li>
+                          <a
+                            onClick={() => {
+                              if (index + 1 < pagination.pageSize) {
+                                setPagination((prev) => ({
+                                  ...prev,
+                                  pageIndex: index + 1,
+                                }));
+                              }
+                            }}
+                            className={`${pagination.pageIndex === index ? "bg-kalbe-light px-3 text-white" : "bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"} flex h-8 items-center justify-center border border-gray-300`}
+                          >
+                            {index + 1}
+                          </a>
+                        </li>
+                      ))}
+                      <li>
+                        <a
+                          className={`disabled flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+                        >
+                          ...
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          className={`flex h-8 items-center justify-center border border-gray-300 bg-kalbe-light px-3 leading-tight text-white hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+                        >
+                          {pagination.pageIndex}
+                        </a>
+                      </li>
+                    </>
+                  ) : (
+                    [...Array(3)].map((_, index) => (
+                      <li>
+                        <a
+                          onClick={() => {
+                            if (index + 1 < pagination.pageSize) {
+                              setPagination((prev) => ({
+                                ...prev,
+                                pageIndex: index + 1,
+                              }));
+                            }
+                          }}
+                          className={`${pagination.pageIndex === index + 1 ? "bg-kalbe-light px-3 text-white" : "bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"} flex h-8 items-center justify-center border border-gray-300`}
+                        >
+                          {index + 1}
+                        </a>
+                      </li>
+                    ))
+                  )}
+                  {/* <li>
                     <a
                       href="#"
                       className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                     >
                       1
                     </a>
-                  </li>
+                  </li> */}
                   <li>
                     <a
-                      href="#"
-                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    >
-                      2
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      aria-current="page"
-                      className="z-10 flex h-8 items-center justify-center border border-primary bg-kalbe-proLight px-3 leading-tight text-primary hover:bg-kalbe-ultraLight hover:text-primary dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                    >
-                      3
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    >
-                      4
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    >
-                      5
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                      onClick={() => {
+                        if (pagination.pageIndex + 1 > pagination.pageSize) {
+                          return;
+                        }
+                        setPagination((prev) => ({
+                          ...prev,
+                          pageIndex: pagination.pageIndex + 1,
+                        }));
+                      }}
+                      className={`${
+                        pagination.pageIndex + 1 > pagination.pageSize
+                          ? "disabled"
+                          : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white"
+                      }
+                        flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400`}
                     >
                       <span className="sr-only">Next</span>
                       <svg

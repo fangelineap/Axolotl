@@ -22,19 +22,23 @@ const Review = ({ searchParams }: any) => {
 
     const {data: session, error: sessionError} = await supabase.auth.getSession();
 
-    const { data, error } = await supabase
-      .from("caregiver")
-      .select("*")
-      .eq("caregiver_id", session.session?.user.id)
-      .limit(1);
+    const {data: userData, error: userError} = await supabase.from('users').select().eq('user_id', session.session?.user.id).limit(1);
 
-    if (error) {
-      console.log("error ", error);
-    }
-    if (data) {
-      console.log(data);
-      setStatus(data[0].status);
-      setNotes(data[0].notes);
+    if(userData) {
+      const { data, error } = await supabase
+        .from("caregiver")
+        .select("*")
+        .eq("user_id", userData[0].id)
+        .limit(1);
+  
+      if (error) {
+        console.log("error ", error);
+      }
+      if (data) {
+        console.log(data);
+        setStatus(data[0].status);
+        setNotes(data[0].notes);
+      }
     }
   };
 
