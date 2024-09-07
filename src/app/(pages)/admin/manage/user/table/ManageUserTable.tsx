@@ -7,7 +7,6 @@ import { columns } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/AxolotlModal";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 // import { useRouter } from "next/navigation";
 
 interface ManageUserTableProps {

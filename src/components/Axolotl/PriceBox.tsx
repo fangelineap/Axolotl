@@ -17,6 +17,16 @@ const PriceBox = ({
   name,
   required,
 }: PriceBoxProps) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    if (!isNaN(Number(value)) || value === "") {
+      if (onChange) {
+        onChange(e);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-lg font-semibold">
@@ -34,8 +44,9 @@ const PriceBox = ({
           type="text"
           placeholder={placeholder}
           value={value === 0 ? "" : value?.toString()}
-          onChange={onChange}
+          onChange={handleInputChange}
           disabled={disabled}
+          maxLength={8}
           className={`w-full rounded-r-md border border-gray-1 bg-white px-2 py-2 font-normal text-dark outline-none transition ${
             disabled
               ? "disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary"

@@ -8,7 +8,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/AxolotlModal";
 import { deleteAdminMedicine } from "../actions";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 
 interface ManageMedicineTableProps {

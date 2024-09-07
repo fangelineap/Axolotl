@@ -8,7 +8,6 @@ import { toast, ToastContainer } from "react-toastify";
 import AxolotlModal from "./AxolotlModal";
 import AxolotlRejectionModal from "./AxolotlRejectionModal";
 import { approveCaregiver, rejectCaregiver } from "@/app/(pages)/admin/manage/approval/actions";
-import "react-toastify/dist/ReactToastify.css";
 
 interface ApprovalButtonsProps {
   status: string;
@@ -69,7 +68,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       );
 
       if (error !== null && error !== undefined) {
-        toast.error("Something went wrong." + error, {
+        toast.error("Failed to perform the action. Please try again.", {
           position: "bottom-right",
         });
         return;

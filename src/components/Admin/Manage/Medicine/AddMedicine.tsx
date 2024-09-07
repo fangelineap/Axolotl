@@ -13,7 +13,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { uuidv7 } from "uuidv7";
 
 function AddMedicine() {
@@ -47,6 +46,18 @@ function AddMedicine() {
   };
 
   const validateForm = (form: FormData) => {
+    if (
+      !medicinePhoto &&
+      !form.get("name") &&
+      !form.get("type") &&
+      !form.get("price") &&
+      !form.get("exp_date")
+    ) {
+      toast.error("Please insert a valid data.", {
+        position: "bottom-right",
+      });
+      return false;
+    }
     if (!medicinePhoto) {
       toast.warning("Please upload a photo.", {
         position: "bottom-right",
@@ -65,6 +76,18 @@ function AddMedicine() {
       });
       return false;
     }
+    if (!form.get("exp_date")) {
+      toast.warning("Please select the expiry date.", {
+        position: "bottom-right",
+      });
+      return false;
+    }
+    if (new Date(form.get("exp_date")?.toString() || "") <= new Date()) {
+      toast.warning("The expiry date cannot be in the past or today.", {
+        position: "bottom-right",
+      });
+      return false;
+    }
     if (
       !form.get("price") ||
       isNaN(parseFloat(form.get("price")?.toString() || "0"))
@@ -74,15 +97,16 @@ function AddMedicine() {
       });
       return false;
     }
-    if (
-      form.get("exp_date")?.toString() == "" ||
-      form.get("exp_date") == null
-    ) {
-      toast.warning("Please select the expiry date.", {
-        position: "bottom-right",
-      });
+    if ((form.get("price")?.toString().length ?? 0) <= 2) {
+      toast.warning(
+        "Bro, this isn't a thrift store 🤡. Add some digits before we go broke 💸",
+        {
+          position: "bottom-right",
+        },
+      );
       return false;
     }
+
     return true;
   };
 
