@@ -16,29 +16,30 @@ async function getUserData() {
     return [];
   }
 
-  const responses: AdminUserTable[] = [];
+  const responses = await Promise.all(
+    data.map(async (user) => {
+      const response = await getUserAuthSchema(user.user_id);
+      return response ? (response as unknown as AdminUserTable) : null;
+    }),
+  );
 
-  for (const user of data) {
-    const response = await getUserAuthSchema(user.user_id);
+  const validResponses = responses.filter((response) => response !== null);
 
-    if (response) {
-      responses.push(response as unknown as AdminUserTable);
-    }
-  }
-
-  if (responses.length < data.length) {
+  if (validResponses.length < data.length) {
     return [];
   }
 
-  const combinedData = data.map((data) => {
-    const user = responses.find(
-      (response) => response.id === data.user_id,
+  const combinedData = data.map((userData) => {
+    const userAuth = validResponses.find(
+      (response) => response?.id === userData.user_id,
     );
 
-    return {
-      ...data,
-      email: user?.email || "",
+    const combined: AdminUserTable = {
+      ...userData,
+      email: userAuth?.email || "",
     };
+
+    return combined;
   });
 
   return combinedData;

@@ -23,7 +23,7 @@ import { useState } from "react";
 import CustomPagination from "../Pagination/Pagination";
 import SelectDataTable from "../Axolotl/SelectDataTable";
 
-interface DataTableProps<T extends { id?: number | string; uuid?: string; caregiver_id?: string }> {
+interface DataTableProps<T extends { id?: number | string; uuid?: string; caregiver_id?: string; user_id: string }> {
   data: T[];
   columns: ColumnDef<T>[];
   showAction?: (row: T) => void;
@@ -32,7 +32,7 @@ interface DataTableProps<T extends { id?: number | string; uuid?: string; caregi
   initialSorting?: ColumnSort[];
 }
 
-export function DataTable<T extends { id?: number | string; uuid?: string; caregiver_id?: string }>({
+export function DataTable<T extends { id?: number | string; uuid?: string; caregiver_id?: string; user_id: string }>({
   data,
   columns,
   showAction,
@@ -75,7 +75,9 @@ export function DataTable<T extends { id?: number | string; uuid?: string; careg
                       ? row.original.uuid
                       : pathName === "/admin/manage/approval"
                         ? row.original.caregiver_id
-                        : row.original.id;
+                        : pathName === "/admin/manage/user"
+                          ? row.original.user_id
+                          : row.original.id;
 
                   const navigatePath = basePath
                     ? `${basePath}/${id}`
