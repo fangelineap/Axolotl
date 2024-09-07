@@ -23,7 +23,7 @@ import { useState } from "react";
 import CustomPagination from "../Pagination/Pagination";
 import SelectDataTable from "../Axolotl/SelectDataTable";
 
-interface DataTableProps<T extends { id?: number | string; uuid?: string }> {
+interface DataTableProps<T extends { id?: number | string; uuid?: string; caregiver_id?: string }> {
   data: T[];
   columns: ColumnDef<T>[];
   showAction?: (row: T) => void;
@@ -32,7 +32,7 @@ interface DataTableProps<T extends { id?: number | string; uuid?: string }> {
   initialSorting?: ColumnSort[];
 }
 
-export function DataTable<T extends { id?: number | string; uuid?: string }>({
+export function DataTable<T extends { id?: number | string; uuid?: string; caregiver_id?: string }>({
   data,
   columns,
   showAction,
@@ -70,7 +70,13 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
               <button
                 onClick={() => {
                   showAction(row.original);
-                  const id = row.original.id || row.original.uuid;
+                  const id =
+                    pathName === "/admin/manage/medicine"
+                      ? row.original.uuid
+                      : pathName === "/admin/manage/approval"
+                        ? row.original.caregiver_id
+                        : row.original.id;
+
                   const navigatePath = basePath
                     ? `${basePath}/${id}`
                     : `${pathName}/${id}`;
@@ -131,7 +137,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
         <div className="flex w-full items-center justify-between md:w-auto">
           {pathName === "/admin/manage/medicine" && (
             <button
-              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-ultraLight hover:text-primary font-medium"
+              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 font-medium text-white hover:bg-kalbe-ultraLight hover:text-primary"
               onClick={() => router.push(`${pathName}/add`)}
             >
               Add Medicine
@@ -139,7 +145,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string }>({
           )}
           {pathName === "/admin/manage/user" && (
             <button
-              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 text-white hover:bg-kalbe-ultraLight hover:text-primary font-medium"
+              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 font-medium text-white hover:bg-kalbe-ultraLight hover:text-primary"
               onClick={() => router.push(`${pathName}/add`)}
             >
               Add User

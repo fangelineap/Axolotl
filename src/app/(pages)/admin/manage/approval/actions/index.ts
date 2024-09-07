@@ -19,34 +19,14 @@ export async function getAdminApproval() {
       return [];
     }
 
-    // Directly cast caregivers to the expected AdminApprovalTable[] type
-    const userWithCaregiver: AdminApprovalTable[] = caregivers ?? [];
+    const caregiverWithUserDetails: AdminApprovalTable[] = caregivers.map(
+      (caregiver) => ({
+        ...caregiver,
+        user: caregiver.users,
+      }),
+    );
 
-    return userWithCaregiver;
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-    return [];
-  }
-}
-
-export async function getAdminCaregiverDataById(id: number) {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data, error } = await supabase
-      .from("caregiver")
-      .select("*")
-      .eq("id", id)
-      .single();
-
-    if (error) {
-      console.error("Error fetching data:", error.message);
-      return null;
-    }
-
-    return data as AdminApprovalTable;
+    return caregiverWithUserDetails;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
     return [];
@@ -62,7 +42,7 @@ export async function getAdminApprovalById(caregiver_id: string) {
     // Fetch caregivers data
     const { data: caregivers, error: caregiverError } = await supabase
       .from("caregiver")
-      .select("*")
+      .select("*, users(*)")
       .eq("caregiver_id", caregiver_id)
       .single();
 
@@ -74,25 +54,12 @@ export async function getAdminApprovalById(caregiver_id: string) {
       return null;
     }
 
-    // Fetch corresponding user data for each caregiver_id
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", caregivers.caregiver_id)
-      .single();
+    const caregiverWithUserDetails: AdminApprovalTable = {
+      ...caregivers,
+      user: caregivers.users,
+    };
 
-    if (userError) {
-      console.error(
-        `Error fetching user data for caregiver_id ${caregivers.caregiver_id}:`,
-        userError.message,
-      );
-      return { caregivers, user: null } as unknown as AdminApprovalTable;
-    }
-
-    // Combine caregiver data with user data
-    const detailedData: AdminApprovalTable = { ...caregivers, user };
-
-    return detailedData;
+    return caregiverWithUserDetails;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
     return [];

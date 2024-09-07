@@ -2,7 +2,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { AdminApprovalTable } from "../table/data";
-import { getAdminApprovalById, getAdminCaregiverDataById } from "../actions";
+import { getAdminApprovalById } from "../actions";
 import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
 
 interface AdminShowApprovalProps {
@@ -10,18 +10,12 @@ interface AdminShowApprovalProps {
 }
 
 async function fetchData({ params }: AdminShowApprovalProps) {
-  const response = await getAdminCaregiverDataById(Number(params.userId));
-  return response as AdminApprovalTable;
-}
-
-async function fetchCaregiverDetails(caregiver_id: string) {
-  const response = await getAdminApprovalById(caregiver_id);
+  const response = await getAdminApprovalById(params.userId);
   return response as AdminApprovalTable;
 }
 
 export async function generateMetadata({ params }: AdminShowApprovalProps) {
-  const rawData = await fetchData({ params });
-  const response = await fetchCaregiverDetails(rawData.caregiver_id);
+  const response = await fetchData({ params });
 
   if (!response) {
     return {
@@ -37,14 +31,15 @@ export async function generateMetadata({ params }: AdminShowApprovalProps) {
 }
 
 async function AdminShowApproval({ params }: AdminShowApprovalProps) {
-  const rawData = await fetchData({ params });
-  const response = await fetchCaregiverDetails(rawData.caregiver_id);
+  const response = await fetchData({ params });
 
-  if (!rawData) {
+  if (!response) {
     return (
       <DefaultLayout>
-        <div className="mx-20 h-[75vh] w-auto flex items-center justify-center">
-          <h1 className="mb-5 text-heading-1 font-bold">Something went wrong</h1>
+        <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
+          <h1 className="mb-5 text-heading-1 font-bold">
+            Something went wrong
+          </h1>
         </div>
       </DefaultLayout>
     );
