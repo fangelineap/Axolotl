@@ -5,7 +5,11 @@ const columnHelper = createColumnHelper<AdminApprovalTable>();
 
 // Control the order of the status column (Unverified => Verified => Rejected)
 const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
-  const order: { [key: string]: number } = { Unverified: 0, Verified: 1, Rejected: 2 };
+  const order: { [key: string]: number } = {
+    Unverified: 0,
+    Verified: 1,
+    Rejected: 2,
+  };
   const statusA = rowA.getValue(columnId);
   const statusB = rowB.getValue(columnId);
 
@@ -20,7 +24,7 @@ export const columns = [
         <div className="flex items-center justify-center text-center">
           <p>{user_id}</p>
         </div>
-      )
+      );
     },
     id: "User ID",
     header: "User ID",
@@ -67,18 +71,14 @@ export const columns = [
       const role = info.getValue();
 
       return (
-        <div>
+        <div className="flex items-center justify-center">
           {role === "Nurse" ? (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-yellow-light px-3 py-1">
-                <p className="font-bold text-yellow">{role}</p>
-              </div>
+            <div className="rounded-3xl bg-yellow-light px-3 py-1">
+              <p className="font-bold text-yellow">{role}</p>
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-blue-light px-3 py-1">
-                <p className="font-bold text-blue">{role}</p>
-              </div>
+            <div className="rounded-3xl bg-blue-light px-3 py-1">
+              <p className="font-bold text-blue">{role}</p>
             </div>
           )}
         </div>
@@ -95,24 +95,18 @@ export const columns = [
       const type = info.getValue();
 
       return (
-        <div>
+        <div className="flex items-center justify-center">
           {type === "Verified" ? (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
-                <p className="font-bold text-primary">{type}</p>
-              </div>
+            <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
+              <p className="font-bold text-primary">{type}</p>
             </div>
           ) : type === "Unverified" ? (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-blue-light px-3 py-1">
-                <p className="font-bold text-blue">{type}</p>
-              </div>
+            <div className="rounded-3xl bg-blue-light px-3 py-1">
+              <p className="font-bold text-blue">{type}</p>
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-red-light px-3 py-1">
-                <p className="font-bold text-red">{type}</p>
-              </div>
+            <div className="rounded-3xl bg-red-light px-3 py-1">
+              <p className="font-bold text-red">{type}</p>
             </div>
           )}
         </div>

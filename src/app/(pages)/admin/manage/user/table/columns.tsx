@@ -44,30 +44,22 @@ export const columns = [
       const role = info.getValue();
 
       return (
-        <div className="grid gap-5">
+        <div className="flex items-center justify-center">
           {role === "Nurse" ? (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-yellow-light px-3 py-1">
-                <p className="font-bold text-yellow">{role}</p>
-              </div>
+            <div className="rounded-3xl bg-yellow-light px-3 py-1">
+              <p className="font-bold text-yellow">{role}</p>
             </div>
           ) : role === "Midwife" ? (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-blue-light px-3 py-1">
-                <p className="font-bold text-blue">{role}</p>
-              </div>
+            <div className="rounded-3xl bg-blue-light px-3 py-1">
+              <p className="font-bold text-blue">{role}</p>
             </div>
           ) : role === "Admin" ? (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-red-light px-3 py-1">
-                <p className="font-bold text-red">{role}</p>
-              </div>
+            <div className="rounded-3xl bg-red-light px-3 py-1">
+              <p className="font-bold text-red">{role}</p>
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
-                <p className="font-bold text-primary">{role}</p>
-              </div>
+            <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
+              <p className="font-bold text-primary">{role}</p>
             </div>
           )}
         </div>
