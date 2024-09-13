@@ -3,12 +3,57 @@
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { CAREGIVER } from "@/types/axolotl";
+import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const OrderCaregiver = () => {
+
+type User = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  address: string;
+  gender: string;
+  birthdate: Date;
+  created_at: Date;
+  updated_at: Date;
+  user_id: string;
+  role: string;
+  caregiver: CAREGIVER[];
+};
+
+const OrderCaregiver = ({searchParams}: any) => {
   const [time, setTime] = useState<string>("");
   const [service, setService] = useState<string>("");
+  const [caregiver, setCaregiver] = useState<User>();
+  
+  useEffect(() => {
+    const getCaregiver = async() => {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+
+      try {
+        const {data, error} = await supabase.from('users').select('*, caregiver(*)').eq('user_id', searchParams.caregiver).limit(1);
+        if(data) {  
+          console.log('data', data)
+          setCaregiver(data[0]);
+        }
+      } catch (error) {
+        console.log('error', error);
+        throw new Error('Error fetching data');
+      }
+    }
+
+    if(searchParams.caregiver) {
+      getCaregiver()
+    }
+  }, [])
+
+  console.log('cg', caregiver);
 
   return (
     <DefaultLayout>
@@ -25,10 +70,10 @@ const OrderCaregiver = () => {
               />
               <div className="w-[50%]">
                 <h1 className="text-lg font-extrabold">
-                  Strawberry Shortcake, A.Md.Kep.
+                  {`${caregiver?.first_name} ${caregiver?.last_name}`}
                 </h1>
                 <h1 className="mb-2 text-dark-secondary">
-                  Nurse at RS Axolotl Malang, Malang City, East Java
+                  {`${caregiver?.role} at ${caregiver?.caregiver[0].workplace}`}
                 </h1>
                 <div className="flex justify-between rounded-md border border-primary bg-kalbe-proLight p-2">
                   <div>

@@ -3,6 +3,7 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type Caregiver = {
@@ -21,7 +22,7 @@ type Caregiver = {
   updated_at: Date;
   notes: string[];
   rate: number;
-  user_id: string;
+  caregiver_id: string;
 };
 
 type User = {
@@ -40,6 +41,8 @@ type User = {
 };
 
 const Page = ({ searchParams }: any) => {
+  const router = useRouter();
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
   const [caregiver, setCaregiver] = useState<User[]>([]);
@@ -103,7 +106,7 @@ const Page = ({ searchParams }: any) => {
     if (searchParams.caregiver) {
       getUser();
     }
-  }, [searchParams.caregiver]);
+  }, [,searchParams.caregiver]);
 
   useEffect(() => {
     let filteredCG: User[] = [];
@@ -513,7 +516,8 @@ const Page = ({ searchParams }: any) => {
                           </div>
                           <div className="h-25 w-[0.5px] bg-primary"></div>
                           <div className="flex w-[30%] justify-end">
-                            <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                            <button 
+                            onClick={() => router.push(`/patient/health-services/appointment?caregiver=${cg.user_id}`)} className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
                               Book Now
                             </button>
                           </div>
@@ -582,7 +586,9 @@ const Page = ({ searchParams }: any) => {
                         </div>
                         <div className="h-25 w-[0.5px] bg-primary"></div>
                         <div className="flex w-[30%] justify-end">
-                          <button className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                          <button
+                          onClick={() => router.push(`/patient/health-services/appointment?caregiver=${cg.user_id}`)} 
+                          className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
                             Book Now
                           </button>
                         </div>

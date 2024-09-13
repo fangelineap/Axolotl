@@ -31,8 +31,6 @@ const PersonalInformation = ({ searchParams }: any) => {
 
   let session: any;
 
-  console.log("Roleeeee:", searchParams.role);
-
   const onClose = () => {
     setFinished(false);
     router.push("/admin");
@@ -116,11 +114,12 @@ const PersonalInformation = ({ searchParams }: any) => {
               workplace: form.get("workplace"),
               work_experiences: form.get("workExperiences"),
               status: "Unverified",
-              user_id: userData[0].id,
+              caregiver_id: userData[0].id,
               cv: pathCv,
               degree_certificate: pathCertificate,
               sip: pathSip,
               str: pathStr,
+              rate: 0
             });
 
           if (insertError) {
@@ -155,13 +154,13 @@ const PersonalInformation = ({ searchParams }: any) => {
           blood_type: blood,
           height: form.get("height"),
           weight: form.get("weight"),
-          is_smoking: form.get("isSmoking"),
+          is_smoking: isSmoking,
           allergies: form.get("allergies"),
           current_medication: form.get("medication"),
           med_freq_times: form.get("medicineQuantity"),
           med_freq_day: form.get("medicineFrequency"),
           illness_history: form.get("illnessHistory"),
-          user_id: userData[0].id,
+          patient_id: userData[0].id,
         });
 
         if (error) {

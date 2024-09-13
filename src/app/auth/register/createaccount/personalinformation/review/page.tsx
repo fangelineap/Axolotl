@@ -28,7 +28,7 @@ const Review = ({ searchParams }: any) => {
       const { data, error } = await supabase
         .from("caregiver")
         .select("*")
-        .eq("user_id", userData[0].id)
+        .eq("caregiver_id", userData[0].id)
         .limit(1);
   
       if (error) {
