@@ -10,6 +10,7 @@ import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWith
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
 import { FaSearch } from "react-icons/fa";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
+import { fetchMedicine } from "@/app/(pages)/caregiver/medicinePreparation/action";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -44,6 +45,15 @@ interface MedecinePreparationProps {
   };
 }
 
+interface MedicineType {
+  uuid: number;
+  name: string;
+  type: string;
+  price: string;
+  exp_date: string;
+  medicine_photo: string;
+}
+
 const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   orderStatus,
   patientInfo,
@@ -55,32 +65,30 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [medicineList, setMedicineList] = useState<MedicineType[]>([]);
+  const [filteredMedicineList, setFilteredMedicineList] = useState<
+    MedicineType[]
+  >([]);
+
   const [selectedMedications, setSelectedMedications] = useState<
     { quantity: number; name: string; price: string }[]
   >([]);
   const [totalPrice, setTotalPrice] = useState<number>(
     parseInt(price.total.replace(/Rp\.\s/g, "").replace(/\./g, "")),
   );
-  const [deliveryFee, setDeliveryFee] = useState<number>(
-    parseInt(price.delivery.replace(/Rp\.\s/g, "").replace(/\./g, "")),
-  );
+  const [deliveryFee, setDeliveryFee] = useState<number>(10000);
   const [totalCharge, setTotalCharge] = useState<number>(
     parseInt(price.totalCharge.replace(/Rp\.\s/g, "").replace(/\./g, "")),
   );
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentMedicine, setCurrentMedicine] = useState<{
-    id: number;
-    name: string;
-    type: string;
-    price: string;
-    expired: string;
-    imagePath: string;
-  } | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
+  const [currentMedicine, setCurrentMedicine] = useState<MedicineType | null>(
+    null,
+  );
 
   const [isAddNewMedicineModalOpen, setIsAddNewMedicineModalOpen] =
     useState<boolean>(false);
+
   const [newMedicine, setNewMedicine] = useState<{
     name: string;
     type: string;
@@ -95,50 +103,34 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     expired: null,
   });
 
-  // Dummy data for the medication list
-  const medicineList = [
-    {
-      id: 1,
-      name: "Propofol",
-      type: "Branded",
-      price: "10.000",
-      expired: "26/12/2028",
-      imagePath: "/images/contohObat/panadol.jpg",
-    },
-    {
-      id: 2,
-      name: "Profertil",
-      type: "Branded",
-      price: "15.000",
-      expired: "30/10/2029",
-      imagePath: "/images/contohObat/panadol.jpg",
-    },
-    {
-      id: 3,
-      name: "Pronicy",
-      type: "Branded",
-      price: "20.000",
-      expired: "03/07/2035",
-      imagePath: "/images/contohObat/panadol.jpg",
-    },
-    {
-      id: 4,
-      name: "Panadol",
-      type: "Branded",
-      price: "15.000",
-      expired: "17/07/2045",
-      imagePath: "/images/contohObat/panadol.jpg",
-    },
-  ];
+  useEffect(() => {
+    // Fetch medicine data from the database
+    const loadMedicineList = async () => {
+      try {
+        const medicines: MedicineType[] = await fetchMedicine(); // Fetch data from your database
+        setMedicineList(medicines || []); // Set the medicine list with fetched data
+        setFilteredMedicineList(medicines || []); // Initialize filtered list with full data
+      } catch (err) {
+        console.error("Failed to load medicines", err);
+      }
+    };
 
-  const handleMedicineSelect = (medicine: {
-    id: number;
-    name: string;
-    type: string;
-    price: string;
-    expired: string;
-    imagePath: string;
-  }) => {
+    loadMedicineList();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = medicineList.filter((med) =>
+        med.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+      setFilteredMedicineList(filtered);
+    } else {
+      setFilteredMedicineList(medicineList);
+    }
+  }, [searchTerm, medicineList]);
+
+  const handleMedicineSelect = (medicine: MedicineType) => {
+    console.log("Selected Medicine UUID:", medicine.uuid);
     setCurrentMedicine(medicine);
     setIsModalOpen(true); // Open the modal when a medicine is selected
   };
@@ -147,16 +139,22 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     if (currentMedicine) {
       setSelectedMedications((prev) => [
         ...prev,
-        { quantity, name: currentMedicine.name, price: currentMedicine.price },
+        {
+          quantity: 1,
+          name: currentMedicine.name,
+          price: currentMedicine.price || "0",
+        },
       ]);
-      setTotalPrice(
-        (prev) =>
-          prev +
-          parseInt(
-            currentMedicine.price.replace(/Rp\.\s/g, "").replace(/\./g, ""),
-          ) *
-            quantity,
+
+      const priceAsString = currentMedicine.price
+        ? currentMedicine.price.toString()
+        : "0";
+
+      const cleanedPrice = parseInt(
+        priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, ""),
       );
+
+      setTotalPrice((prev) => prev + (isNaN(cleanedPrice) ? 0 : cleanedPrice));
       setIsModalOpen(false); // Close the modal after adding the medicine
       setSearchTerm(""); // Clear the search term
     }
@@ -211,26 +209,23 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   useEffect(() => {
     const calculateTotalPrice = () => {
       const sum = selectedMedications.reduce((acc, med) => {
+        // Ensure med.price is treated as a string and handle null/undefined cases
+        const priceAsString = med.price ? med.price.toString() : "0";
+
+        // Safely perform replace operations
         const medPrice = parseInt(
-          med.price.replace(/Rp\.\s/g, "").replace(/\./g, ""),
+          priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, ""),
+          10, // Ensure base 10 parsing
         );
-        return acc + medPrice * med.quantity;
+
+        return acc + (isNaN(medPrice) ? 0 : medPrice * med.quantity); // Handle NaN cases
       }, 0);
 
       setTotalPrice(sum);
     };
 
     calculateTotalPrice();
-
-    // Set delivery fee to 0 if no additional medicine is added
-    if (selectedMedications.length === 0) {
-      setDeliveryFee(0);
-    } else {
-      setDeliveryFee(
-        parseInt(price.delivery.replace(/Rp\.\s/g, "").replace(/\./g, "")),
-      );
-    }
-  }, [selectedMedications, price.delivery]);
+  }, [selectedMedications]);
 
   useEffect(() => {
     setTotalCharge(totalPrice + deliveryFee);
@@ -307,6 +302,20 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     },
     maxFiles: 1,
   });
+
+  // Disable background scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen || isAddNewMedicineModalOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    // Cleanup when the component unmounts or modal is closed
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isModalOpen, isAddNewMedicineModalOpen]);
 
   return (
     <div className="flex flex-col lg:flex-row lg:justify-between">
@@ -458,20 +467,18 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             </div>
             {searchTerm && (
               <div className="absolute z-10 mt-11 w-full max-w-md rounded border bg-white shadow-lg">
-                {medicineList
-                  .filter((med) =>
-                    med.name.toLowerCase().includes(searchTerm.toLowerCase()),
-                  )
-                  .map((med, index) => (
-                    <div
-                      key={index}
-                      className="flex cursor-pointer items-center justify-between p-2 hover:bg-gray-100"
-                      onClick={() => handleMedicineSelect(med)}
-                    >
-                      <span className="text-gray-500">{med.name}</span>
-                      <span className="italic text-gray-500">{med.type}</span>
-                    </div>
-                  ))}
+                {filteredMedicineList.map((medicine) => (
+                  <div
+                    key={medicine.uuid}
+                    className="flex cursor-pointer items-center justify-between p-2 hover:bg-gray-100"
+                    onClick={() => handleMedicineSelect(medicine)}
+                  >
+                    <span className="text-gray-500">{medicine.name}</span>
+                    <span className="italic text-gray-500">
+                      {medicine.type}
+                    </span>
+                  </div>
+                ))}
                 <div
                   className="cursor-pointer p-2 text-gray-500 hover:bg-gray-100"
                   onClick={handleAddNewMedicine}
@@ -631,28 +638,33 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       </div>
 
       {/* Modal for Adding Medicine */}
-      {isModalOpen && (
+      {isModalOpen && currentMedicine && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-lg rounded-lg bg-white ">
+          <div
+            className=" h-full w-full max-w-lg rounded-lg  bg-white 
+                   md:h-[75vh] lg:h-[93vh]"
+          >
             <div className="rounded-t-lg bg-primary px-6 py-4">
               <h2 className="text-center text-xl font-bold text-white">
-                Add New Medicine
+                Add Medicine
               </h2>
             </div>
-            <div className="p-6">
+            <div className=" max-h-[75vh] overflow-y-auto p-6 md:max-h-[65vh] lg:max-h-[80vh]">
               {/* Medicine Photo Section */}
               <div className="mb-6">
                 <h3 className="mb-2 font-bold text-primary">Medicine Photo</h3>
                 <div className="flex h-48 w-full items-center justify-center rounded-lg border border-primary p-4">
-                  {currentMedicine?.imagePath && (
+                  {currentMedicine.medicine_photo ? (
                     <div className="relative flex h-full w-full items-center justify-center">
                       <Image
-                        src={currentMedicine.imagePath}
-                        alt={currentMedicine.name}
+                        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(currentMedicine.medicine_photo)}`}
+                        alt={currentMedicine.medicine_photo}
                         className="object-contain" // Make image contain within the container
                         layout="fill" // Fills the container
                       />
                     </div>
+                  ) : (
+                    <p>No Image Available</p>
                   )}
                 </div>
               </div>
@@ -668,7 +680,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                   <input
                     type="text"
                     className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine?.id}
+                    value={currentMedicine.uuid}
                     disabled
                   />
                 </div>
@@ -677,7 +689,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                   <input
                     type="text"
                     className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine?.name}
+                    value={currentMedicine.name}
                     disabled
                   />
                 </div>
@@ -685,10 +697,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                   <label className="mb-4 block text-sm font-medium">Type</label>
                   <select
                     className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine?.type}
+                    value={currentMedicine.type}
                     disabled
                   >
-                    <option>Branded</option>
+                    <option>{currentMedicine.type}</option>
                   </select>
                 </div>
                 <div className="mb-4 flex items-center">
@@ -700,7 +712,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       <input
                         type="text"
                         className="mt-1 block w-full rounded border p-2"
-                        value={currentMedicine?.expired}
+                        value={currentMedicine.exp_date}
                         disabled
                       />
                     </div>
@@ -715,7 +727,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       <input
                         type="text"
                         className="block w-full rounded border p-2 pl-10"
-                        value={currentMedicine?.price}
+                        value={currentMedicine.price}
                         disabled
                       />
                     </div>
@@ -791,7 +803,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       }
                     />
                   </div>
-                  {/* Periksa lagi bagian price masih ga bener buat show Rp.*/}
                   <div className="mt-3 w-1/2 pl-4">
                     <InputGroupWithCurrency
                       customClasses="mb-6.5"
