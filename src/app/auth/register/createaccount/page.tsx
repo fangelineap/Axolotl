@@ -15,14 +15,14 @@ const CreateAccount = async ({ searchParams }: any) => {
   const { data: userSession } = await getUserFromSession();
 
   if (userSession) {
-    if (userSession[0].role == "Patient") {
+    if (userSession[0].role === "Patient") {
       redirect("/patient");
     } else if (
-      userSession[0].role == "Nurse" ||
-      userSession[0].role == "Midwife"
+      userSession[0].role === "Nurse" ||
+      userSession[0].role === "Midwife"
     ) {
       redirect("/caregiver");
-    } else if (userSession[0].role == "Admin") {
+    } else if (userSession[0].role === "Admin") {
       redirect("/admin");
     }
   }

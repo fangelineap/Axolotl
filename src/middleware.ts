@@ -2,9 +2,11 @@
 
 import { NextResponse } from "next/server";
 import { getUserFromSession } from "./app/lib/server";
+import { getCaregiverVerificationStatus } from "./app/server-action/auth";
 
 export async function middleware(request: Request) {
   const { data, error } = await getUserFromSession();
+  console.log(data, error);
 
   /**
    * If there's no Session & the user is trying to continue the personalinformation
@@ -14,48 +16,53 @@ export async function middleware(request: Request) {
   }
 
   const userRole = data[0]?.role;
+  const userId = data[0]?.id;
+  const { url } = request;
 
-  /**
-   * If there's session, and the user tries to visit other roles based page
-   */
-  if (request.url.includes("/patient")) {
-    if (userRole == "Patient") {
-      return NextResponse.next();
-    } else if (userRole == "Nurse" || userRole == "Midwife") {
-      return NextResponse.redirect(new URL("/caregiver", request.url));
-    } else if (userRole == "Admin") {
-      return NextResponse.redirect(new URL("/admin", request.url));
+  // Role-based redirects
+  const roleRedirects: { [key: string]: string } = {
+    Patient: "/patient",
+    Nurse: "/caregiver",
+    Midwife: "/caregiver",
+    Admin: "/admin",
+  };
+
+  // Handle patient, caregiver, and admin access
+  if (url.includes("/patient")) {
+    if (userRole === "Patient") return NextResponse.next();
+  } else if (url.includes("/caregiver")) {
+    if (userRole === "Nurse" || userRole === "Midwife") {
+      const caregiverStatus = await getCaregiverVerificationStatus(userId);
+
+      const caregiverRedirects = {
+        Verified: NextResponse.next(),
+        Rejected: NextResponse.redirect(
+          new URL(
+            "/auth/register/createaccount/personalinformation/review?role=Caregiver",
+            url,
+          ),
+        ),
+        Unverified: NextResponse.redirect(
+          new URL(
+            "/auth/register/createaccount/personalinformation/review?role=Caregiver",
+            url,
+          ),
+        ),
+      };
+
+      return (
+        (caregiverStatus !== null && caregiverRedirects[caregiverStatus]) ||
+        NextResponse.redirect(new URL("/", url))
+      );
     }
+  } else if (url.includes("/admin")) {
+    if (userRole === "Admin") return NextResponse.next();
   }
 
-  if (request.url.includes("/caregiver")) {
-    if (userRole == "Patient") {
-      return NextResponse.redirect(new URL("/patient", request.url));
-    } else if (userRole == "Nurse" || userRole == "Midwife") {
-      return NextResponse.next();
-    } else if (userRole == "Admin") {
-      return NextResponse.redirect(new URL("/admin", request.url));
-    }
-  }
-
-  if (request.url.includes("/admin")) {
-    if (userRole == "Patient") {
-      return NextResponse.redirect(new URL("/patient", request.url));
-    } else if (userRole == "Nurse" || userRole == "Midwife") {
-      return NextResponse.redirect(new URL("/caregiver", request.url));
-    } else if (userRole == "Admin") {
-      return NextResponse.next();
-    }
-  }
-
-  return NextResponse.redirect(new URL("/", request.url));
+  // Default role-based redirection
+  return NextResponse.redirect(new URL(roleRedirects[userRole] || "/", url));
 }
 
 export const config = {
-  matcher: [
-    "/patient/:path*",
-    "/admin/:path*",
-    "/caregiver/:path*",
-    "/auth/register/createaccount/personalinformation:path*/:path*",
-  ],
+  matcher: ["/patient/:path*", "/admin/:path*", "/caregiver/:path*"],
 };

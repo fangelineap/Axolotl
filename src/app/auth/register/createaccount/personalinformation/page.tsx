@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
+import { deleteUser } from "@/app/server-action/admin/SupaAdmin";
+import AxolotlModal from "@/components/Axolotl/AxolotlModal";
 import CheckboxBlood from "@/components/Axolotl/CheckboxBlood";
 import CheckboxSmoker from "@/components/Axolotl/CheckboxSmoker";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
@@ -8,9 +11,10 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import SelectGroupTwo from "@/components/FormElements/SelectGroup/SelectGroupTwo";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -29,12 +33,85 @@ const PersonalInformation = ({ searchParams }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [finished, setFinished] = useState<boolean>(false);
 
-  let session: any;
+  const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
-  const onClose = () => {
-    setFinished(false);
-    router.push("/admin");
+  /**
+   * Check if the user is logged in
+   */
+  useEffect(() => {
+    const checkSession = async () => {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      );
+
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (!sessionData.session || sessionError) {
+        // If the user is not logged in, redirect to the sign-in page
+        router.push("/auth/signin");
+      }
+    };
+
+    // Run the session check
+    checkSession();
+
+    // Logic to handle browser back button and close window
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      setOpenCancelModal(true); // Open cancel modal when user tries to leave
+    };
+
+    const handlePopState = () => {
+      setOpenCancelModal(true);
+    };
+
+    // Listen for browser close/refresh
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Listen for browser back button
+    window.addEventListener("popstate", handlePopState);
+
+    // Cleanup event listeners when component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [router]);
+
+  /**
+   * Handle the cancel modal
+   */
+  const handleOpenModal = () => setOpenCancelModal(true);
+  const handleCloseModal = () => setOpenCancelModal(false);
+
+  /**
+   * Clear User
+   */
+  const confirmCancelRegistration = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+
+    const { data: userData, error: userError } =
+      await supabase.auth.getSession();
+
+    if (userError) {
+      console.error("Error fetching user data:", userError);
+      return;
+    }
+
+    await deleteUser(userData.session?.user.id!);
+
+    router.replace("/auth/signin");
   };
+
+  /**
+   * Handle User Registration
+   */
+  let session: any;
 
   const uploadToStorage = async (storage: string, file: string) => {
     const supabase = createBrowserClient(
@@ -54,9 +131,15 @@ const PersonalInformation = ({ searchParams }: any) => {
           upsert: false,
         });
 
+      if (error) {
+        return error;
+      }
+
       console.log(`Data path for ${storage}: `, data?.path);
       return data?.path;
     }
+
+    return error;
   };
 
   const addPersonalInfo = async (form: FormData) => {
@@ -104,23 +187,22 @@ const PersonalInformation = ({ searchParams }: any) => {
           .select()
           .eq("user_id", sessionData.session?.user.id);
 
-          console.log('user data', userData);
+        console.log("user data", userData);
         if (userData) {
           const { data: insertData, error: insertError } = await supabase
             .from("caregiver")
-            .insert({
+            .update({
               profile_photo: pathProfile,
               employment_type: form.get("employmentType"),
               workplace: form.get("workplace"),
               work_experiences: form.get("workExperiences"),
-              status: "Unverified",
-              caregiver_id: userData[0].id,
               cv: pathCv,
               degree_certificate: pathCertificate,
               sip: pathSip,
               str: pathStr,
-              rate: 0
-            });
+              rate: 0,
+            })
+            .eq("caregiver_id", userData[0].id);
 
           if (insertError) {
             setLoading(false);
@@ -455,10 +537,12 @@ const PersonalInformation = ({ searchParams }: any) => {
                           <div className="flex flex-col items-center justify-center">
                             {profilePhoto ? (
                               <div className="flex items-center gap-5">
-                                <img
+                                <Image
                                   src={URL.createObjectURL(profilePhoto)}
                                   alt={profilePhoto.name}
                                   className="h-[105px]"
+                                  width={105}
+                                  height={105}
                                 />
                                 <span className="mt-1 text-sm">
                                   {profilePhoto.name}
@@ -842,10 +926,11 @@ const PersonalInformation = ({ searchParams }: any) => {
               {/* Third div for finish button */}
               <div className="mt-5.5 flex items-center justify-center gap-3">
                 <button
-                  onClick={() => router.back()}
-                  className="w-1/4 rounded-[7px] bg-gray-cancel-hover p-[8px] font-medium text-white hover:bg-opacity-90 lg:ml-4 lg:w-[10%]"
+                  type="button"
+                  onClick={handleOpenModal}
+                  className="w-1/4 rounded-[7px] border border-gray-cancel bg-gray-cancel p-[8px] font-medium text-white hover:bg-gray-cancel-hover hover:text-gray-cancel lg:ml-4 lg:w-[10%]"
                 >
-                  Back
+                  Cancel
                 </button>
                 {loading ? (
                   <>
@@ -877,7 +962,7 @@ const PersonalInformation = ({ searchParams }: any) => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-1/4 rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90 lg:w-[10%]"
+                    className="w-1/4 rounded-[7px] border border-primary bg-primary p-[8px] font-medium text-white hover:bg-kalbe-ultraLight hover:text-primary lg:w-[10%]"
                   >
                     Finish
                   </button>
@@ -896,6 +981,14 @@ const PersonalInformation = ({ searchParams }: any) => {
           </form>
         </div>
       </div>
+      <AxolotlModal
+        isOpen={openCancelModal}
+        onClose={handleCloseModal}
+        onConfirm={confirmCancelRegistration}
+        title="Cancel Registration"
+        question={`Are you sure you want to cancel your registration? This action cannot be undone.`}
+        action="cancel"
+      />
       {searchParams.role != null && finished && (
         <>
           <div
