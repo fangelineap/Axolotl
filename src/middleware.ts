@@ -6,7 +6,7 @@ import { getUserFromSession } from "./app/lib/server";
 export async function middleware(request: Request) {
   const { data, error } = await getUserFromSession();
 
-  if (!data) {
+  if (!data || error) {
     return NextResponse.redirect(new URL("/auth/signin", request.url));
   }
 
@@ -44,5 +44,9 @@ export async function middleware(request: Request) {
 }
 
 export const config = {
-  matcher: ["/patient", "/admin", "/caregiver"],
+  matcher: [
+    "/patient/:path*",
+    "/admin/:path*",
+    "/caregiver/:path*",
+  ],
 };

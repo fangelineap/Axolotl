@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
@@ -26,28 +26,21 @@ export default async function createSupabaseServerClient() {
 
 export async function getUserFromSession() {
   const supabase = await createSupabaseServerClient();
-  const {data, error} = await supabase.auth.getSession();
+  const { data: sessionData, error } = await supabase.auth.getSession();
 
-  if(error) {
-    return null;
+  // Return early if there's no session or an error
+  if (error || !sessionData?.session) {
+    return { data: null, error: error || new Error("No session found") };
   }
 
-  return await supabase.from('users').select().eq('user_id', data.session?.user.id);
-}
+  // Fetch the user from the database
+  const { data: user, error: userError } = await supabase
+    .from("users")
+    .select()
+    .eq("user_id", sessionData.session.user.id);
 
-export async function getCaregiver() {
-  const supabase = await createSupabaseServerClient();
-  const {data, error} = await supabase.auth.getSession();
-  
-  if(error) {
-    return null;
-  }
-
-  const {data: caregiverData, error: caregiverError} = await supabase.from('caregiver').select().eq('caregiver_id', data.session?.user.id);
-
-  if(caregiverError) {
-    return null;
-  }
-
-  console.log('caregiver data:', caregiverData);
+  return {
+    data: user || null,
+    error: userError || null,
+  };
 }
