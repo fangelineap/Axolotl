@@ -6,10 +6,26 @@ import React from "react";
 import PasswordInput from "../../component/PasswordInput";
 import { registerWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
-import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
+import { getUserFromSession } from "@/app/lib/server";
 
-const CreateAccount = ({ searchParams }: any) => {
-  console.log("Role ", searchParams.role);
+const CreateAccount = async ({ searchParams }: any) => {
+  /**
+   * Get user from session
+   */
+  const { data: userSession } = await getUserFromSession();
+
+  if (userSession) {
+    if (userSession[0].role == "Patient") {
+      redirect("/patient");
+    } else if (
+      userSession[0].role == "Nurse" ||
+      userSession[0].role == "Midwife"
+    ) {
+      redirect("/caregiver");
+    } else if (userSession[0].role == "Admin") {
+      redirect("/admin");
+    }
+  }
 
   const toPersonalInformation = async (form: FormData) => {
     "use server";
@@ -17,6 +33,7 @@ const CreateAccount = ({ searchParams }: any) => {
       form.get("password")?.toString() ==
       form.get("confirmPassword")?.toString()
     ) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { data, error } = await registerWithEmailAndPassword(
         form.get("email")!.toString(),
         form.get("password")!.toString(),

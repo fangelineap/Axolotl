@@ -147,7 +147,6 @@ const RegisterComponent = () => {
                   type="button"
                   onClick={(e) => {
                     const cbox = document.getElementById("formCheckbox") as HTMLInputElement;
-                    const cboxCustom = document.querySelector(".box");
 
                     if (role == "") {
                       e.preventDefault();

@@ -26,10 +26,10 @@ export default async function createSupabaseServerClient() {
 
 export async function getUserFromSession() {
   const supabase = await createSupabaseServerClient();
-  const { data: sessionData, error } = await supabase.auth.getSession();
+  const { data: sessionData, error } = await supabase.auth.getUser();
 
   // Return early if there's no session or an error
-  if (error || !sessionData?.session) {
+  if (error || !sessionData?.user) {
     return { data: null, error: error || new Error("No session found") };
   }
 
@@ -37,7 +37,7 @@ export async function getUserFromSession() {
   const { data: user, error: userError } = await supabase
     .from("users")
     .select()
-    .eq("user_id", sessionData.session.user.id);
+    .eq("user_id", sessionData.user.id);
 
   return {
     data: user || null,
