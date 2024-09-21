@@ -1,16 +1,15 @@
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
-import { AdminApprovalTable } from "../table/data";
-import { getAdminApprovalById } from "../actions";
 import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
+import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getSingleAdminApprovalById } from "../actions";
+import { AdminApprovalTable } from "../table/data";
 
 interface AdminShowApprovalProps {
   params: { userId: string };
 }
 
 async function fetchData({ params }: AdminShowApprovalProps) {
-  const response = await getAdminApprovalById(params.userId);
+  const response = await getSingleAdminApprovalById(params.userId);
   return response as AdminApprovalTable;
 }
 

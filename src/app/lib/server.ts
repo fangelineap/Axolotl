@@ -33,14 +33,16 @@ export async function getUserFromSession() {
     return { data: null, error: error || new Error("No session found") };
   }
 
+  const userId = sessionData.user.id
+
   // Fetch the user from the database
   const { data: user, error: userError } = await supabase
     .from("users")
     .select()
-    .eq("user_id", sessionData.user.id);
+    .eq("user_id", userId);
 
   return {
-    data: user || null,
+    data: user ? user[0] : null,
     error: userError || null,
   };
 }

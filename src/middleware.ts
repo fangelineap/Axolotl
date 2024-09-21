@@ -2,6 +2,18 @@
 
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
+import { getCaregiverVerificationStatus } from "./app/server-action/auth";
+
+function getRoleRedirect(userRole: string): string {
+  const roleRedirects: { [key: string]: string } = {
+    Patient: "/patient",
+    Nurse: "/caregiver",
+    Midwife: "/caregiver",
+    Admin: "/admin",
+  };
+
+  return roleRedirects[userRole] || "/";
+}
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -59,8 +71,11 @@ export async function updateSession(request: NextRequest) {
   /**
    * If there's no Session & the user is trying to continue the personalinformation
    */
-  if (!user && !request.nextUrl.pathname.startsWith("/auth")) {
-    return NextResponse.redirect(new URL("/auth/signin", request.url));
+  if (!user) {
+    if (!pathname.startsWith("/auth")) {
+      return NextResponse.redirect(new URL("/auth/signin", request.url));
+    }
+    return NextResponse.next();
   }
 
   const userId = user?.id;
@@ -76,56 +91,46 @@ export async function updateSession(request: NextRequest) {
   }
 
   const userRole = userData.role;
+  const roleRedirect = getRoleRedirect(userRole);
+
+  // If the user is already on their role-specific page, allow access without redirection
+  if (pathname.startsWith(roleRedirect)) {
+    return NextResponse.next();
+  }
 
   console.log({ userRole });
 
-  // const { url } = request;
+  // Handle patient, caregiver, and admin access
+  if (url.includes("/patient")) {
+    if (userRole === "Patient") return NextResponse.next();
+  } else if (url.includes("/caregiver")) {
+    if (userRole === "Nurse" || userRole === "Midwife") {
+      const caregiverStatus = await getCaregiverVerificationStatus(userId);
 
-  // // Role-based redirects
-  // const roleRedirects: { [key: string]: string } = {
-  //   Patient: "/patient",
-  //   Nurse: "/caregiver",
-  //   Midwife: "/caregiver",
-  //   Admin: "/admin",
-  // };
+      const caregiverRedirects = {
+        Verified: NextResponse.next(),
+        Rejected: NextResponse.redirect(
+          new URL(
+            "/auth/register/createaccount/personalinformation/review?role=Caregiver",
+            url,
+          ),
+        ),
+        Unverified: NextResponse.redirect(
+          new URL(
+            "/auth/register/createaccount/personalinformation/review?role=Caregiver",
+            url,
+          ),
+        ),
+      };
 
-  // // Handle patient, caregiver, and admin access
-  // if (url.includes("/patient")) {
-  //   if (userRole === "Patient") return NextResponse.next();
-  // } else if (url.includes("/caregiver")) {
-  //   if (userRole === "Nurse" || userRole === "Midwife") {
-  //     const caregiverStatus = await getCaregiverVerificationStatus(userId);
-
-  //     const caregiverRedirects = {
-  //       Verified: NextResponse.next(),
-  //       Rejected: NextResponse.redirect(
-  //         new URL(
-  //           "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-  //           url,
-  //         ),
-  //       ),
-  //       Unverified: NextResponse.redirect(
-  //         new URL(
-  //           "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-  //           url,
-  //         ),
-  //       ),
-  //     };
-
-  //     return (
-  //       (caregiverStatus !== null && caregiverRedirects[caregiverStatus]) ||
-  //       NextResponse.redirect(new URL("/", url))
-  //     );
-  //   }
-  // } else if (url.includes("/admin")) {
-  //   if (userRole === "Admin") return NextResponse.next();
-  // }
-
-  // // Default role-based redirection
-  // const redirectUrl = roleRedirects[userRole];
-  // if (redirectUrl) {
-  //   return NextResponse.redirect(new URL(redirectUrl, request.url));
-  // }
+      return (
+        (caregiverStatus !== null && caregiverRedirects[caregiverStatus]) ||
+        NextResponse.redirect(new URL("/", url))
+      );
+    }
+  } else if (url.includes("/admin")) {
+    if (userRole === "Admin") return NextResponse.next();
+  }
 
   // Default role-based redirection
   return supabaseResponse;
@@ -136,14 +141,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.\\.(?:svg|png|jpg|jpeg|gif|webp)$).)",
-  ],
+  matcher: ["/patient/:path*", "/admin/:path*", "/caregiver/:path*"],
 };
