@@ -101,35 +101,48 @@ export async function updateSession(request: NextRequest) {
   console.log({ userRole });
 
   // Handle patient, caregiver, and admin access
-  if (url.includes("/patient")) {
-    if (userRole === "Patient") return NextResponse.next();
-  } else if (url.includes("/caregiver")) {
+  if (pathname.startsWith("/patient")) {
+    if (userRole === "Patient") {
+      return NextResponse.next();
+    } else {
+      // Redirect to the correct role page
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+    }
+  } else if (pathname.startsWith("/caregiver")) {
     if (userRole === "Nurse" || userRole === "Midwife") {
-      const caregiverStatus = await getCaregiverVerificationStatus(userId);
+      const caregiverStatus = await getCaregiverVerificationStatus(userId!);
 
       const caregiverRedirects = {
         Verified: NextResponse.next(),
         Rejected: NextResponse.redirect(
           new URL(
             "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-            url,
+            request.url,
           ),
         ),
         Unverified: NextResponse.redirect(
           new URL(
             "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-            url,
+            request.url,
           ),
         ),
       };
 
       return (
         (caregiverStatus !== null && caregiverRedirects[caregiverStatus]) ||
-        NextResponse.redirect(new URL("/", url))
+        NextResponse.redirect(new URL("/", request.url))
       );
+    } else {
+      // Redirect to the correct role page
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
-  } else if (url.includes("/admin")) {
-    if (userRole === "Admin") return NextResponse.next();
+  } else if (pathname.startsWith("/admin")) {
+    if (userRole === "Admin") {
+      return NextResponse.next();
+    } else {
+      // Redirect to the correct role page
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+    }
   }
 
   // Default role-based redirection
@@ -141,5 +154,14 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/patient/:path*", "/admin/:path*", "/caregiver/:path*"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.\\.(?:svg|png|jpg|jpeg|gif|webp)$).)",
+  ],
 };
