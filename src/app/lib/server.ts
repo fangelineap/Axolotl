@@ -49,5 +49,16 @@ export async function getCaregiver() {
     return null;
   }
 
-  console.log('caregiver data:', caregiverData);
+  return caregiverData;
+}
+
+export async function getCaregiverById(id: string) {
+  const supabase = await createSupabaseServerClient();
+  const {data, error} = await supabase.from('users').select('*, caregiver(*)').eq('user_id', id);
+  
+  if(error) {
+    return null;
+  }
+
+  return data;
 }

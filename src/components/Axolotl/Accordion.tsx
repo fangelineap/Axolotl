@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 interface AccordionProps {
-  type: string
+  type: string;
   symptoms: string[];
   selectedAll: string[];
   setSelectedAll: (selectedAll: any) => void;
@@ -21,15 +21,18 @@ const Accordion = ({
     >
       <h6 className="mb-0">
         <button
-          className="rounded-t-1 text-dark-500 group relative flex justify-between w-full cursor-pointer items-center border-b border-solid border-slate-100 p-4 text-left font-semibold text-slate-700 transition-all ease-in"
+          className="rounded-t-1 text-dark-500 group relative flex w-full cursor-pointer items-center justify-between border-b border-solid border-slate-100 p-4 text-left font-semibold text-slate-700 transition-all ease-in"
           data-collapse-target="animated-collapse-1"
-          onClick={() => setOpen(!open)}
+          onClick={(e) => {
+            e.preventDefault();
+            setOpen(!open);
+          }}
         >
           <span>{type}</span>
           <svg
             data-accordion-icon=""
-            className={`h-6 w-6 shrink-0 ${open ? 'transition-transform duration-500 rotate-180' : 'transition-transform duration-500 rotate-0'}`}
-            fill='currentColor'
+            className={`h-6 w-6 shrink-0 ${open ? "rotate-180 transition-transform duration-500" : "rotate-0 transition-transform duration-500"}`}
+            fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -78,8 +81,6 @@ const Accordion = ({
                             prev.filter((item) => item !== symptom),
                           );
                         }
-
-                        console.log("selectedAll", selectedAll);
                       }}
                     />
                     <div
