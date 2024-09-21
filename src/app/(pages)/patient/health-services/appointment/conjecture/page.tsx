@@ -15,7 +15,9 @@ import {
 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 
-const Conjecture = () => {
+const Conjecture = ({searchParams}: any) => {
+
+  console.log('diagnosis', searchParams.conjecture)
   const [concern, setConcern] = useState<string>("");
   const [selectedAll, setSelectedAll] = useState<string[]>([]);
   const [days, setDays] = useState<number>(0);
@@ -106,7 +108,7 @@ const Conjecture = () => {
                   <h1>We presume that you might have</h1>
                 </div>
                 <h1 className="py-5 text-center font-semibold text-primary">
-                  Lack of Money
+                  {searchParams.conjecture}
                 </h1>
               </div>
             </>

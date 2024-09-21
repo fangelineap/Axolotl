@@ -1,9 +1,16 @@
 "use client";
 
+import {
+  getCaregiverById,
+  getUserFromSession
+} from "@/app/lib/server";
+import { createAppointment } from "@/app/server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledLabel from "@/components/Axolotl/DisabledLabel";
+import Select from "@/components/Axolotl/Select";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { services } from "@/utils/Metadata/Services";
 import {
   IconCircleMinus,
   IconCirclePlus,
@@ -11,9 +18,10 @@ import {
   IconCircleXFilled,
 } from "@tabler/icons-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-const PlacingOrder = () => {
+const PlacingOrder = ({ searchParams }: any) => {
   const [concern, setConcern] = useState<string>("");
   const [selectedAll, setSelectedAll] = useState<string[]>([]);
   const [days, setDays] = useState<number>(0);
@@ -22,6 +30,45 @@ const PlacingOrder = () => {
   const [seconds, setSeconds] = useState(3600);
 
   const [copied, setCopied] = useState(false);
+  const [serviceType, setServiceType] = useState<string>("");
+  const [session, setSession] = useState<any>(null);
+  const [caregiver, setCaregiver] = useState<any>(null);
+  const [allTypes, setAllTypes] = useState<string[]>([]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data, error } = await getUserFromSession();
+      const caregiver = await getCaregiverById(searchParams.caregiver);
+
+      if (caregiver) {
+        setCaregiver(caregiver[0]);
+        setServiceType(searchParams.service);
+      }
+
+      if (data) {
+        setSession(data[0]);
+      }
+    };
+
+    getSession();
+  }, []);
+
+  useEffect(() => {
+    const getServiceTypes = () => {
+      services.map((service) => {
+        if (service.name === serviceType) {
+          setAllTypes([]);
+          service.types.map((type) => {
+            setAllTypes((prev) => [...prev, type.name.toString()]);
+          });
+        }
+      });
+    };
+
+    getServiceTypes();
+  }, [serviceType]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -36,6 +83,32 @@ const PlacingOrder = () => {
 
     return () => clearInterval(interval as NodeJS.Timeout);
   }, [isActive, seconds]);
+
+  const submitOrder = async (formData: FormData) => {
+    const res = await createAppointment({
+      service_type: serviceType,
+      caregiver_id: searchParams.caregiver,
+      causes: formData.get("causes")!.toString(),
+      main_concern: concern,
+      current_medication: formData.get("currentMedication")!.toString(),
+      medical_description: formData.get("medicalDescription")!.toString(),
+      days_of_visit: days,
+      appointment_time: searchParams.time,
+      appointment_date: searchParams.date,
+      total_payment: days * 500000,
+      symptoms: selectedAll,
+    });
+
+    console.log('res', res)
+    
+    if(res !== 'Please try again') {
+      router.push('/patient/health-services/appointment/conjecture?conjecture=' + res);
+    }
+    // if (res === 'Success') {
+    //   const diagnosis = await 
+    //   router.push('/patient/health-services/appointment/conjecture')
+    // }
+  };
 
   return (
     <DefaultLayout>
@@ -65,57 +138,72 @@ const PlacingOrder = () => {
         </div>
 
         {/* Content */}
-        <div className="mt-6 flex h-[100%] w-[85%] flex-col justify-between lg:flex-row">
+        <form
+          action={submitOrder}
+          className="mt-6 flex h-[100%] w-[85%] flex-col justify-between lg:flex-row"
+        >
           {/* Left Side */}
           <div className="w-[100%] p-3 lg:mr-7 lg:w-[65%]">
             <h1 className="mb-5 text-2xl font-bold">Place Your Order</h1>
             {/* Patient Information Section */}
-            <>
-              <h1 className="mb-2 text-lg font-semibold">
-                Patient Information
-              </h1>
-              <div>
-                <DisabledLabel
-                  label="Patient Name"
-                  horizontal
-                  placeholder="Lemon Meringue"
-                  type="text"
-                  key={"patient-name"}
-                />
-                <DisabledLabel
-                  label="Address"
-                  horizontal
-                  placeholder="Jl. Pundung Raya No. 1"
-                  type="text"
-                  key={"patient-address"}
-                />
-                <DisabledLabel
-                  label="Phone Number"
-                  horizontal
-                  placeholder="0812223334445"
-                  type="text"
-                  key={"patient-phone-number"}
-                />
-                <DisabledLabel
-                  label="Birthdate"
-                  horizontal
-                  placeholder="30/02/2003"
-                  type="text"
-                  key={"patient-birthdate"}
-                />
-              </div>
-            </>
+            {session && (
+              <>
+                <h1 className="mb-2 text-lg font-semibold">
+                  Patient Information
+                </h1>
+                <div>
+                  <DisabledLabel
+                    label="Patient Name"
+                    horizontal
+                    placeholder={session.first_name + " " + session.last_name}
+                    type="text"
+                    key={"patient-name"}
+                  />
+                  <DisabledLabel
+                    label="Address"
+                    horizontal
+                    placeholder={session.address}
+                    type="text"
+                    key={"patient-address"}
+                  />
+                  <DisabledLabel
+                    label="Phone Number"
+                    horizontal
+                    placeholder={"0" + session.phone_number}
+                    type="text"
+                    key={"patient-phone-number"}
+                  />
+                  <DisabledLabel
+                    label="Birthdate"
+                    horizontal
+                    placeholder={session.birthdate}
+                    type="text"
+                    key={"patient-birthdate"}
+                  />
+                </div>
+              </>
+            )}
 
             {/* Order Details */}
             <>
               <h1 className="mb-2 mt-7 text-lg font-semibold">Order Details</h1>
               <div>
-                <DisabledLabel
-                  label="Service Type"
-                  horizontal
-                  placeholder="After Care"
-                  type="text"
-                  key={"service-type"}
+                <Select
+                  label="Choose your home service"
+                  name="appointmentService"
+                  placeholder="Select service"
+                  required
+                  customClass={"w-full mb-3"}
+                  options={[
+                    "Neonatal Care",
+                    "Elderly Care",
+                    "After Care",
+                    "Booster",
+                  ]}
+                  selectedOption={serviceType}
+                  setSelectedOption={setServiceType}
+                  isOptionSelected={false}
+                  changeTextColor={() => {}}
                 />
                 {/* <div className="flex justify-between gap-3"> */}
                 <h1 className="font-medium text-dark dark:text-white">
@@ -138,30 +226,30 @@ const PlacingOrder = () => {
                   </label>
                   <input
                     type="text"
+                    name="causes"
                     placeholder="Causes"
                     className="w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   />
                 </div>
-                <SelectHorizontal
-                  label="Main Concerns"
-                  placeholder="Choose your concern"
-                  required
-                  options={[
-                    "Wound treatment",
-                    "Comorbidities treatment",
-                    "Patient with disability",
-                  ]}
-                  isOptionSelected={false}
-                  name="main-concerns"
-                  setSelectedOption={setConcern}
-                  selectedOption={concern}
-                />
+                {allTypes.length > 0 && (
+                  <SelectHorizontal
+                    label="Main Concerns"
+                    placeholder="Choose your concern"
+                    required
+                    options={allTypes}
+                    isOptionSelected={false}
+                    name="main-concerns"
+                    setSelectedOption={setConcern}
+                    selectedOption={concern}
+                  />
+                )}
                 <div className="mb-3 flex items-center justify-between gap-5">
                   <label className="mb-3 block font-medium text-dark dark:text-white">
                     Current Medication <span className="ml-1 text-red">*</span>
                   </label>
                   <input
                     type="text"
+                    name="currentMedication"
                     placeholder="Enter your current medication (separated by ',')"
                     className="w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                   />
@@ -172,6 +260,7 @@ const PlacingOrder = () => {
                     <span className="ml-1 text-red">*</span>
                   </label>
                   <textarea
+                    name="medicalDescription"
                     rows={4}
                     placeholder="lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
                     className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
@@ -187,10 +276,14 @@ const PlacingOrder = () => {
               </h1>
               <div className="mb-3 grid grid-flow-row grid-cols-4 gap-2">
                 {selectedAll.map((selected, index) => (
-                  <div key={selected} className="flex items-center justify-between gap-2 rounded-full border-2 border-primary bg-white px-2 py-1 text-primary">
+                  <div
+                    key={selected}
+                    className="flex items-center justify-between gap-2 rounded-full border-2 border-primary bg-white px-2 py-1 text-primary"
+                  >
                     <h1 className="font-medium">{selected}</h1>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         setSelectedAll((prev: string[]) =>
                           prev.filter((item) => item !== selected),
                         );
@@ -211,19 +304,15 @@ const PlacingOrder = () => {
                 <Accordion
                   type="General Symptoms"
                   symptoms={[
-                    "sakit pinggang",
-                    "sakit punggung",
-                    "sakit hati",
-                    "sakit gigi",
-                    "sakit kepala",
-                    "sakit perut",
+                    "itching",
+                    "skin rash"
                   ]}
                   selectedAll={selectedAll}
                   setSelectedAll={setSelectedAll}
                 />
                 <Accordion
                   type="Skin Symptoms"
-                  symptoms={["gatal?", "kesemutan?", "cihuy"]}
+                  symptoms={["dischromic patches"]}
                   selectedAll={selectedAll}
                   setSelectedAll={setSelectedAll}
                 />
@@ -247,8 +336,11 @@ const PlacingOrder = () => {
                         Your transaction will be automatically terminated in
                       </h1>
                       <h1 className="text-lg font-semibold">
-                        {Math.floor(seconds / 3600)}:{Math.floor(seconds / 60) == 60 ? "00" : Math.floor(seconds / 60)}:
-                        {seconds % 60 == 0 ? "00" : seconds % 60}
+                        {Math.floor(seconds / 3600)}:
+                        {Math.floor(seconds / 60) == 60
+                          ? "00"
+                          : Math.floor(seconds / 60)}
+                        :{seconds % 60 == 0 ? "00" : seconds % 60}
                       </h1>
                     </div>
                     <div className="mb-1 mt-3 flex justify-between">
@@ -278,45 +370,49 @@ const PlacingOrder = () => {
                       </h1>
                       <h1>12345-67890-87654</h1>
                       <button
-                        className={`my-3 rounded-md ${copied ? 'disabled bg-gray-cancel' : 'bg-primary'} px-3 py-1 font-semibold text-white`}
-                        onClick={async () => {
+                        className={`my-3 rounded-md ${copied ? "disabled bg-gray-cancel" : "bg-primary"} px-3 py-1 font-semibold text-white`}
+                        onClick={async (e) => {
+                          e.preventDefault();
+
                           try {
                             await navigator.clipboard.writeText(
                               "12345-67890-87654",
                             );
-                            setCopied(true)
+                            setCopied(true);
                           } catch (error) {
                             console.log("error");
                           }
                         }}
                       >
-                        {copied ? 'Copied' : 'Copy to clipboard'}
+                        {copied ? "Copied" : "Copy to clipboard"}
                       </button>
                     </div>
                     <div>
-                        <h1 className="font-bold text-lg mb-2">Payment Status</h1>
-                    <div className="border-primary bg-kalbe-ultraLight px-5 py-2 border-[1px] rounded-md">
-                      <h1 className="text-lg font-semibold text-primary text-center">Verified</h1>
+                      <h1 className="mb-2 text-lg font-bold">Payment Status</h1>
+                      <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
+                        <h1 className="text-center text-lg font-semibold text-primary">
+                          Verified
+                        </h1>
+                      </div>
                     </div>
-                    </div>
-                    <div className="flex w-full justify-center mt-5 mb-5">
+                    <div className="mb-5 mt-5 flex w-full justify-center">
                       {copied ? (
-                      <button
-                        type="button"
-                        className={`w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90`}
-                        onClick={() => setIsActive(true)}
-                      >
-                        Continue
-                      </button>
+                        <button
+                          className={`w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90`}
+                        >
+                          Continue
+                        </button>
                       ) : (
                         <button
-                        type="button"
-                        disabled
-                        className={`w-full rounded-sm bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90`}
-                        onClick={() => setIsActive(true)}
-                      >
-                        Continue
-                      </button>
+                          disabled
+                          className={`w-full rounded-sm bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setIsActive(true);
+                          }}
+                        >
+                          Continue
+                        </button>
                       )}
                     </div>
                   </div>
@@ -332,40 +428,51 @@ const PlacingOrder = () => {
                         className="rounded-full bg-kalbe-veryLight"
                         alt="CG pfp"
                       />
-                      <h1>Strawberry Shortcake, A.Md.Kep.</h1>
+                      <h1>
+                        {caregiver?.first_name} {caregiver?.last_name}
+                      </h1>
                     </div>
                     <DisabledLabel
                       horizontal={false}
                       label="Service Type"
                       type="text"
-                      value="After Care"
+                      value={serviceType}
                     />
                     <DisabledLabel
                       horizontal={false}
                       label="Service For"
                       type="text"
-                      value="Wound Treatment"
+                      value={concern}
                     />
-                    <div>
-                      <label className="font-medium text-dark dark:text-white">
-                        Days of Visit
-                      </label>
-                      <div className="my-2 flex justify-between rounded-full border-[1px] border-stroke p-2 text-primary">
-                        <button
-                          onClick={() => {
-                            if (days > 0) {
-                              setDays(days - 1);
-                            }
-                          }}
-                        >
-                          <IconCircleMinus size={30} />
-                        </button>
-                        <h1 className="text-lg text-black">{days}</h1>
-                        <button onClick={() => setDays(days + 1)}>
-                          <IconCirclePlus size={30} />
-                        </button>
-                      </div>
-                    </div>
+                    {serviceType &&
+                      (serviceType !== "Booster" ? (
+                        <div>
+                          <label className="font-medium text-dark dark:text-white">
+                            Days of Visit
+                          </label>
+                          <div className="my-2 flex justify-between rounded-full border-[1px] border-stroke p-2 text-primary">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (days > 0) {
+                                  setDays(days - 1);
+                                }
+                              }}
+                            >
+                              <IconCircleMinus size={30} />
+                            </button>
+                            <h1 className="text-lg text-black">{days}</h1>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setDays(days + 1);
+                              }}
+                            >
+                              <IconCirclePlus size={30} />
+                            </button>
+                          </div>
+                        </div>
+                      ) : null)}
                   </div>
                   <div className="flex justify-between px-5 py-3">
                     <h1 className="text-lg font-semibold">Sub Total: </h1>
@@ -373,9 +480,11 @@ const PlacingOrder = () => {
                   </div>
                   <div className="flex w-full justify-center px-5">
                     <button
-                      type="button"
                       className="mb-5 w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
-                      onClick={() => setIsActive(true)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsActive(true);
+                      }}
                     >
                       Pay
                     </button>
@@ -384,7 +493,7 @@ const PlacingOrder = () => {
               )}
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </DefaultLayout>
   );
