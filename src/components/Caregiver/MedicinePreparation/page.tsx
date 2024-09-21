@@ -641,15 +641,16 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       {isModalOpen && currentMedicine && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div
-            className=" h-full w-full max-w-lg rounded-lg  bg-white 
-                   md:h-[75vh] lg:h-[93vh]"
+            className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md xl:max-w-xl 
+            mx-auto rounded-lg bg-white sm:h-auto md:h-auto lg:h-auto xl:h-auto
+            max-h-[90vh] overflow-y-auto"
           >
             <div className="rounded-t-lg bg-primary px-6 py-4">
               <h2 className="text-center text-xl font-bold text-white">
                 Add Medicine
               </h2>
             </div>
-            <div className=" max-h-[75vh] overflow-y-auto p-6 md:max-h-[65vh] lg:max-h-[80vh]">
+            <div className=" overflow-y-auto p-6  ">
               {/* Medicine Photo Section */}
               <div className="mb-6">
                 <h3 className="mb-2 font-bold text-primary">Medicine Photo</h3>
@@ -673,17 +674,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 <h3 className="mb-2 font-bold text-primary">
                   Medicine Description
                 </h3>
-                <div className="mb-4">
-                  <label className="mb-4 block text-sm font-medium">
-                    Product ID
-                  </label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine.uuid}
-                    disabled
-                  />
-                </div>
                 <div className="mb-4">
                   <label className="mb-4 block text-sm font-medium">Name</label>
                   <input
@@ -783,7 +773,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                     name="Brand"
                     label="Type"
                     content={["Branded", "Generic"]}
-                    customClasses="w-full xl:w-1/2"
+                    customClasses="w-full"
                     required
                     onChange={(value) =>
                       setNewMedicine({ ...newMedicine, type: value })
