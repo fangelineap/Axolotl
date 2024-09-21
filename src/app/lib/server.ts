@@ -145,6 +145,7 @@ export async function logout() {
 
   redirect("/auth/signin");
 }
+
 export async function getCaregiverById(id: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
