@@ -1,14 +1,13 @@
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
-import ManageApprovalTable from "./table/ManageApprovalTable";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
-import { getAdminApproval } from "./actions";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
+import { getAllAdminApproval } from "./actions";
+import ManageApprovalTable from "./table/ManageApprovalTable";
 
 export const metadata = getAdminMetadata("Manage Approval");
 
 async function AdminManageApproval() {
-  const data = await getAdminApproval();
+  const data = await getAllAdminApproval();
 
   return (
     <div className="bg-gray">

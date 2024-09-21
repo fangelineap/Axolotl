@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import AxolotlModal from "./AxolotlModal";
 import AxolotlRejectionModal from "./AxolotlRejectionModal";
-import { approveCaregiver, rejectCaregiver } from "@/app/(pages)/admin/manage/approval/actions";
+import { adminApproveCaregiver, adminRejectCaregiver } from "@/app/(pages)/admin/manage/approval/actions";
 
 interface ApprovalButtonsProps {
   status: string;
@@ -33,7 +33,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       setOpenRejectionNotesModal(true);
     } else {
       try {
-        const { data, error } = await approveCaregiver(caregiver.caregiver_id);
+        const { data, error } = await adminApproveCaregiver(caregiver.caregiver_id);
 
         if (error !== null && error !== undefined) {
           toast.error("Something went wrong.", {
@@ -62,7 +62,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
 
   const handleRejectionModal = async (notes: string) => {
     try {
-      const { data, error } = await rejectCaregiver(
+      const { data, error } = await adminRejectCaregiver(
         caregiver.caregiver_id,
         notes,
       );

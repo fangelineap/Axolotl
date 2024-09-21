@@ -15,24 +15,21 @@ const SignIn = async ({ searchParams }: any) => {
   /**
    * Get user from session
    */
-  const { data: userSession } = await getUserFromSession();
+  const { data: user } = await getUserFromSession();
 
-  if (userSession) {
-    if (userSession[0].role === "Patient") {
+  if (user) {
+    if (user.role === "Patient") {
       redirect("/patient");
-    } else if (
-      userSession[0].role === "Nurse" ||
-      userSession[0].role === "Midwife"
-    ) {
+    } else if (user.role === "Nurse" || user.role === "Midwife") {
       redirect("/caregiver");
-    } else if (userSession[0].role === "Admin") {
+    } else if (user.role === "Admin") {
       redirect("/admin");
     }
   }
 
   /**
    * Redirect User after Sign In
-   * @param form 
+   * @param form
    */
   const signIn = async (form: FormData) => {
     "use server";
@@ -65,7 +62,6 @@ const SignIn = async ({ searchParams }: any) => {
       }
     }
   };
-
 
   return (
     <DefaultLayout>

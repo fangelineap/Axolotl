@@ -57,9 +57,13 @@ export const columns = [
             <div className="rounded-3xl bg-red-light px-3 py-1">
               <p className="font-bold text-red">{role}</p>
             </div>
-          ) : (
+          ) : role === "Patient" ? (
             <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
               <p className="font-bold text-primary">{role}</p>
+            </div>
+          ) : (
+            <div className="rounded-3xl bg-gray px-3 py-1">
+              <p className="font-bold text-gray-cancel">N/A</p>
             </div>
           )}
         </div>
