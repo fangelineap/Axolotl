@@ -2,7 +2,7 @@ import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import { AdminUserTable } from "../table/data";
-import { getUserByUserID } from "../actions";
+import { getAdminUserByUserID } from "../actions";
 import ViewUser from "@/components/Admin/Manage/User/ViewUser";
 
 interface AdminShowUserProps {
@@ -10,7 +10,7 @@ interface AdminShowUserProps {
 }
 
 async function fetchData({ params }: AdminShowUserProps) {
-  const response = await getUserByUserID(params.userId);
+  const response = await getAdminUserByUserID(params.userId);
   return response as AdminUserTable;
 }
 

@@ -5,7 +5,7 @@ import { unstable_noStore } from "next/cache";
 import { AdminUserTable } from "../table/data";
 import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
 
-export async function getAllUsers() {
+export async function getAdminAllUsers() {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -29,7 +29,7 @@ export async function getAllUsers() {
   }
 }
 
-export async function getUserByUserID(user_id: string) {
+export async function getAdminUserByUserID(user_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();

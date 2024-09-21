@@ -16,7 +16,6 @@ const SelectHorizontal = ({
   placeholder,
   name,
   required,
-  customClass,
   options,
   selectedOption,
   setSelectedOption,

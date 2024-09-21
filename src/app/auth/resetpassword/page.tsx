@@ -1,10 +1,8 @@
+import { resetPassword } from "@/app/server-action/auth";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
-import PasswordInput from "../component/PasswordInput";
-import { resetPassword } from "@/app/server-action/auth";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import PasswordInput from "../component/PasswordInput";
 
 const ResetPassword = ({ searchParams }: any) => {
   const handleReset = async (form: FormData) => {

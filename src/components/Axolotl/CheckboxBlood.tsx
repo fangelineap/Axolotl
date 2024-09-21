@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface CheckboxBloodProps {
   blood: "A" | "B" | "AB" | "O" | "",
   setBlood: (blood: "A" | "B" | "AB" | "O" | "") => void

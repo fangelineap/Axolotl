@@ -48,3 +48,8 @@ export type PATIENT = {
 };
 
 export type USER_AUTH_SCHEMA = USER & { email: string };
+
+export type USER_DETAILS_AUTH_SCHEMA = USER_AUTH_SCHEMA & {
+  patient?: PATIENT;
+  caregiver?: CAREGIVER;
+};

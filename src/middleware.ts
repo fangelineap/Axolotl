@@ -69,13 +69,19 @@ export async function updateSession(request: NextRequest) {
   }
 
   /**
-   * If there's no Session & the user is trying to continue the personalinformation
+   * If the user is not authenticated, redirect to signin and clear auth cookies
    */
   if (!user) {
-    if (!pathname.startsWith("/auth")) {
-      return NextResponse.redirect(new URL("/auth/signin", request.url));
-    }
-    return NextResponse.next();
+    // User is not authenticated, clear auth cookies and redirect to signin
+    const response = NextResponse.redirect(
+      new URL("/auth/signin", request.url),
+    );
+
+    // Clear Supabase auth cookies
+    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
+    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
+
+    return response;
   }
 
   const userId = user?.id;
@@ -87,7 +93,8 @@ export async function updateSession(request: NextRequest) {
     .single();
 
   if (userData) {
-    console.log({ user, userData });
+    console.log(user);
+    console.log(userData);
   }
 
   const userRole = userData.role;

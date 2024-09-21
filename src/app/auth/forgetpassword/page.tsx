@@ -9,6 +9,7 @@ const ForgetPassword = ({ searchParams }: any) => {
   const handleRedirect = async (form: FormData) => {
     "use server";
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { data, error } = await forgetPassword(form.get("email")!.toString());
     if (error != null) {
       redirect("/auth/forgetpassword/?success=false");

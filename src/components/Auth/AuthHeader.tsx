@@ -30,6 +30,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
     };
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -101,7 +102,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         </div>
         <div className="flex gap-8">
-          <div className="flex items-center justify-center gap-2 text-black">
+          <div className="lg:flex items-center justify-center gap-2 text-black hidden">
             <Link href="/">
               <div className="flex items-center gap-2">
                 <IconArrowLeft />

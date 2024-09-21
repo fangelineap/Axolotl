@@ -370,31 +370,35 @@ const PersonalInformation = ({ searchParams }: any) => {
                             <span className="ml-1 text-red">*</span>
                           </label>
                           <div className="flex flex-row gap-3">
-                            <div className="relative w-[240px]">
-                              <span className="absolute right-[1px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.2px]">
-                                cm
-                              </span>
-                              <input
-                                className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent py-3 pl-5.5 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
-                                type="number"
-                                name="height"
-                                id="height"
-                                placeholder="Height"
-                                required
-                              />
+                            <div className="w-[240px]">
+                              <div className="flex w-full items-center">
+                                <input
+                                  className="w-full rounded-l-md border border-gray-1 bg-white p-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                                  type="number"
+                                  name="height"
+                                  id="height"
+                                  placeholder="Height"
+                                  required
+                                />
+                                <span className="border-gray-r rounded-r-md border border-l-0 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+                                  cm
+                                </span>
+                              </div>
                             </div>
-                            <div className="relative w-[240px]">
-                              <input
-                                className="relative w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent py-3 pl-5.5 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
-                                type="number"
-                                name="weight"
-                                id="weight"
-                                placeholder="Weight"
-                                required
-                              />
-                              <span className="absolute right-[0.5px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.2px]">
-                                kg
-                              </span>
+                            <div className="w-[240px]">
+                              <div className="mb-3 flex w-full">
+                                <input
+                                  className="w-full rounded-l-md border border-gray-1 bg-white p-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                                  type="number"
+                                  name="weight"
+                                  id="weight"
+                                  placeholder="Weight"
+                                  required
+                                />
+                                <span className="border-gray-r rounded-r-md border border-l-0 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+                                  kg
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -454,31 +458,35 @@ const PersonalInformation = ({ searchParams }: any) => {
                               <span className="ml-1 text-red">*</span>
                             </label>
                             <div className="flex flex-row gap-3">
-                              <div className="relative w-[240px] xl:w-[170px]">
-                                <span className="absolute right-[0.5px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.1px]">
-                                  qty
-                                </span>
-                                <input
-                                  className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent py-3 pl-5.5 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
-                                  type="number"
-                                  name="medicineQuantity"
-                                  id="medicineQuantity"
-                                  placeholder="0"
-                                  required
-                                />
+                              <div className="w-[240px] xl:w-[170px]">
+                                <div className="flex w-full items-center">
+                                  <input
+                                    className="w-full rounded-l-md border border-gray-1 bg-white p-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                                    type="number"
+                                    name="medicineQuantity"
+                                    id="medicineQuantity"
+                                    placeholder="0"
+                                    required
+                                  />
+                                  <span className="border-gray-r rounded-r-md border border-l-0 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+                                    qty
+                                  </span>
+                                </div>
                               </div>
-                              <div className="relative w-[240px] xl:w-[170px]">
-                                <input
-                                  className="relative w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent py-3 pl-5.5 text-dark focus:border-primary focus-visible:outline-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
-                                  type="number"
-                                  name="medicineFrequency"
-                                  id="medicineFrequency"
-                                  placeholder="0"
-                                  required
-                                />
-                                <span className="absolute right-[0.5px] top-[1px] rounded-br-[7px] rounded-tr-[7px] bg-slate-300 p-[12.1px]">
-                                  /day
-                                </span>
+                              <div className="w-[240px] xl:w-[170px]">
+                                <div className="flex w-full items-center">
+                                  <input
+                                    className="w-full rounded-l-md border border-gray-1 bg-white p-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                                    type="number"
+                                    name="medicineFrequency"
+                                    id="medicineFrequency"
+                                    placeholder="0"
+                                    required
+                                  />
+                                  <span className="border-gray-r rounded-r-md border border-l-0 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+                                    /day
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>

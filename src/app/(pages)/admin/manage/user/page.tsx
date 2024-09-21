@@ -3,14 +3,14 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 import ManageUserTable from "./table/ManageUserTable";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
-import { getAllUsers } from "./actions";
+import { getAdminAllUsers } from "./actions";
 import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
 import { AdminUserTable } from "./table/data";
 
 export const metadata = getAdminMetadata("Manage User");
 
 async function getUserData() {
-  const data = await getAllUsers();
+  const data = await getAdminAllUsers();
 
   if (!data.length) {
     return [];

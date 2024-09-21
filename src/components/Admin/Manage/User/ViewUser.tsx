@@ -169,7 +169,7 @@ async function ViewUser({ user }: ViewUserProps) {
             <div className="flex w-full gap-5">
               <DisabledLabel
                 label="Email"
-                value={user?.email}
+                value={user.email}
                 horizontal={false}
                 type="text"
               />

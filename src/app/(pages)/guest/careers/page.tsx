@@ -134,8 +134,8 @@ const Careers: React.FC = () => {
               <h2 className="mb-4 text-3xl">
                 Start your <span className="font-bold">Journey</span> Now!
               </h2>
-              <div className="mb-6 flex w-full items-center justify-center rounded-lg border border-yellow-dark bg-yellow-light p-4">
-                <div className="flex-shrink-0 pr-4">
+              <div className="mb-6 flex flex-col gap-4 lg:flex-row w-full items-center justify-center rounded-lg border border-yellow-dark bg-yellow-light p-4">
+                <div className="flex-shrink-0">
                   <IconExclamationCircleFilled
                     size={50}
                     className="text-yellow-dark"
