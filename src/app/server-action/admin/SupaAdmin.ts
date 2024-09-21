@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
+import { unstable_noStore } from "next/cache";
 
 async function getAdminAuthClient() {
   const supabaseAdminClient = createClient(
@@ -31,6 +32,25 @@ export async function getUserAuthSchema(user_id: string) {
     return response?.user;
   } catch (error) {
     console.error("Error in getUserAuthSchema:", error);
+    return null;
+  }
+}
+
+export async function deleteUser(user_id: string) {
+  unstable_noStore();
+
+  try {
+    const supabaseAdmin = await getAdminAuthClient();
+    const { error } = await supabaseAdmin.deleteUser(user_id);
+    if (error) {
+      console.error("Error deleting user:", error.message);
+      return null;
+    }
+    console.log("Successfully deleted user:", user_id);
+
+    return true;
+  } catch (error) {
+    console.error("Error in deleteUser:", error);
     return null;
   }
 }

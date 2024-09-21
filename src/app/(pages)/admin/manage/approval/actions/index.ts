@@ -4,7 +4,7 @@ import createSupabaseServerClient from "@/app/lib/server";
 import { unstable_noStore } from "next/cache";
 import { AdminApprovalTable } from "../table/data";
 
-export async function getAdminApproval() {
+export async function getAllAdminApproval() {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -33,7 +33,7 @@ export async function getAdminApproval() {
   }
 }
 
-export async function getAdminApprovalById(caregiver_id: string) {
+export async function getSingleAdminApprovalById(caregiver_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -66,7 +66,7 @@ export async function getAdminApprovalById(caregiver_id: string) {
   }
 }
 
-export async function approveCaregiver(caregiver_id: string) {
+export async function adminApproveCaregiver(caregiver_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -92,7 +92,7 @@ export async function approveCaregiver(caregiver_id: string) {
   }
 }
 
-export async function rejectCaregiver(caregiver_id: string, notes: string) {
+export async function adminRejectCaregiver(caregiver_id: string, notes: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();

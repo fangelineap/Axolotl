@@ -7,10 +7,30 @@ import PasswordInput from "../component/PasswordInput";
 import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
+import { getUserFromSession } from "@/app/lib/server";
 
 export const metadata: Metadata = getGuestMetadata("sign in");
 
-const SignIn = ({ searchParams }: any) => {
+const SignIn = async ({ searchParams }: any) => {
+  /**
+   * Get user from session
+   */
+  const { data: user } = await getUserFromSession();
+
+  if (user) {
+    if (user.role === "Patient") {
+      redirect("/patient");
+    } else if (user.role === "Nurse" || user.role === "Midwife") {
+      redirect("/caregiver");
+    } else if (user.role === "Admin") {
+      redirect("/admin");
+    }
+  }
+
+  /**
+   * Redirect User after Sign In
+   * @param form
+   */
   const signIn = async (form: FormData) => {
     "use server";
 

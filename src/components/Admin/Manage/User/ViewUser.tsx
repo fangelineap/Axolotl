@@ -3,14 +3,13 @@ import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 interface ViewUserProps {
   user: AdminUserTable;
 }
 
 async function ViewUser({ user }: ViewUserProps) {
-  const cg_full_name = user.first_name + " " + user.last_name;
+  const user_full_name = user.first_name + " " + user.last_name;
 
   const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
@@ -81,7 +80,7 @@ async function ViewUser({ user }: ViewUserProps) {
             )}
           </div>
           <div className="mb-4 flex flex-col items-center justify-center gap-2 lg:mb-0 lg:items-start">
-            <h1 className="text-xl font-bold">{cg_full_name}</h1>
+            <h1 className="text-xl font-bold">{user_full_name}</h1>
             <div className="flex flex-col gap-2">
               {(user.role === "Nurse" || user.role === "Midwife") && (
                 <div className="flex items-center justify-center gap-2">
@@ -191,6 +190,11 @@ async function ViewUser({ user }: ViewUserProps) {
               horizontal={false}
               type="text"
             />
+          </div>
+
+          {/* Center Divider */}
+          <div className="hidden lg:flex lg:items-center">
+            <div className="h-full border-l border-primary"></div>
           </div>
         </div>
 

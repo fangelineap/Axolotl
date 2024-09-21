@@ -2,6 +2,7 @@
 "use server";
 
 import createSupabaseServerClient from "@/app/lib/server";
+import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function signInWithEmailAndPassword(
@@ -78,16 +79,38 @@ export async function resetPassword(password: string, code: string) {
   redirect("/auth/signin");
 }
 
-export async function getCaregiver(caregiverId: any) {
-  const supabase = await createSupabaseServerClient();
-  return await supabase
-    .from("caregiver")
-    .select("*")
-    .eq("caregiver_id", caregiverId)
-    .limit(1);
-}
-
 export async function getUser(user_id: string) {
   const supabase = await createSupabaseServerClient();
   return await supabase.from("users").select().eq("user_id", user_id);
+}
+
+export async function getCaregiverVerificationStatus(caregiver_id: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data: caregiverData, error: caregiverError } = await supabase
+      .from("caregiver")
+      .select("*")
+      .eq("caregiver_id", caregiver_id)
+      .single();
+
+    if (caregiverError) {
+      console.error("Error fetching data:", caregiverError.message);
+      return null;
+    }
+
+    const verificationStatus =
+      caregiverData?.status === "Verified"
+        ? "Verified"
+        : caregiverData?.status === "Rejected"
+          ? "Rejected"
+          : "Unverified";
+
+    return verificationStatus;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+    return null;
+  }
 }

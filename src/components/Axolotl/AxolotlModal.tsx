@@ -15,7 +15,7 @@ interface AxolotlModalProps {
   onConfirm: () => void;
   title: string;
   question: string;
-  action?: "delete" | "reject" | "confirm" | "skip" | "approve";
+  action?: "delete" | "reject" | "confirm" | "skip" | "approve" | "cancel";
   medicine?: AdminMedicineTable | null;
   user?: AdminUserTable | null;
 }
@@ -43,7 +43,7 @@ function AxolotlModal({
             </button>
           </div>
           <div className="flex flex-col gap-5 px-5">
-            <p className="text-xl text-dark-secondary">{question}</p>
+            <p className="text-lg text-dark-secondary">{question}</p>
             {medicine && (
               <div className="flex flex-col gap-2">
                 <h3 className="text-xl font-medium text-black">
@@ -125,6 +125,22 @@ function AxolotlModal({
                   onClick={onConfirm}
                 >
                   Yup, skip it
+                </button>
+              </>
+            )}
+            {action === "cancel" && (
+              <>
+                <button
+                  className="w-1/4 rounded-md border border-red bg-white px-3 py-2 font-bold text-red hover:bg-red-hover hover:text-red"
+                  onClick={onConfirm}
+                >
+                  Yes, cancel
+                </button>
+                <button
+                  className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                  onClick={onClose}
+                >
+                  No, continue the registration
                 </button>
               </>
             )}

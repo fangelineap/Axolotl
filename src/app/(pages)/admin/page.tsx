@@ -1,6 +1,13 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import Image from "next/image";
+import {
+  IconFileCheck,
+  IconFirstAidKit,
+  IconMedicineSyrup,
+  IconUsers,
+  IconVaccine,
+} from "@tabler/icons-react";
 import { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -28,22 +35,20 @@ const AdminDashboard = () => {
               <h1 className="text-heading-4 font-medium">Order Logs</h1>
               <div className="mt-5 flex justify-center gap-4 xl:justify-end">
                 <Link href="/admin/order/service" title="Order Service">
-                  <Image
-                    src={"/images/freepik/admin-order-service.svg"}
-                    alt="Admin Order Service"
-                    width={125}
-                    height={125}
-                    className="cursor-pointer grayscale transition-colors duration-300 hover:grayscale-0"
-                  />
+                  <div className="h-35 w-35 cursor-pointer">
+                    <div className="flex h-full w-full flex-col items-center justify-between rounded-lg border-2 border-primary bg-primary p-2 text-white transition-colors duration-150 hover:bg-white hover:text-primary">
+                      <IconFirstAidKit size={80} stroke={1} />
+                      <p className="text-xl font-medium">Service</p>
+                    </div>
+                  </div>
                 </Link>
                 <Link href="/admin/order/medicine" title="Order Medicine">
-                  <Image
-                    src={"/images/freepik/admin-order-med.svg"}
-                    alt="Admin Order Medicine"
-                    width={125}
-                    height={125}
-                    className="cursor-pointer grayscale transition-colors duration-300 hover:grayscale-0"
-                  />
+                  <div className="h-35 w-35 cursor-pointer">
+                    <div className="flex h-full w-full flex-col items-center justify-between rounded-lg border-2 border-primary bg-primary p-2 text-white transition-colors duration-150 hover:bg-white hover:text-primary">
+                      <IconVaccine size={80} stroke={1} />
+                      <p className="text-xl font-medium">Medicine</p>
+                    </div>
+                  </div>
                 </Link>
               </div>
             </div>
@@ -51,31 +56,28 @@ const AdminDashboard = () => {
               <h1 className="text-heading-4 font-medium">Management</h1>
               <div className="mt-5 flex justify-center gap-4 xl:justify-end">
                 <Link href="/admin/manage/user" title="Manage User">
-                  <Image
-                    src={"/images/freepik/admin-manage-user.svg"}
-                    alt="Admin Manage User"
-                    width={125}
-                    height={125}
-                    className="cursor-pointer grayscale transition-colors duration-300 hover:grayscale-0"
-                  />
+                  <div className="h-35 w-35 cursor-pointer">
+                    <div className="flex h-full w-full flex-col items-center justify-between gap-1 rounded-lg border-2 border-primary bg-primary p-2 text-white transition-colors duration-150 hover:bg-white hover:text-primary">
+                      <IconUsers size={80} stroke={1} />
+                      <p className="text-xl font-medium">User</p>
+                    </div>
+                  </div>
                 </Link>
                 <Link href="/admin/manage/approval" title="Manage Approval">
-                  <Image
-                    src={"/images/freepik/admin-manage-approval.svg"}
-                    alt="Admin Manage Approval"
-                    width={125}
-                    height={125}
-                    className="cursor-pointer grayscale transition-colors duration-300 hover:grayscale-0"
-                  />
+                  <div className="h-35 w-35 cursor-pointer">
+                    <div className="flex h-full w-full flex-col items-center justify-between gap-1 rounded-lg border-2 border-primary bg-primary p-2 text-white transition-colors duration-150 hover:bg-white hover:text-primary">
+                      <IconFileCheck size={80} stroke={1} />
+                      <p className="text-xl font-medium">Approval</p>
+                    </div>
+                  </div>
                 </Link>
                 <Link href="/admin/manage/medicine" title="Manage Medicine">
-                  <Image
-                    src={"/images/freepik/admin-manage-med.svg"}
-                    alt="Admin Manage Medicine"
-                    width={125}
-                    height={125}
-                    className="cursor-pointer grayscale transition-colors duration-300 hover:grayscale-0"
-                  />
+                  <div className="h-35 w-35 cursor-pointer">
+                    <div className="flex h-full w-full flex-col items-center justify-between gap-1 rounded-lg border-2 border-primary bg-primary p-2 text-white transition-colors duration-150 hover:bg-white hover:text-primary">
+                      <IconMedicineSyrup size={80} stroke={1} />
+                      <p className="text-xl font-medium">Medicine</p>
+                    </div>
+                  </div>
                 </Link>
               </div>
             </div>

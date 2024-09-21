@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: AdminShowUserProps) {
     };
   }
 
-  const full_name = response.first_name + " " + response.last_name;
+  const user_full_name = response.first_name + " " + response.last_name;
 
   return {
-    title: `${full_name} Details`,
+    title: `${user_full_name} Details`,
   };
 }
 
