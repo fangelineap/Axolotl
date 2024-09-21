@@ -33,14 +33,14 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
+    second: "2-digit"
   });
 
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   });
 
   // Helper function to format dates
@@ -50,11 +50,11 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   // Use the formatters
   const formattedReviewDate = formatDate(
     caregiver.reviewed_at,
-    dateTimeFormatter,
+    dateTimeFormatter
   );
   const formattedBirthDate = formatDate(
     caregiver.user.birthdate,
-    dateFormatter,
+    dateFormatter
   );
 
   return (
@@ -176,90 +176,87 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
           </div>
 
           {/* Second Column */}
-          <div className="flex w-full flex-col gap-5">
-            <div className="flex w-full flex-col gap-2">
-              <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                User Working Experiences
-              </h1>
-              <div className="flex w-full gap-5">
-                <DisabledLabel
-                  label="Employment Type"
-                  value={caregiver.employment_type}
-                  horizontal={false}
-                  type="text"
-                />
-                <DisabledLabel
-                  label="Work Experiences"
-                  value={caregiver.work_experiences.toString()}
-                  horizontal={false}
-                  type="text"
-                  isWorkingExperiences={true}
-                />
-              </div>
+          <div className="flex w-full flex-col gap-2">
+            {/* User Working Experiences */}
+            <h1 className="mb-3 text-heading-6 font-bold text-primary">
+              User Working Experiences
+            </h1>
+            <div className="flex w-full gap-5">
               <DisabledLabel
-                label="Workplace"
-                value={caregiver.workplace}
+                label="Employment Type"
+                value={caregiver.employment_type}
                 horizontal={false}
                 type="text"
               />
+              <DisabledLabel
+                label="Work Experiences"
+                value={caregiver.work_experiences.toString()}
+                horizontal={false}
+                type="text"
+                isUnit={true}
+                unitName="year"
+              />
             </div>
-            <div className="flex w-full flex-col gap-2">
-              <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                User Licences
-              </h1>
-              <div className="grid grid-cols-2 gap-5">
-                <DownloadLicenses
-                  licenseTitle="Curriculum Vitae"
-                  fileLink={caregiver.cv}
-                  cv
-                />
-                <DownloadLicenses
-                  licenseTitle="Degree Certificate"
-                  fileLink={caregiver.degree_certificate}
-                  degree_certificate
-                />
-                <DownloadLicenses
-                  licenseTitle="Surat Tanda Registrasi"
-                  fileLink={caregiver.str}
-                  str
-                />
-                <DownloadLicenses
-                  licenseTitle="Surat Izin Praktik"
-                  fileLink={caregiver.sip}
-                  sip
-                />
-              </div>
+            <DisabledLabel
+              label="Workplace"
+              value={caregiver.workplace}
+              horizontal={false}
+              type="text"
+            />
+
+            {/* User Licenses */}
+            <h1 className="mb-3 text-heading-6 font-bold text-primary">
+              User Licences
+            </h1>
+            <div className="grid grid-cols-2 gap-5">
+              <DownloadLicenses
+                licenseTitle="Curriculum Vitae"
+                fileLink={caregiver.cv}
+                cv
+              />
+              <DownloadLicenses
+                licenseTitle="Degree Certificate"
+                fileLink={caregiver.degree_certificate}
+                degree_certificate
+              />
+              <DownloadLicenses
+                licenseTitle="Surat Tanda Registrasi"
+                fileLink={caregiver.str}
+                str
+              />
+              <DownloadLicenses
+                licenseTitle="Surat Izin Praktik"
+                fileLink={caregiver.sip}
+                sip
+              />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Rejection Notes */}
-        {caregiver.status === "Rejected" && (
-          <div className="mt-3 flex w-full flex-col justify-center gap-2">
-            <h1 className="mb-3 text-heading-6 font-bold text-primary">
-              Rejection Notes
-            </h1>
-            <textarea
-              title="Rejection Notes"
-              value={caregiver.notes}
-              disabled
-              className="h-20 w-full rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
-            />
-          </div>
-        )}
+      {/* Rejection Notes */}
+      {caregiver.status === "Rejected" && (
+        <div className="mt-3 flex w-full flex-col justify-center gap-2">
+          <h1 className="mb-3 text-heading-6 font-bold text-primary">
+            Rejection Notes
+          </h1>
+          <textarea
+            title="Rejection Notes"
+            value={caregiver.notes}
+            disabled
+            className="h-20 w-full rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
+          />
+        </div>
+      )}
 
-        {/* Button Group */}
-        <div className="mt-5 flex w-full items-center justify-end">
-          <div className="flex w-1/4 items-center justify-end gap-5">
-            {caregiver.status === "Unverified" ? (
-              <ApprovalButtons
-                status={caregiver.status}
-                caregiver={caregiver}
-              />
-            ) : (
-              <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
-            )}
-          </div>
+      {/* Button Group */}
+      <div className="mt-5 flex w-full items-center justify-end">
+        <div className="flex w-1/4 items-center justify-end gap-5">
+          {caregiver.status === "Unverified" ? (
+            <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
+          ) : (
+            <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
+          )}
         </div>
       </div>
     </div>

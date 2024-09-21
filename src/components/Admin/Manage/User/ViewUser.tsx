@@ -17,14 +17,14 @@ async function ViewUser({ user }: ViewUserProps) {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
+    second: "2-digit"
   });
 
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   });
 
   const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
@@ -35,7 +35,7 @@ async function ViewUser({ user }: ViewUserProps) {
   if (user.caregiver) {
     formattedReviewDate = formatDate(
       user.caregiver?.reviewed_at,
-      dateTimeFormatter,
+      dateTimeFormatter
     );
   }
 
@@ -178,18 +178,97 @@ async function ViewUser({ user }: ViewUserProps) {
                 value={Number(user.phone_number)}
               />
             </div>
-            <DisabledLabel
-              label="Birthdate"
-              value={formattedBirthDate}
-              horizontal={false}
-              type="text"
-            />
-            <DisabledLabel
-              label="Address"
-              value={user.address}
-              horizontal={false}
-              type="text"
-            />
+            <div className="flex w-full gap-5">
+              <DisabledLabel
+                label="Birthdate"
+                value={formattedBirthDate}
+                horizontal={false}
+                type="text"
+              />
+              <DisabledLabel
+                label="Gender"
+                value={user.gender ? user.gender : "-"}
+                horizontal={false}
+                type="text"
+              />
+            </div>
+            <div className="flex w-full gap-5">
+              <DisabledLabel
+                label="Address"
+                value={user.address ? user.address : "-"}
+                horizontal={false}
+                type="text"
+              />
+              {user.role === "Patient" && (
+                <DisabledLabel
+                  label="Blood Type"
+                  value={
+                    user.patient.blood_type ? user.patient.blood_type : "-"
+                  }
+                  horizontal={false}
+                  type="text"
+                />
+              )}
+            </div>
+            {user.role === "Patient" && (
+              <div className="flex w-full gap-5">
+                <DisabledLabel
+                  label="Height and Weight"
+                  horizontal={false}
+                  type="text"
+                  isHeightWeight
+                  height={
+                    user.patient.height ? String(user.patient.height) : "-"
+                  }
+                  weight={
+                    user.patient.weight ? String(user.patient.weight) : "-"
+                  }
+                />
+                <DisabledLabel
+                  label="Smoker Status"
+                  value={user.patient.is_smoking ? "Yes" : "No"}
+                  horizontal={false}
+                  type="text"
+                />
+              </div>
+            )}
+
+            {/* User Working Preferences (Caregiver) */}
+            {(user.role === "Nurse" || user.role === "Midwife") && (
+              <div className="flex w-full flex-col gap-2">
+                <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                  User Working Preferences
+                </h1>
+                <div className="flex w-full gap-5">
+                  <DisabledLabel
+                    label="Start Day"
+                    placeholder="Sunday, September 21, 2024"
+                    horizontal={false}
+                    type="text"
+                  />
+                  <DisabledLabel
+                    label="End Day"
+                    placeholder="Sunday, September 21, 2024"
+                    horizontal={false}
+                    type="text"
+                  />
+                </div>
+                <div className="flex w-full gap-5">
+                  <DisabledLabel
+                    label="Start Time"
+                    placeholder="00:00"
+                    horizontal={false}
+                    type="text"
+                  />
+                  <DisabledLabel
+                    label="End Time"
+                    placeholder="00:00"
+                    horizontal={false}
+                    type="text"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Center Divider */}
