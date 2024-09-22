@@ -272,10 +272,10 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
   };
 
   return (
-    <div className="mx-20 h-auto w-auto">
+    <>
       <ToastContainer />
-      {/* Title */}
       <form action={saveUpdatedMedicine}>
+        {/* Title */}
         <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
         {/* Container */}
         <div className="flex flex-col justify-between lg:flex-row">
@@ -412,7 +412,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
           </div>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 

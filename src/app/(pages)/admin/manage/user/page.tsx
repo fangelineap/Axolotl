@@ -20,7 +20,7 @@ async function getUserData() {
     data.map(async (user) => {
       const response = await getUserAuthSchema(user.user_id);
       return response ? (response as unknown as AdminUserTable) : null;
-    }),
+    })
   );
 
   const validResponses = responses.filter((response) => response !== null);
@@ -31,12 +31,12 @@ async function getUserData() {
 
   const combinedData = data.map((userData) => {
     const userAuth = validResponses.find(
-      (response) => response?.id === userData.user_id,
+      (response) => response?.id === userData.user_id
     );
 
     const combined: AdminUserTable = {
       ...userData,
-      email: userAuth?.email || "",
+      email: userAuth?.email || ""
     };
 
     return combined;
@@ -52,7 +52,7 @@ async function AdminManageUser() {
     <div className="bg-gray">
       <DefaultLayout>
         <AdminBreadcrumbs parentPage="Manage" pageName="Medicine" />
-        <div className="mx-20 w-auto">
+        <div className="mx-20 h-auto w-auto">
           <h1 className="mb-5 text-heading-1 font-bold">User List</h1>
           <ManageUserTable initialData={data} />
         </div>

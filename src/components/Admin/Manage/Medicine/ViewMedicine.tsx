@@ -19,11 +19,11 @@ function ViewMedicine(data: ViewMedicineProps) {
     weekday: "long",
     month: "long",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   }).format(new Date(data.medicine.exp_date));
 
   return (
-    <div className="mx-20 h-auto w-auto">
+    <>
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
       {/* Container */}
@@ -102,7 +102,7 @@ function ViewMedicine(data: ViewMedicineProps) {
               <button
                 onClick={() => {
                   router.push(
-                    `/admin/manage/medicine/edit/${data.medicine.uuid}`,
+                    `/admin/manage/medicine/edit/${data.medicine.uuid}`
                   );
                 }}
                 className="w-full rounded-[4px] border border-yellow-dark py-2 text-lg font-semibold text-yellow-dark hover:bg-yellow-light"
@@ -119,7 +119,7 @@ function ViewMedicine(data: ViewMedicineProps) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

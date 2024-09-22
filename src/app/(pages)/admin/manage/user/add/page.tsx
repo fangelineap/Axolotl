@@ -8,8 +8,14 @@ export const metadata = getAdminMetadata("Add User");
 function AdminAddUser() {
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs parentPage="Manage" subPage="User" pageName="Profile" />
-      <AddUser />
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="User"
+        pageName="Add User"
+      />
+      <div className="mx-20 h-auto w-auto">
+        <AddUser />
+      </div>
     </DefaultLayout>
   );
 }

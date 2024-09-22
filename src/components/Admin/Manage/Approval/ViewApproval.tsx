@@ -58,7 +58,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   );
 
   return (
-    <div className="mx-20 h-auto w-auto">
+    <>
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
       {/* Container */}
@@ -259,7 +259,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
           <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
