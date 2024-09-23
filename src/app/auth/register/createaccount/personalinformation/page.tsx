@@ -42,7 +42,7 @@ const PersonalInformation = ({ searchParams }: any) => {
     const checkSession = async () => {
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
       const { data: sessionData, error: sessionError } =
@@ -92,7 +92,7 @@ const PersonalInformation = ({ searchParams }: any) => {
   const confirmCancelRegistration = async () => {
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     const { data: userData, error: userError } =
@@ -116,7 +116,7 @@ const PersonalInformation = ({ searchParams }: any) => {
   const uploadToStorage = async (storage: string, file: string) => {
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     const { data: userData, error } = await supabase.auth.getSession();
@@ -128,7 +128,7 @@ const PersonalInformation = ({ searchParams }: any) => {
         .from(storage)
         .upload(`${userData.session.user.id}-${Date.now()}`, file, {
           cacheControl: "3600",
-          upsert: false,
+          upsert: false
         });
 
       if (error) {
@@ -146,14 +146,14 @@ const PersonalInformation = ({ searchParams }: any) => {
     // form validation
     if (form.get("birthdate")?.toString() == "") {
       toast.warning("Please fill the birthdate field", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return;
     }
 
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     const { data: sessionData, error: sessionError } =
@@ -168,7 +168,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           address: form.get("currentLocation"),
           gender: form.get("gender"),
           birthdate: form.get("birthdate")?.toString(),
-          role: form.get("role"),
+          role: form.get("role")
         })
         .eq("user_id", sessionData.session?.user.id);
 
@@ -176,7 +176,7 @@ const PersonalInformation = ({ searchParams }: any) => {
       const pathCv = await uploadToStorage("cv", cv);
       const pathCertificate = await uploadToStorage(
         "degree_certificate",
-        certificate,
+        certificate
       );
       const pathSip = await uploadToStorage("sip", sip);
       const pathStr = await uploadToStorage("str", str);
@@ -200,21 +200,21 @@ const PersonalInformation = ({ searchParams }: any) => {
               degree_certificate: pathCertificate,
               sip: pathSip,
               str: pathStr,
-              rate: 0,
+              rate: 0
             })
             .eq("caregiver_id", userData[0].id);
 
           if (insertError) {
             setLoading(false);
             toast.error("An error occured while uploading your data", {
-              position: "bottom-right",
+              position: "bottom-right"
             });
             return;
           }
 
           setLoading(false);
           router.push(
-            `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`,
+            `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`
           );
         }
       }
@@ -242,7 +242,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           med_freq_times: form.get("medicineQuantity"),
           med_freq_day: form.get("medicineFrequency"),
           illness_history: form.get("illnessHistory"),
-          patient_id: userData[0].id,
+          patient_id: userData[0].id
         });
 
         if (error) {
@@ -433,7 +433,6 @@ const PersonalInformation = ({ searchParams }: any) => {
                         type="text"
                         placeholder="Enter your allergies"
                         customClasses="w-full mb-4.5"
-                        required
                       />
 
                       <div>
@@ -445,7 +444,6 @@ const PersonalInformation = ({ searchParams }: any) => {
                             type="text"
                             placeholder="E.g. Divask"
                             customClasses="w-full"
-                            required
                           />
 
                           {/* Medication frequency */}
@@ -466,7 +464,6 @@ const PersonalInformation = ({ searchParams }: any) => {
                                     name="medicineQuantity"
                                     id="medicineQuantity"
                                     placeholder="0"
-                                    required
                                   />
                                   <span className="border-gray-r rounded-r-md border border-l-0 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
                                     qty
@@ -481,7 +478,6 @@ const PersonalInformation = ({ searchParams }: any) => {
                                     name="medicineFrequency"
                                     id="medicineFrequency"
                                     placeholder="0"
-                                    required
                                   />
                                   <span className="border-gray-r rounded-r-md border border-l-0 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
                                     /day

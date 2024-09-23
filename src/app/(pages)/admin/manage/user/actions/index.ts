@@ -1,9 +1,9 @@
 "use server";
 
 import createSupabaseServerClient from "@/app/lib/server";
+import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
 import { unstable_noStore } from "next/cache";
 import { AdminUserTable } from "../table/data";
-import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
 
 export async function getAdminAllUsers() {
   unstable_noStore();
@@ -14,7 +14,7 @@ export async function getAdminAllUsers() {
     const { data, error } = await supabase.from("users").select("*");
 
     const filterData = data?.filter(
-      (user: AdminUserTable) => user.user_id !== null,
+      (user: AdminUserTable) => user.user_id !== null
     );
 
     if (error) {
@@ -46,15 +46,14 @@ export async function getAdminUserByUserID(user_id: string) {
       return null;
     }
 
-    const authSchema = await getUserAuthSchema(
-      user_id,
-    );
+    const authSchema = await getUserAuthSchema(user_id);
 
     const allData: AdminUserTable = {
       ...userData,
       email: authSchema?.email,
-      patient: (userData?.patient.length === 0) ? null : userData?.patient[0],
-      caregiver: (userData?.caregiver.length === 0) ? null : userData?.caregiver[0],
+      patient: userData?.patient.length === 0 ? null : userData?.patient[0],
+      caregiver:
+        userData?.caregiver.length === 0 ? null : userData?.caregiver[0]
     };
 
     return allData as AdminUserTable;

@@ -29,6 +29,8 @@ export type CAREGIVER = {
   caregiver_id: string;
   notes?: string;
   rate?: number;
+  schedule_start_date?: Date;
+  schedule_end_date?: Date;
 };
 
 export type PATIENT = {

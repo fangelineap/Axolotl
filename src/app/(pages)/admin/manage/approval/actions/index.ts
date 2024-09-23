@@ -22,8 +22,8 @@ export async function getAllAdminApproval() {
     const caregiverWithUserDetails: AdminApprovalTable[] = caregivers.map(
       (caregiver) => ({
         ...caregiver,
-        user: caregiver.users,
-      }),
+        user: caregiver.users
+      })
     );
 
     return caregiverWithUserDetails;
@@ -49,14 +49,14 @@ export async function getSingleAdminApprovalById(caregiver_id: string) {
     if (caregiverError || !caregivers) {
       console.error(
         "Error fetching caregivers data:",
-        caregiverError?.message || "No caregiver found",
+        caregiverError?.message || "No caregiver found"
       );
       return null;
     }
 
     const caregiverWithUserDetails: AdminApprovalTable = {
       ...caregivers,
-      user: caregivers.users,
+      user: caregivers.users
     };
 
     return caregiverWithUserDetails;
@@ -77,6 +77,7 @@ export async function adminApproveCaregiver(caregiver_id: string) {
       .update({
         status: "Verified",
         reviewed_at: new Date(),
+        updated_at: new Date()
       })
       .eq("caregiver_id", caregiver_id)
       .single();
@@ -92,7 +93,10 @@ export async function adminApproveCaregiver(caregiver_id: string) {
   }
 }
 
-export async function adminRejectCaregiver(caregiver_id: string, notes: string) {
+export async function adminRejectCaregiver(
+  caregiver_id: string,
+  notes: string
+) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -104,6 +108,7 @@ export async function adminRejectCaregiver(caregiver_id: string, notes: string) 
         status: "Rejected",
         reviewed_at: new Date(),
         notes: notes,
+        updated_at: new Date()
       })
       .eq("caregiver_id", caregiver_id)
       .single();

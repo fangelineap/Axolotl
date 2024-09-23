@@ -20,15 +20,17 @@ export default async function createSupabaseServerClient() {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options),
+            cookieStore.set(name, value, options)
           );
-        },
-      },
-    },
+        }
+      }
+    }
   );
 }
 
 export async function getUserFromSession() {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
   const { data: sessionData, error } = await supabase.auth.getUser();
 
@@ -48,7 +50,7 @@ export async function getUserFromSession() {
 
   return {
     data: user ? user : null,
-    error: userError || null,
+    error: userError || null
   };
 }
 
@@ -92,7 +94,7 @@ export async function getUserDataFromSession() {
     const patientData: USER_DETAILS_AUTH_SCHEMA = {
       ...patient,
       email: authSchema?.email,
-      patient: patient?.patient.length === 0 ? null : patient?.patient[0],
+      patient: patient?.patient.length === 0 ? null : patient?.patient[0]
     };
 
     return patientData;
@@ -114,7 +116,7 @@ export async function getUserDataFromSession() {
       ...caregiver,
       email: authSchema?.email,
       caregiver:
-        caregiver?.caregiver.length === 0 ? null : caregiver?.caregiver[0],
+        caregiver?.caregiver.length === 0 ? null : caregiver?.caregiver[0]
     };
 
     return caregiverData;
@@ -123,7 +125,7 @@ export async function getUserDataFromSession() {
   if (user.role === "Admin") {
     const adminData: USER_DETAILS_AUTH_SCHEMA = {
       ...user,
-      email: authSchema?.email,
+      email: authSchema?.email
     };
 
     return adminData;
@@ -140,13 +142,15 @@ export async function logout() {
   // Clear session cookies server-side
   await supabase.auth.setSession({
     access_token: "",
-    refresh_token: "",
+    refresh_token: ""
   });
 
   redirect("/auth/signin");
 }
 
 export async function getCaregiverById(id: string) {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("users")
