@@ -1,5 +1,6 @@
 "use client";
 
+import { getOrder } from "@/app/server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
@@ -11,49 +12,26 @@ import {
   IconCirclePlusFilled,
   IconCircleX,
   IconCircleXFilled,
-  IconX,
+  IconX
 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 
-const Conjecture = ({searchParams}: any) => {
-
-  console.log('diagnosis', searchParams.conjecture)
-  const [concern, setConcern] = useState<string>("");
-  const [selectedAll, setSelectedAll] = useState<string[]>([]);
-  const [days, setDays] = useState<number>(0);
-
-  const [isActive, setIsActive] = useState(false);
-  const [seconds, setSeconds] = useState(3600);
-
-  const [copied, setCopied] = useState(false);
-
-  const symptoms: string[] = [
-    "sakit hati",
-    "sakit punggung",
-    "sakit kepala",
-    "sakit a",
-    "sakit b",
-    "sakit c",
-    "sakit d",
-    "sakit e",
-    "sakit f",
-    "sakit g",
-    "sakit h",
-  ];
+const Conjecture = ({ searchParams }: any) => {
+  const [order, setOrder] = useState<any>({});
+  const [symptoms, setSymptoms] = useState<string[]>([]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    const getData = async () => {
+      const data = await getOrder(searchParams.conjecture);
 
-    if (isActive) {
-      interval = setInterval(() => {
-        setSeconds((prevSeconds) => prevSeconds - 1);
-      }, 1000);
-    } else if (!isActive && seconds !== 0) {
-      () => clearInterval(interval as NodeJS.Timeout);
-    }
+      if (data) {
+        setOrder(data);
+        setSymptoms(data.symptoms);
+      }
+    };
 
-    return () => clearInterval(interval as NodeJS.Timeout);
-  }, [isActive, seconds]);
+    getData();
+  }, []);
 
   return (
     <DefaultLayout>
@@ -95,8 +73,10 @@ const Conjecture = ({searchParams}: any) => {
               <h1>Symptoms</h1>
               <div className="px-5 py-2">
                 <ul className="list-disc">
-                  <div className="grid grid-flow-col grid-rows-9 gap-1">
-                    {symptoms.map((symptom) => (
+                  <div
+                    className={`grid grid-flow-col ${order.length > 9 ? "grid-rows-9" : "grid-rows-5"} gap-1`}
+                  >
+                    {symptoms.map((symptom: string) => (
                       <li key={symptom}>{symptom}</li>
                     ))}
                   </div>
@@ -108,7 +88,7 @@ const Conjecture = ({searchParams}: any) => {
                   <h1>We presume that you might have</h1>
                 </div>
                 <h1 className="py-5 text-center font-semibold text-primary">
-                  {searchParams.conjecture}
+                  {order.diagnosis}
                 </h1>
               </div>
             </>
@@ -140,8 +120,8 @@ const Conjecture = ({searchParams}: any) => {
                 </li>
               </ul>
             </div>
-            <div className="flex justify-end mt-5">
-              <button className="w-1/3 rounded-[7px] bg-primary h-11 p-[8px] text-lg font-semibold text-white hover:bg-opacity-90">
+            <div className="mt-5 flex justify-end">
+              <button className="h-11 w-1/3 rounded-[7px] bg-primary p-[8px] text-lg font-semibold text-white hover:bg-opacity-90">
                 Continue
               </button>
             </div>

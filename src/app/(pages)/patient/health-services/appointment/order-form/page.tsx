@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  getCaregiverById,
-  getUserFromSession
-} from "@/app/lib/server";
+import { getCaregiverById, getUserFromSession } from "@/app/lib/server";
+import { getCaregiverPhoto } from "@/app/server-action/caregiver";
 import { createAppointment } from "@/app/server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledLabel from "@/components/Axolotl/DisabledLabel";
@@ -15,7 +13,7 @@ import {
   IconCircleMinus,
   IconCirclePlus,
   IconCirclePlusFilled,
-  IconCircleXFilled,
+  IconCircleXFilled
 } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -34,17 +32,22 @@ const PlacingOrder = ({ searchParams }: any) => {
   const [session, setSession] = useState<any>(null);
   const [caregiver, setCaregiver] = useState<any>(null);
   const [allTypes, setAllTypes] = useState<string[]>([]);
+  const [service, setService] = useState<any>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string>("");
 
   const router = useRouter();
 
   useEffect(() => {
     const getSession = async () => {
       const { data, error } = await getUserFromSession();
-      const caregiver = await getCaregiverById(searchParams.caregiver);
+      const cg = await getCaregiverById(searchParams.caregiver);
 
-      if (caregiver) {
-        setCaregiver(caregiver[0]);
+      if (cg) {
+        setCaregiver(cg[0]);
         setServiceType(searchParams.service);
+
+        const photo = await getCaregiverPhoto(cg[0].caregiver[0].profile_photo);
+        setProfilePhoto(photo!);
       }
 
       if (data) {
@@ -59,6 +62,7 @@ const PlacingOrder = ({ searchParams }: any) => {
     const getServiceTypes = () => {
       services.map((service) => {
         if (service.name === serviceType) {
+          setService(service);
           setAllTypes([]);
           service.types.map((type) => {
             setAllTypes((prev) => [...prev, type.name.toString()]);
@@ -96,18 +100,14 @@ const PlacingOrder = ({ searchParams }: any) => {
       appointment_time: searchParams.time,
       appointment_date: searchParams.date,
       total_payment: days * 500000,
-      symptoms: selectedAll,
+      symptoms: selectedAll
     });
 
-    console.log('res', res)
-    
-    if(res !== 'Please try again') {
-      router.push('/patient/health-services/appointment/conjecture?conjecture=' + res);
+    if (res !== "Please try again") {
+      router.push(
+        "/patient/health-services/appointment/conjecture?conjecture=" + res
+      );
     }
-    // if (res === 'Success') {
-    //   const diagnosis = await 
-    //   router.push('/patient/health-services/appointment/conjecture')
-    // }
   };
 
   return (
@@ -198,7 +198,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                     "Neonatal Care",
                     "Elderly Care",
                     "After Care",
-                    "Booster",
+                    "Booster"
                   ]}
                   selectedOption={serviceType}
                   setSelectedOption={setServiceType}
@@ -285,7 +285,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                       onClick={(e) => {
                         e.preventDefault();
                         setSelectedAll((prev: string[]) =>
-                          prev.filter((item) => item !== selected),
+                          prev.filter((item) => item !== selected)
                         );
                       }}
                     >
@@ -303,10 +303,7 @@ const PlacingOrder = ({ searchParams }: any) => {
               <div>
                 <Accordion
                   type="General Symptoms"
-                  symptoms={[
-                    "itching",
-                    "skin rash"
-                  ]}
+                  symptoms={["itching", "skin rash"]}
                   selectedAll={selectedAll}
                   setSelectedAll={setSelectedAll}
                 />
@@ -376,7 +373,7 @@ const PlacingOrder = ({ searchParams }: any) => {
 
                           try {
                             await navigator.clipboard.writeText(
-                              "12345-67890-87654",
+                              "12345-67890-87654"
                             );
                             setCopied(true);
                           } catch (error) {
@@ -422,10 +419,10 @@ const PlacingOrder = ({ searchParams }: any) => {
                   <div className="px-5 py-2">
                     <div className="my-3 flex items-center gap-3 rounded-md border-[1px] border-stroke p-3">
                       <Image
-                        src="/images/user/caregiver.png"
+                        src={profilePhoto}
                         height={60}
                         width={60}
-                        className="rounded-full bg-kalbe-veryLight"
+                        className="h-[60px] w-[60px] rounded-full bg-kalbe-veryLight object-cover"
                         alt="CG pfp"
                       />
                       <h1>
@@ -476,7 +473,11 @@ const PlacingOrder = ({ searchParams }: any) => {
                   </div>
                   <div className="flex justify-between px-5 py-3">
                     <h1 className="text-lg font-semibold">Sub Total: </h1>
-                    <h1 className="text-lg font-extrabold">Rp.1.500.000</h1>
+                    <h1 className="text-lg font-extrabold">
+                      {serviceType !== "Booster"
+                        ? `Rp ${service ? service.price * days : "0"}`
+                        : `Rp ${service.price}`}
+                    </h1>
                   </div>
                   <div className="flex w-full justify-center px-5">
                     <button
