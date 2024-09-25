@@ -1,8 +1,3 @@
-export type AdminMedicineTable = {
-  uuid?: string;
-  name: string;
-  type: string;
-  exp_date: string | Date;
-  price: number;
-  medicine_photo?: string;
-}
+import { MEDICINE } from "@/types/axolotl";
+
+export type AdminMedicineTable = MEDICINE;

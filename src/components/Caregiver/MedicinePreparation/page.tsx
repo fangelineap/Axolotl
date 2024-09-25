@@ -10,7 +10,7 @@ import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWith
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
 import { FaSearch } from "react-icons/fa";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
-import { fetchMedicine } from "@/app/(pages)/caregiver/medicinePreparation/action";
+import { fetchMedicine } from "@/app/server-action/caregiver/action";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -641,9 +641,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       {isModalOpen && currentMedicine && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div
-            className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-md xl:max-w-xl 
-            mx-auto rounded-lg bg-white sm:h-auto md:h-auto lg:h-auto xl:h-auto
-            max-h-[90vh] overflow-y-auto"
+            className="mx-auto max-h-[90vh] w-full max-w-xs overflow-y-auto rounded-lg 
+            bg-white sm:h-auto sm:max-w-sm md:h-auto md:max-w-md lg:h-auto lg:max-w-md
+            xl:h-auto xl:max-w-xl"
           >
             <div className="rounded-t-lg bg-primary px-6 py-4">
               <h2 className="text-center text-xl font-bold text-white">

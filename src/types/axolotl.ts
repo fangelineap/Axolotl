@@ -47,6 +47,57 @@ export type PATIENT = {
   patient_id: string;
 };
 
+export type MEDICINE = {
+  uuid?: string;
+  name: string;
+  type: string;
+  exp_date: string | Date;
+  price: number;
+  medicine_photo?: string;
+};
+
+export type APPOINTMENT = {
+  service_type: string;
+  appointment_time: string;
+  appointment_date: string;
+  main_concern: string;
+};
+
+export type ORDER = {
+  id: string;
+  is_completed: boolean;
+  total_payment: number;
+  complete_at: Date;
+  created_at: Date;
+  update_at: Date;
+  appointment_order_id: string;
+  medicine_order_id: string;
+  patient_id: string;
+  caregiver_id: string;
+};
+
+export type MEDICINE_ORDER = {
+  id: string;
+  total_qty: number;
+  sub_total_medicine: number;
+  delivery_fee: number;
+  total_price: number;
+  is_paid: boolean;
+  paid_at: Date;
+  updated_at: Date;
+  created_at: Date;
+  medicine_order_detail_id: string;
+};
+
+export type MEDICINE_ORDER_DETAIL = {
+  id: string;
+  quantity: number;
+  total_price: number;
+  created_at: Date;
+  updated_at: Date;
+  medicine_id: string;
+};
+
 export type USER_AUTH_SCHEMA = USER & { email: string };
 
 export type USER_DETAILS_AUTH_SCHEMA = USER_AUTH_SCHEMA & {
