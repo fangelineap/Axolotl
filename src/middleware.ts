@@ -9,7 +9,7 @@ function getRoleRedirect(userRole: string): string {
     Patient: "/patient",
     Nurse: "/caregiver",
     Midwife: "/caregiver",
-    Admin: "/admin",
+    Admin: "/admin"
   };
 
   return roleRedirects[userRole] || "/";
@@ -25,7 +25,7 @@ export async function updateSession(request: NextRequest) {
     "/auth/forgetpassword",
     "/",
     "/guest/about",
-    "/guest/careers",
+    "/guest/careers"
   ];
 
   if (guestPages.includes(pathname)) {
@@ -33,7 +33,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   let supabaseResponse = NextResponse.next({
-    request: { headers: request.headers },
+    request: { headers: request.headers }
   });
 
   const supabase = createServerClient(
@@ -47,25 +47,34 @@ export async function updateSession(request: NextRequest) {
         setAll(cookiesToSet) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value),
+            request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
-            request,
+            request
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options)
           );
-        },
-      },
-    },
+        }
+      }
+    }
   );
 
   const {
     data: { user },
+    error
   } = await supabase.auth.getUser();
 
-  if (user) {
-    console.log(user);
+  if (error) {
+    const response = NextResponse.redirect(
+      new URL("/auth/signin", request.url)
+    );
+
+    // Clear cookies
+    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
+    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
+
+    return response;
   }
 
   /**
@@ -74,7 +83,7 @@ export async function updateSession(request: NextRequest) {
   if (!user) {
     // User is not authenticated, clear auth cookies and redirect to signin
     const response = NextResponse.redirect(
-      new URL("/auth/signin", request.url),
+      new URL("/auth/signin", request.url)
     );
 
     // Clear Supabase auth cookies
@@ -82,6 +91,10 @@ export async function updateSession(request: NextRequest) {
     response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
 
     return response;
+  }
+
+  if (user) {
+    console.log(user);
   }
 
   const userId = user?.id;
@@ -124,15 +137,15 @@ export async function updateSession(request: NextRequest) {
         Rejected: NextResponse.redirect(
           new URL(
             "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-            request.url,
-          ),
+            request.url
+          )
         ),
         Unverified: NextResponse.redirect(
           new URL(
             "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-            request.url,
-          ),
-        ),
+            request.url
+          )
+        )
       };
 
       return (
@@ -169,6 +182,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
+  ]
 };

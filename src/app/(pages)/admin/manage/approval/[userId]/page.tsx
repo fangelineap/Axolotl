@@ -18,14 +18,14 @@ export async function generateMetadata({ params }: AdminShowApprovalProps) {
 
   if (!response) {
     return {
-      title: "User Not Found",
+      title: "User Not Found"
     };
   }
 
   const full_name = response.user.first_name + " " + response.user.last_name;
 
   return {
-    title: `${full_name} Details`,
+    title: `${full_name} Details`
   };
 }
 
@@ -51,7 +51,9 @@ async function AdminShowApproval({ params }: AdminShowApprovalProps) {
         subPage="Approval"
         pageName="Profile"
       />
-      <ViewApproval caregiver={response} />
+      <div className="mx-20 h-auto w-auto">
+        <ViewApproval caregiver={response} />
+      </div>
     </DefaultLayout>
   );
 }

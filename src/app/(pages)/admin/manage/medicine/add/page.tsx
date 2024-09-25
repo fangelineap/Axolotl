@@ -8,8 +8,14 @@ export const metadata = getAdminMetadata("Add Medicine");
 function AdminAddMedicine() {
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs parentPage="Manage" subPage="Medicine" pageName="Add" />
-      <AddMedicine />
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Medicine"
+        pageName="Add Medicine"
+      />
+      <div className="mx-20 h-auto w-auto">
+        <AddMedicine />
+      </div>
     </DefaultLayout>
   );
 }

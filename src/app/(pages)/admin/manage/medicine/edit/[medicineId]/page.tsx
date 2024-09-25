@@ -11,7 +11,7 @@ interface MedicinePageProps {
 
 async function fetchData({ params }: MedicinePageProps) {
   const response: AdminMedicineTable = await getAdminMedicineById(
-    params.medicineId,
+    params.medicineId
   );
   return response;
 }
@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: MedicinePageProps) {
 
   if (!response) {
     return {
-      title: "Medicine Not Found",
+      title: "Medicine Not Found"
     };
   }
 
   return {
-    title: `Update Medicine ${response.name} Details`,
+    title: `Update Medicine ${response.name} Details`
   };
 }
 
@@ -49,9 +49,11 @@ async function AdminUpdateMedicine({ params }: MedicinePageProps) {
       <AdminBreadcrumbs
         parentPage="Manage"
         subPage="Medicine"
-        pageName="Update"
+        pageName="Update Medicine"
       />
-      <UpdateMedicine medicine={medicine} />
+      <div className="mx-20 h-auto w-auto">
+        <UpdateMedicine medicine={medicine} />
+      </div>
     </DefaultLayout>
   );
 }

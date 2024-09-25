@@ -27,7 +27,7 @@ export async function createAppointment({
   appointment_time,
   appointment_date,
   total_payment,
-  symptoms,
+  symptoms
 }: Appointment) {
   const supabase = await createSupabaseServerClient();
 
@@ -43,7 +43,7 @@ export async function createAppointment({
     appointment_time,
     appointment_date,
     total_payment,
-    symptoms,
+    symptoms
   );
 
   let concatSymptoms = "";
@@ -66,12 +66,12 @@ export async function createAppointment({
       {
         method: "POST",
         body: JSON.stringify({
-          symptoms: symptoms.toString(),
+          symptoms: symptoms.toString()
         }),
         headers: {
-          "Content-Type": "application/json",
-        },
-      },
+          "Content-Type": "application/json"
+        }
+      }
     );
 
     const data = await response.json();
@@ -86,25 +86,50 @@ export async function createAppointment({
   }
 
   try {
-    const { data, error } = await supabase.from("appointment").insert({
-      service_type: service_type,
-      causes: causes,
-      main_concern: main_concern,
-      current_medication: current_medication,
-      medical_description: medical_description,
-      day_of_visit: days_of_visit,
-      diagnosis: prediction,
-      appointment_time: appointment_time,
-      appointment_date: appointment_date,
-      total_payment: total_payment,
-      symptoms: symptoms,
-    });
+    const { data, error } = await supabase
+      .from("appointment")
+      .insert({
+        service_type: service_type,
+        causes: causes,
+        main_concern: main_concern,
+        current_medication: current_medication,
+        medical_description: medical_description,
+        day_of_visit: days_of_visit,
+        diagnosis: prediction,
+        appointment_time: appointment_time,
+        appointment_date: appointment_date,
+        total_payment: total_payment,
+        symptoms: symptoms
+      })
+      .select("id");
+
+    if (data) {
+      console.log("data", data);
+    }
 
     if (!error) {
-      return prediction;
+      return data[0].id;
     }
   } catch (error) {
     console.log("error", error);
     return "Error";
+  }
+}
+
+export async function getOrder(id: string) {
+  try {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("appointment")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (data) {
+      return data;
+    }
+  } catch (error) {
+    console.log("Error", error);
   }
 }

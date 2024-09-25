@@ -4,26 +4,33 @@ import {
   IconEye,
   IconSearch,
   IconSelector,
-  IconTrash,
+  IconTrash
 } from "@tabler/icons-react";
 import {
-  useReactTable,
   ColumnDef,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  flexRender,
   ColumnFilter,
   ColumnSort,
-  getPaginationRowModel,
   FilterFn,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
 } from "@tanstack/react-table";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import CustomPagination from "../Pagination/Pagination";
 import SelectDataTable from "../Axolotl/SelectDataTable";
+import CustomPagination from "../Pagination/Pagination";
 
-interface DataTableProps<T extends { id?: number | string; uuid?: string; caregiver_id?: string; user_id?: string }> {
+interface DataTableProps<
+  T extends {
+    id?: number | string;
+    uuid?: string;
+    caregiver_id?: string;
+    user_id?: string;
+  }
+> {
   data: T[];
   columns: ColumnDef<T>[];
   showAction?: (row: T) => void;
@@ -32,18 +39,25 @@ interface DataTableProps<T extends { id?: number | string; uuid?: string; caregi
   initialSorting?: ColumnSort[];
 }
 
-export function DataTable<T extends { id?: number | string; uuid?: string; caregiver_id?: string; user_id?: string }>({
+export function DataTable<
+  T extends {
+    id?: number | string;
+    uuid?: string;
+    caregiver_id?: string;
+    user_id?: string;
+  }
+>({
   data,
   columns,
   showAction,
   deleteAction,
   basePath,
-  initialSorting = [],
+  initialSorting = []
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
   const [sorting, setSorting] = useState<ColumnSort[]>(initialSorting);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const pathName = usePathname();
   const router = useRouter();
 
@@ -102,14 +116,14 @@ export function DataTable<T extends { id?: number | string; uuid?: string; careg
             )}
           </div>
         ),
-        enableSorting: false,
-      } as ColumnDef<T>,
+        enableSorting: false
+      } as ColumnDef<T>
     ],
     state: {
       globalFilter,
       columnFilters,
       sorting,
-      pagination,
+      pagination
     },
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
@@ -118,7 +132,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string; careg
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel()
   });
 
   return (
@@ -161,7 +175,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string; careg
               setPagination((prev) => ({
                 ...prev,
                 pageSize: Number(e.target.value),
-                pageIndex: 0, // Reset to first page on page size change
+                pageIndex: 0 // Reset to first page on page size change
               }))
             }
             className=" text-dark-secondary"
@@ -187,7 +201,7 @@ export function DataTable<T extends { id?: number | string; uuid?: string; careg
                         >
                           {flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
 
                           <button
@@ -277,12 +291,12 @@ export function DataTable<T extends { id?: number | string; uuid?: string; careg
                           display: "-webkit-box",
                           WebkitLineClamp: 1,
                           WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
+                          overflow: "hidden"
                         }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext(),
+                          cell.getContext()
                         )}
                       </div>
                     </td>

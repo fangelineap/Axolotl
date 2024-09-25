@@ -33,14 +33,14 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
+    second: "2-digit"
   });
 
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   });
 
   // Helper function to format dates
@@ -50,15 +50,15 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   // Use the formatters
   const formattedReviewDate = formatDate(
     caregiver.reviewed_at,
-    dateTimeFormatter,
+    dateTimeFormatter
   );
   const formattedBirthDate = formatDate(
     caregiver.user.birthdate,
-    dateFormatter,
+    dateFormatter
   );
 
   return (
-    <div className="mx-20 h-auto w-auto">
+    <>
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
       {/* Container */}
@@ -126,7 +126,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
         {/* User Profile Section */}
         <div className="flex w-full flex-col gap-5 lg:flex-row lg:justify-between">
           {/* First Column */}
-          <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col">
             <h1 className="mb-3 text-heading-6 font-bold text-primary">
               User Personal Data
             </h1>
@@ -176,8 +176,9 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
           </div>
 
           {/* Second Column */}
-          <div className="flex w-full flex-col gap-5">
-            <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col gap-4">
+            {/* User Working Experiences */}
+            <div className="flex w-full flex-col">
               <h1 className="mb-3 text-heading-6 font-bold text-primary">
                 User Working Experiences
               </h1>
@@ -193,7 +194,8 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                   value={caregiver.work_experiences.toString()}
                   horizontal={false}
                   type="text"
-                  isWorkingExperiences={true}
+                  isUnit={true}
+                  unit="year"
                 />
               </div>
               <DisabledLabel
@@ -203,9 +205,11 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                 type="text"
               />
             </div>
-            <div className="flex w-full flex-col gap-2">
+
+            {/* User Licenses */}
+            <div className="flex w-full flex-col">
               <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                User Licences
+                User Licenses
               </h1>
               <div className="grid grid-cols-2 gap-5">
                 <DownloadLicenses
@@ -232,37 +236,30 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Rejection Notes */}
-        {caregiver.status === "Rejected" && (
-          <div className="mt-3 flex w-full flex-col justify-center gap-2">
-            <h1 className="mb-3 text-heading-6 font-bold text-primary">
-              Rejection Notes
-            </h1>
-            <textarea
-              title="Rejection Notes"
-              value={caregiver.notes}
-              disabled
-              className="h-20 w-full rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
-            />
-          </div>
-        )}
+      {/* Rejection Notes */}
+      {caregiver.status === "Rejected" ? (
+        <div className="mt-3 flex w-full flex-col justify-center gap-2">
+          <h1 className="mb-3 text-heading-6 font-bold text-primary">
+            Rejection Notes
+          </h1>
+          <textarea
+            title="Rejection Notes"
+            value={caregiver.notes}
+            disabled
+            className="h-20 w-full rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
+          />
+        </div>
+      ) : null}
 
-        {/* Button Group */}
-        <div className="mt-5 flex w-full items-center justify-end">
-          <div className="flex w-1/4 items-center justify-end gap-5">
-            {caregiver.status === "Unverified" ? (
-              <ApprovalButtons
-                status={caregiver.status}
-                caregiver={caregiver}
-              />
-            ) : (
-              <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
-            )}
-          </div>
+      {/* Button Group */}
+      <div className="mt-5 flex w-full items-center justify-end">
+        <div className="flex w-1/4 items-center justify-end gap-5">
+          <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

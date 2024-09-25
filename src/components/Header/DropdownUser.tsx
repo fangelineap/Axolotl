@@ -26,21 +26,23 @@ const DropdownUser = () => {
 
   const handleLogout = async () => {
     setUser(null);
-    await logout()
+    await logout();
   };
 
   const userImage = useMemo(() => {
     if (!user) return null;
 
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver?.profile_photo || "")}`;
+
     if (user.role === "Nurse" || user.role === "Midwife") {
       return (
         <Image
-          width={112}
-          height={112}
-          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver?.profile_photo || "")}`}
-          style={{ width: "auto", height: "auto" }}
+          width={200}
+          height={200}
+          src={imageUrl}
           alt="User"
-          className="overflow-hidden rounded-full"
+          priority
+          className="h-full w-full rounded-full object-cover"
         />
       );
     } else if (user.role === "Patient") {
@@ -76,7 +78,9 @@ const DropdownUser = () => {
         href="#"
       >
         <div className="h-12 w-12 overflow-hidden rounded-full border">
-        <span className="h-12 w-12 rounded-full">{userImage}</span>
+          <div className="flex h-full w-full items-center justify-center">
+            {userImage}
+          </div>
         </div>
       </Link>
 
@@ -86,21 +90,19 @@ const DropdownUser = () => {
           className={`absolute right-0 mt-7.5 flex w-[280px] flex-col rounded-lg border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
         >
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
-            <span className="relative block h-12 w-12 rounded-full border">
-            <div className="h-12 w-12 overflow-hidden rounded-full">
-              {userImage}
-              </div>
-              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green dark:border-gray-dark" />
-            </span>
+            <div className="relative block rounded-full border">
+              <div className="h-12 w-12 overflow-hidden">{userImage}</div>
+              <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green dark:border-gray-dark" />
+            </div>
 
-            <span className="block">
-              <span className="block font-medium text-dark dark:text-white">
+            <div className="flex w-full flex-col overflow-hidden">
+              <p className="block font-medium text-dark dark:text-white">
                 {user?.first_name} {user?.last_name}
-              </span>
-              <span className="block font-medium text-dark-5 dark:text-dark-6">
+              </p>
+              <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
                 {user?.email}
-              </span>
-            </span>
+              </p>
+            </div>
           </div>
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
             <li>

@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 function AddMedicine() {
   const router = useRouter();
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
-    null,
+    null
   );
   const [isDragging, setIsDragging] = useState(false);
 
@@ -27,14 +27,14 @@ function AddMedicine() {
     name: "",
     type: "",
     price: 0,
-    exp_date: new Date().toISOString(),
+    exp_date: new Date().toISOString()
   });
 
   const formatDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   }).format(new Date(formData.exp_date));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,7 @@ function AddMedicine() {
 
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: value
     });
   };
 
@@ -55,37 +55,37 @@ function AddMedicine() {
       !form.get("exp_date")
     ) {
       toast.error("Please insert a valid data.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
     if (!medicinePhoto) {
       toast.warning("Please upload a photo.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
     if (!form.get("name")) {
       toast.warning("Please enter the medicine name.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
     if (!form.get("type")) {
       toast.warning("Please enter the medicine type.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
     if (!form.get("exp_date")) {
       toast.warning("Please select the expiry date.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
     if (new Date(form.get("exp_date")?.toString() || "") <= new Date()) {
       toast.warning("The expiry date cannot be in the past or today.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
@@ -94,7 +94,7 @@ function AddMedicine() {
       isNaN(parseFloat(form.get("price")?.toString() || "0"))
     ) {
       toast.warning("Please enter a valid price.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return false;
     }
@@ -102,8 +102,8 @@ function AddMedicine() {
       toast.warning(
         "Bro, this isn't a thrift store 🤡. Add some digits before we go broke 💸",
         {
-          position: "bottom-right",
-        },
+          position: "bottom-right"
+        }
       );
       return false;
     }
@@ -131,7 +131,7 @@ function AddMedicine() {
         setMedicinePhoto(selectedFile);
       } else {
         toast.warning("Invalid file type. Only JPG and PNG are allowed.", {
-          position: "bottom-right",
+          position: "bottom-right"
         });
       }
     }
@@ -149,11 +149,11 @@ function AddMedicine() {
   async function uploadAdminToStorage(
     storage: string,
     fileName: string,
-    file: string,
+    file: string
   ) {
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     const { data: userData, error } = await supabase.auth.getSession();
@@ -163,7 +163,7 @@ function AddMedicine() {
         .from(storage)
         .upload(fileName, file, {
           cacheControl: "3600",
-          upsert: false,
+          upsert: false
         });
 
       if (error) {
@@ -179,7 +179,7 @@ function AddMedicine() {
     try {
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
       const { data, error } = await supabase.storage
@@ -203,13 +203,13 @@ function AddMedicine() {
       const path = await uploadAdminToStorage(
         "medicine",
         fileName,
-        medicinePhoto as unknown as string,
+        medicinePhoto as unknown as string
       );
 
       return fileName;
     } catch (error) {
       toast.error("Error uploading file. Please try again.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return;
     }
@@ -222,7 +222,7 @@ function AddMedicine() {
 
     if (pathMedicine?.length === 0 && pathMedicine === undefined) {
       toast.error("Something went wrong. Please try again", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
       return;
     }
@@ -233,9 +233,9 @@ function AddMedicine() {
       type: form.get("type")?.toString() || "",
       price: parseFloat(form.get("price")?.toString() || "0"),
       exp_date: new Date(
-        form.get("exp_date")?.toString() || "",
+        form.get("exp_date")?.toString() || ""
       ).toLocaleString(),
-      medicine_photo: pathMedicine as string,
+      medicine_photo: pathMedicine as string
     };
 
     const { data, error } = await addAdminMedicine(medicineData);
@@ -244,14 +244,14 @@ function AddMedicine() {
       await cancelUploadAdminToStorage(pathMedicine as string);
 
       toast.error("Failed to save medicine. Uploaded photo has been deleted.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
 
       return;
     }
 
     toast.success("A new medicine has been added successfully.", {
-      position: "bottom-right",
+      position: "bottom-right"
     });
 
     setTimeout(() => {
@@ -262,10 +262,10 @@ function AddMedicine() {
   };
 
   return (
-    <div className="mx-20 h-auto w-auto">
+    <>
       <ToastContainer />
-      {/* Title */}
       <form action={saveMedicine}>
+        {/* Title */}
         <h1 className="mb-5 text-heading-1 font-bold">Add Medicine</h1>
         {/* Container */}
         <div className="flex flex-col justify-between lg:flex-row">
@@ -362,7 +362,7 @@ function AddMedicine() {
                     const inputValue = e.target.value;
                     setFormData({
                       ...formData,
-                      price: inputValue === "" ? 0 : parseFloat(inputValue),
+                      price: inputValue === "" ? 0 : parseFloat(inputValue)
                     });
                   }}
                   required={true}
@@ -384,7 +384,7 @@ function AddMedicine() {
           </div>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 

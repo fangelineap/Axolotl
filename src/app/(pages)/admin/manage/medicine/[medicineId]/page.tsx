@@ -11,7 +11,7 @@ interface MedicinePageProps {
 
 async function fetchData({ params }: MedicinePageProps) {
   const response: AdminMedicineTable = await getAdminMedicineById(
-    params.medicineId,
+    params.medicineId
   );
   return response;
 }
@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: MedicinePageProps) {
 
   if (!response) {
     return {
-      title: "Medicine Not Found",
+      title: "Medicine Not Found"
     };
   }
 
   return {
-    title: `${response.name} Details`,
+    title: `${response.name} Details`
   };
 }
 
@@ -52,7 +52,9 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
         subPage="Medicine"
         pageName="View"
       />
-      <ViewMedicine medicine={medicine} />
+      <div className="mx-20 h-auto w-auto">
+        <ViewMedicine medicine={medicine} />
+      </div>
     </DefaultLayout>
   );
 }

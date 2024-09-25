@@ -7,7 +7,10 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import AxolotlModal from "./AxolotlModal";
 import AxolotlRejectionModal from "./AxolotlRejectionModal";
-import { adminApproveCaregiver, adminRejectCaregiver } from "@/app/(pages)/admin/manage/approval/actions";
+import {
+  adminApproveCaregiver,
+  adminRejectCaregiver
+} from "@/app/(pages)/admin/manage/approval/actions";
 
 interface ApprovalButtonsProps {
   status: string;
@@ -33,17 +36,19 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       setOpenRejectionNotesModal(true);
     } else {
       try {
-        const { data, error } = await adminApproveCaregiver(caregiver.caregiver_id);
+        const { data, error } = await adminApproveCaregiver(
+          caregiver.caregiver_id
+        );
 
         if (error !== null && error !== undefined) {
           toast.error("Something went wrong.", {
-            position: "bottom-right",
+            position: "bottom-right"
           });
           return;
         }
 
         toast.success("Caregiver approved successfully", {
-          position: "bottom-right",
+          position: "bottom-right"
         });
 
         setTimeout(() => {
@@ -52,7 +57,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       } catch (error) {
         console.error(error);
         toast.error("Failed to perform the action. Please try again.", {
-          position: "bottom-right",
+          position: "bottom-right"
         });
       } finally {
         handleModalClose();
@@ -64,18 +69,18 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
     try {
       const { data, error } = await adminRejectCaregiver(
         caregiver.caregiver_id,
-        notes,
+        notes
       );
 
       if (error !== null && error !== undefined) {
         toast.error("Failed to perform the action. Please try again.", {
-          position: "bottom-right",
+          position: "bottom-right"
         });
         return;
       }
 
       toast.success("Caregiver rejected successfully", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
 
       setTimeout(() => {
@@ -84,7 +89,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
     } catch (error) {
       console.error(error);
       toast.error("Failed to perform the action. Please try again.", {
-        position: "bottom-right",
+        position: "bottom-right"
       });
     } finally {
       handleModalClose();
@@ -122,7 +127,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       ) : (
         <button
           className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
-          onClick={() => router.back()}
+          onClick={() => router.replace("/admin/manage/approval")}
         >
           Go back
         </button>
