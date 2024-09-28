@@ -1,5 +1,6 @@
 "use client";
 
+import { getProfilePhoto } from "@/app/server-action/caregiver";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
@@ -63,17 +64,6 @@ const Page = ({ searchParams }: any) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const getProfilePhoto = (profile_photo: string) => {
-    const { data } = supabase.storage
-      .from("profile_photo")
-      .getPublicUrl(profile_photo);
-
-    if (data) {
-      return data.publicUrl;
-      setProfilePhoto((prev) => [...prev, data.publicUrl]);
-    }
-  };
-
   useEffect(() => {
     const getUser = async () => {
       const supabase = createBrowserClient(
@@ -93,11 +83,12 @@ const Page = ({ searchParams }: any) => {
         .eq("role", searchParams.caregiver);
       if (data) {
         data.forEach((user: User) => {
-          try {
-            const url = getProfilePhoto(user.caregiver[0]?.profile_photo);
-
+          const getProfilePhotoUrl = async () => {
+            const url = await getProfilePhoto(user.caregiver[0]?.profile_photo);
             user.caregiver[0].profile_photo_url = url!;
-          } catch (error) {}
+          };
+
+          getProfilePhotoUrl();
         });
         setCaregiver(data);
         setPagination((prev) => ({
