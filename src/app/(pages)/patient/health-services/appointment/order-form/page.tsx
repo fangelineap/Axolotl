@@ -244,7 +244,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                   />
                 )}
                 <div className="mb-3 flex items-center justify-between gap-5">
-                  <label className="mb-3 block font-medium text-dark dark:text-white">
+                  <label className="mb-3 block font-black text-dark dark:text-white">
                     Current Medication <span className="ml-1 text-red">*</span>
                   </label>
                   <input
