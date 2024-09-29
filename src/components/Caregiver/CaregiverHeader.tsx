@@ -86,10 +86,8 @@ const CaregiverHeader: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/caregiver">
                   <div
-                    className={`text-black hover:bg-gray-100 hover:text-green-light-1 dark:text-white ${
-                      isActive("/caregiver")
-                        ? "font-bold text-green-light-1"
-                        : ""
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
+                      isActive("/caregiver") ? "font-bold text-kalbe-light" : ""
                     }`}
                   >
                     Schedule
@@ -99,9 +97,9 @@ const CaregiverHeader: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/caregiver/order">
                   <div
-                    className={`text-black hover:bg-gray-100 hover:text-green-light-1 dark:text-white ${
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
                       isActive("/caregiver/order")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >

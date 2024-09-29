@@ -165,16 +165,16 @@ const GuestHeader: React.FC<HeaderProps> = ({
                   </div>
                   {dropdownOpen && (
                     <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
-                      <li className="border-b border-gray-200 dark:border-gray-700">
+                      <li className="border-b border-gray-1 dark:border-gray-700">
                         <Link href="/auth/signin">
-                          <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
+                          <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
                             Nurses
                           </div>
                         </Link>
                       </li>
                       <li>
                         <Link href="/auth/signin">
-                          <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-kalbe-light dark:text-white">
+                          <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
                             Midwives
                           </div>
                         </Link>

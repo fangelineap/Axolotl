@@ -159,7 +159,7 @@ const AdminHeader: React.FC<HeaderProps> = ({
                 </div>
                 {dropdownOrderOpen && (
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
-                    <li className="border-b border-gray-200 dark:border-gray-700">
+                    <li className="border-b border-gray-1 dark:border-gray-700">
                       <Link href="/admin/order/service">
                         <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
                           Service
@@ -200,14 +200,14 @@ const AdminHeader: React.FC<HeaderProps> = ({
                 </div>
                 {dropdownManagementOpen && (
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
-                    <li className="border-b border-gray-200 dark:border-gray-700">
+                    <li className="border-b border-gray-1 dark:border-gray-700">
                       <Link href="/admin/manage/user">
                         <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
                           User
                         </div>
                       </Link>
                     </li>
-                    <li className="border-b border-gray-200 dark:border-gray-700">
+                    <li className="border-b border-gray-1 dark:border-gray-700">
                       <Link href="/admin/manage/approval">
                         <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
                           Approval

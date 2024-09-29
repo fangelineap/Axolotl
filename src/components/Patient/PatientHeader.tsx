@@ -111,8 +111,8 @@ const PatientHeader: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/patient">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                      isActive("/patient") ? "font-bold text-green-light-1" : ""
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
+                      isActive("/patient") ? "font-bold text-kalbe-light" : ""
                     }`}
                   >
                     Dashboard
@@ -122,9 +122,9 @@ const PatientHeader: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/patient/order-history">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
+                    className={`text-black hover:text-kalbe-light dark:text-white ${
                       isActive("/patient/order-history")
-                        ? "font-bold text-green-light-1"
+                        ? "font-bold text-kalbe-light"
                         : ""
                     }`}
                   >
@@ -139,8 +139,8 @@ const PatientHeader: React.FC<HeaderProps> = ({
                 onClick={toggleDropdown}
               >
                 <div
-                  className={`cursor-pointer text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                    dropdownOpen ? "font-bold text-green-light-1" : ""
+                  className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
+                    dropdownOpen ? "text-kalbe-light" : ""
                   }`}
                 >
                   <div className="flex">
@@ -157,16 +157,16 @@ const PatientHeader: React.FC<HeaderProps> = ({
                 </div>
                 {dropdownOpen && (
                   <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
-                    <li className="border-b border-gray-200 dark:border-gray-700">
+                    <li className="border-b border-gray-1 dark:border-gray-700">
                       <Link href="/patient/health-services?caregiver=Nurse">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-green-light-1 dark:text-white">
                           Nurses
                         </div>
                       </Link>
                     </li>
                     <li>
                       <Link href="/patient/health-services?caregiver=Midwife">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
+                        <div className="block px-4 py-2 text-black hover:bg-gray hover:text-green-light-1 dark:text-white">
                           Midwives
                         </div>
                       </Link>
