@@ -1,5 +1,6 @@
 "use client";
 
+import { getProfilePhoto } from "@/app/server-action/caregiver";
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
@@ -35,7 +36,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
     const getCaregiver = async () => {
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
       try {
@@ -45,7 +46,11 @@ const OrderCaregiver = ({ searchParams }: any) => {
           .eq("user_id", searchParams.caregiver)
           .limit(1);
         if (data) {
-          console.log("data", data);
+          const url = await getProfilePhoto(
+            data[0].caregiver[0]?.profile_photo
+          );
+          data[0].caregiver[0].profile_photo_url = url!;
+
           setCaregiver(data[0]);
         }
       } catch (error) {
@@ -62,11 +67,11 @@ const OrderCaregiver = ({ searchParams }: any) => {
   console.log("cg", caregiver);
 
   const toOrderForm = (formData: FormData) => {
-    console.log('date', formData.get('appointmentDate'))
+    console.log("date", formData.get("appointmentDate"));
     router.push(
-      `/patient/health-services/appointment/order-form?caregiver=${searchParams.caregiver}&service=${service}&time=${time}&date=${formData.get('appointmentDate')}`,
-    )
-  }
+      `/patient/health-services/appointment/order-form?caregiver=${searchParams.caregiver}&service=${service}&time=${time}&date=${formData.get("appointmentDate")}`
+    );
+  };
 
   return (
     <DefaultLayout>
@@ -75,13 +80,15 @@ const OrderCaregiver = ({ searchParams }: any) => {
           <div className="mt-6 flex h-[100%] w-[85%] flex-col justify-between gap-7 lg:flex-row">
             <div className="p-3 lg:w-[65%]">
               <div className="flex items-start gap-10">
-                <Image
-                  src="/images/user/caregiver.png"
-                  height={100}
-                  width={100}
-                  className="rounded-full bg-kalbe-veryLight"
-                  alt="CG pfp"
-                />
+                <div className="min-w-[100px]">
+                  <Image
+                    src={caregiver?.caregiver[0].profile_photo_url!}
+                    height={100}
+                    width={100}
+                    className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight"
+                    alt="CG pfp"
+                  />
+                </div>
                 <div className="w-[50%]">
                   <h1 className="text-lg font-extrabold">
                     {`${caregiver?.first_name} ${caregiver?.last_name}`}
@@ -222,7 +229,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
                       "Neonatal Care",
                       "Elderly Care",
                       "After Care",
-                      "Booster",
+                      "Booster"
                     ]}
                     selectedOption={service}
                     setSelectedOption={setService}

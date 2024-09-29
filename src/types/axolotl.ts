@@ -15,6 +15,7 @@ export type USER = {
 export type CAREGIVER = {
   id: string;
   profile_photo: string;
+  profile_photo_url?: string;
   employment_type: "Full-time" | "Part-time";
   workplace: string;
   work_experiences: number;

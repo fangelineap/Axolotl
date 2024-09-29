@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 const PlacingOrder = ({ searchParams }: any) => {
   const [concern, setConcern] = useState<string>("");
   const [selectedAll, setSelectedAll] = useState<string[]>([]);
-  const [days, setDays] = useState<number>(0);
+  const [days, setDays] = useState<number>(1);
 
   const [isActive, setIsActive] = useState(false);
   const [seconds, setSeconds] = useState(3600);
@@ -206,10 +206,12 @@ const PlacingOrder = ({ searchParams }: any) => {
                   changeTextColor={() => {}}
                 />
                 {/* <div className="flex justify-between gap-3"> */}
-                <h1 className="font-medium text-dark dark:text-white">
+                <h1 className="text-body-sm font-medium text-dark dark:text-white">
                   Service Description:
                 </h1>
-                <p className="w-[75%]">Service desc for after care</p>
+                <p className="w-[75%] text-body-sm">
+                  Service desc for after care
+                </p>
                 {/* </div> */}
               </div>
             </>
@@ -221,7 +223,7 @@ const PlacingOrder = ({ searchParams }: any) => {
               </h1>
               <div>
                 <div className="mb-3 flex items-center justify-between gap-5">
-                  <label className="mb-3 block font-medium text-dark dark:text-white">
+                  <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
                     Causes <span className="ml-1 text-red">*</span>
                   </label>
                   <input
@@ -244,7 +246,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                   />
                 )}
                 <div className="mb-3 flex items-center justify-between gap-5">
-                  <label className="mb-3 block font-medium text-dark dark:text-white">
+                  <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
                     Current Medication <span className="ml-1 text-red">*</span>
                   </label>
                   <input
@@ -376,6 +378,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                               "12345-67890-87654"
                             );
                             setCopied(true);
+                            setIsActive(false);
                           } catch (error) {
                             console.log("error");
                           }
@@ -386,11 +389,19 @@ const PlacingOrder = ({ searchParams }: any) => {
                     </div>
                     <div>
                       <h1 className="mb-2 text-lg font-bold">Payment Status</h1>
-                      <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
-                        <h1 className="text-center text-lg font-semibold text-primary">
-                          Verified
-                        </h1>
-                      </div>
+                      {copied ? (
+                        <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
+                          <h1 className="text-center text-lg font-semibold text-primary">
+                            Verified
+                          </h1>
+                        </div>
+                      ) : (
+                        <div className="rounded-md border-[1px] border-yellow bg-yellow-light px-5 py-2">
+                          <h1 className="text-center text-lg font-semibold text-yellow">
+                            Pending
+                          </h1>
+                        </div>
+                      )}
                     </div>
                     <div className="mb-5 mt-5 flex w-full justify-center">
                       {copied ? (

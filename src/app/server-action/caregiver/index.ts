@@ -13,3 +13,15 @@ export async function getCaregiverPhoto(storage_id: string) {
     return data.publicUrl;
   }
 }
+
+export async function getProfilePhoto(profile_photo: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data } = supabase.storage
+    .from("profile_photo")
+    .getPublicUrl(profile_photo);
+
+  if (data) {
+    return data.publicUrl;
+  }
+}

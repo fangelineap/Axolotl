@@ -1,5 +1,6 @@
 "use client";
 
+import { getProfilePhoto } from "@/app/server-action/caregiver";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
@@ -9,6 +10,7 @@ import React, { useEffect, useState } from "react";
 type Caregiver = {
   id: string;
   profile_photo: string;
+  profile_photo_url?: string;
   employment_type: string;
   workplace: string;
   work_experiences: number;
@@ -54,23 +56,13 @@ const Page = ({ searchParams }: any) => {
     pageSize:
       filtered.length > 0
         ? Math.ceil(filtered.length / 5)
-        : Math.ceil(caregiver.length / 5),
+        : Math.ceil(caregiver.length / 5)
   });
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-
-  const getProfilePhoto = (profile_photo: string) => {
-    const { data } = supabase.storage
-      .from("profile_photo")
-      .getPublicUrl(profile_photo);
-
-    if (data) {
-      setProfilePhoto((prev) => [...prev, data.publicUrl]);
-    }
-  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -80,9 +72,9 @@ const Page = ({ searchParams }: any) => {
         {
           auth: {
             autoRefreshToken: false,
-            persistSession: false,
-          },
-        },
+            persistSession: false
+          }
+        }
       );
 
       const { data } = await supabase
@@ -91,14 +83,17 @@ const Page = ({ searchParams }: any) => {
         .eq("role", searchParams.caregiver);
       if (data) {
         data.forEach((user: User) => {
-          try {
-            getProfilePhoto(user.caregiver[0]?.profile_photo);
-          } catch (error) {}
+          const getProfilePhotoUrl = async () => {
+            const url = await getProfilePhoto(user.caregiver[0]?.profile_photo);
+            user.caregiver[0].profile_photo_url = url!;
+          };
+
+          getProfilePhotoUrl();
         });
         setCaregiver(data);
         setPagination((prev) => ({
           ...prev,
-          pageSize: Math.ceil(data.length / 5),
+          pageSize: Math.ceil(data.length / 5)
         }));
       }
     };
@@ -106,7 +101,7 @@ const Page = ({ searchParams }: any) => {
     if (searchParams.caregiver) {
       getUser();
     }
-  }, [,searchParams.caregiver]);
+  }, [, searchParams.caregiver]);
 
   useEffect(() => {
     let filteredCG: User[] = [];
@@ -464,14 +459,16 @@ const Page = ({ searchParams }: any) => {
                       key={index}
                       className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3"
                     >
-                      <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                        <Image
-                          src={profilePhoto![index]}
-                          height={100}
-                          width={100}
-                          className="h-[100px] w-[100px] rounded-full object-cover"
-                          alt="CG pfp"
-                        />
+                      <div className="flex h-[100%] w-[100%] items-center gap-5 lg:mr-10 lg:gap-10">
+                        <div className="min-w-[100px]">
+                          <Image
+                            src={cg.caregiver[0]?.profile_photo_url!}
+                            height={100}
+                            width={100}
+                            className="h-[100px] w-[100px] rounded-full object-cover"
+                            alt="CG pfp"
+                          />
+                        </div>
                         <div className="flex w-full items-center gap-5">
                           <div className="w-[70%]">
                             <h1 className="mb-2 font-semibold">
@@ -516,8 +513,14 @@ const Page = ({ searchParams }: any) => {
                           </div>
                           <div className="h-25 w-[0.5px] bg-primary"></div>
                           <div className="flex w-[30%] justify-end">
-                            <button 
-                            onClick={() => router.push(`/patient/health-services/appointment?caregiver=${cg.user_id}`)} className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                            <button
+                              onClick={() =>
+                                router.push(
+                                  `/patient/health-services/appointment?caregiver=${cg.user_id}`
+                                )
+                              }
+                              className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80"
+                            >
                               Book Now
                             </button>
                           </div>
@@ -534,14 +537,16 @@ const Page = ({ searchParams }: any) => {
                     key={index}
                     className="mb-5 flex w-full items-center justify-between gap-5 rounded-md border border-primary p-3"
                   >
-                    <div className="flex w-full items-center gap-5 lg:mr-10 lg:gap-10">
-                      <Image
-                        src={profilePhoto![index]}
-                        height={100}
-                        width={100}
-                        className="h-[100px] w-[100px] rounded-full object-cover"
-                        alt="CG pfp"
-                      />
+                    <div className="flex h-[100%] w-[100%] items-center gap-5 lg:mr-10 lg:gap-10">
+                      <div className="min-w-[100px]">
+                        <Image
+                          src={cg.caregiver[0]?.profile_photo_url!}
+                          width={100}
+                          height={100}
+                          className="h-[100px] w-[100px] rounded-full object-cover"
+                          alt="Nurse pfp"
+                        />
+                      </div>
                       <div className="flex w-full items-center gap-5">
                         <div className="w-[70%]">
                           <h1 className="mb-2 font-semibold">
@@ -587,8 +592,13 @@ const Page = ({ searchParams }: any) => {
                         <div className="h-25 w-[0.5px] bg-primary"></div>
                         <div className="flex w-[30%] justify-end">
                           <button
-                          onClick={() => router.push(`/patient/health-services/appointment?caregiver=${cg.user_id}`)} 
-                          className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80">
+                            onClick={() =>
+                              router.push(
+                                `/patient/health-services/appointment?caregiver=${cg.user_id}`
+                              )
+                            }
+                            className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80"
+                          >
                             Book Now
                           </button>
                         </div>
@@ -625,7 +635,7 @@ const Page = ({ searchParams }: any) => {
                         if (pagination.pageIndex - 1 > 0) {
                           setPagination({
                             ...pagination,
-                            pageIndex: pagination.pageIndex - 1,
+                            pageIndex: pagination.pageIndex - 1
                           });
                         }
                       }}
@@ -660,7 +670,7 @@ const Page = ({ searchParams }: any) => {
                               if (index + 1 < pagination.pageSize) {
                                 setPagination((prev) => ({
                                   ...prev,
-                                  pageIndex: index + 1,
+                                  pageIndex: index + 1
                                 }));
                               }
                             }}
@@ -686,14 +696,14 @@ const Page = ({ searchParams }: any) => {
                       </li>
                     </>
                   ) : (
-                    [...Array(3)].map((_, index) => (
+                    [...Array(pagination.pageIndex)].map((_, index) => (
                       <li>
                         <a
                           onClick={() => {
                             if (index + 1 < pagination.pageSize) {
                               setPagination((prev) => ({
                                 ...prev,
-                                pageIndex: index + 1,
+                                pageIndex: index + 1
                               }));
                             }
                           }}
@@ -720,7 +730,7 @@ const Page = ({ searchParams }: any) => {
                         }
                         setPagination((prev) => ({
                           ...prev,
-                          pageIndex: pagination.pageIndex + 1,
+                          pageIndex: pagination.pageIndex + 1
                         }));
                       }}
                       className={`${
