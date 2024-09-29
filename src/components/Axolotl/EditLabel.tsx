@@ -1,28 +1,31 @@
 import React from "react";
 
 interface EditLabelProps {
+  // Basic Props
   label: string;
   type: string;
-  placeholder?: string;
-  value?: string;
-  disabled?: boolean;
   name: string;
-  required?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  horizontal: boolean;
+  placeholder: string;
+  required: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
 }
 
 const EditLabel = ({
   label,
   type,
+  name,
+  horizontal = false,
   placeholder,
-  value,
-  disabled = false,
-  onChange,
   required,
-  name
+  onChange,
+  value
 }: EditLabelProps) => {
   return (
-    <div className="mb-3 flex items-center justify-between gap-5">
+    <div
+      className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
+    >
       <label className="font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
@@ -31,13 +34,9 @@ const EditLabel = ({
         type={type}
         placeholder={placeholder}
         value={value}
-        disabled={disabled}
         onChange={onChange}
-        className={`w-3/4 rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 text-dark outline-none transition focus:border-primary active:border-primary ${
-          disabled
-            ? "disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary"
-            : "bg-white"
-        } font-normal dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+        className={`${horizontal ? "md:w-3/4" : null} w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition 
+        focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
       />
     </div>
   );

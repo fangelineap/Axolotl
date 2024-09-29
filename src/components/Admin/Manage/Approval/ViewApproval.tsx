@@ -248,14 +248,17 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
             title="Rejection Notes"
             value={caregiver.notes}
             disabled
-            className="h-20 w-full rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
+            className="h-20 w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
           />
         </div>
       ) : null}
 
       {/* Button Group */}
       <div className="mt-5 flex w-full items-center justify-end">
-        <div className="flex w-1/4 items-center justify-end gap-5">
+        <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
+          <h1 className="visible mb-3 text-center text-heading-6 font-bold text-primary md:hidden">
+            Reject/Approve
+          </h1>
           <ApprovalButtons status={caregiver.status} caregiver={caregiver} />
         </div>
       </div>

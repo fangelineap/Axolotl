@@ -4,6 +4,7 @@ import DownloadLicenses from "@/components/Axolotl/DownloadLicenses";
 import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
 interface ViewUserProps {
   user: AdminUserTable;
@@ -73,7 +74,7 @@ async function ViewUser({ user }: ViewUserProps) {
         {["Nurse", "Midwife", "Patient"].includes(user.role) ? (
           <>
             {/* Top Section */}
-            <div className="flex w-full flex-col items-center justify-start gap-10 md:flex-row">
+            <div className="flex w-full flex-col items-center justify-start gap-5 md:flex-row">
               <div className="h-40 w-40 overflow-hidden rounded-full border">
                 {user.role === "Nurse" || user.role === "Midwife" ? (
                   <Image
@@ -453,7 +454,7 @@ async function ViewUser({ user }: ViewUserProps) {
             <div className="flex h-full w-full flex-col items-start justify-between gap-5 md:flex-row">
               {/* Left Section */}
               {/* Profile with Profile Picture Section */}
-              <div className="md:max-w-1/4 flex h-full w-full flex-row items-center justify-center gap-10 rounded-md border border-primary py-4 md:flex-col md:gap-2">
+              <div className="flex h-full w-full flex-row items-center justify-center gap-10 rounded-md border border-primary py-4 md:max-w-[25%] md:flex-col md:gap-2">
                 <div className="h-25 w-25 overflow-hidden rounded-full border">
                   <Image
                     src="/images/user/Default Admin Photo.png"
@@ -477,7 +478,7 @@ async function ViewUser({ user }: ViewUserProps) {
               </div>
 
               {/* Right Section */}
-              <div className="md:max-w-3/4 flex h-full w-full flex-col items-center justify-center rounded-md border border-primary p-4">
+              <div className="flex h-full w-full flex-col items-center justify-center rounded-md border border-primary p-4 md:min-w-[75%]">
                 <div className="flex w-full flex-col">
                   {/* Header */}
                   <div className="mb-3 flex w-full flex-col gap-3">
@@ -547,7 +548,7 @@ async function ViewUser({ user }: ViewUserProps) {
         {/* Button Group */}
         <div className="flex w-full items-center justify-end">
           <div className="flex w-1/2 items-center justify-end gap-5 md:w-1/4">
-            <div className="w-3/4 md:w-[50%]">
+            <div className="w-3/4 md:w-[75%] md:min-w-[50%]">
               <Link href={"/admin/manage/user"}>
                 <button className="w-full rounded-md border border-gray-cancel bg-gray-cancel p-2 px-3 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel">
                   Go back

@@ -35,7 +35,7 @@ const DisabledLabel = ({
   if (isRating) {
     return (
       <div
-        className={`mb-3 flex ${horizontal ? "items-center justify-between gap-5" : "w-full flex-col gap-2"}`}
+        className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
         <label className="font-medium text-dark dark:text-white">{label}</label>
         <div className="flex w-full items-center gap-3 py-2">
@@ -49,7 +49,7 @@ const DisabledLabel = ({
   if (isUnit) {
     return (
       <div
-        className={`mb-3 flex ${horizontal ? "items-center justify-between gap-5" : "w-full flex-col gap-2"}`}
+        className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
         <label className="font-medium text-dark dark:text-white">{label}</label>
         <div className="flex w-full items-center">
@@ -58,7 +58,7 @@ const DisabledLabel = ({
             placeholder={placeholder}
             value={value}
             disabled
-            className={`${horizontal ? "w-3/4" : "w-full"} rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+            className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
           />
           <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
             {unit}
@@ -71,7 +71,7 @@ const DisabledLabel = ({
   if (isMultipleUnit) {
     return (
       <div
-        className={`mb-3 flex ${horizontal ? "items-center justify-between gap-5" : "w-full flex-col gap-2"}`}
+        className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
         <label className="font-medium text-dark dark:text-white">{label}</label>
         <div className="flex w-full items-center gap-2">
@@ -81,7 +81,7 @@ const DisabledLabel = ({
               placeholder={placeholder}
               value={value}
               disabled
-              className={`${horizontal ? "w-3/4" : "w-full"} rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+              className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
             />
             <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
               {unit}
@@ -93,7 +93,7 @@ const DisabledLabel = ({
               placeholder={placeholder}
               value={value}
               disabled
-              className={`${horizontal ? "w-3/4" : "w-full"} rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+              className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
             />
             <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
               {secondUnit}
@@ -107,7 +107,7 @@ const DisabledLabel = ({
   if (isTextArea) {
     return (
       <div
-        className={`mb-3 flex ${horizontal ? "items-center justify-between gap-5" : "w-full flex-col gap-2"}`}
+        className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
         <label className="font-medium text-dark dark:text-white">{label}</label>
         <textarea
@@ -115,7 +115,7 @@ const DisabledLabel = ({
           placeholder={placeholder}
           value={value}
           disabled
-          className={`${horizontal ? "w-3/4" : "w-full"} max-h-30 min-h-20 overflow-auto rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+          className={`${horizontal ? "md:w-3/4" : null} max-h-30 min-h-20 w-full overflow-auto rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
         />
       </div>
     );
@@ -123,7 +123,7 @@ const DisabledLabel = ({
 
   return (
     <div
-      className={`mb-3 flex ${horizontal ? "items-center justify-between gap-5" : "w-full flex-col gap-2"}`}
+      className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
     >
       <label className="font-medium text-dark dark:text-white">{label}</label>
       <input
@@ -131,7 +131,7 @@ const DisabledLabel = ({
         placeholder={placeholder}
         value={value}
         disabled
-        className={`${horizontal ? "w-3/4" : "w-full"} rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+        className={`${horizontal ? "md:w-3/4" : null} w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
       />
     </div>
   );

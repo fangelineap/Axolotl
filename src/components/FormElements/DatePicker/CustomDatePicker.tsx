@@ -7,13 +7,15 @@ interface CustomProps {
   label: string;
   required?: boolean;
   name: string;
+  horizontal?: boolean;
 }
 
 const CustomDatePicker = ({
   placeholder,
   label,
   required,
-  name
+  name,
+  horizontal = false
 }: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
@@ -47,19 +49,24 @@ const CustomDatePicker = ({
   }, []);
 
   return (
-    <div className="mb-3 flex items-center justify-between gap-5">
+    <div
+      className={`mb-3 flex w-full flex-col gap-2 ${
+        horizontal
+          ? "md:flex-row md:items-center md:justify-between md:gap-5"
+          : ""
+      }`}
+    >
       <label className="font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
-      <div className="relative w-3/4">
+      <div className={`relative w-full ${horizontal ? "md:w-3/4" : ""}`}>
         <input
           name={name}
-          className="form-datepicker w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-3 py-3 font-normal outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary"
+          className={`form-datepicker w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
           placeholder={placeholder}
           data-class="flatpickr-right"
           required={required}
         />
-
         <div className="pointer-events-none absolute inset-0 left-auto right-5 flex items-center">
           <svg
             width="20"

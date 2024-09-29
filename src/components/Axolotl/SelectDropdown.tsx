@@ -5,18 +5,24 @@ interface CustomProps {
   label: string;
   required: boolean;
   name: string;
+  placeholder: string;
+  content: Array<string>;
+  horizontal: boolean;
   value?: string;
 }
 
-const SelectMedicineTypes: React.FC<CustomProps> = ({
+const SelectDropdown: React.FC<CustomProps> = ({
   label,
   required,
+  placeholder,
   name,
+  content,
+  horizontal = false,
   value
 }: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>(value || "");
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
-  const content = ["Generic", "Branded"];
+  const options = content;
 
   useEffect(() => {
     if (value) {
@@ -31,7 +37,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
 
   const getContent = () => {
     let res: any = [];
-    content.forEach((str) => {
+    options.forEach((str) => {
       res.push(
         <>
           <option value={str} className="bg-white text-black">
@@ -46,12 +52,16 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
   };
 
   return (
-    <div className="mb-3 flex items-center justify-between gap-5">
+    <div
+      className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
+    >
       <label className="font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
 
-      <div className="relative flex w-3/4 cursor-pointer rounded-[7px] bg-white focus:border-primary active:border-primary dark:bg-dark-2">
+      <div
+        className={`relative flex w-full cursor-pointer rounded-md bg-white focus:border-primary active:border-primary dark:bg-dark-2 ${horizontal ? "md:w-3/4" : null}`}
+      >
         <select
           title={label}
           name={name}
@@ -60,7 +70,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
             setSelectedOption(e.target.value);
             changeTextColor();
           }}
-          className={`relative z-10 w-full cursor-pointer appearance-none rounded-[7px] border-[1.5px] border-gray-1 bg-transparent bg-white py-2 pl-3 pr-11.5 transition  focus:border-primary focus-visible:outline-none active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
+          className={`relative z-10 w-full cursor-pointer appearance-none rounded-md border-[1.5px] border-gray-1 bg-transparent bg-white py-2 pl-3 pr-11.5 transition focus:border-primary focus-visible:outline-none active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
             isOptionSelected
               ? "text-dark dark:text-white"
               : "text-dark-secondary"
@@ -72,7 +82,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
             hidden={true}
             className="text-dark-secondary"
           >
-            Medicine Type
+            {placeholder}
           </option>
           {getContent()}
         </select>
@@ -86,4 +96,4 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
   );
 };
 
-export default SelectMedicineTypes;
+export default SelectDropdown;

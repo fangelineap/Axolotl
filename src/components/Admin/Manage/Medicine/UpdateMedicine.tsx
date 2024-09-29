@@ -3,13 +3,15 @@
 
 import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
+import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import EditLabel from "@/components/Axolotl/EditLabel";
 import PriceBox from "@/components/Axolotl/PriceBox";
-import SelectMedicineTypes from "@/components/Axolotl/SelectMedicineTypes";
+import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { createBrowserClient } from "@supabase/ssr";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -338,24 +340,28 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
               </div>
             </div>
             <div className="flex flex-col">
-              <EditLabel
-                name="uuid"
+              <DisabledLabel
                 label="Product ID"
                 value={medicine.uuid}
                 type="text"
-                disabled={true}
+                horizontal
               />
               <EditLabel
                 name="name"
                 label="Name"
+                placeholder="Medicine Name"
                 value={formData.name}
                 type="text"
                 onChange={handleInputChange}
                 required={true}
+                horizontal
               />
-              <SelectMedicineTypes
+              <SelectDropdown
                 value={formData.type}
                 name="type"
+                placeholder="Select Type"
+                horizontal={true}
+                content={["Generic", "Branded"]}
                 label="Type"
                 required={true}
               />
@@ -364,6 +370,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                 label="Exp. Date"
                 placeholder={formatDate}
                 required={true}
+                horizontal={true}
               />
             </div>
           </div>
@@ -393,14 +400,11 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                   }}
                   required={true}
                 />
-                <button
-                  onClick={() =>
-                    router.replace(`/admin/manage/medicine/${medicine.uuid}`)
-                  }
-                  className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover"
-                >
-                  Cancel
-                </button>
+                <Link href={`/admin/manage/medicine/${medicine.uuid}`}>
+                  <button className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover">
+                    Cancel
+                  </button>
+                </Link>
                 <button
                   type="submit"
                   className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary"

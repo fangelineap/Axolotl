@@ -1,9 +1,9 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
+import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
+import { IconInfoCircleFilled } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
-import { IconExclamationCircleFilled } from "@tabler/icons-react";
+import React from "react";
 
 export const metadata = getGuestMetadata("careers");
 
@@ -134,18 +134,15 @@ const Careers: React.FC = () => {
               <h2 className="mb-4 text-3xl">
                 Start your <span className="font-bold">Journey</span> Now!
               </h2>
-              <div className="mb-6 flex flex-col gap-4 lg:flex-row w-full items-center justify-center rounded-lg border border-yellow-dark bg-yellow-light p-4">
+              <div className="mb-6 flex w-full flex-col items-center justify-center gap-4 rounded-lg border border-blue bg-blue-light p-4 lg:flex-row">
                 <div className="flex-shrink-0">
-                  <IconExclamationCircleFilled
-                    size={50}
-                    className="text-yellow-dark"
-                  />
+                  <IconInfoCircleFilled size={50} className="text-blue" />
                 </div>
                 <div>
-                  <h3 className="mb-2 font-bold text-yellow-dark">
+                  <h3 className="mb-2 font-bold text-blue">
                     Quick Tips for Speed Up Your Registration
                   </h3>
-                  <ul className="list-disc pl-5 text-left text-sm text-yellow-dark">
+                  <ul className="list-disc pl-5 text-left text-sm text-blue">
                     <li>
                       Get all necessary documents before registering yourself as
                       a caregiver.

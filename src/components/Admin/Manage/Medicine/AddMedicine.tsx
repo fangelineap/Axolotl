@@ -1,20 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { addAdminMedicine } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
+import DisabledLabel from "@/components/Axolotl/DisabledLabel";
 import EditLabel from "@/components/Axolotl/EditLabel";
 import PriceBox from "@/components/Axolotl/PriceBox";
-import SelectMedicineTypes from "@/components/Axolotl/SelectMedicineTypes";
+import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { createBrowserClient } from "@supabase/ssr";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { uuidv7 } from "uuidv7";
 import "react-toastify/dist/ReactToastify.css";
+import { uuidv7 } from "uuidv7";
 
 function AddMedicine() {
   const router = useRouter();
@@ -156,7 +157,7 @@ function AddMedicine() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const { data: userData, error } = await supabase.auth.getSession();
+    const { data: userData } = await supabase.auth.getSession();
 
     if (userData.session?.user) {
       const { data, error } = await supabase.storage
@@ -182,9 +183,7 @@ function AddMedicine() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
-      const { data, error } = await supabase.storage
-        .from("medicine")
-        .remove([path]);
+      const { error } = await supabase.storage.from("medicine").remove([path]);
 
       if (error) {
         return error;
@@ -200,13 +199,14 @@ function AddMedicine() {
       const name = uuidv7();
       const extension = medicinePhoto.name.split(".")[1];
       const fileName = `${name}_${Date.now()}.${extension}`;
-      const path = await uploadAdminToStorage(
+      await uploadAdminToStorage(
         "medicine",
         fileName,
         medicinePhoto as unknown as string
       );
 
       return fileName;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Error uploading file. Please try again.", {
         position: "bottom-right"
@@ -238,7 +238,7 @@ function AddMedicine() {
       medicine_photo: pathMedicine as string
     };
 
-    const { data, error } = await addAdminMedicine(medicineData);
+    const { error } = await addAdminMedicine(medicineData);
 
     if (error !== null && error !== undefined) {
       await cancelUploadAdminToStorage(pathMedicine as string);
@@ -317,12 +317,11 @@ function AddMedicine() {
               </div>
             </div>
             <div className="flex flex-col">
-              <EditLabel
-                name="uuid"
+              <DisabledLabel
                 label="Product ID"
                 value="This will be auto-generated"
                 type="text"
-                disabled={true}
+                horizontal
               />
               <EditLabel
                 name="name"
@@ -331,13 +330,22 @@ function AddMedicine() {
                 type="text"
                 onChange={handleInputChange}
                 required={true}
+                horizontal
               />
-              <SelectMedicineTypes name="type" label="Type" required={true} />
+              <SelectDropdown
+                content={["Generic", "Branded"]}
+                name="type"
+                placeholder="Select Medicine Type"
+                horizontal={true}
+                label="Type"
+                required={true}
+              />
               <CustomDatePicker
                 name="exp_date"
                 label="Exp. Date"
                 placeholder={formatDate}
                 required={true}
+                horizontal
               />
             </div>
           </div>
@@ -367,12 +375,11 @@ function AddMedicine() {
                   }}
                   required={true}
                 />
-                <button
-                  onClick={() => router.replace("/admin/manage/medicine")}
-                  className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover"
-                >
-                  Cancel
-                </button>
+                <Link href={"/admin/manage/medicine"}>
+                  <button className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover">
+                    Cancel
+                  </button>
+                </Link>
                 <button
                   type="submit"
                   className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary"

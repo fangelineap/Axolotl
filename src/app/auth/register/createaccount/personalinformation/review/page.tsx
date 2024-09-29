@@ -18,20 +18,25 @@ const Review = ({ searchParams }: any) => {
   const checkUser = async () => {
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const {data: session, error: sessionError} = await supabase.auth.getSession();
+    const { data: session, error: sessionError } =
+      await supabase.auth.getSession();
 
-    const {data: userData, error: userError} = await supabase.from('users').select().eq('user_id', session.session?.user.id).limit(1);
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select()
+      .eq("user_id", session.session?.user.id)
+      .limit(1);
 
-    if(userData) {
+    if (userData) {
       const { data, error } = await supabase
         .from("caregiver")
         .select("*")
         .eq("caregiver_id", userData[0].id)
         .limit(1);
-  
+
       if (error) {
         console.log("error ", error);
       }
@@ -150,7 +155,7 @@ const Review = ({ searchParams }: any) => {
             )}
             <div className="flex flex-col items-center justify-center p-5">
               <h1
-                className={`mb-1 text-2xl font-bold ${status == 'Verified' ? "text-kalbe-light" : status == 'Unverified' ? "text-yellow-dark" : 'text-red'}`}
+                className={`mb-1 text-2xl font-bold ${status == "Verified" ? "text-kalbe-light" : status == "Unverified" ? "text-yellow-dark" : "text-red"}`}
               >
                 {status == "Verified"
                   ? "Congratulations"
@@ -182,12 +187,12 @@ const Review = ({ searchParams }: any) => {
               )}
             </div>
           </div>
-          {status == 'Verified' && (
+          {status == "Verified" && (
             <div className="text-blue-gray-500 mb-6 flex shrink-0 flex-wrap items-center justify-center">
               <button
                 type="submit"
-                className="w-1/4 cursor-pointer rounded-[5px] bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
-                onClick={() => router.push('/admin')}
+                className="w-1/4 cursor-pointer rounded-md bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
+                onClick={() => router.push("/admin")}
               >
                 Okay
               </button>
