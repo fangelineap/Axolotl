@@ -2,7 +2,7 @@ import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function AddUser() {
+function AddAdmin() {
   // const validateForm = (form: FormData) => {
   //   if (
   //     !form.get("name") &&
@@ -58,4 +58,4 @@ function AddUser() {
   );
 }
 
-export default AddUser;
+export default AddAdmin;

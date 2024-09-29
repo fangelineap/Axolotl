@@ -13,7 +13,7 @@ const CustomDatePicker = ({
   placeholder,
   label,
   required,
-  name,
+  name
 }: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
@@ -30,19 +30,19 @@ const CustomDatePicker = ({
       onPreCalendarPosition: (
         selectedDates: Date[],
         dateStr: string,
-        instance: Instance,
+        instance: Instance
       ) => {
         const calendarContainer = instance.calendarContainer as HTMLElement;
         if (calendarContainer) {
           calendarContainer.style.setProperty(
             "position",
             "absolute",
-            "important",
+            "important"
           );
           calendarContainer.style.setProperty("top", "auto", "important");
           calendarContainer.style.setProperty("bottom", "100%", "important");
         }
-      },
+      }
     });
   }, []);
 
@@ -51,7 +51,7 @@ const CustomDatePicker = ({
       <label className="font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
-      <div className="relative w-[75%]">
+      <div className="relative w-3/4">
         <input
           name={name}
           className="form-datepicker w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-3 py-3 font-normal outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary"

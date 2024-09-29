@@ -1,9 +1,17 @@
 "use server";
 
 import createSupabaseServerClient from "@/app/lib/server";
-import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import {
+  deleteUser,
+  getUserAuthSchema
+} from "@/app/server-action/admin/SupaAdmin";
 import { unstable_noStore } from "next/cache";
 import { AdminUserTable } from "../table/data";
+import { USER_AUTH_SCHEMA } from "@/types/axolotl";
+
+export async function addAdminNewAdmin(form: USER_AUTH_SCHEMA) {
+  unstable_noStore();
+}
 
 export async function getAdminAllUsers() {
   unstable_noStore();
@@ -60,5 +68,30 @@ export async function getAdminUserByUserID(user_id: string) {
   } catch (error) {
     console.error("An unexpected error occurred:", error);
     return { data: null, error };
+  }
+}
+
+export async function deleteAdminUser(user_id: string) {
+  unstable_noStore();
+
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { error: deleteFromUserTableError } = await supabase
+      .from("users")
+      .delete()
+      .eq("user_id", user_id);
+
+    await deleteUser(user_id);
+
+    if (deleteFromUserTableError) {
+      console.error("Error deleting user:", deleteFromUserTableError?.message);
+      return null;
+    }
+    console.log("Successfully deleted user:", user_id);
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
 }

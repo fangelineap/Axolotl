@@ -18,12 +18,12 @@ const InputGroup: React.FC<InputGroupProps> = ({
   type,
   placeholder,
   required,
-  name,
+  name
 }) => {
   return (
     <>
       <div className={customClasses}>
-        <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+        <label className="mb-2 block text-body-sm font-medium text-dark dark:text-white">
           {label}
           {required && <span className="ml-1 text-red">*</span>}
         </label>

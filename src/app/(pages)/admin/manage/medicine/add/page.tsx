@@ -8,12 +8,12 @@ export const metadata = getAdminMetadata("Add Medicine");
 function AdminAddMedicine() {
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs
-        parentPage="Manage"
-        subPage="Medicine"
-        pageName="Add Medicine"
-      />
-      <div className="mx-20 h-auto w-auto">
+      <div className="mx-4 h-auto w-auto md:mx-20">
+        <AdminBreadcrumbs
+          parentPage="Manage"
+          subPage="Medicine"
+          pageName="Add Medicine"
+        />
         <AddMedicine />
       </div>
     </DefaultLayout>

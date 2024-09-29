@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const AdminHeader: React.FC<HeaderProps> = ({
   sidebarOpen,
-  setSidebarOpen,
+  setSidebarOpen
 }) => {
   const [dropdownOrderOpen, setDropdownOrderOpen] = useState(false);
   const [dropdownManagementOpen, setDropdownManagementOpen] = useState(false);
@@ -110,7 +110,7 @@ const AdminHeader: React.FC<HeaderProps> = ({
 
         <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
           <div className="mr-10 hidden lg:block">
-            <Link href="/">
+            <Link href="/admin">
               <div className="cursor-pointer rounded-md p-2 dark:hidden">
                 <Image
                   width={175}

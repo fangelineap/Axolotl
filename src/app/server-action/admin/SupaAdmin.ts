@@ -10,14 +10,19 @@ async function getAdminAuthClient() {
     {
       auth: {
         autoRefreshToken: false,
-        persistSession: false,
-      },
-    },
+        persistSession: false
+      }
+    }
   );
 
   return supabaseAdminClient.auth.admin;
 }
 
+/**
+ * Gets the user's authentication schema from Supabase.
+ * @param {string} user_id
+ * @returns {Promise<USER_AUTH_SCHEMA | null>}
+ */
 export async function getUserAuthSchema(user_id: string) {
   const supabaseAdmin = await getAdminAuthClient();
 
@@ -36,6 +41,11 @@ export async function getUserAuthSchema(user_id: string) {
   }
 }
 
+/**
+ * Deletes a user from Supabase.
+ * @param {string} user_id
+ * @returns {Promise<boolean | null>}
+ */
 export async function deleteUser(user_id: string) {
   unstable_noStore();
 

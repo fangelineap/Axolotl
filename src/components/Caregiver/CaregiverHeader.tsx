@@ -1,41 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import DropdownUser from "@/components/Header/DropdownUser";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg0: boolean) => void;
 }
 
-const PatientHeader: React.FC<HeaderProps> = ({
+const CaregiverHeader: React.FC<HeaderProps> = ({
   sidebarOpen,
-  setSidebarOpen,
+  setSidebarOpen
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
   const pathname = usePathname();
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node)
-    ) {
-      setDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
 
   const isActive = (path: string) => pathname === path;
 
@@ -86,16 +63,14 @@ const PatientHeader: React.FC<HeaderProps> = ({
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <div>
-            <h5 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
-              Axolotl
-            </h5>
-          </div>
+          <h5 className="mb-0.5 text-heading-5 font-bold text-dark dark:text-white">
+            Axolotl
+          </h5>
         </div>
 
-        <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
+        <div className="lg:items-left hidden lg:flex lg:w-full lg:justify-between">
           <div className="mr-10 hidden lg:block">
-            <Link href="/">
+            <Link href="/caregiver">
               <div className="cursor-pointer rounded-md p-2 dark:hidden">
                 <Image
                   width={175}
@@ -106,75 +81,33 @@ const PatientHeader: React.FC<HeaderProps> = ({
               </div>
             </Link>
           </div>
-          <div className="flex flex-grow justify-center">
+          <div className="flex flex-grow justify-start ">
             <ul className="flex items-center gap-5 py-3">
               <li>
-                <Link href="/patient">
+                <Link href="/caregiver">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                      isActive("/patient")
+                    className={`text-black hover:bg-gray-100 hover:text-green-light-1 dark:text-white ${
+                      isActive("/caregiver")
                         ? "font-bold text-green-light-1"
                         : ""
                     }`}
                   >
-                    Dashboard
+                    Schedule
                   </div>
                 </Link>
               </li>
               <li>
-                <Link href="/patient/order-history">
+                <Link href="/caregiver/order">
                   <div
-                    className={`text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                      isActive("/patient/order-history")
+                    className={`text-black hover:bg-gray-100 hover:text-green-light-1 dark:text-white ${
+                      isActive("/caregiver/order")
                         ? "font-bold text-green-light-1"
                         : ""
                     }`}
                   >
-                    Order History
+                    Order
                   </div>
                 </Link>
-              </li>
-
-              <li
-                className="relative"
-                ref={dropdownRef}
-                onClick={toggleDropdown}
-              >
-                <div
-                  className={`cursor-pointer text-black hover:bg-gray-1 hover:text-green-light-1 dark:text-white ${
-                    dropdownOpen ? "font-bold text-green-light-1" : ""
-                  }`}
-                >
-                  <div className="flex">
-                    <div className="flex-none">Health Services</div>
-                    <div className="ml-2 mt-1 flex-none">
-                      <Image
-                        src={"/images/icon/icon-arrow-down.svg"}
-                        alt="Arrow Down"
-                        width={15}
-                        height={15}
-                      />
-                    </div>
-                  </div>
-                </div>
-                {dropdownOpen && (
-                  <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
-                    <li className="border-b border-gray-200 dark:border-gray-700">
-                      <Link href="/patient/health-services?caregiver=Nurse">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
-                          Nurses
-                        </div>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/patient/health-services?caregiver=Midwife">
-                        <div className="block px-4 py-2 text-black hover:bg-gray-3 hover:text-green-light-1 dark:text-white">
-                          Midwives
-                        </div>
-                      </Link>
-                    </li>
-                  </ul>
-                )}
               </li>
             </ul>
           </div>
@@ -187,4 +120,4 @@ const PatientHeader: React.FC<HeaderProps> = ({
   );
 };
 
-export default PatientHeader;
+export default CaregiverHeader;

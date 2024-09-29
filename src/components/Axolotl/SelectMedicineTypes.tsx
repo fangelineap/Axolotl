@@ -12,7 +12,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
   label,
   required,
   name,
-  value,
+  value
 }: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>(value || "");
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
@@ -38,7 +38,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
             {str}
           </option>
           ,
-        </>,
+        </>
       );
     });
 
@@ -51,7 +51,7 @@ const SelectMedicineTypes: React.FC<CustomProps> = ({
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
 
-      <div className="relative flex w-[75%] cursor-pointer rounded-[7px] bg-white focus:border-primary active:border-primary dark:bg-dark-2">
+      <div className="relative flex w-3/4 cursor-pointer rounded-[7px] bg-white focus:border-primary active:border-primary dark:bg-dark-2">
         <select
           title={label}
           name={name}

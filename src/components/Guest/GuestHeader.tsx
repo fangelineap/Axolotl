@@ -10,7 +10,7 @@ interface HeaderProps {
 
 const GuestHeader: React.FC<HeaderProps> = ({
   sidebarOpen,
-  setSidebarOpen,
+  setSidebarOpen
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLLIElement>(null);
@@ -90,19 +90,21 @@ const GuestHeader: React.FC<HeaderProps> = ({
           </h5>
         </div>
 
-        <div className="flex items-center justify-between w-full">
+        <div className="flex w-full items-center justify-between">
           <div className="hidden lg:flex lg:w-full lg:items-center">
             <div className="mr-10 hidden lg:block">
-              <div className="cursor-pointer rounded-md p-2 dark:hidden">
-                <Image
-                  width={175}
-                  height={175}
-                  src={"/images/logo/axolotl.svg"}
-                  alt="Logo"
-                />
-              </div>
+              <Link href="/caregiver">
+                <div className="cursor-pointer rounded-md p-2 dark:hidden">
+                  <Image
+                    width={175}
+                    height={175}
+                    src={"/images/logo/axolotl.svg"}
+                    alt="Logo"
+                  />
+                </div>
+              </Link>
             </div>
-            <div className="flex items-center justify-center w-full">
+            <div className="flex w-full items-center justify-center">
               <ul className="flex items-center gap-10 py-3 text-xl">
                 <li>
                   <Link href="/">

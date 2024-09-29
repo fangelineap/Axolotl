@@ -14,15 +14,19 @@ const DynamicFooter = () => {
         <CGAdminFooter />
       </>
     );
-  } else {
+  }
+
+  if (pathname.startsWith("/auth")) {
+    return null;
+  }
+
+  if (pathname.startsWith("/patient") || pathname.startsWith("/")) {
     return (
       <>
         <GuestPatientFooter />
       </>
     );
   }
-
-  return null;
 };
 
 export default DynamicFooter;

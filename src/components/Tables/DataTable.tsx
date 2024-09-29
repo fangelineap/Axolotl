@@ -84,18 +84,21 @@ export function DataTable<
               <button
                 onClick={() => {
                   showAction(row.original);
+
+                  const idFieldMap: { [key: string]: keyof T } = {
+                    "/admin/manage/medicine": "uuid",
+                    "/admin/manage/approval": "caregiver_id",
+                    "/admin/manage/user": "user_id"
+                  };
+
                   const id =
-                    pathName === "/admin/manage/medicine"
-                      ? row.original.uuid
-                      : pathName === "/admin/manage/approval"
-                        ? row.original.caregiver_id
-                        : pathName === "/admin/manage/user"
-                          ? row.original.user_id
-                          : row.original.id;
+                    row.original[idFieldMap[pathName] as keyof T] ||
+                    row.original.id;
 
                   const navigatePath = basePath
                     ? `${basePath}/${id}`
                     : `${pathName}/${id}`;
+
                   router.push(navigatePath);
                 }}
                 className="text-dark-secondary hover:text-blue"
@@ -107,7 +110,6 @@ export function DataTable<
               <button
                 onClick={() => {
                   deleteAction(row.original);
-                  console.log(row.original);
                 }}
                 className="text-dark-secondary hover:text-red"
               >
@@ -164,7 +166,7 @@ export function DataTable<
               className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 font-medium text-white hover:bg-kalbe-ultraLight hover:text-primary"
               onClick={() => router.push(`${pathName}/add`)}
             >
-              Add User
+              Create an Admin
             </button>
           )}
           <label className="mr-2">Items per page:</label>

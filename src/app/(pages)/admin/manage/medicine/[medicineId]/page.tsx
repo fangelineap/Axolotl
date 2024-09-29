@@ -47,12 +47,12 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
 
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs
-        parentPage="Manage"
-        subPage="Medicine"
-        pageName="View"
-      />
-      <div className="mx-20 h-auto w-auto">
+      <div className="mx-4 h-auto w-auto md:mx-20">
+        <AdminBreadcrumbs
+          parentPage="Manage"
+          subPage="Medicine"
+          pageName="View"
+        />
         <ViewMedicine medicine={medicine} />
       </div>
     </DefaultLayout>

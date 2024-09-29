@@ -35,16 +35,15 @@ function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
     if (selectedMedicine && selectedMedicine.uuid) {
       try {
         await deleteAdminMedicine(selectedMedicine.uuid);
-
         toast.success("Medicine deleted successfully", {
-          position: "bottom-right",
+          position: "bottom-right"
         });
 
         router.refresh();
       } catch (error) {
-        console.log(error)
+        console.error(error);
         toast.error("Failed to delete medicine. Please try again.", {
-          position: "bottom-right",
+          position: "bottom-right"
         });
       } finally {
         handleModalClose();

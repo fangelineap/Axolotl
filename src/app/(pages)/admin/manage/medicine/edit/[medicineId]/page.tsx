@@ -36,7 +36,7 @@ async function AdminUpdateMedicine({ params }: MedicinePageProps) {
   if (!medicine) {
     return (
       <DefaultLayout>
-        <div className="mx-20 h-auto w-auto">
+        <div className="mx-4 h-auto w-auto md:mx-20">
           <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
           <p>No medicine details found.</p>
         </div>
@@ -46,12 +46,12 @@ async function AdminUpdateMedicine({ params }: MedicinePageProps) {
 
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs
-        parentPage="Manage"
-        subPage="Medicine"
-        pageName="Update Medicine"
-      />
-      <div className="mx-20 h-auto w-auto">
+      <div className="mx-4 h-auto w-auto md:mx-20">
+        <AdminBreadcrumbs
+          parentPage="Manage"
+          subPage="Medicine"
+          pageName="Update Medicine"
+        />
         <UpdateMedicine medicine={medicine} />
       </div>
     </DefaultLayout>

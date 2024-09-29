@@ -19,14 +19,14 @@ export async function generateMetadata({ params }: AdminShowUserProps) {
 
   if (!response) {
     return {
-      title: "User Not Found",
+      title: "User Not Found"
     };
   }
 
   const user_full_name = response.first_name + " " + response.last_name;
 
   return {
-    title: `${user_full_name} Details`,
+    title: `${user_full_name} Details`
   };
 }
 
@@ -35,12 +35,14 @@ async function AdminShowUser({ params }: AdminShowUserProps) {
 
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs
-        parentPage="Manage"
-        subPage="Medicine"
-        pageName="View"
-      />
-      <ViewUser user={data} />
+      <div className="mx-4 h-auto w-auto md:mx-20">
+        <AdminBreadcrumbs
+          parentPage="Manage"
+          subPage="Medicine"
+          pageName="View"
+        />
+        <ViewUser user={data} />
+      </div>
     </DefaultLayout>
   );
 }

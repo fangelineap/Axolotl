@@ -1,9 +1,11 @@
 import { forgetPassword } from "@/app/server-action/auth";
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import React from "react";
+
+export const metadata: Metadata = getGuestMetadata("forgot");
 
 const ForgetPassword = ({ searchParams }: any) => {
   const handleRedirect = async (form: FormData) => {
@@ -20,52 +22,57 @@ const ForgetPassword = ({ searchParams }: any) => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Forget Password Form" />
-      <div className="flex justify-center pb-9 pt-3">
-        <div className="w-full min-w-[350px] rounded-[10px] border border-stroke bg-white shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:w-4/5 md:w-2/3 lg:w-5/12">
-          <div className="rounded-t-[10px] border-b border-stroke bg-kalbe-light px-6.5 py-4 dark:border-dark-3 ">
-            <h3 className="text-center text-xl font-semibold text-white">
+      <div className="mx-4 my-25 flex h-full w-auto justify-center md:mx-20 md:my-35">
+        <div className="w-full lg:max-w-[50%]">
+          <div className="rounded-t-xl border border-primary bg-primary py-3">
+            <h1 className="text-center text-xl font-semibold text-white md:text-heading-5">
               Forget Password
-            </h3>
+            </h1>
           </div>
-          <form action={handleRedirect}>
-            <div className="p-6.5">
-              <div className="flex flex-col items-center justify-center pb-6">
-                <h1 className="text-xl font-bold">Confirm your email!</h1>
-                <h3>We will send an email to reset your password</h3>
-              </div>
-
-              <InputGroup
-                name="email"
-                label="Email"
-                type="email"
-                placeholder="Enter your email address"
-                customClasses="mb-4.5"
-                required
-              />
-
-              {searchParams.success != null && (
-                <div
-                  className={`hidden ${searchParams.success == "true" ? "visible bg-kalbe-veryLight" : "visible bg-red-400"} mb-4.5 rounded-md p-3`}
-                >
-                  <p className="ml-3 text-sm font-medium text-white">
-                    {searchParams.success == "true"
-                      ? "Check your email"
-                      : "Enter a valid email address"}
-                  </p>
+          <div className="rounded-b-xl border border-primary">
+            <form action={handleRedirect}>
+              <div className="flex flex-col gap-4 p-5">
+                <div className="flex flex-col items-center justify-center">
+                  <h1 className="text-xl font-bold md:text-heading-6">
+                    Confirm your email!
+                  </h1>
+                  <p>We will send an email to reset your password</p>
                 </div>
-              )}
 
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  className="flex w-1/3 justify-center rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
-                >
-                  Confirm Email
-                </button>
+                <div className="flex w-full flex-col gap-3">
+                  <InputGroup
+                    name="email"
+                    label="Email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    customClasses="mb-4.5"
+                    required
+                  />
+
+                  {searchParams.success != null && (
+                    <div
+                      className={`hidden ${searchParams.success == "true" ? "visible bg-kalbe-veryLight" : "visible bg-red"} rounded-md p-3`}
+                    >
+                      <p className="text-sm font-medium text-white">
+                        {searchParams.success == "true"
+                          ? "Check your email"
+                          : "Your email is not registered, please create an account"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-center">
+                  <button
+                    type="submit"
+                    className="w-full rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary md:w-1/2"
+                  >
+                    Confirm Email
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </DefaultLayout>

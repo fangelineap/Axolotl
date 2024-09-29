@@ -1,9 +1,10 @@
 "use client";
 
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { Checkbox } from "@mui/material";
+import { IconSquare } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -11,170 +12,153 @@ const RegisterComponent = () => {
   const [role, setRole] = useState<"Caregiver" | "Patient" | "">("");
 
   return (
-    <>
-      <Breadcrumb pageName="Register Form" />
-      <div className="flex justify-center pb-9 pt-3">
-        {/* <!-- Sign In Form --> */}
-        <div className="w-full min-w-[350px] rounded-[10px] border border-stroke bg-white shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:w-4/5 md:w-2/3 lg:w-5/12">
-          <div className="rounded-t-[10px] border-b border-stroke bg-kalbe-light px-6.5 py-4 dark:border-dark-3 ">
-            <h3 className="text-center text-xl font-semibold text-white">
-              Choose Your Role
-            </h3>
-          </div>
+    <div className="mx-4 my-12 flex h-full w-auto justify-center md:mx-20 md:my-15">
+      <ToastContainer />
+      {/* <!-- Account Registration Form --> */}
+      <div className="w-full lg:max-w-[50%]">
+        <div className="rounded-t-xl border border-primary bg-primary py-3">
+          <h1 className="text-center text-xl font-semibold text-white md:text-heading-5">
+            Choose Your Role
+          </h1>
+        </div>
+        <div className="rounded-b-xl border border-primary">
           <form action="#">
-            <div className="p-6.5">
-              <div className="flex flex-col items-center justify-center pb-6">
-                <h1 className="text-xl font-semibold">
+            <div className="flex flex-col gap-5 p-5">
+              <div className="flex flex-col items-center justify-center">
+                <h1 className="text-xl font-bold md:text-heading-6">
                   I&apos;m signing up as a
                 </h1>
               </div>
 
-              <div
-                onClick={() => {
-                  if (role !== "Caregiver") setRole("Caregiver");
-                  else setRole("");
-                }}
-                className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${role === "Caregiver" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
-              >
-                <div className="flex items-center justify-start gap-7">
-                  <Image
-                    src="/images/user/caregiver.png"
-                    className={`h-[60px] rounded-full border ${role === "Caregiver" ? "bg-kalbe-veryLight" : ""}`}
-                    alt="Caregiver"
-                    width={60}
-                    height={60}
-                  />
-                  <div className="flex flex-col">
-                    <h2 className="font-semibold">Caregiver</h2>
-                    <p className="text-dark-secondary">
-                      Be a home care assistant
-                    </p>
-                  </div>
-                </div>
-                {role === "Caregiver" && (
-                  <Image
-                    src="/images/icon/icon-done.svg"
-                    className="rounded-full border bg-kalbe-veryLight"
-                    alt="Checked Logo"
-                    width={30}
-                    height={30}
-                  />
-                )}
-              </div>
-
-              <div
-                onClick={() => {
-                  if (role !== "Patient") setRole("Patient");
-                  else setRole("");
-                }}
-                className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${role == "Patient" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
-              >
-                <div className="flex items-center justify-start gap-7">
-                  <Image
-                    src="/images/user/patient.png"
-                    className={`h-[60px] rounded-full border ${role === "Patient" ? "bg-kalbe-veryLight" : ""}`}
-                    alt="Patient"
-                    height={60}
-                    width={60}
-                  />
-                  <div className="flex flex-col">
-                    <h2 className="font-semibold">Patient</h2>
-                    <p className="text-dark-secondary">Book appointments</p>
-                  </div>
-                </div>
-                {role === "Patient" ? (
-                  <Image
-                    src="/images/icon/icon-done.svg"
-                    className="rounded-full border bg-kalbe-veryLight"
-                    alt="Checked Logo"
-                    width={30}
-                    height={30}
-                  />
-                ) : (
-                  ""
-                )}
-              </div>
-
-              <div className="mb-5.5 mt-5 flex items-center justify-between">
-                <label
-                  htmlFor="formCheckbox"
-                  className="flex cursor-pointer items-center"
+              <div className="flex w-full flex-col items-center justify-center gap-3">
+                {/* Caregiver */}
+                <div
+                  onClick={() => {
+                    if (role !== "Caregiver") setRole("Caregiver");
+                    else setRole("");
+                  }}
+                  className={`flex w-full items-center justify-between rounded-md border p-4 outline-none transition focus:border-primary ${role === "Caregiver" ? "border-kalbe-light bg-kalbe-ultraLight" : "bg-white"} cursor-pointer disabled:cursor-default`}
                 >
-                  <div className="relative pt-0.5">
-                    <input
-                      type="checkbox"
-                      id="formCheckbox"
-                      className="taskCheckbox sr-only"
-                      required
+                  <div className="flex items-center justify-start gap-4">
+                    <Image
+                      src="/images/user/caregiver.png"
+                      className={`max-h-12 max-w-12 rounded-full border md:max-h-18 md:max-w-18 ${role === "Caregiver" ? "bg-kalbe-veryLight" : ""}`}
+                      alt="Caregiver"
+                      width={200}
+                      height={200}
                     />
-                    <div className="box mr-3 flex h-5 w-5 items-center justify-center rounded border border-stroke dark:border-dark-3">
-                      <span className="text-white opacity-0">
-                        <svg
-                          className="fill-current"
-                          width="10"
-                          height="7"
-                          viewBox="0 0 10 7"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M9.70685 0.292804C9.89455 0.480344 10 0.734667 10 0.999847C10 1.26503 9.89455 1.51935 9.70685 1.70689L4.70059 6.7072C4.51283 6.89468 4.2582 7 3.9927 7C3.72721 7 3.47258 6.89468 3.28482 6.7072L0.281063 3.70701C0.0986771 3.5184 -0.00224342 3.26578 3.785e-05 3.00357C0.00231912 2.74136 0.10762 2.49053 0.29326 2.30511C0.4789 2.11969 0.730026 2.01451 0.992551 2.01224C1.25508 2.00996 1.50799 2.11076 1.69683 2.29293L3.9927 4.58607L8.29108 0.292804C8.47884 0.105322 8.73347 0 8.99896 0C9.26446 0 9.51908 0.105322 9.70685 0.292804Z"
-                            fill=""
-                          />
-                        </svg>
-                      </span>
+                    <div className="flex flex-col">
+                      <h2 className="font-medium md:text-xl">Caregiver</h2>
+                      <p className="text-sm text-dark-secondary md:text-lg">
+                        Be a home care assistant
+                      </p>
                     </div>
                   </div>
-                  <p className="text-sm">
-                    I agree to{" "}
-                    <span className="text-kalbe-light">
-                      privacy policy & terms
-                    </span>
-                  </p>
-                </label>
+                  {role === "Caregiver" && (
+                    <Image
+                      src="/images/icon/icon-done.svg"
+                      className="max-h-8 max-w-8 rounded-full border bg-kalbe-veryLight md:max-h-10 md:max-w-10"
+                      alt="Checked Logo"
+                      width={200}
+                      height={200}
+                    />
+                  )}
+                </div>
+
+                {/* Patient */}
+                <div
+                  onClick={() => {
+                    if (role !== "Patient") setRole("Patient");
+                    else setRole("");
+                  }}
+                  className={`flex w-full items-center justify-between rounded-md border p-4 outline-none transition focus:border-primary ${role === "Patient" ? "border-kalbe-light bg-kalbe-ultraLight" : "bg-white"} cursor-pointer disabled:cursor-default`}
+                >
+                  <div className="flex items-center justify-start gap-4">
+                    <Image
+                      src="/images/user/patient.png"
+                      className={`max-h-12 max-w-12 rounded-full border md:max-h-18 md:max-w-18 ${role === "Patient" ? "bg-kalbe-veryLight" : ""}`}
+                      alt="Patient"
+                      height={200}
+                      width={200}
+                    />
+                    <div className="flex flex-col">
+                      <h2 className="font-medium md:text-xl">Patient</h2>
+                      <p className="text-sm text-dark-secondary md:text-lg">
+                        Book appointments
+                      </p>
+                    </div>
+                  </div>
+                  {role === "Patient" && (
+                    <Image
+                      src="/images/icon/icon-done.svg"
+                      className="max-h-8 max-w-8 rounded-full border bg-kalbe-veryLight md:max-h-10 md:max-w-10"
+                      alt="Checked Logo"
+                      width={200}
+                      height={200}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="flex w-3/4 items-center justify-start gap-2">
+                <Checkbox
+                  id="formCheckbox"
+                  required
+                  disableRipple
+                  className="hover:bg-transparent"
+                  icon={<IconSquare stroke={1} />}
+                  sx={{
+                    color: "#BABABA", // This changes the border color
+                    "&.Mui-checked": {
+                      color: "#1CBF90" // This changes the checkmark color when checked
+                    },
+                    padding: 0,
+                    borderWidth: "1px !important"
+                  }}
+                />
+                <p className="text-sm md:text-base">
+                  I agree to{" "}
+                  <span className="text-kalbe-light">
+                    privacy policy & terms
+                  </span>
+                </p>
               </div>
 
               <Link
                 href={{
                   pathname: "/auth/register/createaccount",
-                  query: { role: role },
+                  query: { role: role }
                 }}
                 className="flex justify-center"
               >
                 <button
                   type="button"
                   onClick={(e) => {
-                    const cbox = document.getElementById("formCheckbox") as HTMLInputElement;
+                    const cbox = document.getElementById(
+                      "formCheckbox"
+                    ) as HTMLInputElement;
 
                     if (role == "") {
                       e.preventDefault();
-                      // e.stopPropagation();
                       toast.warning("Please select a role", {
-                        position: "bottom-right",
+                        position: "bottom-right"
                       });
-                      // alert('Please select a role');
                     } else if (!cbox?.checked) {
                       e.preventDefault();
-                      // e.stopPropagation();
                       toast.warning(
-                        "Please read our terms and conditions before accessing out application",
+                        "Please accept our terms and conditions before accessing out application",
                         {
-                          position: "bottom-right",
-                        },
+                          position: "bottom-right"
+                        }
                       );
                     }
                   }}
-                  className="w-1/3 rounded-[7px] bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
+                  className="w-full rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary md:w-1/2"
                 >
                   Next
                 </button>
               </Link>
-
-              <ToastContainer />
-
-              <p className="mt-4.5 text-center text-body-sm">
+              <p className="text-center text-body-sm">
                 Already have an account?{" "}
                 <span>
                   <Link
@@ -189,7 +173,7 @@ const RegisterComponent = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

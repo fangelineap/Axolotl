@@ -1,19 +1,19 @@
 import React from "react";
 import GuestHeader from "../Guest/GuestHeader";
-import GuestSidebar from "../Guest/Sidebar Guest";
+import GuestSidebar from "../Guest/GuestSidebar";
 import { usePathname } from "next/navigation";
 import PatientHeader from "../Patient/PatientHeader";
-import PatientSidebar from "../Patient/Sidebar Patient";
+import PatientSidebar from "../Patient/PatientSidebar";
 import AdminHeader from "../Admin/AdminHeader";
 import AdminSidebar from "../Admin/AdminSidebar";
-import CaregiverHeader from "../Caregiver/CaregiverHeader/page";
-import CaregiverSidebar from "../Caregiver/Sidebar Caregiver/page";
+import CaregiverHeader from "../Caregiver/CaregiverHeader";
+import CaregiverSidebar from "../Caregiver/CaregiverSidebar";
 import AuthHeader from "../Auth/AuthHeader";
 import AuthSidebar from "../Auth/AuthSidebar";
 
 const DynamicHeader = ({
   sidebarOpen,
-  setSidebarOpen,
+  setSidebarOpen
 }: {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;

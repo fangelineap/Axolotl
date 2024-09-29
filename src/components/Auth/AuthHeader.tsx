@@ -91,18 +91,20 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
         <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
           <div className="mr-10 hidden lg:block">
-            <div className="cursor-pointer rounded-md p-2 dark:hidden">
-              <Image
-                width={175}
-                height={175}
-                src={"/images/logo/axolotl.svg"}
-                alt="Logo"
-              />
-            </div>
+            <Link href="/">
+              <div className="cursor-pointer rounded-md p-2 dark:hidden">
+                <Image
+                  width={175}
+                  height={175}
+                  src={"/images/logo/axolotl.svg"}
+                  alt="Logo"
+                />
+              </div>
+            </Link>
           </div>
         </div>
         <div className="flex gap-8">
-          <div className="lg:flex items-center justify-center gap-2 text-black hidden">
+          <div className="hidden items-center justify-center gap-2 text-black hover:text-dark-secondary lg:flex">
             <Link href="/">
               <div className="flex items-center gap-2">
                 <IconArrowLeft />
@@ -119,7 +121,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               </Link>
             ) : (
               <Link href="/auth/signin">
-                <button className="rounded bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-medium">
+                <button className="rounded border border-primary bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-ultraLight hover:text-primary">
                   Login
                 </button>
               </Link>

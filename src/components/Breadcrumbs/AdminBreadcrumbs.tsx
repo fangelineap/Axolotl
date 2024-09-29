@@ -9,10 +9,10 @@ interface AdminBreadcrumbsProps {
 const AdminBreadcrumbs = ({
   parentPage,
   subPage,
-  pageName,
+  pageName
 }: AdminBreadcrumbsProps) => {
   return (
-    <div className="mb-6 ml-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
       <nav>
         <ol className="flex items-center gap-2">
           <li className="m-0 p-0 font-medium">

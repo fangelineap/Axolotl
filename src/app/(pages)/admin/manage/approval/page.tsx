@@ -12,8 +12,8 @@ async function AdminManageApproval() {
   return (
     <div className="bg-gray">
       <DefaultLayout>
-        <AdminBreadcrumbs parentPage="Manage" pageName="Approval" />
-        <div className="mx-20 h-auto w-auto">
+        <div className="mx-4 h-auto w-auto md:mx-20">
+          <AdminBreadcrumbs parentPage="Manage" pageName="Approval" />
           <h1 className="mb-5 text-heading-1 font-bold">Approval</h1>
           <ManageApprovalTable initialData={data} />
         </div>

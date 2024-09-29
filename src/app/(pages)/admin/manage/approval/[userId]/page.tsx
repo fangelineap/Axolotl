@@ -46,12 +46,12 @@ async function AdminShowApproval({ params }: AdminShowApprovalProps) {
 
   return (
     <DefaultLayout>
-      <AdminBreadcrumbs
-        parentPage="Manage"
-        subPage="Approval"
-        pageName="Profile"
-      />
-      <div className="mx-20 h-auto w-auto">
+      <div className="mx-4 h-auto w-auto md:mx-20">
+        <AdminBreadcrumbs
+          parentPage="Manage"
+          subPage="Approval"
+          pageName="Profile"
+        />
         <ViewApproval caregiver={response} />
       </div>
     </DefaultLayout>

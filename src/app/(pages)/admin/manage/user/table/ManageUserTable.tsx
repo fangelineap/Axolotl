@@ -6,9 +6,10 @@ import { AdminUserTable } from "./data";
 import { columns } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/AxolotlModal";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import { useRouter } from "next/navigation";
+import { deleteAdminUser } from "../actions";
+import { useRouter } from "next/navigation";
 
 interface ManageUserTableProps {
   initialData: AdminUserTable[];
@@ -16,10 +17,8 @@ interface ManageUserTableProps {
 
 function ManageUserTable({ initialData }: ManageUserTableProps) {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedUser, setSelectedUser] =
-    useState<AdminUserTable | null>(null);
-  
-  // const router = useRouter();
+  const [selectedUser, setSelectedUser] = useState<AdminUserTable | null>(null);
+  const router = useRouter();
 
   const handleDeleteClick = (user: AdminUserTable) => {
     setSelectedUser(user);
@@ -32,7 +31,23 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
   };
 
   const handleModalConfirm = async () => {
-    console.log("Hey")
+    if (selectedUser && selectedUser.user_id) {
+      try {
+        await deleteAdminUser(selectedUser.user_id);
+        toast.success("User deleted successfully", {
+          position: "bottom-right"
+        });
+
+        router.refresh();
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to delete user. Please try again.", {
+          position: "bottom-right"
+        });
+      } finally {
+        handleModalClose();
+      }
+    }
   };
 
   return (
@@ -44,7 +59,6 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
         showAction={(row: AdminUserTable) => row}
         deleteAction={(row: AdminUserTable) => handleDeleteClick(row)}
         initialSorting={[{ id: "Role", desc: false }]}
-
       />
 
       <AxolotlModal
@@ -52,7 +66,7 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
         onClose={handleModalClose}
         onConfirm={handleModalConfirm}
         title="Confirmation"
-        question="Are you sure you want to delete this medicine?"
+        question="Are you sure you want to delete this user?"
         action="delete"
         user={selectedUser}
       />

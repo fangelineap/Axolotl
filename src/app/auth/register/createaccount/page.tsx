@@ -1,12 +1,10 @@
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { getUserFromSession } from "@/app/lib/server";
+import { registerWithEmailAndPassword } from "@/app/server-action/auth";
 import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";
-import React from "react";
-import PasswordInput from "../../component/PasswordInput";
-import { registerWithEmailAndPassword } from "@/app/server-action/auth";
 import { redirect } from "next/navigation";
-import { getUserFromSession } from "@/app/lib/server";
+import PasswordInput from "../../component/PasswordInput";
 
 const CreateAccount = async ({ searchParams }: any) => {
   /**
@@ -17,10 +15,7 @@ const CreateAccount = async ({ searchParams }: any) => {
   if (userSession) {
     if (userSession.role === "Patient") {
       redirect("/patient");
-    } else if (
-      userSession.role === "Nurse" ||
-      userSession.role === "Midwife"
-    ) {
+    } else if (userSession.role === "Nurse" || userSession.role === "Midwife") {
       redirect("/caregiver");
     } else if (userSession.role === "Admin") {
       redirect("/admin");
@@ -40,28 +35,27 @@ const CreateAccount = async ({ searchParams }: any) => {
         form.get("phoneNumber")!.toString(),
         form.get("firstName")!.toString(),
         form.get("lastName")!.toString(),
-        searchParams.role,
+        searchParams.role
       );
 
       if (error) {
         redirect(
-          `/auth/register/createaccount?role=${searchParams.role}&message=exist`,
+          `/auth/register/createaccount?role=${searchParams.role}&message=exist`
         );
       } else {
         redirect(
-          `/auth/register/createaccount/personalinformation?role=${searchParams.role}`,
+          `/auth/register/createaccount/personalinformation?role=${searchParams.role}`
         );
       }
     }
 
     redirect(
-      `/auth/register/createaccount?role=${searchParams.role}&message=pass`,
+      `/auth/register/createaccount?role=${searchParams.role}&message=pass`
     );
   };
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Create Account Form" />
       {/* Stepper */}
       <div className="mb-3.5 flex items-center justify-center">
         <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">

@@ -4,71 +4,42 @@ import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+
+const fetchUserData = async () => {
+  const user = await getUserDataFromSession();
+  if (!user) {
+    return null;
+  }
+  return user as USER_DETAILS_AUTH_SCHEMA;
+};
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState<USER_DETAILS_AUTH_SCHEMA | null>(null);
+  const [userImageUrl, setUserImageUrl] = useState<string | null>(null);
 
-  useMemo(() => {
-    const fetchUserData = async () => {
-      const user = await getUserDataFromSession();
-      if (!user) {
-        setUser(null);
-        return;
+  useEffect(() => {
+    fetchUserData().then((user) => {
+      setUser(user);
+      if (user) {
+        let imageUrl;
+        if (user.role === "Patient") {
+          imageUrl = "/images/user/patient.png";
+        } else if (user.role === "Admin") {
+          imageUrl = "/images/user/Default Admin Photo.png";
+        } else {
+          imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver?.profile_photo || "")}`;
+        }
+        setUserImageUrl(imageUrl);
       }
-
-      setUser(user as USER_DETAILS_AUTH_SCHEMA);
-    };
-
-    fetchUserData();
+    });
   }, []);
 
   const handleLogout = async () => {
     setUser(null);
     await logout();
   };
-
-  const userImage = useMemo(() => {
-    if (!user) return null;
-
-    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver?.profile_photo || "")}`;
-
-    if (user.role === "Nurse" || user.role === "Midwife") {
-      return (
-        <Image
-          width={200}
-          height={200}
-          src={imageUrl}
-          alt="User"
-          priority
-          className="h-full w-full rounded-full object-cover"
-        />
-      );
-    } else if (user.role === "Patient") {
-      return (
-        <Image
-          src="/images/user/patient.png"
-          alt="Default Patient Profile Photo"
-          width={200}
-          height={200}
-          priority
-          className="h-full w-full object-cover"
-        />
-      );
-    } else {
-      return (
-        <Image
-          src="/images/user/Default Admin Photo.png"
-          alt="Admin Profile Photo"
-          width={200}
-          height={200}
-          priority
-          className="h-full w-full object-cover"
-        />
-      );
-    }
-  }, [user]);
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
@@ -79,7 +50,16 @@ const DropdownUser = () => {
       >
         <div className="h-12 w-12 overflow-hidden rounded-full border">
           <div className="flex h-full w-full items-center justify-center">
-            {userImage}
+            {userImageUrl && (
+              <Image
+                width={200}
+                height={200}
+                src={userImageUrl}
+                alt="User"
+                priority
+                className="h-full w-full rounded-full object-cover"
+              />
+            )}
           </div>
         </div>
       </Link>
@@ -91,7 +71,18 @@ const DropdownUser = () => {
         >
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
             <div className="relative block rounded-full border">
-              <div className="h-12 w-12 overflow-hidden">{userImage}</div>
+              <div className="h-12 w-12 overflow-hidden">
+                {userImageUrl && (
+                  <Image
+                    width={200}
+                    height={200}
+                    src={userImageUrl}
+                    alt="User"
+                    priority
+                    className="h-full w-full rounded-full object-cover"
+                  />
+                )}
+              </div>
               <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green dark:border-gray-dark" />
             </div>
 

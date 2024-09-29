@@ -19,7 +19,7 @@ const EditLabel = ({
   disabled = false,
   onChange,
   required,
-  name,
+  name
 }: EditLabelProps) => {
   return (
     <div className="mb-3 flex items-center justify-between gap-5">
@@ -33,7 +33,7 @@ const EditLabel = ({
         value={value}
         disabled={disabled}
         onChange={onChange}
-        className={`w-[75%] rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 text-dark outline-none transition focus:border-primary active:border-primary ${
+        className={`w-3/4 rounded-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 text-dark outline-none transition focus:border-primary active:border-primary ${
           disabled
             ? "disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary"
             : "bg-white"

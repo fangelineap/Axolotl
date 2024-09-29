@@ -49,7 +49,6 @@ const Review = ({ searchParams }: any) => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Review Form" />
       {/* Stepper */}
       <div className="mb-3.5 flex items-center justify-center">
         <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">

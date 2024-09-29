@@ -259,7 +259,6 @@ const PersonalInformation = ({ searchParams }: any) => {
   return (
     <DefaultLayout>
       <ToastContainer />
-      <Breadcrumb pageName="Personal Information Form" />
       <div className="mb-3.5 flex items-center justify-center">
         <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
           <div className="flex items-center justify-start gap-1">
@@ -1000,7 +999,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           >
             <div
               data-dialog="dialog-xs"
-              className="font-sans text-blue-gray-500 relative m-4 w-[75%] min-w-[25%] rounded-lg bg-white p-3 text-base font-light leading-relaxed antialiased shadow-2xl md:max-w-[50%] lg:w-1/4 lg:max-w-[25%]"
+              className="font-sans text-blue-gray-500 min-w-1/4 lg:max-w-1/4 relative m-4 w-3/4 rounded-lg bg-white p-3 text-base font-light leading-relaxed antialiased shadow-2xl md:max-w-[50%] lg:w-1/4"
             >
               <div className="flex flex-col items-center justify-center pt-[30px]">
                 <svg
