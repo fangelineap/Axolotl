@@ -1,9 +1,8 @@
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
-import { getAdminMedicineById } from "../actions";
-import { AdminMedicineTable } from "../table/data";
+import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import ViewMedicine from "@/components/Admin/Manage/Medicine/ViewMedicine";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import { getAdminMedicineById } from "../actions";
+import { AdminMedicineTable } from "../table/data";
 
 interface MedicinePageProps {
   params: { medicineId: string };
@@ -35,27 +34,25 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
 
   if (!medicine) {
     return (
-      <DefaultLayout>
+      <AdminLayout>
         <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
           <h1 className="mb-5 text-heading-1 font-bold">
             Something went wrong
           </h1>
         </div>
-      </DefaultLayout>
+      </AdminLayout>
     );
   }
 
   return (
-    <DefaultLayout>
-      <div className="mx-4 h-auto w-auto md:mx-20">
-        <AdminBreadcrumbs
-          parentPage="Manage"
-          subPage="Medicine"
-          pageName="View"
-        />
-        <ViewMedicine medicine={medicine} />
-      </div>
-    </DefaultLayout>
+    <AdminLayout>
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Medicine"
+        pageName="View"
+      />
+      <ViewMedicine medicine={medicine} />
+    </AdminLayout>
   );
 }
 

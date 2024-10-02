@@ -3,6 +3,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { unstable_noStore } from "next/cache";
 
+/**
+ * * Get the admin auth client
+ * @returns
+ */
 async function getAdminAuthClient() {
   const supabaseAdminClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,9 +23,9 @@ async function getAdminAuthClient() {
 }
 
 /**
- * Gets the user's authentication schema from Supabase.
- * @param {string} user_id
- * @returns {Promise<USER_AUTH_SCHEMA | null>}
+ * * Gets the user's authentication schema from Supabase
+ * @param user_id
+ * @returns
  */
 export async function getUserAuthSchema(user_id: string) {
   const supabaseAdmin = await getAdminAuthClient();
@@ -42,9 +46,9 @@ export async function getUserAuthSchema(user_id: string) {
 }
 
 /**
- * Deletes a user from Supabase.
- * @param {string} user_id
- * @returns {Promise<boolean | null>}
+ * * Deletes a user from Supabase
+ * @param user_id
+ * @returns
  */
 export async function deleteUser(user_id: string) {
   unstable_noStore();

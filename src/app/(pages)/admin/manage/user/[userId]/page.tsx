@@ -1,9 +1,8 @@
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
-import { AdminUserTable } from "../table/data";
-import { getAdminUserByUserID } from "../actions";
+import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import ViewUser from "@/components/Admin/Manage/User/ViewUser";
+import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import { getAdminUserByUserID } from "../actions";
+import { AdminUserTable } from "../table/data";
 
 interface AdminShowUserProps {
   params: { userId: string };
@@ -34,16 +33,14 @@ async function AdminShowUser({ params }: AdminShowUserProps) {
   const data = await fetchData({ params });
 
   return (
-    <DefaultLayout>
-      <div className="mx-4 h-auto w-auto md:mx-20">
-        <AdminBreadcrumbs
-          parentPage="Manage"
-          subPage="Medicine"
-          pageName="View"
-        />
-        <ViewUser user={data} />
-      </div>
-    </DefaultLayout>
+    <AdminLayout>
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Medicine"
+        pageName="View"
+      />
+      <ViewUser user={data} />
+    </AdminLayout>
   );
 }
 

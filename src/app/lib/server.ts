@@ -7,6 +7,9 @@ import { getUserAuthSchema } from "../server-action/admin/SupaAdmin";
 import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { redirect } from "next/navigation";
 
+/**
+ * * Default Supabase Server Client
+ */
 export default async function createSupabaseServerClient() {
   const cookieStore = cookies();
 
@@ -28,6 +31,10 @@ export default async function createSupabaseServerClient() {
   );
 }
 
+/**
+ * * Get user data from users table
+ * @returns
+ */
 export async function getUserFromSession() {
   unstable_noStore();
 
@@ -54,6 +61,11 @@ export async function getUserFromSession() {
   };
 }
 
+/**
+ * * Get all user detailed data from users table
+ * * and its corresponding auth schema (patient or caregiver)
+ * @returns
+ */
 export async function getUserDataFromSession() {
   unstable_noStore();
 
@@ -148,6 +160,11 @@ export async function logout() {
   redirect("/auth/signin");
 }
 
+/**
+ * * Get caregiver data by user id
+ * @param id
+ * @returns
+ */
 export async function getCaregiverById(id: string) {
   unstable_noStore();
 

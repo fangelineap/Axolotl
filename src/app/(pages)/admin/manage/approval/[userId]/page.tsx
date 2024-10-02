@@ -1,6 +1,6 @@
 import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
+import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getSingleAdminApprovalById } from "../actions";
 import { AdminApprovalTable } from "../table/data";
 
@@ -34,27 +34,25 @@ async function AdminShowApproval({ params }: AdminShowApprovalProps) {
 
   if (!response) {
     return (
-      <DefaultLayout>
+      <AdminLayout>
         <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
           <h1 className="mb-5 text-heading-1 font-bold">
             Something went wrong
           </h1>
         </div>
-      </DefaultLayout>
+      </AdminLayout>
     );
   }
 
   return (
-    <DefaultLayout>
-      <div className="mx-4 h-auto w-auto md:mx-20">
-        <AdminBreadcrumbs
-          parentPage="Manage"
-          subPage="Approval"
-          pageName="Profile"
-        />
-        <ViewApproval caregiver={response} />
-      </div>
-    </DefaultLayout>
+    <AdminLayout>
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Approval"
+        pageName="Profile"
+      />
+      <ViewApproval caregiver={response} />
+    </AdminLayout>
   );
 }
 

@@ -1,9 +1,8 @@
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import React from "react";
-import { AdminMedicineTable } from "../../table/data";
-import { getAdminMedicineById } from "../../actions";
+import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import UpdateMedicine from "@/components/Admin/Manage/Medicine/UpdateMedicine";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import { getAdminMedicineById } from "../../actions";
+import { AdminMedicineTable } from "../../table/data";
 
 interface MedicinePageProps {
   params: { medicineId: string };
@@ -35,26 +34,22 @@ async function AdminUpdateMedicine({ params }: MedicinePageProps) {
 
   if (!medicine) {
     return (
-      <DefaultLayout>
-        <div className="mx-4 h-auto w-auto md:mx-20">
-          <h1 className="mb-5 text-heading-1 font-bold">Medicine Details</h1>
-          <p>No medicine details found.</p>
-        </div>
-      </DefaultLayout>
+      <AdminLayout>
+        <h1 className="mb-5 text-heading-1 font-bold">No Medicine Found</h1>
+        <p>No medicine details found.</p>
+      </AdminLayout>
     );
   }
 
   return (
-    <DefaultLayout>
-      <div className="mx-4 h-auto w-auto md:mx-20">
-        <AdminBreadcrumbs
-          parentPage="Manage"
-          subPage="Medicine"
-          pageName="Update Medicine"
-        />
-        <UpdateMedicine medicine={medicine} />
-      </div>
-    </DefaultLayout>
+    <AdminLayout>
+      <AdminBreadcrumbs
+        parentPage="Manage"
+        subPage="Medicine"
+        pageName="Update Medicine"
+      />
+      <UpdateMedicine medicine={medicine} />
+    </AdminLayout>
   );
 }
 

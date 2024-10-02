@@ -4,6 +4,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { getCaregiverVerificationStatus } from "./app/server-action/auth";
 
+/**
+ * * Handling the page protection between roles
+ * @param userRole
+ * @returns
+ */
 function getRoleRedirect(userRole: string): string {
   const roleRedirects: { [key: string]: string } = {
     Patient: "/patient",
@@ -15,7 +20,43 @@ function getRoleRedirect(userRole: string): string {
   return roleRedirects[userRole] || "/";
 }
 
-export async function updateSession(request: NextRequest) {
+/**
+ * * Validate the current session with the last session stored in the browser
+ * @param supabase
+ * @param request
+ * @returns
+ */
+async function validateSession(
+  supabase: ReturnType<typeof createServerClient>,
+  request: NextRequest
+) {
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.getUser();
+
+  // If error exists, session might be invalid or expired
+  if (error || !user) {
+    const response = NextResponse.redirect(
+      new URL("/auth/signin", request.url)
+    );
+
+    // Clear session cookies
+    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
+    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
+
+    return { isValid: false, response };
+  }
+
+  return { isValid: true, user };
+}
+
+/**
+ * * Update the session based on the user's role
+ * @param request
+ * @returns
+ */
+async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const guestPages = [
@@ -60,36 +101,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
-
-  if (error) {
-    const response = NextResponse.redirect(
-      new URL("/auth/signin", request.url)
-    );
-
-    // Clear cookies
-    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
-    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
-
-    return response;
-  }
-
   /**
-   * If the user is not authenticated, redirect to signin and clear auth cookies
+   * ! Validate the user's session
    */
-  if (!user) {
-    // User is not authenticated, clear auth cookies and redirect to signin
-    const response = NextResponse.redirect(
-      new URL("/auth/signin", request.url)
-    );
+  const { isValid, user, response } = await validateSession(supabase, request);
 
-    // Clear Supabase auth cookies
-    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
-    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
-
+  if (!isValid) {
     return response;
   }
 
@@ -169,10 +186,18 @@ export async function updateSession(request: NextRequest) {
   return supabaseResponse;
 }
 
+/**
+ * * Middleware
+ * @param request
+ * @returns
+ */
 export default async function middleware(request: NextRequest) {
   return await updateSession(request);
 }
 
+/**
+ * * Middleware Config
+ */
 export const config = {
   matcher: [
     /*

@@ -138,7 +138,7 @@ export function DataTable<
   });
 
   return (
-    <div className="rounded-xl border border-gray-1 bg-white p-5">
+    <div className="rounded-lg border border-gray-1 bg-white p-5">
       <div className="flex flex-col justify-between border-b border-gray-1 pb-4 md:flex-row">
         <div className="mb-4 flex w-full md:mb-0 md:w-80">
           <input

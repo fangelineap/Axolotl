@@ -1,16 +1,15 @@
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import { Metadata } from "next";
-import React from "react";
 
 export const metadata: Metadata = {
-  title: "Axolotl - Admin Order Service Logs",
+  title: "Axolotl - Admin Order Service Logs"
 };
 
 function AdminOrderService() {
   return (
-    <DefaultLayout>
+    <AdminLayout>
       <div>AdminOrderService</div>
-    </DefaultLayout>
+    </AdminLayout>
   );
 }
 
