@@ -8,35 +8,38 @@ export const columns = [
     cell: (info) => {
       const uuid = info.getValue()?.toString();
       const truncatedUuid = uuid ? `${uuid.slice(0, 16)}...` : "";
+
       return truncatedUuid;
     },
     id: "User ID",
     header: "User ID",
     enableSorting: true,
-    enableColumnFilter: true,
+    enableColumnFilter: true
   }),
   columnHelper.accessor(
     (row) => `${row.first_name || ""} ${row.last_name || ""}`.trim(),
     {
       cell: (info) => {
         const user_full_name = info.getValue();
+
         return user_full_name;
       },
       id: "User Name",
       header: "User Name",
       enableSorting: true,
-      enableColumnFilter: true,
-    },
+      enableColumnFilter: true
+    }
   ),
   columnHelper.accessor((row) => row.email, {
     id: "User Email",
     cell: (info) => {
       const formattedDate = info.getValue();
+
       return formattedDate;
     },
     header: "User Email",
     enableSorting: true,
-    enableColumnFilter: true,
+    enableColumnFilter: true
   }),
 
   columnHelper.accessor("role", {
@@ -73,6 +76,6 @@ export const columns = [
     header: "Role",
     enableSorting: true,
     enableColumnFilter: true,
-    filterFn: "equals",
-  }),
+    filterFn: "equals"
+  })
 ];

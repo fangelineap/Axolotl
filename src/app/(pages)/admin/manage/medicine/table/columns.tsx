@@ -8,14 +8,14 @@ export const columns = [
     id: "Medicine ID",
     header: "Medicine ID",
     enableSorting: true,
-    enableColumnFilter: true,
+    enableColumnFilter: true
   }),
   columnHelper.accessor("name", {
     cell: (info) => info.getValue()?.toString(),
     id: "Medicine Name",
     header: "Medicine Name",
     enableSorting: true,
-    enableColumnFilter: true,
+    enableColumnFilter: true
   }),
   columnHelper.accessor("type", {
     cell: (info) => {
@@ -39,25 +39,27 @@ export const columns = [
     header: "Medicine Type",
     enableSorting: true,
     enableColumnFilter: true,
-    filterFn: "equals",
+    filterFn: "equals"
   }),
   columnHelper.accessor(
     (row) => {
       const price = row.price;
+
       return new Intl.NumberFormat("id-ID", {
         style: "currency",
-        currency: "IDR",
+        currency: "IDR"
       }).format(price);
     },
     {
       id: "Medicine Price",
       cell: (info) => {
         const formattedPrice = info.getValue();
+
         return <p>{formattedPrice}</p>;
       },
       header: "Medicine Price",
       enableSorting: true,
-      enableColumnFilter: true,
-    },
-  ),
+      enableColumnFilter: true
+    }
+  )
 ];

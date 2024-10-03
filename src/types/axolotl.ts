@@ -54,7 +54,7 @@ export type MEDICINE = {
   uuid?: string;
   name: string;
   type: string;
-  exp_date: string | Date;
+  exp_date: Date;
   price: number;
   medicine_photo?: string;
 };
@@ -106,4 +106,9 @@ export type USER_AUTH_SCHEMA = USER & { email: string };
 export type USER_DETAILS_AUTH_SCHEMA = USER_AUTH_SCHEMA & {
   patient?: PATIENT;
   caregiver?: CAREGIVER;
+};
+
+export type NEW_ADMIN_AUTH_SCHEMA = USER & {
+  email: string;
+  password: string;
 };

@@ -1,70 +1,88 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
 import createSupabaseServerClient from "@/app/lib/server";
 import { revalidatePath, unstable_noStore } from "next/cache";
-import { AdminMedicineTable } from '../table/data';
+import { AdminMedicineTable } from "../table/data";
 
+/**
+ * * Create new medicine
+ * @param form
+ * @returns
+ */
 export async function addAdminMedicine(form: AdminMedicineTable) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
+
   const { name, type, price, exp_date, medicine_photo } = form;
 
-  if (!name || !type || !price || !exp_date) {
-    return {
-      data: null,
-      error: { name: "Invalid input data", message: "Invalid input data" },
-    };
+  const requiredFields = {
+    name,
+    type,
+    price,
+    exp_date,
+    medicine_photo
+  };
+
+  for (const [key, value] of Object.entries(requiredFields)) {
+    if (!value) {
+      return {
+        data: null,
+        error: {
+          name: `Missing ${key}`,
+          message: `${key} is required`
+        }
+      };
+    }
   }
 
   try {
-    const { data, error } = await supabase.from("medicine").insert({
+    const { data } = await supabase.from("medicine").insert({
       name: name,
       type: type,
       price: price,
       exp_date: exp_date,
-      medicine_photo: medicine_photo,
+      medicine_photo: medicine_photo
     });
 
     return { data, error: null };
   } catch (error) {
-    return {
-      data: null,
-      error: {
-        name: "InsertError",
-        message: "Failed to insert data into the database.",
-      },
-    };
+    return { data: null, error };
   }
 }
 
+/**
+ * * Get all medicine
+ * @returns
+ */
 export async function getAdminMedicine() {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase.from("medicine").select("*");
-
-    if (error) {
-      console.error("Error fetching medicine data:", error.message);
-      return [];
-    }
+    const { data } = await supabase.from("medicine").select("*");
 
     return data as AdminMedicineTable[];
   } catch (error) {
+    console.error("Error fetching data:", error);
+
     return [];
   }
 }
 
+/**
+ * * Get medicine by id
+ * @param uuid
+ * @returns
+ */
 export async function getAdminMedicineById(uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("medicine")
       .select("*")
       .eq("uuid", uuid)
@@ -72,23 +90,40 @@ export async function getAdminMedicineById(uuid: string) {
 
     return data;
   } catch (error) {
-    console.error("Error fetching data:", error);
-
     return { data: [], error };
   }
 }
 
+/**
+ * * Update medicine
+ * @param form
+ * @returns
+ */
 export async function updateAdminMedicineById(form: AdminMedicineTable) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
+
   const { uuid, name, type, price, exp_date, medicine_photo } = form;
 
-  if (!uuid || !name || !type || !price || !exp_date) {
-    return {
-      data: null,
-      error: { name: "Invalid input data", message: "Invalid input data" },
-    };
+  const requiredFields = {
+    uuid,
+    name,
+    type,
+    price,
+    exp_date
+  };
+
+  for (const [key, value] of Object.entries(requiredFields)) {
+    if (!value) {
+      return {
+        data: null,
+        error: {
+          name: `Missing ${key}`,
+          message: `${key} is required`
+        }
+      };
+    }
   }
 
   try {
@@ -99,7 +134,7 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
         type: type,
         price: price,
         exp_date: exp_date,
-        medicine_photo: medicine_photo,
+        medicine_photo: medicine_photo
       })
       .eq("uuid", form.uuid)
       .single();
@@ -110,19 +145,22 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
 
     return { data, error: null };
   } catch (error) {
-    console.error("Error fetching data:", error);
-
-    return { data: null, error: { name: "UpdateError", message: error } };
+    return { data: null, error };
   }
 }
 
+/**
+ * * Delete medicine
+ * @param uuid
+ * @returns
+ */
 export async function deleteAdminMedicine(uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("medicine")
       .delete()
       .eq("uuid", uuid)
@@ -132,8 +170,6 @@ export async function deleteAdminMedicine(uuid: string) {
 
     return { data, error: null };
   } catch (error) {
-    console.error("Error fetching data:", error);
-
-    return { data: null, error: { name: "DeleteError", message: error } };
+    return { data: null, error };
   }
 }

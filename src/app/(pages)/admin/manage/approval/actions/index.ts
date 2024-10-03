@@ -4,6 +4,10 @@ import createSupabaseServerClient from "@/app/lib/server";
 import { unstable_noStore } from "next/cache";
 import { AdminApprovalTable } from "../table/data";
 
+/**
+ * * Get all caregiver
+ * @returns
+ */
 export async function getAllAdminApproval() {
   unstable_noStore();
 
@@ -16,6 +20,7 @@ export async function getAllAdminApproval() {
 
     if (error) {
       console.error("Error fetching caregivers data:", error.message);
+
       return [];
     }
 
@@ -29,30 +34,27 @@ export async function getAllAdminApproval() {
     return caregiverWithUserDetails;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
+
     return [];
   }
 }
 
+/**
+ * * Get single caregiver
+ * @param caregiver_id
+ * @returns
+ */
 export async function getSingleAdminApprovalById(caregiver_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    // Fetch caregivers data
-    const { data: caregivers, error: caregiverError } = await supabase
+    const { data: caregivers } = await supabase
       .from("caregiver")
       .select("*, users(*)")
       .eq("caregiver_id", caregiver_id)
       .single();
-
-    if (caregiverError || !caregivers) {
-      console.error(
-        "Error fetching caregivers data:",
-        caregiverError?.message || "No caregiver found"
-      );
-      return null;
-    }
 
     const caregiverWithUserDetails: AdminApprovalTable = {
       ...caregivers,
@@ -62,17 +64,23 @@ export async function getSingleAdminApprovalById(caregiver_id: string) {
     return caregiverWithUserDetails;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
+
     return [];
   }
 }
 
+/**
+ * * Approve caregiver
+ * @param caregiver_id
+ * @returns
+ */
 export async function adminApproveCaregiver(caregiver_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("caregiver")
       .update({
         status: "Verified",
@@ -82,17 +90,20 @@ export async function adminApproveCaregiver(caregiver_id: string) {
       .eq("caregiver_id", caregiver_id)
       .single();
 
-    if (error) {
-      return { data: null, error };
-    }
-
     return { data, error: null };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
+
     return { data: null, error };
   }
 }
 
+/**
+ * * Reject caregiver
+ * @param caregiver_id
+ * @param notes
+ * @returns
+ */
 export async function adminRejectCaregiver(
   caregiver_id: string,
   notes: string
@@ -102,7 +113,7 @@ export async function adminRejectCaregiver(
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("caregiver")
       .update({
         status: "Rejected",
@@ -113,13 +124,10 @@ export async function adminRejectCaregiver(
       .eq("caregiver_id", caregiver_id)
       .single();
 
-    if (error) {
-      return { data: null, error };
-    }
-
     return { data, error: null };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
+
     return { data: null, error };
   }
 }

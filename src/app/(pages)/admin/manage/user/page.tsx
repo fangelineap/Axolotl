@@ -18,6 +18,7 @@ async function getUserData() {
   const responses = await Promise.all(
     data.map(async (user) => {
       const response = await getUserAuthSchema(user.user_id);
+
       return response ? (response as unknown as AdminUserTable) : null;
     })
   );

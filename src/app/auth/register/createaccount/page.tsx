@@ -4,7 +4,7 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import PasswordInput from "../../component/PasswordInput";
+import PasswordInput from "@/components/Axolotl/PasswordInput";
 
 const CreateAccount = async ({ searchParams }: any) => {
   /**
@@ -28,8 +28,7 @@ const CreateAccount = async ({ searchParams }: any) => {
       form.get("password")?.toString() ==
       form.get("confirmPassword")?.toString()
     ) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { data, error } = await registerWithEmailAndPassword(
+      const { error } = await registerWithEmailAndPassword(
         form.get("email")!.toString(),
         form.get("password")!.toString(),
         form.get("phoneNumber")!.toString(),

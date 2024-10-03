@@ -10,6 +10,7 @@ interface AdminShowApprovalProps {
 
 async function fetchData({ params }: AdminShowApprovalProps) {
   const response = await getSingleAdminApprovalById(params.userId);
+
   return response as AdminApprovalTable;
 }
 

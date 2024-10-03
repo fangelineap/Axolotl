@@ -12,6 +12,7 @@ async function fetchData({ params }: MedicinePageProps) {
   const response: AdminMedicineTable = await getAdminMedicineById(
     params.medicineId
   );
+
   return response;
 }
 

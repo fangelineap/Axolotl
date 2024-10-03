@@ -1,7 +1,6 @@
 import React from "react";
 
 interface EditLabelProps {
-  // Basic Props
   label: string;
   type: string;
   name: string;

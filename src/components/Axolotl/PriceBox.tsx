@@ -2,7 +2,7 @@ import React from "react";
 
 interface PriceBoxProps {
   disabled?: boolean;
-  value?: number | "";
+  value?: number | string;
   placeholder: string;
   name?: string;
   required?: boolean;
@@ -15,16 +15,18 @@ const PriceBox = ({
   onChange,
   placeholder,
   name,
-  required,
+  required
 }: PriceBoxProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
-    if (!isNaN(Number(value)) || value === "") {
-      if (onChange) {
-        onChange(e);
-      }
-    }
+    const isNumericOrEmpty = value === "" || !isNaN(Number(value));
+    const isNotLeadingZero = !(value.length === 1 && value[0] === "0");
+    const isWithinMaxLength = value.length <= 12;
+
+    if (!isNumericOrEmpty || !isNotLeadingZero || !isWithinMaxLength) return;
+
+    if (onChange) onChange(e);
   };
 
   return (

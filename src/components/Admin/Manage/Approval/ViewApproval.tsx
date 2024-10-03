@@ -17,6 +17,7 @@ async function getUserData(caregiver_id: string) {
   if (!response) {
     return null;
   }
+
   return response as unknown as USER_AUTH_SCHEMA;
 }
 

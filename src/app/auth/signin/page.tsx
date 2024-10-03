@@ -6,7 +6,7 @@ import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import PasswordInput from "../component/PasswordInput";
+import PasswordInput from "@/components/Axolotl/PasswordInput";
 
 export const metadata: Metadata = getGuestMetadata("sign in");
 
