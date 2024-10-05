@@ -1,9 +1,9 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
-import ApprovalButtons from "@/components/Axolotl/ApprovalButtons";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
-import DownloadLicenses from "@/components/Axolotl/DownloadLicenses";
-import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
+import ApprovalButtons from "@/components/Axolotl/Buttons/ApprovalButtons";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
+import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
 import { USER_AUTH_SCHEMA } from "@/types/axolotl";
 import Image from "next/image";
 import React from "react";
@@ -132,13 +132,13 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
               User Personal Data
             </h1>
             <div className="flex w-full gap-5">
-              <DisabledLabel
+              <DisabledCustomInputGroup
                 label="First Name"
                 value={caregiver.user.first_name}
                 horizontal={false}
                 type="text"
               />
-              <DisabledLabel
+              <DisabledCustomInputGroup
                 label="Last Name"
                 value={caregiver.user.last_name}
                 horizontal={false}
@@ -146,24 +146,24 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
               />
             </div>
             <div className="flex w-full gap-5">
-              <DisabledLabel
+              <DisabledCustomInputGroup
                 label="Email"
                 value={cg_user_data?.email}
                 horizontal={false}
                 type="text"
               />
-              <PhoneNumberBox
+              <DisabledPhoneNumberBox
                 placeholder="081XXXXXXXX"
                 value={Number(caregiver.user.phone_number)}
               />
             </div>
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Birthdate"
               value={formattedBirthDate}
               horizontal={false}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Address"
               value={caregiver.user.address}
               horizontal={false}
@@ -184,13 +184,13 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                 User Working Experiences
               </h1>
               <div className="flex w-full gap-5">
-                <DisabledLabel
+                <DisabledCustomInputGroup
                   label="Employment Type"
                   value={caregiver.employment_type}
                   horizontal={false}
                   type="text"
                 />
-                <DisabledLabel
+                <DisabledCustomInputGroup
                   label="Work Experiences"
                   value={caregiver.work_experiences.toString()}
                   horizontal={false}
@@ -199,7 +199,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                   unit="year"
                 />
               </div>
-              <DisabledLabel
+              <DisabledCustomInputGroup
                 label="Workplace"
                 value={caregiver.workplace}
                 horizontal={false}

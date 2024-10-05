@@ -14,7 +14,7 @@ interface AxolotlRejectionModalProps {
 function AxolotlRejectionModal({
   isOpen,
   onReject,
-  onClose,
+  onClose
 }: AxolotlRejectionModalProps) {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
@@ -30,10 +30,12 @@ function AxolotlRejectionModal({
   const handleFormSubmit = () => {
     if (!notes.trim()) {
       setError("Rejection reason is required.");
+
       return;
     }
     if (notes.trim().length < 10) {
       setError("Rejection reason must be at least 10 characters.");
+
       return;
     }
     onReject(notes);

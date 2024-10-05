@@ -1,10 +1,10 @@
-import { getUserFromSession } from "@/app/lib/server";
+import { getUserFromSession } from "@/lib/server";
 import { registerWithEmailAndPassword } from "@/app/server-action/auth";
 import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import PasswordInput from "@/components/Axolotl/PasswordInput";
+import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 
 const CreateAccount = async ({ searchParams }: any) => {
   /**

@@ -1,7 +1,7 @@
 import { IconStarFilled } from "@tabler/icons-react";
 import React from "react";
 
-interface DisabledLabelProps {
+interface DisabledCustomInputGroupProps {
   // Basic Props
   label: string;
   type: string;
@@ -19,7 +19,7 @@ interface DisabledLabelProps {
   secondUnit?: string;
 }
 
-const DisabledLabel = ({
+const DisabledCustomInputGroup = ({
   label,
   type,
   horizontal = false,
@@ -31,7 +31,7 @@ const DisabledLabel = ({
   unit,
   isMultipleUnit = false,
   secondUnit
-}: DisabledLabelProps) => {
+}: DisabledCustomInputGroupProps) => {
   if (isRating) {
     return (
       <div
@@ -137,4 +137,4 @@ const DisabledLabel = ({
   );
 };
 
-export default DisabledLabel;
+export default DisabledCustomInputGroup;

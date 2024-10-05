@@ -1,6 +1,6 @@
 "use server";
 
-import createSupabaseServerClient from "@/app/lib/server";
+import createSupabaseServerClient from "@/lib/server";
 import { unstable_noStore } from "next/cache";
 import { AdminApprovalTable } from "../table/data";
 
@@ -50,11 +50,15 @@ export async function getSingleAdminApprovalById(caregiver_id: string) {
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data: caregivers } = await supabase
+    const { data: caregivers, error } = await supabase
       .from("caregiver")
       .select("*, users(*)")
       .eq("caregiver_id", caregiver_id)
       .single();
+
+    if (error) {
+      console.error("Error fetching caregivers data:", error.message);
+    }
 
     const caregiverWithUserDetails: AdminApprovalTable = {
       ...caregivers,
@@ -70,25 +74,40 @@ export async function getSingleAdminApprovalById(caregiver_id: string) {
 }
 
 /**
- * * Approve caregiver
+ * * Helper function to update caregiver verification status
  * @param caregiver_id
+ * @param status
+ * @param notes
  * @returns
  */
-export async function adminApproveCaregiver(caregiver_id: string) {
+async function updateCaregiverStatus(
+  caregiver_id: string,
+  status: "Verified" | "Rejected",
+  notes?: string
+) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
+  const updateData = {
+    status,
+    reviewed_at: new Date(),
+    updated_at: new Date(),
+    ...(notes && { notes })
+  };
+
   try {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("caregiver")
-      .update({
-        status: "Verified",
-        reviewed_at: new Date(),
-        updated_at: new Date()
-      })
+      .update(updateData)
       .eq("caregiver_id", caregiver_id)
       .single();
+
+    if (error) {
+      console.error("Error updating caregiver status:", error.message);
+
+      return { data: null, error };
+    }
 
     return { data, error: null };
   } catch (error) {
@@ -96,6 +115,15 @@ export async function adminApproveCaregiver(caregiver_id: string) {
 
     return { data: null, error };
   }
+}
+
+/**
+ * * Approve caregiver
+ * @param caregiver_id
+ * @returns
+ */
+export async function adminApproveCaregiver(caregiver_id: string) {
+  return await updateCaregiverStatus(caregiver_id, "Verified");
 }
 
 /**
@@ -108,26 +136,5 @@ export async function adminRejectCaregiver(
   caregiver_id: string,
   notes: string
 ) {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data } = await supabase
-      .from("caregiver")
-      .update({
-        status: "Rejected",
-        reviewed_at: new Date(),
-        notes: notes,
-        updated_at: new Date()
-      })
-      .eq("caregiver_id", caregiver_id)
-      .single();
-
-    return { data, error: null };
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return { data: null, error };
-  }
+  return await updateCaregiverStatus(caregiver_id, "Rejected", notes);
 }

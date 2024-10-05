@@ -1,6 +1,6 @@
 "use server";
 
-import createSupabaseServerClient from "@/app/lib/server";
+import createSupabaseServerClient from "@/lib/server";
 
 export async function getCaregiverPhoto(storage_id: string) {
   const supabase = await createSupabaseServerClient();

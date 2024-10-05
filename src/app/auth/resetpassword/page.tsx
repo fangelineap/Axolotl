@@ -1,7 +1,7 @@
 import { resetPassword } from "@/app/server-action/auth";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { redirect } from "next/navigation";
-import PasswordInput from "../../../components/Axolotl/PasswordInput";
+import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import { Metadata } from "next";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 

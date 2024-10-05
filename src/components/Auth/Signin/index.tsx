@@ -4,7 +4,7 @@ import React from "react";
 import GoogleSigninButton from "../GoogleSigninButton";
 import SigninWithPassword from "../SigninWithPassword";
 
-export default function Signin() {
+export default function SignInTemplate() {
   return (
     <>
       <GoogleSigninButton text="Sign in" />

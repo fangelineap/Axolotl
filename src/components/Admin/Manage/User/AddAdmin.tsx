@@ -1,8 +1,8 @@
 "use client";
 
 import { createAdminNewAdmin } from "@/app/(pages)/admin/manage/user/actions";
-import EditLabel from "@/components/Axolotl/EditLabel";
-import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
+import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AdminUserValidation } from "./Validation/AdminUserValidation";
-import PasswordInput from "@/components/Axolotl/PasswordInput";
+import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 
 function AddAdmin() {
   const router = useRouter();
@@ -151,7 +151,7 @@ function AddAdmin() {
                 {/* Content */}
                 <div className="flex w-full flex-col">
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <EditLabel
+                    <CustomInputGroup
                       label="First Name"
                       type="text"
                       name="first_name"
@@ -160,7 +160,7 @@ function AddAdmin() {
                       required
                       onChange={handleInputChange}
                     />
-                    <EditLabel
+                    <CustomInputGroup
                       label="Last Name"
                       type="text"
                       name="last_name"
@@ -171,7 +171,7 @@ function AddAdmin() {
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <EditLabel
+                    <CustomInputGroup
                       label="Email"
                       type="email"
                       name="email"
@@ -216,7 +216,7 @@ function AddAdmin() {
                       content={["Male", "Female"]}
                     />
                   </div>
-                  <EditLabel
+                  <CustomInputGroup
                     label="Address"
                     type="text"
                     name="address"

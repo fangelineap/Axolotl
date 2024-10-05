@@ -2,9 +2,9 @@
 "use client";
 
 import { deleteUser } from "@/app/server-action/admin/SupaAdmin";
-import AxolotlModal from "@/components/Axolotl/AxolotlModal";
-import CheckboxBlood from "@/components/Axolotl/CheckboxBlood";
-import CheckboxSmoker from "@/components/Axolotl/CheckboxSmoker";
+import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
+import CheckboxBlood from "@/components/Axolotl/Checkboxes/CheckboxBlood";
+import CheckboxSmoker from "@/components/Axolotl/Checkboxes/CheckboxSmoker";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import InputGroup from "@/components/FormElements/InputGroup";
@@ -100,6 +100,7 @@ const PersonalInformation = ({ searchParams }: any) => {
 
     if (userError) {
       console.error("Error fetching user data:", userError);
+
       return;
     }
 
@@ -136,6 +137,7 @@ const PersonalInformation = ({ searchParams }: any) => {
       }
 
       console.log(`Data path for ${storage}: `, data?.path);
+
       return data?.path;
     }
 
@@ -148,6 +150,7 @@ const PersonalInformation = ({ searchParams }: any) => {
       toast.warning("Please fill the birthdate field", {
         position: "bottom-right"
       });
+
       return;
     }
 
@@ -209,6 +212,7 @@ const PersonalInformation = ({ searchParams }: any) => {
             toast.error("An error occured while uploading your data", {
               position: "bottom-right"
             });
+
             return;
           }
 
@@ -223,6 +227,7 @@ const PersonalInformation = ({ searchParams }: any) => {
       if (blood == "" || isSmoking == "") {
         toast.warning("Please fill all fields", { position: "bottom-right" });
         setLoading(false);
+
         return;
       }
 

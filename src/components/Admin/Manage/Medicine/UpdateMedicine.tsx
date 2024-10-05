@@ -3,9 +3,9 @@
 
 import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
-import EditLabel from "@/components/Axolotl/EditLabel";
-import PriceBox from "@/components/Axolotl/PriceBox";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { createBrowserClient } from "@supabase/ssr";
@@ -201,7 +201,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       return;
     }
 
-    toast.success("A new medicine has been added successfully.", {
+    toast.success("Medicine updated successfully.", {
       position: "bottom-right"
     });
 
@@ -277,13 +277,13 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
               </div>
             </div>
             <div className="flex flex-col">
-              <DisabledLabel
+              <DisabledCustomInputGroup
                 label="Product ID"
                 value={medicine.uuid}
                 type="text"
                 horizontal
               />
-              <EditLabel
+              <CustomInputGroup
                 name="name"
                 label="Name"
                 placeholder="Medicine Name"

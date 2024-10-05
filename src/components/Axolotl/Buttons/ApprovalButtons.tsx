@@ -3,14 +3,15 @@
 
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import AxolotlModal from "./AxolotlModal";
-import AxolotlRejectionModal from "./AxolotlRejectionModal";
+
 import {
   adminApproveCaregiver,
   adminRejectCaregiver
 } from "@/app/(pages)/admin/manage/approval/actions";
+import AxolotlModal from "../Modal/AxolotlModal";
+import AxolotlRejectionModal from "../Modal/AxolotlRejectionModal";
 
 interface ApprovalButtonsProps {
   status: string;
@@ -44,6 +45,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
           toast.error("Something went wrong.", {
             position: "bottom-right"
           });
+
           return;
         }
 
@@ -76,6 +78,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         toast.error("Failed to perform the action. Please try again.", {
           position: "bottom-right"
         });
+
         return;
       }
 

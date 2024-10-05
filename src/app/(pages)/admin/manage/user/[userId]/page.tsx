@@ -10,6 +10,7 @@ interface AdminShowUserProps {
 
 async function fetchData({ params }: AdminShowUserProps) {
   const response = await getAdminUserByUserID(params.userId);
+
   return response as AdminUserTable;
 }
 

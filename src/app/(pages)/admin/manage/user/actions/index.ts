@@ -1,6 +1,6 @@
 "use server";
 
-import createSupabaseServerClient from "@/app/lib/server";
+import createSupabaseServerClient from "@/lib/server";
 import {
   createUser,
   deleteUser,
@@ -9,6 +9,24 @@ import {
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
 import { AdminUserTable } from "../table/data";
+
+/**
+ * * Validate required fields
+ * @param fields
+ * @returns
+ */
+function validateRequiredFields(fields: Record<string, any>) {
+  for (const [key, value] of Object.entries(fields)) {
+    if (!value) {
+      return {
+        name: `Missing ${key}`,
+        message: `${key} is required`
+      };
+    }
+  }
+
+  return null;
+}
 
 /**
  * * Create an admin
@@ -31,7 +49,7 @@ export async function createAdminNewAdmin(form: NEW_ADMIN_AUTH_SCHEMA) {
     birthdate
   } = form;
 
-  const requiredFields = {
+  const validationError = validateRequiredFields({
     email,
     password,
     first_name,
@@ -40,18 +58,15 @@ export async function createAdminNewAdmin(form: NEW_ADMIN_AUTH_SCHEMA) {
     address,
     gender,
     birthdate
-  };
+  });
 
-  for (const [key, value] of Object.entries(requiredFields)) {
-    if (!value) {
-      return {
-        data: null,
-        error: {
-          name: `Missing ${key}`,
-          message: `${key} is required`
-        }
-      };
-    }
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return {
+      data: null,
+      validationError
+    };
   }
 
   try {
@@ -116,17 +131,17 @@ export async function getAdminAllUsers() {
   try {
     const { data, error } = await supabase.from("users").select("*");
 
-    const filterData = data?.filter(
-      (user: AdminUserTable) => user.user_id !== null
-    );
-
     if (error) {
       console.error("Error fetching data:", error.message);
 
       return [];
     }
 
-    return filterData as AdminUserTable[];
+    const filterData: AdminUserTable[] = data?.filter(
+      (user: AdminUserTable) => user.user_id !== null
+    );
+
+    return filterData;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -168,7 +183,7 @@ export async function getAdminUserByUserID(user_id: string) {
         userData?.caregiver.length === 0 ? null : userData?.caregiver[0]
     };
 
-    return allData as AdminUserTable;
+    return allData;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -192,14 +207,13 @@ export async function deleteAdminUser(user_id: string) {
       .delete()
       .eq("user_id", user_id);
 
-    await deleteUser(user_id);
-
     if (deleteFromUserTableError) {
       console.error("Error deleting user:", deleteFromUserTableError?.message);
 
       return null;
     }
-    console.log("Successfully deleted user:", user_id);
+
+    await deleteUser(user_id);
 
     return true;
   } catch (error) {

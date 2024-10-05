@@ -1,4 +1,4 @@
-import { getUserDataFromSession, logout } from "@/app/lib/server";
+import { getUserDataFromSession, logout } from "@/lib/server";
 import ClickOutside from "@/components/ClickOutside";
 import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
@@ -11,6 +11,7 @@ const fetchUserData = async () => {
   if (!user) {
     return null;
   }
+
   return user as USER_DETAILS_AUTH_SCHEMA;
 };
 

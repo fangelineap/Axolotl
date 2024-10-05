@@ -27,7 +27,7 @@ const MultiSelect: React.FC<DropdownProps> = ({ id }) => {
           newOptions.push({
             value: select.options[i].value,
             text: select.options[i].innerText,
-            selected: select.options[i].hasAttribute("selected"),
+            selected: select.options[i].hasAttribute("selected")
           });
         }
         setOptions(newOptions);
@@ -90,6 +90,7 @@ const MultiSelect: React.FC<DropdownProps> = ({ id }) => {
       setShow(false);
     };
     document.addEventListener("click", clickHandler);
+
     return () => document.removeEventListener("click", clickHandler);
   });
 

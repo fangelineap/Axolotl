@@ -1,9 +1,26 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { AdminApprovalTable } from "./data";
 
+/**
+ * * Role Display
+ */
+const roleDisplay: Record<
+  "Nurse" | "Midwife",
+  { bgColor: string; textColor: string }
+> = {
+  Nurse: { bgColor: "bg-yellow-light", textColor: "text-yellow" },
+  Midwife: { bgColor: "bg-blue-light", textColor: "text-blue" }
+};
+
 const columnHelper = createColumnHelper<AdminApprovalTable>();
 
-// Control the order of the status column (Unverified => Verified => Rejected)
+/**
+ * * Default Sort Function; This function will sort the table starting from Unverified, Verified, and Rejected
+ * @param rowA
+ * @param rowB
+ * @param columnId
+ * @returns
+ */
 const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
   const order: { [key: string]: number } = {
     Unverified: 0,
@@ -72,19 +89,14 @@ export const columns = [
   ),
   columnHelper.accessor("user.role", {
     cell: (info) => {
-      const role = info.getValue();
+      const role = info.getValue() as "Midwife" | "Nurse";
+      const { bgColor, textColor } = roleDisplay[role];
 
       return (
-        <div className="flex items-center justify-center">
-          {role === "Nurse" ? (
-            <div className="rounded-3xl bg-yellow-light px-3 py-1">
-              <p className="font-bold text-yellow">{role}</p>
-            </div>
-          ) : (
-            <div className="rounded-3xl bg-blue-light px-3 py-1">
-              <p className="font-bold text-blue">{role}</p>
-            </div>
-          )}
+        <div className={`flex items-center justify-center`}>
+          <div className={`rounded-3xl px-3 py-1 ${bgColor}`}>
+            <p className={`font-bold ${textColor}`}>{role}</p>
+          </div>
         </div>
       );
     },

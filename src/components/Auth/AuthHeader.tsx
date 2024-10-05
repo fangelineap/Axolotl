@@ -25,6 +25,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };

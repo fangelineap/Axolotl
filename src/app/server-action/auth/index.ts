@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
-import createSupabaseServerClient from "@/app/lib/server";
+import createSupabaseServerClient from "@/lib/server";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
+/**
+ * * Sign in with email and password
+ * @param email
+ * @param password
+ * @returns
+ */
 export async function signInWithEmailAndPassword(
   email: string,
   password: string
@@ -17,6 +23,16 @@ export async function signInWithEmailAndPassword(
   });
 }
 
+/**
+ * * Register with email and password
+ * @param email
+ * @param password
+ * @param phoneNumber
+ * @param firstName
+ * @param lastName
+ * @param role
+ * @returns
+ */
 export async function registerWithEmailAndPassword(
   email: string,
   password: string,
@@ -35,27 +51,31 @@ export async function registerWithEmailAndPassword(
   if (error) {
     console.log("Error while registering user: ", error);
 
-    return { data, error };
+    return { data: null, error };
   }
 
-  if (role === "Caregiver") {
-    return await supabase.from("users").insert({
-      first_name: firstName,
-      last_name: lastName,
-      phone_number: phoneNumber,
-      user_id: data.user?.id
-    });
+  const userId = data.user?.id;
+
+  if (!userId) {
+    throw new Error("User ID not found");
   }
 
-  return await supabase.from("users").insert({
+  const userInsertData = {
     first_name: firstName,
     last_name: lastName,
     phone_number: phoneNumber,
-    role: role,
-    user_id: data.user?.id
-  });
+    role: role === "Caregiver" ? undefined : role,
+    user_id: userId
+  };
+
+  return await supabase.from("users").insert(userInsertData);
 }
 
+/**
+ * * Forget password
+ * @param email
+ * @returns
+ */
 export async function forgetPassword(email: string) {
   const supabase = await createSupabaseServerClient();
 
@@ -64,28 +84,69 @@ export async function forgetPassword(email: string) {
   });
 }
 
+/**
+ * * Reset password
+ * @param password
+ * @param code
+ */
 export async function resetPassword(password: string, code: string) {
   const supabase = await createSupabaseServerClient();
 
-  const { data: sessionData, error: sessionError } =
+  const { error: sessionError } =
     await supabase.auth.exchangeCodeForSession(code);
-  const { data, error } = await supabase.auth.updateUser({
+
+  if (sessionError) {
+    console.error("Error exchanging code for session:", sessionError);
+
+    return;
+  }
+
+  const { error } = await supabase.auth.updateUser({
     password: password
   });
 
   if (error) {
-    alert("Erorr. Please try again.");
+    console.error("Erorr. Please try again.");
+
+    return;
   }
 
   redirect("/auth/signin");
 }
 
+/**
+ * * Get user (FOR SIGN IN PAGE REDIRECT)
+ * @param user_id
+ * @returns
+ */
 export async function getUser(user_id: string) {
   const supabase = await createSupabaseServerClient();
 
-  return await supabase.from("users").select().eq("user_id", user_id);
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select()
+      .eq("user_id", user_id);
+
+    if (error) {
+      console.error("Error fetching data:", error.message);
+
+      return null;
+    }
+
+    return data[0];
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return null;
+  }
 }
 
+/**
+ * * Get caregiver verification status
+ * @param caregiver_id
+ * @returns
+ */
 export async function getCaregiverVerificationStatus(caregiver_id: string) {
   unstable_noStore();
 
@@ -104,12 +165,13 @@ export async function getCaregiverVerificationStatus(caregiver_id: string) {
       return null;
     }
 
-    const verificationStatus =
-      caregiverData?.status === "Verified"
-        ? "Verified"
-        : caregiverData?.status === "Rejected"
-          ? "Rejected"
-          : "Unverified";
+    const statusMap: Record<string, string> = {
+      Verified: "Verified",
+      Rejected: "Rejected",
+      Unverified: "Unverified"
+    };
+
+    const verificationStatus = statusMap[caregiverData?.status];
 
     return verificationStatus;
   } catch (error) {

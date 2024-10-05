@@ -1,8 +1,8 @@
 "use client";
 
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
-import PriceBox from "@/components/Axolotl/PriceBox";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import { Skeleton } from "@mui/material";
 import { IconBan } from "@tabler/icons-react";
 import Image from "next/image";
@@ -72,25 +72,25 @@ function ViewMedicine(data: ViewMedicineProps) {
             )}
           </div>
           <div className="flex flex-col">
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Product ID"
               horizontal
               value={data.medicine.uuid}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Name"
               horizontal
               value={data.medicine.name}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Type"
               horizontal
               value={data.medicine.type}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Exp. Date"
               horizontal
               value={formatDate}

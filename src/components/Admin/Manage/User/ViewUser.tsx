@@ -1,10 +1,10 @@
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
-import DownloadLicenses from "@/components/Axolotl/DownloadLicenses";
-import PhoneNumberBox from "@/components/Axolotl/PhoneNumberBox";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 
 interface ViewUserProps {
   user: AdminUserTable;
@@ -173,13 +173,13 @@ async function ViewUser({ user }: ViewUserProps) {
                     User Personal Data
                   </h1>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="First Name"
                       value={user.first_name}
                       horizontal={false}
                       type="text"
                     />
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Last Name"
                       value={user.last_name}
                       horizontal={false}
@@ -187,25 +187,25 @@ async function ViewUser({ user }: ViewUserProps) {
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Email"
                       value={user.email}
                       horizontal={false}
                       type="text"
                     />
-                    <PhoneNumberBox
+                    <DisabledPhoneNumberBox
                       placeholder="081XXXXXXXX"
                       value={Number(user.phone_number)}
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Birthdate"
                       value={formattedBirthDate}
                       horizontal={false}
                       type="text"
                     />
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Gender"
                       value={user.gender ? user.gender : "-"}
                       horizontal={false}
@@ -213,14 +213,14 @@ async function ViewUser({ user }: ViewUserProps) {
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Address"
                       value={user.address ? user.address : "-"}
                       horizontal={false}
                       type="text"
                     />
                     {user.role === "Patient" && (
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Blood Type"
                         value={
                           user.patient.blood_type
@@ -234,7 +234,7 @@ async function ViewUser({ user }: ViewUserProps) {
                   </div>
                   {user.role === "Patient" && (
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Height and Weight"
                         horizontal={false}
                         type="text"
@@ -252,7 +252,7 @@ async function ViewUser({ user }: ViewUserProps) {
                             : "-"
                         }
                       />
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Smoker Status"
                         value={user.patient.is_smoking ? "Yes" : "No"}
                         horizontal={false}
@@ -269,13 +269,13 @@ async function ViewUser({ user }: ViewUserProps) {
                       User Working Preferences
                     </h1>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Start Day"
                         value={formattedStartDate}
                         horizontal={false}
                         type="text"
                       />
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="End Day"
                         value={formattedEndDate}
                         horizontal={false}
@@ -283,13 +283,13 @@ async function ViewUser({ user }: ViewUserProps) {
                       />
                     </div>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Start Time"
                         value={formattedStartTime}
                         horizontal={false}
                         type="text"
                       />
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="End Time"
                         value={formattedEndTime}
                         horizontal={false}
@@ -316,13 +316,13 @@ async function ViewUser({ user }: ViewUserProps) {
                         User Rating
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
-                        <DisabledLabel
+                        <DisabledCustomInputGroup
                           label="Total Order"
                           placeholder="Total Order"
                           horizontal={false}
                           type="text"
                         />
-                        <DisabledLabel
+                        <DisabledCustomInputGroup
                           label="Rating"
                           type="text"
                           horizontal={false}
@@ -338,13 +338,13 @@ async function ViewUser({ user }: ViewUserProps) {
                         User Working Experiences
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
-                        <DisabledLabel
+                        <DisabledCustomInputGroup
                           label="Employment Type"
                           value={user.caregiver.employment_type}
                           horizontal={false}
                           type="text"
                         />
-                        <DisabledLabel
+                        <DisabledCustomInputGroup
                           label="Work Experiences"
                           value={user.caregiver.work_experiences.toString()}
                           horizontal={false}
@@ -353,7 +353,7 @@ async function ViewUser({ user }: ViewUserProps) {
                           unit="year"
                         />
                       </div>
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Workplace"
                         value={user.caregiver.workplace}
                         horizontal={false}
@@ -399,7 +399,7 @@ async function ViewUser({ user }: ViewUserProps) {
                       User Past Medical History
                     </h1>
 
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Allergies"
                       value={
                         user.patient.allergies ? user.patient.allergies : "-"
@@ -408,7 +408,7 @@ async function ViewUser({ user }: ViewUserProps) {
                       type="text"
                     />
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Current Medication"
                         value={
                           user.patient.current_medication
@@ -418,7 +418,7 @@ async function ViewUser({ user }: ViewUserProps) {
                         horizontal={false}
                         type="text"
                       />
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Medication Frequency"
                         horizontal={false}
                         type="text"
@@ -437,7 +437,7 @@ async function ViewUser({ user }: ViewUserProps) {
                         }
                       />
                     </div>
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Illness History"
                       horizontal={false}
                       type="text"
@@ -493,13 +493,13 @@ async function ViewUser({ user }: ViewUserProps) {
                   {/* Content */}
                   <div className="flex w-full flex-col">
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="First Name"
                         value={user.first_name}
                         horizontal={false}
                         type="text"
                       />
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Last Name"
                         value={user.last_name}
                         horizontal={false}
@@ -507,32 +507,32 @@ async function ViewUser({ user }: ViewUserProps) {
                       />
                     </div>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Email"
                         value={user.email}
                         horizontal={false}
                         type="text"
                       />
-                      <PhoneNumberBox
+                      <DisabledPhoneNumberBox
                         placeholder="081XXXXXXXX"
                         value={Number(user.phone_number)}
                       />
                     </div>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Birthdate"
                         value={formattedBirthDate}
                         horizontal={false}
                         type="text"
                       />
-                      <DisabledLabel
+                      <DisabledCustomInputGroup
                         label="Gender"
                         value={user.gender ? user.gender : "-"}
                         horizontal={false}
                         type="text"
                       />
                     </div>
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       label="Address"
                       value={user.address ? user.address : "-"}
                       horizontal={false}
