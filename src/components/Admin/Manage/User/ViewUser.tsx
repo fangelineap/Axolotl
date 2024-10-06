@@ -1,10 +1,11 @@
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
-import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 
 interface ViewUserProps {
   user: AdminUserTable;
@@ -157,9 +158,12 @@ async function ViewUser({ user }: ViewUserProps) {
                     </div>
                   )}
                 </div>
-                <button className="rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary">
-                  Edit Profile
-                </button>
+                <AxolotlButton
+                  label="Edit Profile"
+                  variant="primary"
+                  fontThickness="bold"
+                  customClasses="text-lg"
+                />
               </div>
             </div>
 
@@ -471,9 +475,12 @@ async function ViewUser({ user }: ViewUserProps) {
                   <div className="flex items-center justify-center rounded-md border border-red bg-red-light p-2">
                     <p className="font-bold text-red">{user.role}</p>
                   </div>
-                  <button className="rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary">
-                    Edit Profile
-                  </button>
+                  <AxolotlButton
+                    label="Edit Profile"
+                    variant="primary"
+                    fontThickness="bold"
+                    customClasses="text-lg"
+                  />
                 </div>
               </div>
 
@@ -550,9 +557,12 @@ async function ViewUser({ user }: ViewUserProps) {
           <div className="flex w-1/2 items-center justify-end gap-5 md:w-1/4">
             <div className="w-3/4 md:w-[75%] md:min-w-[50%]">
               <Link href={"/admin/manage/user"}>
-                <button className="w-full rounded-md border border-gray-cancel bg-gray-cancel p-2 px-3 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel">
-                  Go back
-                </button>
+                <AxolotlButton
+                  label="Go back"
+                  variant="secondary"
+                  fontThickness="bold"
+                  customClasses="text-lg"
+                />
               </Link>
             </div>
           </div>

@@ -33,6 +33,18 @@ export async function generateMetadata({ params }: AdminShowUserProps) {
 async function AdminShowUser({ params }: AdminShowUserProps) {
   const data = await fetchData({ params });
 
+  if (!data) {
+    return (
+      <AdminLayout>
+        <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
+          <h1 className="mb-5 text-heading-1 font-bold">
+            Something went wrong
+          </h1>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <AdminBreadcrumbs

@@ -1,23 +1,23 @@
-import ButtonDefault from "@/components/Buttons/ButtonDefault";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { IconArrowRight } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import AxolotlButton from "../Buttons/AxolotlButton";
 
 const GuestPage = () => {
   return (
     <DefaultLayout>
       <div className="container mx-auto px-6 md:px-10">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-5">
-          <div className="flex justify-center md:mb-0 md:flex-1 md:justify-start">
+        <div className="flex flex-col gap-2 md:mx-10 md:flex-row md:items-center md:justify-between md:gap-5">
+          <div className="flex items-center justify-center">
             <Image
               src="/images/freepik/ortunsuster.svg"
               alt="Illustration of healthcare professional"
-              width={635}
-              height={635}
-              className="rounded-lg"
+              width={500}
+              height={500}
               priority
+              className="block md:hidden lg:block"
             />
           </div>
           <div className="flex flex-col gap-4 text-center lg:max-w-lg lg:flex-1 lg:text-right">
@@ -32,24 +32,29 @@ const GuestPage = () => {
                 Axolotl delivers your healthcare solution right to your doorstep
               </p>
             </div>
-            <div className="flex flex-col gap-4 md:flex-row md:justify-end">
-              <ButtonDefault
-                label="Get Started"
-                link="/get-started"
-                customClasses="bg-kalbe-light text-white py-2 px-4 rounded border border-primary hover:bg-kalbe-ultraLight hover:text-primary"
-              />
-              <ButtonDefault
-                label="Get in touch"
-                link="/get-in-touch"
-                customClasses="bg-white border border-kalbe-light text-kalbe-light py-2 px-4 rounded hover:text-primary hover:border-primary hover:bg-kalbe-ultraLight"
-              />
+            <div className="flex flex-col items-center justify-center gap-4 md:flex-row lg:justify-end">
+              <Link href="/auth/signin" className="w-full md:w-fit">
+                <AxolotlButton
+                  label="Get Started"
+                  variant="primary"
+                  roundType="regular"
+                />
+              </Link>
+              <Link href="/guest/about" className="w-full md:w-fit">
+                <AxolotlButton
+                  label="Read our story"
+                  variant="primaryOutlined"
+                  endIcon={<IconArrowRight size={20} stroke={1.5} />}
+                  roundType="regular"
+                />
+              </Link>
             </div>
           </div>
         </div>
       </div>
       <div className="py-5 md:pb-12">
         <div className="container mx-auto flex flex-col gap-8 px-6 lg:px-10">
-          <div className="flex flex-wrap justify-center space-x-4 text-center text-lg font-medium text-gray-600 md:space-x-8">
+          <div className="hidden flex-wrap items-center justify-center gap-4 text-center text-xl font-medium md:flex md:gap-4">
             {[
               "Nurses",
               "Midwives",
@@ -100,11 +105,11 @@ const GuestPage = () => {
               alt="Testimonial"
               width={600}
               height={400}
-              className="h-auto w-full rounded-lg lg:order-2 lg:h-1/2 lg:w-1/2"
+              className="h-auto w-3/4 rounded-lg lg:order-2 lg:h-1/2 lg:w-1/2"
             />
             <div className="w-full lg:order-1 lg:w-1/2">
               <div className="text-center lg:text-left">
-                <h3 className="text-heading-4 font-normal text-dark md:text-heading-1">
+                <h3 className="text-heading-5 font-normal text-dark md:text-heading-1">
                   To <span className="font-bold">Improve Health</span> <br />{" "}
                   for a&nbsp;
                   <span className="font-bold">Better Life</span>
@@ -120,7 +125,7 @@ const GuestPage = () => {
                 </p>
                 <Link
                   href="/guest/about"
-                  className="mt-4 flex items-center justify-start gap-2 text-kalbe-light hover:underline"
+                  className="mt-4 flex items-center justify-center gap-2 text-kalbe-light hover:underline md:justify-start"
                 >
                   Read our journey <IconArrowRight />
                 </Link>
@@ -169,7 +174,7 @@ const GuestPage = () => {
         </div>
       </div>
 
-      <div className="md:pb-12">
+      <div className="py-8 md:pb-12">
         <div className="container mx-auto px-6 lg:px-10">
           <div className="grid gap-15 lg:grid-cols-2">
             <div className="grid gap-6">
@@ -238,7 +243,7 @@ const GuestPage = () => {
         </div>
       </div>
 
-      <div className="pt-12 md:pt-0">
+      <div className="pt-8 md:pt-0">
         <div className="container mx-auto px-6 lg:px-10">
           <div className="text-center">
             <h2 className="text-3xl font-normal md:text-4xl">
@@ -248,14 +253,17 @@ const GuestPage = () => {
               Let&apos;s create a healthier future together with Axolotl!
             </p>
             <div className="mt-6 flex flex-col items-center space-y-4 sm:flex-row sm:justify-center sm:space-x-4 sm:space-y-0">
-              <ButtonDefault
-                label="Apply as Caregiver"
-                link="/guest/careers"
-                customClasses="bg-kalbe-light text-white py-2 px-4 rounded hover:bg-kalbe-ultraLight hover:text-primary border border-primary"
-              />
+              <Link href="/guest/careers">
+                <AxolotlButton
+                  label="Apply as Caregiver"
+                  roundType="regular"
+                  variant="primary"
+                  fontThickness="medium"
+                />
+              </Link>
               <Link
                 href="/guest/careers"
-                className="flex items-center gap-2 text-kalbe-light hover:underline"
+                className="flex items-center gap-2 text-kalbe-light transition duration-150 ease-in-out hover:underline"
               >
                 More Information <IconArrowRight />
               </Link>

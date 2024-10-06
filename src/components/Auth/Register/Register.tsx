@@ -1,5 +1,6 @@
 "use client";
 
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import { Checkbox } from "@mui/material";
 import { IconSquare } from "@tabler/icons-react";
 import Image from "next/image";
@@ -131,7 +132,9 @@ const RegisterComponent = () => {
                 }}
                 className="flex justify-center"
               >
-                <button
+                <AxolotlButton
+                  label="Next"
+                  variant="primary"
                   type="button"
                   onClick={(e) => {
                     const cbox = document.getElementById(
@@ -153,10 +156,11 @@ const RegisterComponent = () => {
                       );
                     }
                   }}
-                  className="w-full rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary md:w-1/2"
+                  customClasses="md:w-1/2"
+                  fontThickness="medium"
                 >
                   Next
-                </button>
+                </AxolotlButton>
               </Link>
               <p className="text-center text-body-sm">
                 Already have an account?{" "}

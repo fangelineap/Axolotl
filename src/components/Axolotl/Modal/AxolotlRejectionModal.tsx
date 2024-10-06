@@ -4,6 +4,7 @@ import { Modal } from "@mui/material";
 import { IconX } from "@tabler/icons-react";
 import React, { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
+import AxolotlButton from "../Buttons/AxolotlButton";
 
 interface AxolotlRejectionModalProps {
   isOpen: boolean;
@@ -52,9 +53,7 @@ function AxolotlRejectionModal({
             </button>
           </div>
           <div className="flex flex-col gap-5 px-5">
-            <p className="text-xl text-dark-secondary">
-              Please add why you reject this caregiver
-            </p>
+            <p className="text-xl">Please add why you reject this caregiver</p>
             <div className="flex w-full flex-col gap-2">
               <textarea
                 className={`h-32 rounded-md border p-2 focus:outline-none ${
@@ -70,12 +69,13 @@ function AxolotlRejectionModal({
             </div>
           </div>
           <div className="flex items-center justify-center px-5">
-            <button
-              className="w-full rounded-md border border-red bg-red px-3 py-2 font-bold text-white hover:bg-red-hover hover:text-red"
+            <AxolotlButton
+              label="Reject this Caregiver"
               onClick={handleFormSubmit}
-            >
-              Reject this Caregiver
-            </button>
+              variant="danger"
+              fontThickness="bold"
+              roundType="regular"
+            />
           </div>
         </div>
       </div>

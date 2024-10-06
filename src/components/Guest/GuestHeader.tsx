@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -110,7 +112,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 <li>
                   <Link href="/">
                     <div
-                      className={`text-black hover:text-kalbe-light dark:text-white ${
+                      className={`text-black transition duration-150 ease-in-out hover:text-kalbe-light dark:text-white ${
                         isActive("/") ? "font-bold text-kalbe-light" : ""
                       }`}
                     >
@@ -121,7 +123,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 <li>
                   <Link href="/guest/about">
                     <div
-                      className={`text-black hover:text-kalbe-light dark:text-white ${
+                      className={`text-black transition duration-150 ease-in-out hover:text-kalbe-light dark:text-white ${
                         isActive("/guest/about")
                           ? "font-bold text-kalbe-light"
                           : ""
@@ -134,7 +136,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
                 <li>
                   <Link href="/guest/careers">
                     <div
-                      className={`text-black hover:text-kalbe-light dark:text-white ${
+                      className={`text-black transition duration-150 ease-in-out hover:text-kalbe-light dark:text-white ${
                         isActive("/guest/careers")
                           ? "font-bold text-kalbe-light"
                           : ""
@@ -150,32 +152,31 @@ const GuestHeader: React.FC<HeaderProps> = ({
                   onClick={toggleDropdown}
                 >
                   <div
-                    className={`cursor-pointer text-black hover:text-kalbe-light dark:text-white ${
+                    className={`cursor-pointer text-black transition duration-150 ease-in-out hover:text-kalbe-light dark:text-white ${
                       dropdownOpen ? "text-kalbe-light" : ""
                     }`}
                   >
                     <div className="flex items-center justify-center gap-1">
                       <p>Health Services</p>
-                      <Image
-                        src={"/images/icon/icon-arrow-down.svg"}
-                        alt="Arrow Down"
-                        width={15}
-                        height={15}
-                      />
+                      {dropdownOpen ? (
+                        <IconChevronUp stroke={1.5} />
+                      ) : (
+                        <IconChevronDown stroke={1.5} />
+                      )}
                     </div>
                   </div>
                   {dropdownOpen && (
                     <ul className="absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg dark:bg-gray-dark">
                       <li className="border-b border-gray-1 dark:border-gray-700">
                         <Link href="/auth/signin">
-                          <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          <div className="block px-4 py-2 text-black transition duration-150 ease-in-out hover:bg-gray hover:text-kalbe-light dark:text-white">
                             Nurses
                           </div>
                         </Link>
                       </li>
                       <li>
                         <Link href="/auth/signin">
-                          <div className="block px-4 py-2 text-black hover:bg-gray hover:text-kalbe-light dark:text-white">
+                          <div className="block px-4 py-2 text-black transition duration-150 ease-in-out hover:bg-gray hover:text-kalbe-light dark:text-white">
                             Midwives
                           </div>
                         </Link>
@@ -187,12 +188,13 @@ const GuestHeader: React.FC<HeaderProps> = ({
             </div>
           </div>
           <div className="ml-auto">
-            <Link href="/auth/signin">
-              <div className="text-black dark:text-white">
-                <button className="rounded bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-medium">
-                  Login
-                </button>
-              </div>
+            <Link href="/auth/signin" className="w-full">
+              <AxolotlButton
+                label="Login"
+                variant="primary"
+                roundType="regular"
+                fontThickness="medium"
+              />
             </Link>
           </div>
         </div>

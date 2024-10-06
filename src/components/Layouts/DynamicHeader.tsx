@@ -20,69 +20,28 @@ const DynamicHeader = ({
 }) => {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/admin")) {
-    return (
-      <>
-        <AdminHeader
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-        <AdminSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      </>
-    );
-  } else if (pathname.startsWith("/patient")) {
-    return (
-      <>
-        <PatientHeader
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-        <PatientSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      </>
-    );
-  } else if (pathname.startsWith("/caregiver")) {
-    return (
-      <>
-        <CaregiverHeader
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-        <CaregiverSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      </>
-    );
-  } else if (pathname.startsWith("/auth")) {
-    return (
-      <>
-        <AuthHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <AuthSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      </>
-    );
-  } else {
-    return (
-      <>
-        <GuestHeader
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-        <GuestSidebar
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      </>
-    );
-  }
+  const layoutMap: { [key: string]: { Header: any; Sidebar: any } } = {
+    "/admin": { Header: AdminHeader, Sidebar: AdminSidebar },
+    "/patient": { Header: PatientHeader, Sidebar: PatientSidebar },
+    "/caregiver": { Header: CaregiverHeader, Sidebar: CaregiverSidebar },
+    "/auth": { Header: AuthHeader, Sidebar: AuthSidebar }
+  };
+
+  const matchedLayout = Object.keys(layoutMap).find((key) =>
+    pathname.startsWith(key)
+  );
+
+  // Fallback to Guest layout if no match found or route is undefined
+  const { Header, Sidebar } = matchedLayout
+    ? layoutMap[matchedLayout]
+    : { Header: GuestHeader, Sidebar: GuestSidebar };
+
+  return (
+    <>
+      <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    </>
+  );
 };
 
 export default DynamicHeader;

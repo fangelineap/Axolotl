@@ -15,6 +15,8 @@ export async function signInWithEmailAndPassword(
   email: string,
   password: string
 ) {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
 
   return supabase.auth.signInWithPassword({
@@ -41,6 +43,8 @@ export async function registerWithEmailAndPassword(
   lastName: string,
   role: string
 ) {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.signUp({
@@ -77,6 +81,8 @@ export async function registerWithEmailAndPassword(
  * @returns
  */
 export async function forgetPassword(email: string) {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
 
   return await supabase.auth.resetPasswordForEmail(email, {
@@ -90,6 +96,8 @@ export async function forgetPassword(email: string) {
  * @param code
  */
 export async function resetPassword(password: string, code: string) {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
 
   const { error: sessionError } =
@@ -120,6 +128,8 @@ export async function resetPassword(password: string, code: string) {
  * @returns
  */
 export async function getUser(user_id: string) {
+  unstable_noStore();
+
   const supabase = await createSupabaseServerClient();
 
   try {
@@ -134,7 +144,7 @@ export async function getUser(user_id: string) {
       return null;
     }
 
-    return data[0];
+    return data[0].role;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 

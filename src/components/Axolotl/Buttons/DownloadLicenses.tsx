@@ -44,7 +44,7 @@ const DownloadLicenses = ({
 
   return (
     <Link href={href!} target="_blank" rel="noopener noreferrer" passHref>
-      <button className="flex w-full items-center justify-between gap-2 rounded-md border border-primary bg-primary px-4 py-2 text-white hover:bg-kalbe-ultraLight hover:text-primary">
+      <button className="flex w-full items-center justify-between gap-2 rounded-md border border-primary bg-primary px-4 py-2 text-white transition duration-150 ease-in-out hover:bg-kalbe-ultraLight hover:text-primary">
         <h1 className="max-w-xs truncate font-bold">{licenseTitle}</h1>
         <IconDownload />
       </button>

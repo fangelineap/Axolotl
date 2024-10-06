@@ -1,4 +1,3 @@
-import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
 import SignInComponent from "@/components/Auth/Signin/SignInComponent";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
@@ -36,35 +35,12 @@ const SignIn = async ({ searchParams }: any) => {
     handleRedirectByRole(user.role);
   }
 
-  /**
-   * * Redirect User after Sign In
-   * @param form
-   */
-  const signIn = async (form: FormData) => {
-    "use server";
-
-    const email = form.get("email")!.toString();
-    const password = form.get("password")!.toString();
-
-    const { data, error } = await signInWithEmailAndPassword(email, password);
-
-    if (error) {
-      redirect("/auth/signin?success=false");
-    }
-
-    if (data) {
-      const { data: userData, error: userError } = await getUser(data.user.id);
-      if (userError || !userData) {
-        redirect("/auth/signin?success=false");
-      }
-
-      handleRedirectByRole(userData.role);
-    }
-  };
-
   return (
     <DefaultLayout>
-      <SignInComponent signIn={signIn} searchParams={searchParams} />
+      <SignInComponent
+        searchParams={searchParams}
+        handleRedirectByRole={handleRedirectByRole}
+      />
     </DefaultLayout>
   );
 };

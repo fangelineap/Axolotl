@@ -2,6 +2,7 @@
 
 import { addAdminMedicine } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
@@ -314,16 +315,22 @@ function AddMedicine() {
                   required={true}
                 />
                 <Link href={"/admin/manage/medicine"}>
-                  <button className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover">
-                    Cancel
-                  </button>
+                  <AxolotlButton
+                    label="Cancel"
+                    fontThickness="bold"
+                    variant="dangerOutlined"
+                    customClasses="text-lg"
+                    roundType="regular"
+                  />
                 </Link>
-                <button
+                <AxolotlButton
+                  label="Add Medicine"
                   type="submit"
-                  className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary"
-                >
-                  Add Medicine
-                </button>
+                  fontThickness="bold"
+                  variant="primary"
+                  customClasses="text-lg"
+                  roundType="regular"
+                />
               </div>
             </div>
           </div>

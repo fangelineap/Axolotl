@@ -1,7 +1,9 @@
 "use client";
 
 import { createAdminNewAdmin } from "@/app/(pages)/admin/manage/user/actions";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
@@ -13,7 +15,6 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AdminUserValidation } from "./Validation/AdminUserValidation";
-import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 
 function AddAdmin() {
   const router = useRouter();
@@ -259,13 +260,15 @@ function AddAdmin() {
 
           {/* Buttons Group */}
           <div className="mt-5 flex w-full items-center justify-end">
-            <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
-              <button
-                className="w-full rounded-md border border-primary bg-primary p-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
+            <div className="w-full md:w-1/4">
+              <AxolotlButton
+                label="Create User"
+                fontThickness="bold"
+                variant="primary"
                 type="submit"
               >
                 Create User
-              </button>
+              </AxolotlButton>
             </div>
           </div>
         </div>
