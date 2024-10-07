@@ -2,7 +2,8 @@
 
 import { CaregiverOrder } from "@/app/(pages)/caregiver/type/data";
 import createSupabaseServerClient, {
-  getUserDataFromSession
+  getUserDataFromSession,
+  getUserFromSession
 } from "@/lib/server";
 import { MEDICINE_ORDER_DETAIL } from "@/types/axolotl";
 
@@ -137,5 +138,53 @@ export async function fetchOrdersByCaregiver() {
     console.error("Error:", error);
 
     return [];
+  }
+}
+
+export async function fetchOrderDetail(orderId: string) {
+  unstable_noStore();
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const currentUser = await getUserFromSession();
+    const { data, error } = await supabase
+      .from("order")
+      .select(
+        `*, patient(*, users(*)), appointment(*), caregiver(*, users(user_id)), medicineOrder(*, medicineOrderDetail(*))`
+      )
+      .eq("id", orderId);
+
+    if (error) {
+      console.error("Error fetching order:", error.message);
+      throw new Error("Failed to fetch order");
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("Order not found");
+    }
+
+    // Check if the current user has access to the order
+    const order = data[0];
+
+    if (
+      currentUser.data?.id === order.caregiver.caregiver_id &&
+      currentUser.data?.user_id === order.caregiver.users?.user_id
+    ) {
+      // Safely access the patient users data and ensure it’s not undefined
+      const user = order.patient?.users || {};
+
+      const destructuredData = { user, ...order };
+
+      return destructuredData;
+    } else {
+      throw new Error("You are not authorized to access this order");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Error fetching order:", error.message);
+    } else {
+      console.log("Unknown error fetching order");
+    }
+    throw new Error("Failed to fetch order");
   }
 }

@@ -14,6 +14,7 @@ const formatDate = (date: Date) => {
     month: "long",
     day: "numeric"
   };
+
   return date.toLocaleDateString("en-US", options);
 };
 
@@ -37,6 +38,7 @@ const Dashboard = () => {
           groupedOrders[dateKey] = [];
         }
         groupedOrders[dateKey].push(order);
+
         return groupedOrders;
       },
       {} as { [key: string]: any[] }
@@ -54,6 +56,7 @@ const Dashboard = () => {
           ).setHours(0, 0, 0, 0);
           // Only show orders that are today or in the future
           const todayDate = new Date().setHours(0, 0, 0, 0);
+
           return appointmentDate >= todayDate; // Compare dates without considering time
         });
 

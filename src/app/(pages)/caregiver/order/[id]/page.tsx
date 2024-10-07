@@ -1,14 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { fetchOrderDetail } from "@/app/server-action/caregiver/action";
 import OrderDetail from "@/components/Caregiver/OrderDetail/page";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useParams } from "next/navigation";
-import { fetchOrdersByCaregiver } from "@/app/server-action/caregiver/action";
+import { useEffect, useState } from "react";
 import type { CaregiverOrderDetails } from "../../type/data";
 
-const OrderDetailPage: React.FC = () => {
+const OrderDetailPage = () => {
   const params = useParams();
-  const orderId = params.id;
+  const orderId = params.id as string;
 
   const [orderData, setOrderData] = useState<CaregiverOrderDetails | null>(
     null
@@ -20,34 +20,26 @@ const OrderDetailPage: React.FC = () => {
     dayOfVisit: number,
     appointmentTime: string
   ): string {
-    // Combine the date and time into a single Date object
     const [hours, minutes] = appointmentTime.split(":");
     const startDate = new Date(appointmentDate);
     startDate.setHours(parseInt(hours), parseInt(minutes));
 
-    // Add the number of days from dayOfVisit
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + dayOfVisit);
 
-    // Return the end time in the desired format
     return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
   }
 
-  // Fetch the order data based on the ID from the URL
   useEffect(() => {
     const getOrderData = async () => {
       setLoading(true);
-      const orders = await fetchOrdersByCaregiver();
+      const orders = await fetchOrderDetail(orderId);
 
-      // Check if orders are being fetched correctly
-      console.log("Fetched Orders:", orders);
+      if (!orders) {
+        throw new Error("Failed to fetch orders");
+      }
 
-      // Ensure the id is compared as a string
-      const order = orders.find(
-        (order: CaregiverOrderDetails) => String(order.id) === String(orderId)
-      );
-
-      setOrderData(order || null);
+      setOrderData(orders);
       setLoading(false);
     };
 
@@ -64,6 +56,14 @@ const OrderDetailPage: React.FC = () => {
     return <div>Order not found</div>;
   }
 
+  // Extract user and patient data from orderData
+  const user = orderData.user;
+  const first_name = user?.first_name;
+  const last_name = user?.last_name;
+  const address = user?.address;
+  const phone_number = user?.phone_number;
+  const birthdate = user?.birthdate;
+
   return (
     <DefaultLayout>
       <div className="mb-4 text-sm text-gray-500">
@@ -76,33 +76,33 @@ const OrderDetailPage: React.FC = () => {
 
       <div>
         <OrderDetail
-          status={orderData.is_completed ? "Completed" : "Ongoing"}
+          status={orderData?.is_completed ? "Completed" : "Ongoing"}
           patientInfo={{
-            name: `${orderData.user.first_name}  ${orderData.user.last_name}`,
-            address: `${orderData.user.address}`,
-            phoneNumber: `${orderData.user.phone_number}`,
-            birthdate: `${orderData.user.birthdate}`
+            name: `${first_name} ${last_name}`,
+            address: address || "N/A",
+            phoneNumber: phone_number || "N/A",
+            birthdate: String(birthdate) || "N/A"
           }}
           medicalDetails={{
-            causes: `${orderData.appointment?.causes}`,
-            mainConcerns: `${orderData.appointment?.main_concern}`,
-            currentMedicine: `${orderData.appointment?.current_medication}`,
+            causes: orderData?.appointment?.causes || "N/A",
+            mainConcerns: orderData?.appointment?.main_concern || "N/A",
+            currentMedicine:
+              orderData?.appointment?.current_medication || "N/A",
             symptoms:
-              Array.isArray(orderData.appointment?.symptoms) &&
-              orderData.appointment?.symptoms.length > 0
+              Array.isArray(orderData?.appointment?.symptoms) &&
+              orderData.appointment.symptoms.length > 0
                 ? orderData.appointment.symptoms
                 : [],
-            medicalDescriptions: `${orderData.appointment?.medical_description}`,
-            conjectures: `${orderData.appointment?.diagnosis}`
+            medicalDescriptions:
+              orderData?.appointment?.medical_description || "N/A",
+            conjectures: orderData?.appointment?.diagnosis || "N/A"
           }}
           serviceDetails={{
-            orderId: `#${orderData.id}`,
+            orderId: `#${orderData?.id}`,
             orderDate: orderData.created_at
               ? orderData.created_at.toString()
               : "N/A",
-            serviceType: orderData.appointment
-              ? orderData.appointment.service_type
-              : "N/A",
+            serviceType: orderData.appointment?.service_type || "N/A",
             totalDays: orderData.appointment?.day_of_visit,
             startTime:
               new Date(orderData.appointment.appointment_date)
@@ -110,7 +110,6 @@ const OrderDetailPage: React.FC = () => {
                 .split("T")[0] +
               " / " +
               orderData.appointment?.appointment_time,
-
             endTime: calculateEndTime(
               orderData.appointment.appointment_date,
               orderData.appointment?.day_of_visit || 0,
@@ -135,10 +134,10 @@ const OrderDetailPage: React.FC = () => {
             })) || []
           }
           proofOfService={{
-            imageUrl: orderData.user.caregiver?.profile_photo_url || ""
+            imageUrl: orderData.caregiver?.profile_photo_url || ""
           }}
-          orderType={orderData.appointment ? orderData.appointment.id : "N/A"}
-          patientName={`${orderData.user.first_name} ${orderData.user.last_name}`}
+          orderType={orderData.appointment?.id || "N/A"}
+          patientName={`${first_name} ${last_name}`}
         />
       </div>
     </DefaultLayout>

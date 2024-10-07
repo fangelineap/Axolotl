@@ -1,7 +1,7 @@
 "use server";
 
 import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
-import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
+import { USER, USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { createServerClient } from "@supabase/ssr";
 import { unstable_noStore } from "next/cache";
 import { cookies } from "next/headers";
@@ -55,7 +55,7 @@ export async function getUserFromSession() {
     .single();
 
   return {
-    data: userData || null,
+    data: (userData as USER) || null,
     error: userDataError || null
   };
 }

@@ -17,7 +17,8 @@ const SignIn = async ({ searchParams }: any) => {
    * * Redirect User after Sign In based on role
    * @param role
    */
-  const handleRedirectByRole = (role: string) => {
+  const handleRedirectByRole = async (role: string) => {
+    "use server";
     const roleBasedRedirects: Record<string, string> = {
       Patient: "/patient",
       Nurse: "/caregiver",

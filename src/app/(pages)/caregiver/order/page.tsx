@@ -15,7 +15,7 @@ interface Order {
 const statusColorClassMap: Record<string, string> = {
   Ongoing: "bg-yellow-light text-yellow-dark",
   Canceled: "bg-red-light text-red",
-  Done: "bg-green-light-3 text-green",
+  Done: "bg-green-light-3 text-green"
 };
 
 const Order = () => {
@@ -26,19 +26,19 @@ const Order = () => {
       id: 1,
       orderType: "After Care",
       patientName: "Axolotl",
-      status: "Ongoing",
+      status: "Ongoing"
     },
     {
       id: 2,
       orderType: "After Care",
       patientName: "Axolotl",
-      status: "Ongoing",
+      status: "Ongoing"
     },
     {
       id: 3,
       orderType: "After Care",
       patientName: "Axolotl",
-      status: "Canceled",
+      status: "Canceled"
     },
     { id: 4, orderType: "After Care", patientName: "Axolotl", status: "Done" },
     { id: 5, orderType: "After Care", patientName: "Axolotl", status: "Done" },
@@ -46,16 +46,16 @@ const Order = () => {
       id: 6,
       orderType: "Neonatal Care",
       patientName: "Arvel",
-      status: "Canceled",
+      status: "Canceled"
     },
     { id: 7, orderType: "Booster", patientName: "Alex", status: "Ongoing" },
     {
       id: 8,
       orderType: "Elderly Care",
       patientName: "Kartawijaya",
-      status: "Done",
+      status: "Done"
     },
-    { id: 9, orderType: "After Care", patientName: "Monyet", status: "Done" },
+    { id: 9, orderType: "After Care", patientName: "Monyet", status: "Done" }
   ];
 
   const columns: ColumnDef<Order>[] = [
@@ -69,6 +69,7 @@ const Order = () => {
         const status = getValue<string>();
         const colorClass =
           statusColorClassMap[status] || "bg-gray-500 text-white";
+
         return (
           <span
             className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
@@ -76,15 +77,15 @@ const Order = () => {
             {status}
           </span>
         );
-      },
-    },
+      }
+    }
   ];
 
   const handleShowAction = (row: Order) => {
     const query = new URLSearchParams({
       orderType: row.orderType,
       patientName: row.patientName,
-      status: row.status,
+      status: row.status
     }).toString();
 
     router.push(`/order/${row.id}?${query}`);

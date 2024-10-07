@@ -4,7 +4,6 @@ import {
   MEDICINE_ORDER,
   MEDICINE_ORDER_DETAIL,
   ORDER,
-  PATIENT,
   USER,
   USER_AUTH_SCHEMA
 } from "@/types/axolotl";
@@ -14,10 +13,8 @@ export type CaregiverOrder = USER_AUTH_SCHEMA & {
 };
 
 export type CaregiverOrderDetails = ORDER & {
-  user: USER & {
-    patient: PATIENT;
-    caregiver: CAREGIVER;
-  };
+  user: USER;
+  caregiver: CAREGIVER;
   appointment: {
     id: string;
     service_type: string;
