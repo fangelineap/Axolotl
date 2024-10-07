@@ -12,8 +12,8 @@ interface OrderDetailProps {
   };
   medicalDetails: {
     causes: string;
-    mainConcerns: string[];
-    currentMedicine: string[];
+    mainConcerns: string;
+    currentMedicine: string;
     symptoms: string[];
     medicalDescriptions: string;
     conjectures: string;
@@ -22,11 +22,11 @@ interface OrderDetailProps {
     orderId: string;
     orderDate: string;
     serviceType: string;
-    totalDays: string;
+    totalDays: number;
     startTime: string;
     endTime: string;
-    serviceFee: string;
-    totalCharge: string;
+    serviceFee: number;
+    totalCharge: number;
   };
   medications: {
     quantity: number;
@@ -52,7 +52,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
   serviceDetails,
   medications,
   price,
-  proofOfService,
+  proofOfService
 }) => {
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
 
@@ -82,7 +82,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               </div>
               <div
                 className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
-                  status === "Done"
+                  status === "Completed"
                     ? "bg-primary"
                     : status === "Ongoing"
                       ? "bg-yellow"
@@ -144,9 +144,14 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
             </div>
             <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
               <div>{medicalDetails.causes}</div>
-              <div>{medicalDetails.mainConcerns.join(", ")}</div>
-              <div>{medicalDetails.currentMedicine.join(", ")}</div>
-              <div>{medicalDetails.symptoms.join(", ")}</div>
+              <div>{medicalDetails.mainConcerns}</div>
+              <div>{medicalDetails.currentMedicine}</div>
+              <div>
+                {Array.isArray(medicalDetails.symptoms) &&
+                medicalDetails.symptoms.length > 0
+                  ? medicalDetails.symptoms.join(", ")
+                  : "No symptoms available"}
+              </div>
             </div>
           </div>
           <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
@@ -156,10 +161,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <div className=" w-full rounded-t-md border border-primary bg-green-light py-2 text-white">
                 <p className="font-bold">Conjecture</p>
               </div>
-              <div className="w-full py-2 rounded-b-md border border-primary font-bold text-primary">
-                <p>
-                  {medicalDetails.conjectures}
-                </p>
+              <div className="w-full rounded-b-md border border-primary py-2 font-bold text-primary">
+                <p>{medicalDetails.conjectures}</p>
               </div>
             </div>
           </div>
@@ -201,7 +204,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-12.5">Total Charge</strong>
-              <div className="ml-8">{serviceDetails.totalCharge}</div>
+              <div className="ml-7.5">{serviceDetails.totalCharge}</div>
             </div>
           </div>
         </div>

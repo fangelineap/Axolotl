@@ -59,7 +59,7 @@ export async function fetchOrdersByCaregiver() {
     const { data, error } = await supabase
       .from("order")
       .select(
-        "*, patient(*, users (first_name, last_name, address)), appointment(*), caregiver(*), medicineOrder(*)"
+        `*, patient(*, users (first_name, last_name, address, phone_number, birthdate)), appointment(*), caregiver(*), medicineOrder(*, medicineOrderDetail(*))`
       )
       .eq("caregiver_id", caregiver_id);
 
@@ -80,7 +80,7 @@ export async function fetchOrdersByCaregiver() {
           const { data: medicineDetail, error: medicineDetailError } =
             await supabase
               .from("medicineOrder")
-              .select("*, medicineOrderDetail(*)")
+              .select("*, medicineOrderDetail(*, medicine(*))")
               .eq("id", order.medicineOrder.id);
 
           if (medicineDetailError) {

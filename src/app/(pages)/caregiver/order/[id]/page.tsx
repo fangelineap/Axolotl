@@ -1,123 +1,64 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderDetail from "@/components/Caregiver/OrderDetail/page";
-import { useParams, useSearchParams } from "next/navigation";
-
-// TypeScript Types
-type PatientInfo = {
-  name: string;
-  address: string;
-  phoneNumber: string;
-  birthdate: string;
-};
-
-type MedicalDetails = {
-  causes: string;
-  mainConcerns: string[];
-  currentMedicine: string[];
-  symptoms: string[];
-  medicalDescriptions: string;
-  conjectures: string;
-};
-
-type ServiceDetails = {
-  orderId: string;
-  orderDate: string;
-  serviceType: string;
-  totalDays: string;
-  startTime: string;
-  endTime: string;
-  serviceFee: string;
-  totalCharge: string;
-};
-
-type Medication = {
-  quantity: number;
-  name: string;
-  price: string;
-};
-
-type Price = {
-  total: string;
-  delivery: string;
-  totalCharge: string;
-};
-
-type ProofOfService = {
-  imageUrl: string;
-};
-
-type Order = {
-  id: number;
-  status: string;
-  patientInfo: PatientInfo;
-  medicalDetails: MedicalDetails;
-  serviceDetails: ServiceDetails;
-  medications: Medication[];
-  price: Price;
-  proofOfService: ProofOfService;
-};
-
-// Sample Orders Data
-const orders: Order[] = [
-  {
-    id: 1,
-    status: "Ongoing",
-    patientInfo: {
-      name: "Axolotl",
-      address: "Jl. Lorem Ipsum, Malang City, East Java, Indonesia, 12345",
-      phoneNumber: "08123456789",
-      birthdate: "34/13/2054", // Ensure date format is correct
-    },
-    medicalDetails: {
-      causes: "Post Fractured Left Arm Surgery",
-      mainConcerns: ["Wound Treatment"],
-      currentMedicine: ["Paracetamol", "Ibuprofen"],
-      symptoms: ["Fever"],
-      medicalDescriptions:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Nam ac dolor eget metus scelerisque elementum. Integer sit amet turpis quis magna dictum dapibus. Duis convallis, orci sit amet auctor sodales, libero velit dictum purus, ut varius elit justo id arcu. Cras vulputate auctor arcu, at tristique est varius ac. Vivamus dapibus efficitur nulla, sed scelerisque lorem tristique eget. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean a tincidunt nisi. Nam sit amet magna lacus. Ut condimentum, purus sed suscipit placerat, erat arcu suscipit nisi, et elementum eros velit eu justo.",
-      conjectures: "Lack of Money",
-    },
-    serviceDetails: {
-      orderId: "#123456789",
-      orderDate: "31/06/2024", // Ensure date format is correct
-      serviceType: "After Care",
-      totalDays: "2x Visit",
-      startTime: "32/07/2024 23:59", // Ensure date format is correct
-      endTime: "33/07/2024 23:59", // Ensure date format is correct
-      serviceFee: "2 x Rp. 500.000",
-      totalCharge: "Rp. 1.000.000",
-    },
-    medications: [
-      { quantity: 5, name: "PROPOFOL", price: "Rp. 10.000" },
-      { quantity: 1, name: "PROPOFOL", price: "Rp. 10.000" },
-      { quantity: 1, name: "PROPOFOL", price: "Rp. 10.000" },
-      { quantity: 1, name: "PROPOFOL", price: "Rp. 10.000" },
-      { quantity: 1, name: "PROPOFOL", price: "Rp. 10.000" },
-    ],
-    price: {
-      total: "Rp. 50.000",
-      delivery: "Rp. 10.000",
-      totalCharge: "Rp. 60.000",
-    },
-    proofOfService: {
-      imageUrl: "/images/logo/axolotl.svg",
-    },
-  },
-  // Additional orders can be added here...
-];
+import { useParams } from "next/navigation";
+import { fetchOrdersByCaregiver } from "@/app/server-action/caregiver/action";
+import type { CaregiverOrderDetails } from "../../type/data";
 
 const OrderDetailPage: React.FC = () => {
   const params = useParams();
-  const searchParams = useSearchParams();
+  const orderId = params.id;
 
-  const id = parseInt(params.id as string);
-  const orderType = searchParams.get("orderType");
-  const patientName = searchParams.get("patientName");
-  const status = searchParams.get("status");
+  const [orderData, setOrderData] = useState<CaregiverOrderDetails | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
 
-  const orderData = orders.find((order) => order.id === id);
+  function calculateEndTime(
+    appointmentDate: Date,
+    dayOfVisit: number,
+    appointmentTime: string
+  ): string {
+    // Combine the date and time into a single Date object
+    const [hours, minutes] = appointmentTime.split(":");
+    const startDate = new Date(appointmentDate);
+    startDate.setHours(parseInt(hours), parseInt(minutes));
+
+    // Add the number of days from dayOfVisit
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + dayOfVisit);
+
+    // Return the end time in the desired format
+    return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
+  }
+
+  // Fetch the order data based on the ID from the URL
+  useEffect(() => {
+    const getOrderData = async () => {
+      setLoading(true);
+      const orders = await fetchOrdersByCaregiver();
+
+      // Check if orders are being fetched correctly
+      console.log("Fetched Orders:", orders);
+
+      // Ensure the id is compared as a string
+      const order = orders.find(
+        (order: CaregiverOrderDetails) => String(order.id) === String(orderId)
+      );
+
+      setOrderData(order || null);
+      setLoading(false);
+    };
+
+    if (orderId) {
+      getOrderData();
+    }
+  }, [orderId]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!orderData) {
     return <div>Order not found</div>;
@@ -135,33 +76,69 @@ const OrderDetailPage: React.FC = () => {
 
       <div>
         <OrderDetail
-          status={status || orderData.status}
+          status={orderData.is_completed ? "Completed" : "Ongoing"}
           patientInfo={{
-            name: patientName || orderData.patientInfo.name,
-            address: orderData.patientInfo.address,
-            phoneNumber: orderData.patientInfo.phoneNumber,
-            birthdate: orderData.patientInfo.birthdate,
+            name: `${orderData.user.first_name}  ${orderData.user.last_name}`,
+            address: `${orderData.user.address}`,
+            phoneNumber: `${orderData.user.phone_number}`,
+            birthdate: `${orderData.user.birthdate}`
           }}
-          medicalDetails={orderData.medicalDetails}
+          medicalDetails={{
+            causes: `${orderData.appointment?.causes}`,
+            mainConcerns: `${orderData.appointment?.main_concern}`,
+            currentMedicine: `${orderData.appointment?.current_medication}`,
+            symptoms:
+              Array.isArray(orderData.appointment?.symptoms) &&
+              orderData.appointment?.symptoms.length > 0
+                ? orderData.appointment.symptoms
+                : [],
+            medicalDescriptions: `${orderData.appointment?.medical_description}`,
+            conjectures: `${orderData.appointment?.diagnosis}`
+          }}
           serviceDetails={{
-            orderId: `#${id}`,
-            orderDate: orderData.serviceDetails.orderDate,
-            serviceType: orderType || orderData.serviceDetails.serviceType,
-            totalDays: orderData.serviceDetails.totalDays,
-            startTime: orderData.serviceDetails.startTime,
-            endTime: orderData.serviceDetails.endTime,
-            serviceFee: orderData.serviceDetails.serviceFee,
-            totalCharge: orderData.serviceDetails.totalCharge,
+            orderId: `#${orderData.id}`,
+            orderDate: orderData.created_at
+              ? orderData.created_at.toString()
+              : "N/A",
+            serviceType: orderData.appointment
+              ? orderData.appointment.service_type
+              : "N/A",
+            totalDays: orderData.appointment?.day_of_visit,
+            startTime:
+              new Date(orderData.appointment.appointment_date)
+                .toISOString()
+                .split("T")[0] +
+              " / " +
+              orderData.appointment?.appointment_time,
+
+            endTime: calculateEndTime(
+              orderData.appointment.appointment_date,
+              orderData.appointment?.day_of_visit || 0,
+              orderData.appointment.appointment_time
+            ),
+            serviceFee: orderData.appointment.total_payment,
+            totalCharge: orderData.total_payment
           }}
           price={{
-            total: orderData.price.total,
-            delivery: orderData.price.delivery,
-            totalCharge: orderData.price.totalCharge,
+            total:
+              orderData.medicineOrder?.sub_total_medicine?.toString() || "N/A",
+            delivery:
+              orderData.medicineOrder?.delivery_fee?.toString() || "N/A",
+            totalCharge:
+              orderData.medicineOrder?.total_price?.toString() || "N/A"
           }}
-          medications={orderData.medications}
-          proofOfService={orderData.proofOfService}
-          orderType={orderType || orderData.serviceDetails.serviceType}
-          patientName={patientName || orderData.patientInfo.name}
+          medications={
+            orderData.medicineOrder?.orderDetail?.map((detail) => ({
+              quantity: detail.quantity,
+              name: detail.medicine?.name || "N/A",
+              price: detail.total_price.toString()
+            })) || []
+          }
+          proofOfService={{
+            imageUrl: orderData.user.caregiver?.profile_photo_url || ""
+          }}
+          orderType={orderData.appointment ? orderData.appointment.id : "N/A"}
+          patientName={`${orderData.user.first_name} ${orderData.user.last_name}`}
         />
       </div>
     </DefaultLayout>

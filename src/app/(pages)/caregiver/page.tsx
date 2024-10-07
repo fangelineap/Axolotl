@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import ReactModal from "react-modal";
 import { fetchOrdersByCaregiver } from "@/app/server-action/caregiver/action";
+import { useRouter } from "next/navigation";
 
 // Helper function to format the date
 const formatDate = (date: Date) => {
@@ -23,6 +24,8 @@ const Dashboard = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [reasonModalIsOpen, setReasonModalIsOpen] = useState(false);
   const [cancellationReason, setCancellationReason] = useState("");
+
+  const router = useRouter();
 
   const groupOrdersByDate = (orders: any[]) => {
     return orders.reduce(
@@ -90,6 +93,10 @@ const Dashboard = () => {
     console.log("Reason for cancellation:", cancellationReason);
     closeReasonModal();
     // Further logic to handle the cancellation can be added here
+  };
+
+  const handleSeeMore = (order: any) => {
+    router.push(`/caregiver/order/${order.id}`);
   };
 
   return (
@@ -168,7 +175,10 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="flex flex-col sm:p-3 lg:mb-0 lg:flex-row lg:items-start lg:space-x-4">
-                    <button className="hover:bg-green-success-hover mb-2 mt-0 rounded-lg border border-green px-4 py-2 text-sm font-bold text-kalbe-light hover:bg-green-light-4">
+                    <button
+                      className="hover:bg-green-success-hover mb-2 mt-0 rounded-lg border border-green px-4 py-2 text-sm font-bold text-kalbe-light hover:bg-green-light-4"
+                      onClick={() => handleSeeMore(order)}
+                    >
                       See more
                     </button>
                     <div className="hidden lg:block lg:h-20 lg:border-l lg:border-gray-400"></div>
