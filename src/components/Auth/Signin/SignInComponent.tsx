@@ -5,22 +5,18 @@ import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import InputGroup from "@/components/FormElements/InputGroup";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { SignInValidation } from "./Validation/SignInValidation";
-import React from "react";
 
 interface SignInComponentProps {
-  searchParams: any;
   handleRedirectByRole: (role: string) => void;
 }
 
-function SignInComponent({
-  searchParams,
-  handleRedirectByRole
-}: SignInComponentProps) {
-  const router = useRouter();
+function SignInComponent({ handleRedirectByRole }: SignInComponentProps) {
+  const [showError, setShowError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   /**
    * * Redirect User after Sign In
@@ -32,17 +28,37 @@ function SignInComponent({
     const email = form.get("email")!.toString();
     const password = form.get("password")!.toString();
 
-    const { data, error } = await signInWithEmailAndPassword(email, password);
+    const response = await signInWithEmailAndPassword(email, password);
 
-    if (error) router.replace("/auth/signin?success=false");
+    if (!response.success) {
+      setShowError(true);
+      setErrorMessage(
+        "Invalid credentials! Did your cat walk over the keyboard again? 🐾💻"
+      );
 
-    if (data && data.user?.id) {
-      const userRole = await getUser(data.user.id);
+      setTimeout(() => {
+        setShowError(false);
+        setErrorMessage("");
+      }, 15000);
 
-      if (!userRole) router.replace("/auth/signin?success=false");
-
-      handleRedirectByRole(userRole);
+      return;
     }
+
+    const userRole = await getUser(response.data?.userId!);
+
+    if (!userRole) {
+      setShowError(true);
+      setErrorMessage(
+        "Uh-oh! 👀 Looks like someone's trying to break the Axolotl... but not on my watch! 👮🏻‍♂️"
+      );
+
+      return;
+    }
+
+    setShowError(false);
+    setErrorMessage("");
+
+    handleRedirectByRole(userRole);
   };
 
   return (
@@ -81,11 +97,10 @@ function SignInComponent({
                     required
                   />
 
-                  {searchParams.success != null && (
+                  {showError && (
                     <div className="visible rounded-md bg-red p-3">
                       <p className="text-sm font-medium text-white">
-                        Invalid credentials! Please try again or create an
-                        account
+                        {errorMessage}
                       </p>
                     </div>
                   )}

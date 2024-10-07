@@ -27,7 +27,9 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   const cg_full_name =
     caregiver.user.first_name + " " + caregiver.user.last_name;
 
-  // Create reusable date formatters
+  /**
+   * * Date Formatters
+   */
   const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
@@ -44,15 +46,23 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
     year: "numeric"
   });
 
-  // Helper function to format dates
+  /**
+   * * Helper function to format dates
+   * @param date
+   * @param formatter
+   * @returns
+   */
   const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
     formatter.format(new Date(date));
 
-  // Use the formatters
+  /**
+   * * Formatted Dates
+   */
   const formattedReviewDate = formatDate(
     caregiver.reviewed_at,
     dateTimeFormatter
   );
+
   const formattedBirthDate = formatDate(
     caregiver.user.birthdate,
     dateFormatter

@@ -17,6 +17,7 @@ interface AxolotlButtonProps
   fontThickness?: "regular" | "medium" | "bold";
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
+  customWidth?: boolean;
 }
 
 const AxolotlButton = ({
@@ -27,6 +28,7 @@ const AxolotlButton = ({
   fontThickness = "regular",
   startIcon,
   endIcon,
+  customWidth = false,
   ...props
 }: AxolotlButtonProps) => {
   const baseStyles = {
@@ -59,7 +61,7 @@ const AxolotlButton = ({
     bold: "font-bold"
   };
 
-  const buttonClass = `${baseStyles[variant]} ${roundStyles[roundType]} ${fontThicknessStyles[fontThickness]} border w-full px-3 py-2 transition duration-150 ease-in-out ${endIcon || startIcon ? "flex items-center gap-2 justify-center" : ""} ${customClasses}`;
+  const buttonClass = `${baseStyles[variant]} ${roundStyles[roundType]} ${fontThicknessStyles[fontThickness]} border ${customWidth ? "" : "w-full"} px-3 py-2 transition duration-150 ease-in-out ${endIcon || startIcon ? "flex items-center gap-2 justify-center" : ""} ${customClasses}`;
 
   return (
     <button className={buttonClass} {...props}>
