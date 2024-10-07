@@ -1,10 +1,10 @@
 "use server";
 
+import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { createServerClient } from "@supabase/ssr";
 import { unstable_noStore } from "next/cache";
 import { cookies } from "next/headers";
-import { getUserAuthSchema } from "../server-action/admin/SupaAdmin";
-import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { redirect } from "next/navigation";
 
 /**
@@ -32,7 +32,7 @@ export default async function createSupabaseServerClient() {
 }
 
 /**
- * * Get user data from users table
+ * * Get user data from session, then fetch user data from users table
  * @returns
  */
 export async function getUserFromSession() {
@@ -41,7 +41,6 @@ export async function getUserFromSession() {
   const supabase = await createSupabaseServerClient();
   const { data: sessionData, error } = await supabase.auth.getUser();
 
-  // Return early if there's no session or an error
   if (error || !sessionData?.user) {
     return { data: null, error: error || new Error("No session found") };
   }
@@ -49,16 +48,79 @@ export async function getUserFromSession() {
   const userId = sessionData.user.id;
 
   // Fetch the user from the database
-  const { data: user, error: userError } = await supabase
+  const { data: userData, error: userDataError } = await supabase
     .from("users")
     .select()
     .eq("user_id", userId)
     .single();
 
   return {
-    data: user ? user : null,
-    error: userError || null
+    data: userData || null,
+    error: userDataError || null
   };
+}
+
+/**
+ * * Helper function to fetch user data by role
+ * @param user
+ * @param supabase
+ * @param authSchema
+ * @returns
+ */
+async function fetchUserDataByRole(
+  user: any,
+  supabase: any,
+  authSchema: any
+): Promise<USER_DETAILS_AUTH_SCHEMA | null> {
+  if (user.role === "Patient") {
+    const { data: patient, error: patientError } = await supabase
+      .from("users")
+      .select("*, patient(*)")
+      .eq("user_id", user.user_id)
+      .single();
+
+    if (patientError) {
+      console.error("Error fetching patient data:", patientError.message);
+
+      return null;
+    }
+
+    return {
+      ...patient,
+      email: authSchema?.email,
+      patient: patient?.patient.length === 0 ? null : patient?.patient[0]
+    };
+  }
+
+  if (user.role === "Nurse" || user.role === "Midwife") {
+    const { data: caregiver, error: caregiverError } = await supabase
+      .from("users")
+      .select("*, caregiver(*)")
+      .eq("user_id", user.user_id)
+      .single();
+
+    if (caregiverError) {
+      console.error("Error fetching caregiver data:", caregiverError.message);
+
+      return null;
+    }
+
+    return {
+      ...caregiver,
+      email: authSchema?.email,
+      caregiver:
+        caregiver?.caregiver.length === 0 ? null : caregiver?.caregiver[0]
+    };
+  }
+
+  if (user.role === "Admin") {
+    return {
+      ...user,
+      email: authSchema?.email
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -86,64 +148,18 @@ export async function getUserDataFromSession() {
 
   if (userError) {
     console.error("Error fetching data:", userError.message);
+
     return null;
   }
 
   const authSchema = await getUserAuthSchema(userId);
 
-  if (user.role === "Patient") {
-    const { data: patient, error: patientError } = await supabase
-      .from("users")
-      .select("*, patient(*)")
-      .eq("user_id", userId)
-      .single();
-
-    if (patientError) {
-      console.error("Error fetching data:", patientError.message);
-      return null;
-    }
-
-    const patientData: USER_DETAILS_AUTH_SCHEMA = {
-      ...patient,
-      email: authSchema?.email,
-      patient: patient?.patient.length === 0 ? null : patient?.patient[0]
-    };
-
-    return patientData;
-  }
-
-  if (user.role === "Nurse" || user.role === "Midwife") {
-    const { data: caregiver, error: caregiverError } = await supabase
-      .from("users")
-      .select("*, caregiver(*)")
-      .eq("user_id", userId)
-      .single();
-
-    if (caregiverError) {
-      console.error("Error fetching data:", caregiverError.message);
-      return null;
-    }
-
-    const caregiverData: USER_DETAILS_AUTH_SCHEMA = {
-      ...caregiver,
-      email: authSchema?.email,
-      caregiver:
-        caregiver?.caregiver.length === 0 ? null : caregiver?.caregiver[0]
-    };
-
-    return caregiverData;
-  }
-
-  if (user.role === "Admin") {
-    const adminData: USER_DETAILS_AUTH_SCHEMA = {
-      ...user,
-      email: authSchema?.email
-    };
-
-    return adminData;
-  }
+  return await fetchUserDataByRole(user, supabase, authSchema);
 }
 
+/**
+ * * Handle user logout
+ */
 export async function logout() {
   unstable_noStore();
 

@@ -1,7 +1,6 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import Image from "next/image";
-import React from "react";
 
 export const metadata = getGuestMetadata("about");
 
@@ -100,7 +99,6 @@ const About = () => {
                 height="200"
                 src="https://www.youtube.com/embed/uUw4NJmAUNI?si=syqClaDEecFtKjCZ"
                 title="YouTube video player"
-                frameBorder="0"
                 allowFullScreen
               ></iframe>
             </div>
@@ -113,12 +111,13 @@ const About = () => {
               possible 🥰
             </p>
           </div>
+          <div className="block w-full border-t border-primary md:hidden" />
           <div className="flex flex-col items-center">
-            <blockquote className="text-center text-3xl ">
+            <blockquote className="text-center text-lg md:text-3xl">
               “The eyes of the axolotls spoke to me of the presence of a
               different life, of another way of seeing.”
               <br />
-              <span className="mt-2 block w-full text-right text-lg">
+              <span className="text-md mt-2 block w-full text-right md:text-lg">
                 —Julio Cortázar,&nbsp;
                 <a
                   href="https://www.goodreads.com/work/quotes/21981414-axolotl-la-presencia-de-una-vida-diferente-de-otra-forma-de-mirar"

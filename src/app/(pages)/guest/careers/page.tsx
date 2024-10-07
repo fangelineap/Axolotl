@@ -1,6 +1,7 @@
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
-import { IconInfoCircleFilled } from "@tabler/icons-react";
+import { IconChevronsDown, IconInfoCircleFilled } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -10,27 +11,39 @@ export const metadata = getGuestMetadata("careers");
 const Careers: React.FC = () => {
   return (
     <DefaultLayout>
-      <div className="relative flex h-screen flex-col items-center justify-center p-6 text-black">
+      <div className="flex flex-col items-center justify-center p-6 text-black md:relative md:h-screen">
         <div className="custom-bg absolute inset-0"></div>
 
         <div className="relative z-10 max-w-4xl text-center">
-          <h1 className="mb-4 text-5xl">How to be</h1>
-          <h2 className="mb-6 text-7xl">
+          <h1 className="mb-4 text-heading-3 md:text-heading-2">How to be</h1>
+          <h2 className="mb-6 text-heading-2 md:text-heading-1">
             a <span className="font-bold">Caregiver</span>
           </h2>
-          <p className="mb-8 text-lg">
+          <p className="mb-8 text-lg md:text-xl">
             Join a team dedicated to providing compassionate care and support to
             those who need it most. As a caregiver, you&apos;ll play a vital
             role in enhancing the lives of individuals and families, fostering
             independence, and promoting overall well-being.
           </p>
-          <button className="rounded-full border border-primary bg-primary p-2 px-8 font-bold text-white hover:bg-kalbe-medium">
-            <Link href={"/auth/register"}>Apply Now</Link>
-          </button>
+
+          <Link
+            href={"/auth/register"}
+            className="flex items-center justify-center gap-2"
+          >
+            <AxolotlButton
+              label="Apply Now"
+              variant="primary"
+              roundType="regular"
+              fontThickness="medium"
+              customClasses="text-xl md:text-heading-6 md:w-fit"
+              startIcon={<IconChevronsDown />}
+              endIcon={<IconChevronsDown />}
+            />
+          </Link>
         </div>
       </div>
 
-      <div className="mx-auto mb-12 flex max-w-6xl flex-col items-center justify-center p-6 text-black md:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-center p-6 text-black md:mb-12 md:flex-row">
         <Image
           src="/images/freepik/caregiver-team.svg"
           alt="Caregiver Team"
@@ -50,12 +63,13 @@ const Careers: React.FC = () => {
           </p>
         </div>
       </div>
+
       <div className="mx-auto max-w-6xl p-6 text-black">
         <div className="container mx-auto rounded-lg border border-kalbe-light bg-kalbe-ultraLight p-6">
           <div className="flex flex-col md:flex-row">
             <div className="w-full border-b border-kalbe-light p-4 md:w-1/2 md:border-b-0 md:border-r">
               <h2 className="mb-4 text-2xl">
-                As a <span className="font-bold">Caregiver</span>, you’ll
+                As a <span className="font-bold">Caregiver</span>, you&apos;ll
               </h2>
               <ul className="list-disc space-y-1 pl-5 text-sm">
                 <li>
@@ -121,7 +135,7 @@ const Careers: React.FC = () => {
       </div>
 
       <div className="mx-auto max-w-6xl p-6 text-black">
-        <div className="container mx-auto p-6 text-center md:text-left">
+        <div className="container mx-auto text-center md:text-left">
           <h2 className="mb-6 text-center text-4xl">
             Nice to <span className="font-bold">Have</span>
           </h2>
@@ -153,9 +167,14 @@ const Careers: React.FC = () => {
                   </ul>
                 </div>
               </div>
-              <button className="h-12 w-40 rounded bg-kalbe-light font-bold text-white hover:bg-kalbe-medium md:h-9 md:w-48">
-                <Link href={"/auth/register"}>Apply as Caregiver</Link>
-              </button>
+              <Link href={"/auth/register"} className="w-full md:w-fit">
+                <AxolotlButton
+                  label="Apply as Caregiver"
+                  variant="primary"
+                  roundType="regular"
+                  fontThickness="medium"
+                />
+              </Link>
             </div>
             <div className="hidden md:flex md:justify-center ">
               <Image

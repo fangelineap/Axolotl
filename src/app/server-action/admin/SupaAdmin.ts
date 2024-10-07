@@ -23,7 +23,36 @@ async function getAdminAuthClient() {
 }
 
 /**
- * * Gets the user's authentication schema from Supabase
+ * * Create a user
+ * @param email
+ * @param password
+ */
+export async function createUser(email: string, password: string) {
+  const supabaseAdmin = await getAdminAuthClient();
+
+  try {
+    const { data, error } = await supabaseAdmin.createUser({
+      email,
+      password,
+      email_confirm: true
+    });
+
+    if (error) {
+      console.error("Error creating new user:", error.message);
+
+      return { data: null, error };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("Error in createUser", error);
+
+    return { data: null, error };
+  }
+}
+
+/**
+ * * Get the user's authentication schema from Supabase
  * @param user_id
  * @returns
  */
@@ -35,18 +64,20 @@ export async function getUserAuthSchema(user_id: string) {
 
     if (error) {
       console.error("Error fetching user data:", error.message);
+
       return null;
     }
 
     return response?.user;
   } catch (error) {
     console.error("Error in getUserAuthSchema:", error);
+
     return null;
   }
 }
 
 /**
- * * Deletes a user from Supabase
+ * * Delete a user from Supabase
  * @param user_id
  * @returns
  */
@@ -58,13 +89,14 @@ export async function deleteUser(user_id: string) {
     const { error } = await supabaseAdmin.deleteUser(user_id);
     if (error) {
       console.error("Error deleting user:", error.message);
+
       return null;
     }
-    console.log("Successfully deleted user:", user_id);
 
     return true;
   } catch (error) {
     console.error("Error in deleteUser:", error);
+
     return null;
   }
 }

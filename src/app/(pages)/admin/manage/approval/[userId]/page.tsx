@@ -8,11 +8,22 @@ interface AdminShowApprovalProps {
   params: { userId: string };
 }
 
+/**
+ * * Fetch Data for Admin Detailed Approval Page
+ * @param params
+ * @returns
+ */
 async function fetchData({ params }: AdminShowApprovalProps) {
   const response = await getSingleAdminApprovalById(params.userId);
+
   return response as AdminApprovalTable;
 }
 
+/**
+ * * Generate Metadata for Admin Detailed Approval Page
+ * @param params
+ * @returns
+ */
 export async function generateMetadata({ params }: AdminShowApprovalProps) {
   const response = await fetchData({ params });
 
@@ -29,6 +40,11 @@ export async function generateMetadata({ params }: AdminShowApprovalProps) {
   };
 }
 
+/**
+ * * Render Admin Detailed Approval Page
+ * @param params
+ * @returns
+ */
 async function AdminShowApproval({ params }: AdminShowApprovalProps) {
   const response = await fetchData({ params });
 

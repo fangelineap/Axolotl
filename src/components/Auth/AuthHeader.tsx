@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { IconArrowLeft } from "@tabler/icons-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -25,6 +26,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -104,7 +106,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
         </div>
         <div className="flex gap-8">
-          <div className="hidden items-center justify-center gap-2 text-black hover:text-dark-secondary lg:flex">
+          <div className="hidden items-center justify-center gap-2 text-black hover:underline lg:flex">
             <Link href="/">
               <div className="flex items-center gap-2">
                 <IconArrowLeft />
@@ -115,15 +117,21 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="text-black dark:text-white">
             {pathname.includes("signin") ? (
               <Link href="/auth/register">
-                <button className="rounded border border-kalbe-light px-4 py-2 text-primary hover:bg-kalbe-ultraLight">
-                  Register
-                </button>
+                <AxolotlButton
+                  label="Register"
+                  variant="primaryOutlined"
+                  roundType="regular"
+                  fontThickness="medium"
+                />
               </Link>
             ) : (
               <Link href="/auth/signin">
-                <button className="rounded border border-primary bg-kalbe-light px-4 py-2 text-white hover:bg-kalbe-ultraLight hover:text-primary">
-                  Login
-                </button>
+                <AxolotlButton
+                  label="Login"
+                  variant="primary"
+                  roundType="regular"
+                  fontThickness="medium"
+                />
               </Link>
             )}
           </div>

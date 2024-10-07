@@ -1,8 +1,9 @@
 "use client";
 
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
-import PriceBox from "@/components/Axolotl/PriceBox";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import { Skeleton } from "@mui/material";
 import { IconBan } from "@tabler/icons-react";
 import Image from "next/image";
@@ -72,25 +73,25 @@ function ViewMedicine(data: ViewMedicineProps) {
             )}
           </div>
           <div className="flex flex-col">
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Product ID"
               horizontal
               value={data.medicine.uuid}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Name"
               horizontal
               value={data.medicine.name}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Type"
               horizontal
               value={data.medicine.type}
               type="text"
             />
-            <DisabledLabel
+            <DisabledCustomInputGroup
               label="Exp. Date"
               horizontal
               value={formatDate}
@@ -112,22 +113,26 @@ function ViewMedicine(data: ViewMedicineProps) {
                 disabled={true}
               />
 
-              <button
+              <AxolotlButton
+                label="Update Medicine"
+                variant="warningOutlined"
+                fontThickness="bold"
+                customClasses="text-lg"
+                roundType="regular"
                 onClick={() => {
                   router.push(
                     `/admin/manage/medicine/edit/${data.medicine.uuid}`
                   );
                 }}
-                className="w-full rounded-[4px] border border-yellow-dark py-2 text-lg font-semibold text-yellow-dark hover:bg-yellow-light"
-              >
-                Update Medicine
-              </button>
-              <button
+              />
+              <AxolotlButton
+                label="Go back"
+                variant="secondary"
+                fontThickness="bold"
+                customClasses="text-lg"
+                roundType="regular"
                 onClick={() => router.replace("/admin/manage/medicine")}
-                className="w-full rounded-[4px] border border-gray-cancel bg-gray-cancel py-2 text-lg font-semibold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
-              >
-                Go back
-              </button>
+              />
             </div>
           </div>
         </div>

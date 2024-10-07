@@ -2,7 +2,7 @@
 
 import { getOrder } from "@/app/server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import {

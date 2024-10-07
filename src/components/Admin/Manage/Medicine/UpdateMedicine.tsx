@@ -3,9 +3,10 @@
 
 import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
-import EditLabel from "@/components/Axolotl/EditLabel";
-import PriceBox from "@/components/Axolotl/PriceBox";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
 import { createBrowserClient } from "@supabase/ssr";
@@ -17,6 +18,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { uuidv7 } from "uuidv7";
+import { AdminMedicineValidation } from "./Validation/AdminMedicineValidation";
 
 interface UpdateMedicineProps {
   medicine: AdminMedicineTable;
@@ -50,71 +52,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       ...formData,
       [name]: value
     });
-  };
-
-  const validateForm = (form: FormData) => {
-    if (
-      !medicinePhoto &&
-      !form.get("name") &&
-      !form.get("type") &&
-      !form.get("price") &&
-      !form.get("exp_date")
-    ) {
-      toast.error("Please insert a valid data.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if (!medicinePhoto) {
-      toast.warning("Please upload a photo.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if (!form.get("name")) {
-      toast.warning("Please enter the medicine name.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if (!form.get("type")) {
-      toast.warning("Please enter the medicine type.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if (!form.get("exp_date")) {
-      toast.warning("Please select the expiry date.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if (new Date(form.get("exp_date")?.toString() || "") <= new Date()) {
-      toast.warning("The expiry date cannot be in the past or today.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if (
-      !form.get("price") ||
-      isNaN(parseFloat(form.get("price")?.toString() || "0"))
-    ) {
-      toast.warning("Please enter a valid price.", {
-        position: "bottom-right"
-      });
-      return false;
-    }
-    if ((form.get("price")?.toString().length ?? 0) <= 2) {
-      toast.warning(
-        "Bro, this isn't a thrift store 🤡. Add some digits before we go broke 💸",
-        {
-          position: "bottom-right"
-        }
-      );
-      return false;
-    }
-
-    return true;
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,6 +131,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       if (error) {
         return error;
       }
+
       return true;
     } catch (error) {
       return error;
@@ -217,12 +155,13 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       toast.error("Error uploading file: " + error, {
         position: "bottom-right"
       });
+
       return undefined;
     }
   };
 
   const saveUpdatedMedicine = async (form: FormData) => {
-    if (validateForm(form) == false) return;
+    if (AdminMedicineValidation(form, medicinePhoto) == false) return;
 
     let pathMedicine: string | undefined = undefined;
 
@@ -234,6 +173,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
         toast.error("Something went wrong. Please try again", {
           position: "bottom-right"
         });
+
         return;
       }
     } else {
@@ -241,14 +181,12 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
 
     // Update the medicine in the database
-    const updatedMedicine = {
+    const updatedMedicine: AdminMedicineTable = {
       uuid: medicine.uuid,
       name: form.get("name")?.toString() || "",
       type: form.get("type")?.toString() || "",
       price: parseFloat(form.get("price")?.toString() || "0"),
-      exp_date: new Date(
-        form.get("exp_date")?.toString() || ""
-      ).toLocaleString(),
+      exp_date: new Date(form.get("exp_date")?.toString() || ""),
       medicine_photo: pathMedicine
     };
 
@@ -264,7 +202,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       return;
     }
 
-    toast.success("A new medicine has been added successfully.", {
+    toast.success("Medicine updated successfully.", {
       position: "bottom-right"
     });
 
@@ -340,13 +278,13 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
               </div>
             </div>
             <div className="flex flex-col">
-              <DisabledLabel
+              <DisabledCustomInputGroup
                 label="Product ID"
                 value={medicine.uuid}
                 type="text"
                 horizontal
               />
-              <EditLabel
+              <CustomInputGroup
                 name="name"
                 label="Name"
                 placeholder="Medicine Name"
@@ -401,16 +339,22 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                   required={true}
                 />
                 <Link href={`/admin/manage/medicine/${medicine.uuid}`}>
-                  <button className="w-full rounded-[4px] border border-red py-2 text-lg font-semibold text-red hover:bg-red-hover">
-                    Cancel
-                  </button>
+                  <AxolotlButton
+                    label="Cancel"
+                    fontThickness="bold"
+                    variant="dangerOutlined"
+                    customClasses="text-lg"
+                    roundType="regular"
+                  />
                 </Link>
-                <button
+                <AxolotlButton
+                  label="Update Medicine"
                   type="submit"
-                  className="w-full rounded-[4px] border border-primary bg-primary py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary"
-                >
-                  Update Medicine
-                </button>
+                  fontThickness="bold"
+                  variant="primary"
+                  customClasses="text-lg"
+                  roundType="regular"
+                />
               </div>
             </div>
           </div>

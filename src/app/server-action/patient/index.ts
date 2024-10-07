@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
-import createSupabaseServerClient from "@/app/lib/server";
+import createSupabaseServerClient from "@/lib/server";
 
 interface Appointment {
   service_type: string;

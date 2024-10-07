@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { AdminMedicineTable } from "./data";
 import { columns } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
-import AxolotlModal from "@/components/Axolotl/AxolotlModal";
+import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { deleteAdminMedicine } from "../actions";
 import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";

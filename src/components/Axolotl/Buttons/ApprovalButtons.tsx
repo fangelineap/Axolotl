@@ -3,14 +3,16 @@
 
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import AxolotlModal from "./AxolotlModal";
-import AxolotlRejectionModal from "./AxolotlRejectionModal";
+
 import {
   adminApproveCaregiver,
   adminRejectCaregiver
 } from "@/app/(pages)/admin/manage/approval/actions";
+import AxolotlModal from "../Modal/AxolotlModal";
+import AxolotlRejectionModal from "../Modal/AxolotlRejectionModal";
+import AxolotlButton from "./AxolotlButton";
 
 interface ApprovalButtonsProps {
   status: string;
@@ -44,6 +46,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
           toast.error("Something went wrong.", {
             position: "bottom-right"
           });
+
           return;
         }
 
@@ -76,6 +79,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         toast.error("Failed to perform the action. Please try again.", {
           position: "bottom-right"
         });
+
         return;
       }
 
@@ -111,22 +115,22 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       <ToastContainer />
       {status === "Unverified" ? (
         <div className="flex w-full items-center justify-center gap-5">
-          <button
-            className="w-full rounded-md border border-red p-2 font-bold text-red hover:bg-red-hover"
+          <AxolotlButton
+            label="Reject"
+            variant="dangerOutlined"
+            fontThickness="bold"
             onClick={handleReject}
-          >
-            Reject
-          </button>
-          <button
-            className="w-full rounded-md border border-primary bg-primary p-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
+          />
+          <AxolotlButton
+            label="Approve"
+            variant="primary"
             onClick={handleApprove}
-          >
-            Approve
-          </button>
+            fontThickness="bold"
+          />
         </div>
       ) : (
         <button
-          className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+          className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white transition duration-150 ease-in-out hover:bg-gray-cancel-hover hover:text-gray-cancel"
           onClick={() => router.replace("/admin/manage/approval")}
         >
           Go back

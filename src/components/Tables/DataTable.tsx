@@ -20,6 +20,7 @@ import {
 } from "@tanstack/react-table";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import SelectDataTable from "../Axolotl/SelectDataTable";
 import CustomPagination from "../Pagination/Pagination";
 
@@ -139,8 +140,8 @@ export function DataTable<
 
   return (
     <div className="rounded-lg border border-gray-1 bg-white p-5">
-      <div className="flex flex-col justify-between border-b border-gray-1 pb-4 md:flex-row">
-        <div className="mb-4 flex w-full md:mb-0 md:w-80">
+      <div className="flex flex-col justify-between border-b border-gray-1 pb-4 lg:flex-row">
+        <div className="mb-4 flex w-full lg:mb-0 lg:w-80">
           <input
             type="text"
             placeholder="Search here..."
@@ -152,24 +153,26 @@ export function DataTable<
             <IconSearch className="text-white" />
           </button>
         </div>
-        <div className="flex w-full items-center justify-between md:w-auto">
-          {pathName === "/admin/manage/medicine" && (
-            <button
-              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 font-medium text-white hover:bg-kalbe-ultraLight hover:text-primary"
-              onClick={() => router.push(`${pathName}/add`)}
-            >
-              Add Medicine
-            </button>
-          )}
-          {pathName === "/admin/manage/user" && (
-            <button
-              className="mr-5 rounded-md border border-primary bg-primary p-2 px-4 font-medium text-white hover:bg-kalbe-ultraLight hover:text-primary"
-              onClick={() => router.push(`${pathName}/add`)}
-            >
-              Create an Admin
-            </button>
-          )}
-          <label className="mr-2">Items per page:</label>
+        <div className="flex w-full items-center justify-end gap-4">
+          <div className="w-fit">
+            {pathName === "/admin/manage/medicine" && (
+              <AxolotlButton
+                label="Add Medicine"
+                onClick={() => router.push(`${pathName}/add`)}
+                variant="primary"
+                fontThickness="medium"
+              />
+            )}
+            {pathName === "/admin/manage/user" && (
+              <AxolotlButton
+                label="Create an Admin"
+                onClick={() => router.push(`${pathName}/add`)}
+                variant="primary"
+                fontThickness="medium"
+              />
+            )}
+          </div>
+          <p className="w-fit">Items per page:</p>
           <select
             title="Items per page"
             value={pagination.pageSize}
@@ -177,7 +180,7 @@ export function DataTable<
               setPagination((prev) => ({
                 ...prev,
                 pageSize: Number(e.target.value),
-                pageIndex: 0 // Reset to first page on page size change
+                pageIndex: 0
               }))
             }
             className=" text-dark-secondary"

@@ -3,7 +3,7 @@
 import { CaregiverOrder } from "@/app/(pages)/caregiver/type/data";
 import createSupabaseServerClient, {
   getUserDataFromSession
-} from "@/app/lib/server";
+} from "@/lib/server";
 import { MEDICINE_ORDER_DETAIL } from "@/types/axolotl";
 
 import { unstable_noStore } from "next/cache";

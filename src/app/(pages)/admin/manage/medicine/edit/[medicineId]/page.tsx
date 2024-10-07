@@ -8,13 +8,24 @@ interface MedicinePageProps {
   params: { medicineId: string };
 }
 
+/**
+ * * Fetch Data for Admin Edit Medicine Page
+ * @param param0
+ * @returns
+ */
 async function fetchData({ params }: MedicinePageProps) {
   const response: AdminMedicineTable = await getAdminMedicineById(
     params.medicineId
   );
+
   return response;
 }
 
+/**
+ * * Generate Metadata for Admin Edit Medicine Page
+ * @param param0
+ * @returns
+ */
 export async function generateMetadata({ params }: MedicinePageProps) {
   const response = await fetchData({ params });
 
@@ -29,14 +40,22 @@ export async function generateMetadata({ params }: MedicinePageProps) {
   };
 }
 
+/**
+ * * Render Admin Edit Medicine Page
+ * @param param0
+ * @returns
+ */
 async function AdminUpdateMedicine({ params }: MedicinePageProps) {
   const medicine = await fetchData({ params });
 
   if (!medicine) {
     return (
       <AdminLayout>
-        <h1 className="mb-5 text-heading-1 font-bold">No Medicine Found</h1>
-        <p>No medicine details found.</p>
+        <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
+          <h1 className="mb-5 text-heading-1 font-bold">
+            Something went wrong
+          </h1>
+        </div>
       </AdminLayout>
     );
   }

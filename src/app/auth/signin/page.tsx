@@ -1,146 +1,46 @@
-import { getUserFromSession } from "@/app/lib/server";
-import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
-import InputGroup from "@/components/FormElements/InputGroup";
+import SignInComponent from "@/components/Auth/Signin/SignInComponent";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getUserFromSession } from "@/lib/server";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import PasswordInput from "../component/PasswordInput";
 
 export const metadata: Metadata = getGuestMetadata("sign in");
 
 const SignIn = async ({ searchParams }: any) => {
   /**
-   * Get user from session
+   * * Get user from session
    */
   const { data: user } = await getUserFromSession();
 
-  if (user) {
-    if (user.role === "Patient") {
-      redirect("/patient");
-    } else if (user.role === "Nurse" || user.role === "Midwife") {
-      redirect("/caregiver");
-    } else if (user.role === "Admin") {
-      redirect("/admin");
-    }
-  }
-
   /**
-   * Redirect User after Sign In
-   * @param form
+   * * Redirect User after Sign In based on role
+   * @param role
    */
-  const signIn = async (form: FormData) => {
-    "use server";
+  const handleRedirectByRole = (role: string) => {
+    const roleBasedRedirects: Record<string, string> = {
+      Patient: "/patient",
+      Nurse: "/caregiver",
+      Midwife: "/caregiver",
+      Admin: "/admin"
+    };
 
-    const { error, data } = await signInWithEmailAndPassword(
-      form.get("email")!.toString(),
-      form.get("password")!.toString()
-    );
-
-    if (error) {
-      redirect("/auth/signin?success=false");
-    }
-
-    if (data) {
-      const { data: userData, error: userError } = await getUser(data.user.id);
-      if (userError) {
-        redirect("/auth/signin?success=false");
-      }
-
-      if (userData[0].role == "Nurse" || userData[0].role == "Midwife") {
-        redirect("/caregiver");
-      }
-
-      if (userData[0].role == "Admin") {
-        redirect("/admin");
-      }
-
-      if (userData[0].role == "Patient") {
-        redirect("/patient");
-      }
+    const redirectPath = roleBasedRedirects[role];
+    if (redirectPath) {
+      redirect(redirectPath);
     }
   };
 
+  if (user) {
+    handleRedirectByRole(user.role);
+  }
+
   return (
     <DefaultLayout>
-      <div className="mx-4 my-15 flex h-full w-auto justify-center md:m-20">
-        {/* <!-- Sign In Form --> */}
-        <div className="w-full lg:max-w-[50%]">
-          <div className="rounded-t-xl border border-primary bg-primary py-3">
-            <h1 className="text-center text-xl font-semibold text-white md:text-heading-5">
-              Sign In
-            </h1>
-          </div>
-          <div className="rounded-b-xl border border-primary">
-            <form action={signIn}>
-              <div className="flex flex-col gap-4 p-5">
-                <div className="flex flex-col items-center justify-center">
-                  <h1 className="text-xl font-bold md:text-heading-6">
-                    Welcome back!
-                  </h1>
-                  <p>Sign in to your account below</p>
-                </div>
-
-                <div className="flex w-full flex-col gap-3">
-                  <InputGroup
-                    name="email"
-                    label="Email"
-                    type="email"
-                    placeholder="Enter your email address"
-                    required
-                  />
-                  <PasswordInput
-                    label="Password"
-                    placeholder="Enter your password"
-                    name="password"
-                    required
-                  />
-
-                  {searchParams.success != null && (
-                    <div className="visible rounded-md bg-red p-3">
-                      <p className="text-sm font-medium text-white">
-                        Invalid credentials! Please try again or create an
-                        account
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex w-full justify-end">
-                  <Link
-                    href="/auth/forgetpassword"
-                    className="text-body-sm text-primary hover:underline md:text-dark-secondary md:hover:text-primary"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-
-                <div className="flex justify-center">
-                  <button
-                    type="submit"
-                    className="w-full rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary md:w-1/2"
-                  >
-                    Sign In
-                  </button>
-                </div>
-
-                <p className="text-center text-body-sm">
-                  Don&apos;t have an account?{" "}
-                  <span>
-                    <Link
-                      href="/auth/register"
-                      className="text-primary hover:underline"
-                    >
-                      Sign Up Here
-                    </Link>
-                  </span>
-                </p>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      <SignInComponent
+        searchParams={searchParams}
+        handleRedirectByRole={handleRedirectByRole}
+      />
     </DefaultLayout>
   );
 };

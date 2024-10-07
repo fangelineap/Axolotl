@@ -5,8 +5,9 @@ import {
   IconHash,
   IconMedicineSyrup,
   IconUserCircle,
-  IconX,
+  IconX
 } from "@tabler/icons-react";
+import AxolotlButton from "../Buttons/AxolotlButton";
 import React from "react";
 
 interface AxolotlModalProps {
@@ -28,7 +29,7 @@ function AxolotlModal({
   question,
   action,
   medicine,
-  user,
+  user
 }: AxolotlModalProps) {
   const user_full_name = user?.first_name + " " + user?.last_name;
 
@@ -79,69 +80,77 @@ function AxolotlModal({
               </div>
             )}
           </div>
-          <div className="flex justify-center gap-4">
+          <div className="mx-5 flex justify-between gap-4">
             {(action === "delete" || action === "reject") && (
               <>
-                <button
-                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                <AxolotlButton
+                  label="No, cancel"
                   onClick={onClose}
-                >
-                  No, cancel
-                </button>
-                <button
-                  className="w-1/4 rounded-md border border-red bg-red px-3 py-2 font-bold text-white hover:bg-red-hover hover:text-red"
+                  variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="Yes, I'm sure"
                   onClick={onConfirm}
-                >
-                  Yes, I&apos;m sure
-                </button>
+                  variant="danger"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
               </>
             )}
             {(action === "confirm" || action === "approve") && (
               <>
-                <button
-                  className="w-1/4 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                <AxolotlButton
+                  label="No, cancel"
                   onClick={onClose}
-                >
-                  No, cancel
-                </button>
-                <button
-                  className="w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
+                  variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="Yes, I'm sure"
                   onClick={onConfirm}
-                >
-                  Yes, I&apos;m sure
-                </button>
+                  variant="primary"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
               </>
             )}
             {action === "skip" && (
               <>
-                <button
-                  className="w-1/4 rounded-md border border-red px-3 py-2 font-bold text-red hover:bg-red-hover"
-                  onClick={onClose}
-                >
-                  Not sure
-                </button>
-                <button
-                  className="w-1/4 rounded-md border border-primary bg-primary px-3 py-2 font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
+                <AxolotlButton
+                  label="Not now"
                   onClick={onConfirm}
-                >
-                  Yup, skip it
-                </button>
+                  variant="danger"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="Yup, skip it"
+                  onClick={onConfirm}
+                  variant="primary"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
               </>
             )}
             {action === "cancel" && (
               <>
-                <button
-                  className="w-1/4 rounded-md border border-red bg-white px-3 py-2 font-bold text-red hover:bg-red-hover hover:text-red"
+                <AxolotlButton
+                  label="Yes, cancel the registration"
                   onClick={onConfirm}
-                >
-                  Yes, cancel
-                </button>
-                <button
-                  className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel px-3 py-2 font-bold text-white hover:bg-gray-cancel-hover hover:text-gray-cancel"
+                  variant="danger"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="No, continue the registration"
                   onClick={onClose}
-                >
-                  No, continue the registration
-                </button>
+                  variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
               </>
             )}
           </div>

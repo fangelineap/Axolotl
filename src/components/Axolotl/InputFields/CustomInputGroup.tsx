@@ -1,7 +1,6 @@
 import React from "react";
 
-interface EditLabelProps {
-  // Basic Props
+interface CustomInputGroupProps {
   label: string;
   type: string;
   name: string;
@@ -12,7 +11,7 @@ interface EditLabelProps {
   value?: string;
 }
 
-const EditLabel = ({
+const CustomInputGroup = ({
   label,
   type,
   name,
@@ -21,7 +20,7 @@ const EditLabel = ({
   required,
   onChange,
   value
-}: EditLabelProps) => {
+}: CustomInputGroupProps) => {
   return (
     <div
       className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
@@ -42,4 +41,4 @@ const EditLabel = ({
   );
 };
 
-export default EditLabel;
+export default CustomInputGroup;

@@ -1,14 +1,14 @@
 "use client";
 
-import { getCaregiverById, getUserFromSession } from "@/app/lib/server";
+import { getCaregiverById, getUserFromSession } from "@/lib/server";
 import { getCaregiverPhoto } from "@/app/server-action/caregiver";
 import { createAppointment } from "@/app/server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
-import DisabledLabel from "@/components/Axolotl/DisabledLabel";
+import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import Select from "@/components/Axolotl/Select";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { services } from "@/utils/Metadata/Services";
+import { services } from "@/utils/Services";
 import {
   IconCircleMinus,
   IconCirclePlus,
@@ -152,28 +152,28 @@ const PlacingOrder = ({ searchParams }: any) => {
                   Patient Information
                 </h1>
                 <div>
-                  <DisabledLabel
+                  <DisabledCustomInputGroup
                     label="Patient Name"
                     horizontal
                     placeholder={session.first_name + " " + session.last_name}
                     type="text"
                     key={"patient-name"}
                   />
-                  <DisabledLabel
+                  <DisabledCustomInputGroup
                     label="Address"
                     horizontal
                     placeholder={session.address}
                     type="text"
                     key={"patient-address"}
                   />
-                  <DisabledLabel
+                  <DisabledCustomInputGroup
                     label="Phone Number"
                     horizontal
                     placeholder={"0" + session.phone_number}
                     type="text"
                     key={"patient-phone-number"}
                   />
-                  <DisabledLabel
+                  <DisabledCustomInputGroup
                     label="Birthdate"
                     horizontal
                     placeholder={session.birthdate}
@@ -440,13 +440,13 @@ const PlacingOrder = ({ searchParams }: any) => {
                         {caregiver?.first_name} {caregiver?.last_name}
                       </h1>
                     </div>
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       horizontal={false}
                       label="Service Type"
                       type="text"
                       value={serviceType}
                     />
-                    <DisabledLabel
+                    <DisabledCustomInputGroup
                       horizontal={false}
                       label="Service For"
                       type="text"

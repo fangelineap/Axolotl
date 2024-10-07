@@ -147,9 +147,13 @@ async function updateSession(request: NextRequest) {
     }
   } else if (pathname.startsWith("/caregiver")) {
     if (userRole === "Nurse" || userRole === "Midwife") {
-      const caregiverStatus = await getCaregiverVerificationStatus(userId!);
+      const caregiverStatus = (await getCaregiverVerificationStatus(
+        userId!
+      )) as "Verified" | "Rejected" | "Unverified";
 
-      const caregiverRedirects = {
+      const caregiverRedirects: {
+        [key in "Verified" | "Rejected" | "Unverified"]: NextResponse;
+      } = {
         Verified: NextResponse.next(),
         Rejected: NextResponse.redirect(
           new URL(

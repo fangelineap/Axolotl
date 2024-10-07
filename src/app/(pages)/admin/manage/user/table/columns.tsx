@@ -1,6 +1,20 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { AdminUserTable } from "./data";
 
+/**
+ * * Role Display
+ */
+const roleDisplay: Record<
+  "Nurse" | "Midwife" | "Admin" | "Patient" | "default",
+  { bgColor: string; textColor: string }
+> = {
+  Nurse: { bgColor: "bg-yellow-light", textColor: "text-yellow" },
+  Midwife: { bgColor: "bg-blue-light", textColor: "text-blue" },
+  Admin: { bgColor: "bg-red-light", textColor: "text-red" },
+  Patient: { bgColor: "bg-kalbe-ultraLight", textColor: "text-primary" },
+  default: { bgColor: "bg-gray", textColor: "text-gray-cancel" }
+};
+
 const columnHelper = createColumnHelper<AdminUserTable>();
 
 export const columns = [
@@ -8,64 +22,57 @@ export const columns = [
     cell: (info) => {
       const uuid = info.getValue()?.toString();
       const truncatedUuid = uuid ? `${uuid.slice(0, 16)}...` : "";
+
       return truncatedUuid;
     },
     id: "User ID",
     header: "User ID",
     enableSorting: true,
-    enableColumnFilter: true,
+    enableColumnFilter: true
   }),
   columnHelper.accessor(
     (row) => `${row.first_name || ""} ${row.last_name || ""}`.trim(),
     {
       cell: (info) => {
         const user_full_name = info.getValue();
+
         return user_full_name;
       },
       id: "User Name",
       header: "User Name",
       enableSorting: true,
-      enableColumnFilter: true,
-    },
+      enableColumnFilter: true
+    }
   ),
   columnHelper.accessor((row) => row.email, {
     id: "User Email",
     cell: (info) => {
       const formattedDate = info.getValue();
+
       return formattedDate;
     },
     header: "User Email",
     enableSorting: true,
-    enableColumnFilter: true,
+    enableColumnFilter: true
   }),
 
   columnHelper.accessor("role", {
     cell: (info) => {
-      const role = info.getValue();
+      const role = info.getValue() as
+        | "Nurse"
+        | "Midwife"
+        | "Admin"
+        | "Patient"
+        | "default";
+      const { bgColor, textColor } = roleDisplay[role] || roleDisplay.default;
 
       return (
-        <div className="flex items-center justify-center">
-          {role === "Nurse" ? (
-            <div className="rounded-3xl bg-yellow-light px-3 py-1">
-              <p className="font-bold text-yellow">{role}</p>
-            </div>
-          ) : role === "Midwife" ? (
-            <div className="rounded-3xl bg-blue-light px-3 py-1">
-              <p className="font-bold text-blue">{role}</p>
-            </div>
-          ) : role === "Admin" ? (
-            <div className="rounded-3xl bg-red-light px-3 py-1">
-              <p className="font-bold text-red">{role}</p>
-            </div>
-          ) : role === "Patient" ? (
-            <div className="rounded-3xl bg-kalbe-ultraLight px-3 py-1">
-              <p className="font-bold text-primary">{role}</p>
-            </div>
-          ) : (
-            <div className="rounded-3xl bg-gray px-3 py-1">
-              <p className="font-bold text-gray-cancel">N/A</p>
-            </div>
-          )}
+        <div className={`flex items-center justify-center`}>
+          <div className={`rounded-3xl px-3 py-1 ${bgColor}`}>
+            <p className={`font-bold ${textColor}`}>
+              {role === "default" ? "N/A" : role}
+            </p>
+          </div>
         </div>
       );
     },
@@ -73,6 +80,6 @@ export const columns = [
     header: "Role",
     enableSorting: true,
     enableColumnFilter: true,
-    filterFn: "equals",
-  }),
+    filterFn: "equals"
+  })
 ];

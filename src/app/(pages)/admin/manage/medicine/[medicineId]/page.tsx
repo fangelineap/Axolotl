@@ -8,13 +8,24 @@ interface MedicinePageProps {
   params: { medicineId: string };
 }
 
+/**
+ * * Fetch Data for Admin Detailed Medicine Page
+ * @param params
+ * @returns
+ */
 async function fetchData({ params }: MedicinePageProps) {
   const response: AdminMedicineTable = await getAdminMedicineById(
     params.medicineId
   );
+
   return response;
 }
 
+/**
+ * * Generate Metadata for Admin Detailed Medicine Page
+ * @param params
+ * @returns
+ */
 export async function generateMetadata({ params }: MedicinePageProps) {
   const response = await fetchData({ params });
 
@@ -29,6 +40,11 @@ export async function generateMetadata({ params }: MedicinePageProps) {
   };
 }
 
+/**
+ * * Render Admin Detailed Medicine Page
+ * @param params
+ * @returns
+ */
 async function AdminShowMedicine({ params }: MedicinePageProps) {
   const medicine = await fetchData({ params });
 
