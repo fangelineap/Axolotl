@@ -15,6 +15,7 @@ export const fetchMedicine = async () => {
     if (error) {
       throw error;
     }
+
     return data;
   } catch (error) {
     if (error instanceof Error) {
@@ -65,11 +66,13 @@ export async function fetchOrdersByCaregiver() {
 
     if (error) {
       console.error("Error fetching orders:", error.message);
+
       return [];
     }
 
     if (!data || data.length === 0) {
       console.warn("No orders found for the caregiver");
+
       return [];
     }
 
@@ -88,6 +91,7 @@ export async function fetchOrdersByCaregiver() {
               "Error fetching medicine order details:",
               medicineDetailError.message
             );
+
             return null;
           }
 
@@ -131,6 +135,7 @@ export async function fetchOrdersByCaregiver() {
     return validOrders;
   } catch (error) {
     console.error("Error:", error);
+
     return [];
   }
 }
