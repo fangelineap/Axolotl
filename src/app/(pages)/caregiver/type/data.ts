@@ -14,7 +14,7 @@ export type CaregiverOrder = USER_AUTH_SCHEMA & {
 };
 
 export type CaregiverOrderDetails = ORDER & {
-  patient: PATIENT & { user: USER };
+  patient: PATIENT & { users: USER };
   user: USER;
   caregiver: CAREGIVER;
   appointment: {
