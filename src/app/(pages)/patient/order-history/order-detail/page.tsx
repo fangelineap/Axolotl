@@ -1,10 +1,26 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/page";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderDetail from "@/components/Patient/OrderDetail";
+import { getOrderDetail } from "@/app/server-action/patient";
 
 const medicinePreparation = () => {
+  const [data, setData] = useState<any>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await getOrderDetail("4");
+
+      console.log("dataaaaaaa", data);
+      if (data) {
+        setData(data);
+      }
+    };
+
+    getData();
+  }, []);
+
   // Sample data to pass to the NewComponent
   const sampleData = {
     orderStatus: "Ongoing",
@@ -69,13 +85,17 @@ const medicinePreparation = () => {
       <div className="">
         <h1 className="mb-4 text-2xl font-bold">Order Details</h1>
         {/* Use the NewComponent and pass sample data as props */}
-        <OrderDetail
-          orderStatus={sampleData.orderStatus}
-          patientInfo={sampleData.patientInfo}
-          medicalDetails={sampleData.medicalDetails}
-          serviceDetails={sampleData.serviceDetails}
-          price={sampleData.price}
-        />
+        {data != null && (
+          <OrderDetail
+            orderStatus={data.orderStatus}
+            caregiverInfo={data.caregiverInfo}
+            patientInfo={data.patientInfo}
+            medicalDetails={data.medicalDetails}
+            medicineDetail={data.medicineDetail}
+            serviceDetails={data.serviceDetails}
+            price={data.price}
+          />
+        )}
       </div>
     </DefaultLayout>
   );
