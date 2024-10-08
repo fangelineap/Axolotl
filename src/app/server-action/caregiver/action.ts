@@ -142,49 +142,114 @@ export async function fetchOrdersByCaregiver() {
 }
 
 export async function fetchOrderDetail(orderId: string) {
-  unstable_noStore();
   const supabase = await createSupabaseServerClient();
 
   try {
     const currentUser = await getUserFromSession();
-    const { data, error } = await supabase
+    if (!currentUser || !currentUser.data) {
+      throw new Error("Unable to retrieve user session");
+    }
+
+    // Fetch the basic order data along with the necessary relationships
+    const { data: orderData, error: orderError } = await supabase
       .from("order")
       .select(
-        `*, patient(*, users(*)), appointment(*), caregiver(*, users(user_id)), medicineOrder(*, medicineOrderDetail(*))`
+        `
+        *,
+        patient(*, users(*)),
+        caregiver(*, users(user_id)),
+        appointment(*),
+        medicineOrder(*)
+      `
       )
-      .eq("id", orderId);
+      .eq("id", orderId)
+      .single(); // Fetch one record
 
-    if (error) {
-      console.error("Error fetching order:", error.message);
-      throw new Error("Failed to fetch order");
+    if (orderError || !orderData) {
+      throw new Error(orderError?.message || "Order not found");
     }
 
-    if (!data || data.length === 0) {
-      throw new Error("Order not found");
-    }
+    // Check authorization
+    const isAuthorized =
+      currentUser.data.id === orderData.caregiver?.caregiver_id &&
+      currentUser.data.user_id === orderData.caregiver?.users?.user_id;
 
-    // Check if the current user has access to the order
-    const order = data[0];
-
-    if (
-      currentUser.data?.id === order.caregiver.caregiver_id &&
-      currentUser.data?.user_id === order.caregiver.users?.user_id
-    ) {
-      // Safely access the patient users data and ensure it’s not undefined
-      const user = order.patient?.users || {};
-
-      const destructuredData = { user, ...order };
-
-      return destructuredData;
-    } else {
+    if (!isAuthorized) {
       throw new Error("You are not authorized to access this order");
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log("Error fetching order:", error.message);
-    } else {
-      console.log("Unknown error fetching order");
+
+    const user = orderData.patient?.users || {};
+
+    type MedicineDetail = {
+      name: string;
+      quantity: number;
+      price: number;
+    };
+    // Initialize an empty array for medicine details if there is no `medicineOrder`
+    let meds: MedicineDetail[] = [];
+
+    // Check if `medicineOrder` exists and has an ID
+    if (orderData.medicineOrder?.id) {
+      // Fetch medicine order details
+      const { data: medicineOrderDetailData, error: medicineOrderDetailError } =
+        await supabase
+          .from("medicineOrderDetail")
+          .select("*")
+          .eq("medicine_order_id", orderData.medicineOrder.id); // Safely access id
+
+      if (medicineOrderDetailError) {
+        console.error(
+          "Error fetching medicine order details:",
+          medicineOrderDetailError.message
+        );
+      }
+
+      // Fetch associated medicine data only if `medicineOrderDetailData` exists
+      if (medicineOrderDetailData) {
+        meds = await Promise.all(
+          medicineOrderDetailData.map(async (medDetail) => {
+            const { data: medicineData, error: medicineError } = await supabase
+              .from("medicine")
+              .select("*")
+              .eq("uuid", medDetail.medicine_id)
+              .single();
+
+            if (medicineError || !medicineData) {
+              console.error(
+                "Error fetching medicine:",
+                medicineError?.message || "Medicine not found"
+              );
+
+              return {
+                name: "Unknown",
+                quantity: medDetail.quantity,
+                price: 0
+              }; // Return default
+            }
+
+            return {
+              name: medicineData.name,
+              quantity: medDetail.quantity,
+              price: medicineData.price
+            };
+          })
+        );
+      }
     }
+
+    // Combine the order data, user data, and medicine details
+    const combinedData = {
+      ...orderData,
+      user,
+      medicines: meds // This will be an empty array if no medicineOrder exists
+    };
+
+    return combinedData; // Return the combined data
+  } catch (error) {
+    console.error(
+      "Error fetching order:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     throw new Error("Failed to fetch order");
   }
 }

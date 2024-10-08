@@ -59,7 +59,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   patientInfo,
   medicalDetails,
   serviceDetails,
-  price,
+  price
 }) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -74,16 +74,16 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     { quantity: number; name: string; price: string }[]
   >([]);
   const [totalPrice, setTotalPrice] = useState<number>(
-    parseInt(price.total.replace(/Rp\.\s/g, "").replace(/\./g, "")),
+    parseInt(price.total.replace(/Rp\.\s/g, "").replace(/\./g, ""))
   );
   const [deliveryFee, setDeliveryFee] = useState<number>(10000);
   const [totalCharge, setTotalCharge] = useState<number>(
-    parseInt(price.totalCharge.replace(/Rp\.\s/g, "").replace(/\./g, "")),
+    parseInt(price.totalCharge.replace(/Rp\.\s/g, "").replace(/\./g, ""))
   );
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentMedicine, setCurrentMedicine] = useState<MedicineType | null>(
-    null,
+    null
   );
 
   const [isAddNewMedicineModalOpen, setIsAddNewMedicineModalOpen] =
@@ -100,7 +100,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     type: "Branded",
     price: "",
     quantity: 1,
-    expired: null,
+    expired: null
   });
 
   useEffect(() => {
@@ -121,7 +121,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   useEffect(() => {
     if (searchTerm) {
       const filtered = medicineList.filter((med) =>
-        med.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        med.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredMedicineList(filtered);
     } else {
@@ -142,8 +142,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         {
           quantity: 1,
           name: currentMedicine.name,
-          price: currentMedicine.price || "0",
-        },
+          price: currentMedicine.price || "0"
+        }
       ]);
 
       const priceAsString = currentMedicine.price
@@ -151,7 +151,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         : "0";
 
       const cleanedPrice = parseInt(
-        priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, ""),
+        priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, "")
       );
 
       setTotalPrice((prev) => prev + (isNaN(cleanedPrice) ? 0 : cleanedPrice));
@@ -170,7 +170,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       type: "Branded",
       price: "",
       quantity: 1,
-      expired: null,
+      expired: null
     });
     setIsAddNewMedicineModalOpen(false);
   };
@@ -178,8 +178,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const handleSaveNewMedicine = () => {
     if (!newMedicine.name || !newMedicine.price || !newMedicine.expired) {
       toast.warning("Please fill out all fields.", {
-        position: "top-right",
+        position: "top-right"
       });
+
       return;
     }
 
@@ -189,8 +190,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       {
         quantity: newMedicine.quantity,
         name: newMedicine.name,
-        price: newMedicine.price,
-      },
+        price: newMedicine.price
+      }
     ]);
 
     parseInt(newMedicine.price.replace(/Rp\.\s/g, "").replace(/\./g, "")) *
@@ -202,7 +203,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       type: "Branded",
       price: "",
       quantity: 1,
-      expired: null,
+      expired: null
     });
   };
 
@@ -215,7 +216,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         // Safely perform replace operations
         const medPrice = parseInt(
           priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, ""),
-          10, // Ensure base 10 parsing
+          10 // Ensure base 10 parsing
         );
 
         return acc + (isNaN(medPrice) ? 0 : medPrice * med.quantity); // Handle NaN cases
@@ -244,16 +245,16 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const handleDecreaseQuantity = (index: number) => {
     setSelectedMedications((prev) =>
       prev.map((med, i) =>
-        i === index ? { ...med, quantity: Math.max(med.quantity - 1, 1) } : med,
-      ),
+        i === index ? { ...med, quantity: Math.max(med.quantity - 1, 1) } : med
+      )
     );
   };
 
   const handleIncreaseQuantity = (index: number) => {
     setSelectedMedications((prev) =>
       prev.map((med, i) =>
-        i === index ? { ...med, quantity: med.quantity + 1 } : med,
-      ),
+        i === index ? { ...med, quantity: med.quantity + 1 } : med
+      )
     );
   };
 
@@ -286,8 +287,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         toast.warning(
           "File type not supported. Please upload a JPG or PNG file.",
           {
-            position: "top-right",
-          },
+            position: "top-right"
+          }
         );
       }
     });
@@ -298,9 +299,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     onDropRejected,
     accept: {
       "image/jpeg": [],
-      "image/png": [],
+      "image/png": []
     },
-    maxFiles: 1,
+    maxFiles: 1
   });
 
   // Disable background scroll when modal is open
@@ -805,7 +806,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       onChange={(e) =>
                         setNewMedicine({
                           ...newMedicine,
-                          price: e.target.value,
+                          price: e.target.value
                         })
                       }
                     />

@@ -4,6 +4,7 @@ import {
   MEDICINE_ORDER,
   MEDICINE_ORDER_DETAIL,
   ORDER,
+  PATIENT,
   USER,
   USER_AUTH_SCHEMA
 } from "@/types/axolotl";
@@ -13,6 +14,7 @@ export type CaregiverOrder = USER_AUTH_SCHEMA & {
 };
 
 export type CaregiverOrderDetails = ORDER & {
+  patient: PATIENT & { user: USER };
   user: USER;
   caregiver: CAREGIVER;
   appointment: {
@@ -29,9 +31,12 @@ export type CaregiverOrderDetails = ORDER & {
     appointment_date: Date;
     total_payment: number;
   };
-  medicineOrder: MEDICINE_ORDER & {
-    orderDetail: (MEDICINE_ORDER_DETAIL & { medicine: MEDICINE })[];
-  };
+  medicineOrder: MEDICINE_ORDER;
+  medicines: {
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
 };
 
 export type CaregiverInsertMedicineDetails = CaregiverOrderDetails & {

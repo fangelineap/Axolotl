@@ -3,70 +3,63 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { DataTable } from "@/components/Tables/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { fetchOrdersByCaregiver } from "@/app/server-action/caregiver/action";
+import type { CaregiverOrderDetails } from "../type/data";
 
-interface Order {
-  id: number;
-  orderType: string;
-  patientName: string;
-  status: string;
-}
-
+// Define the status color map
 const statusColorClassMap: Record<string, string> = {
   Ongoing: "bg-yellow-light text-yellow-dark",
   Canceled: "bg-red-light text-red",
   Done: "bg-green-light-3 text-green"
 };
 
-const Order = () => {
+const OrderPage = () => {
   const router = useRouter();
+  const [orderData, setOrderData] = useState<CaregiverOrderDetails[]>([]); // Set to an array of orders
+  const [loading, setLoading] = useState(true); // State to handle loading
 
-  const data: Order[] = [
-    {
-      id: 1,
-      orderType: "After Care",
-      patientName: "Axolotl",
-      status: "Ongoing"
-    },
-    {
-      id: 2,
-      orderType: "After Care",
-      patientName: "Axolotl",
-      status: "Ongoing"
-    },
-    {
-      id: 3,
-      orderType: "After Care",
-      patientName: "Axolotl",
-      status: "Canceled"
-    },
-    { id: 4, orderType: "After Care", patientName: "Axolotl", status: "Done" },
-    { id: 5, orderType: "After Care", patientName: "Axolotl", status: "Done" },
-    {
-      id: 6,
-      orderType: "Neonatal Care",
-      patientName: "Arvel",
-      status: "Canceled"
-    },
-    { id: 7, orderType: "Booster", patientName: "Alex", status: "Ongoing" },
-    {
-      id: 8,
-      orderType: "Elderly Care",
-      patientName: "Kartawijaya",
-      status: "Done"
-    },
-    { id: 9, orderType: "After Care", patientName: "Monyet", status: "Done" }
-  ];
+  // Fetch order data when the component is mounted
+  useEffect(() => {
+    const getOrderData = async () => {
+      setLoading(true);
 
-  const columns: ColumnDef<Order>[] = [
+      try {
+        const orders = await fetchOrdersByCaregiver(); // Fetch data from the database
+
+        if (!orders) {
+          throw new Error("Failed to fetch orders");
+        }
+        setOrderData(orders); // Set the fetched data into state
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch order data:", error);
+        setLoading(false); // Stop loading on error
+      }
+    };
+
+    getOrderData(); // Call the function when the component mounts
+  }, []);
+
+  orderData.forEach((order) => {
+    console.log(order.patient?.users?.first_name); // Access the first name for each order
+  });
+
+  // Define the columns for the table
+  const columns: ColumnDef<CaregiverOrderDetails>[] = [
     { accessorKey: "id", header: "Order ID" },
-    { accessorKey: "orderType", header: "Order Type" },
-    { accessorKey: "patientName", header: "Patient Name" },
+    { accessorKey: "appointment.service_type", header: "Order Type" },
     {
-      accessorKey: "status",
+      accessorKey: "patient.users.first_name",
+      header: "Patient Name",
+      cell: ({ row }) => `${row.original.patient?.users?.first_name || "N/A"}`
+    },
+    {
+      accessorKey: "is_completed",
       header: "Status",
-      cell: ({ getValue }) => {
-        const status = getValue<string>();
+      cell: ({ row }) => {
+        const isCompleted = row.original.is_completed;
+        const status = isCompleted ? "Done" : "Ongoing";
         const colorClass =
           statusColorClassMap[status] || "bg-gray-500 text-white";
 
@@ -81,15 +74,24 @@ const Order = () => {
     }
   ];
 
-  const handleShowAction = (row: Order) => {
+  // Handle action to show order details
+  const handleShowAction = (orderData: CaregiverOrderDetails) => {
     const query = new URLSearchParams({
-      orderType: row.orderType,
-      patientName: row.patientName,
-      status: row.status
+      orderType: orderData.appointment.service_type,
+      patientName: `${orderData.patient?.users?.first_name}`,
+      status: orderData.is_completed ? "Done" : "Ongoing"
     }).toString();
 
-    router.push(`/order/${row.id}?${query}`);
+    router.push(`/order/${orderData.id}?${query}`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading while fetching data
+  }
+
+  if (orderData.length === 0) {
+    return <div>No orders found.</div>; // Handle no data case
+  }
 
   return (
     <DefaultLayout>
@@ -104,10 +106,10 @@ const Order = () => {
 
         <div className="rounded-lg bg-white p-6 shadow">
           <DataTable
-            data={data}
-            columns={columns}
+            data={orderData} // Pass the data array
+            columns={columns} // Pass the columns configuration
             basePath="/caregiver/order"
-            showAction={handleShowAction}
+            showAction={handleShowAction} // Define the action handler
           />
         </div>
       </div>
@@ -115,4 +117,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default OrderPage;

@@ -33,14 +33,18 @@ const OrderDetailPage = () => {
   useEffect(() => {
     const getOrderData = async () => {
       setLoading(true);
-      const orders = await fetchOrderDetail(orderId);
 
-      if (!orders) {
-        throw new Error("Failed to fetch orders");
+      try {
+        const orders = await fetchOrderDetail(orderId);
+
+        if (!orders) {
+          throw new Error("Failed to fetch orders");
+        }
+        setOrderData(orders);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch order details:", error);
       }
-
-      setOrderData(orders);
-      setLoading(false);
     };
 
     if (orderId) {
@@ -126,13 +130,11 @@ const OrderDetailPage = () => {
             totalCharge:
               orderData.medicineOrder?.total_price?.toString() || "N/A"
           }}
-          medications={
-            orderData.medicineOrder?.orderDetail?.map((detail) => ({
-              quantity: detail.quantity,
-              name: detail.medicine?.name || "N/A",
-              price: detail.total_price.toString()
-            })) || []
-          }
+          medications={orderData.medicines.map((detail) => ({
+            quantity: detail.quantity,
+            name: detail.name || "Unknown",
+            price: detail.price?.toString() || "N/A"
+          }))}
           proofOfService={{
             imageUrl: orderData.caregiver?.profile_photo_url || ""
           }}
