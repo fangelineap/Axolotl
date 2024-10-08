@@ -82,15 +82,19 @@ const Page = ({ searchParams }: any) => {
         .select("*, caregiver(*)")
         .eq("role", searchParams.caregiver);
       if (data) {
-        data.forEach((user: User) => {
-          const getProfilePhotoUrl = async () => {
-            const url = await getProfilePhoto(user.caregiver[0]?.profile_photo);
-            user.caregiver[0].profile_photo_url = url!;
-          };
+        const updatedData = await Promise.all(
+          data.map(async (user: User) => {
+            if (user.caregiver && user.caregiver[0]?.profile_photo) {
+              const url = await getProfilePhoto(
+                user.caregiver[0].profile_photo
+              );
+              user.caregiver[0].profile_photo_url = url!;
+            }
+            return user;
+          })
+        );
 
-          getProfilePhotoUrl();
-        });
-        setCaregiver(data);
+        setCaregiver(updatedData);
         setPagination((prev) => ({
           ...prev,
           pageSize: Math.ceil(data.length / 5)
@@ -137,6 +141,8 @@ const Page = ({ searchParams }: any) => {
 
     setFiltered(filteredCG);
   }, [rating, location]);
+
+  console.log("caregiver", caregiver);
 
   return (
     <DefaultLayout>
@@ -541,10 +547,10 @@ const Page = ({ searchParams }: any) => {
                       <div className="min-w-[100px]">
                         <Image
                           src={cg.caregiver[0]?.profile_photo_url!}
-                          width={100}
                           height={100}
+                          width={100}
                           className="h-[100px] w-[100px] rounded-full object-cover"
-                          alt="Nurse pfp"
+                          alt="CG pfp"
                         />
                       </div>
                       <div className="flex w-full items-center gap-5">

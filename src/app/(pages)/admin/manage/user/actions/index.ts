@@ -8,7 +8,7 @@ import {
 } from "@/app/server-action/admin/SupaAdmin";
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
-import { AdminUserTable } from "../table/data";
+import { AdminUserTable, AdminCaregiverDetails } from "../table/data";
 
 /**
  * * Validate required fields
@@ -184,6 +184,61 @@ export async function getAdminUserByUserID(user_id: string) {
     };
 
     return allData;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { data: null, error };
+  }
+}
+
+/**
+ * * Get Caregiver Total Order
+ * @param user_id
+ * @returns
+ */
+export async function getAdminCaregiverTotalOrders(user_id: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data: userData, error: userDataError } = await supabase
+      .from("users")
+      .select("*, caregiver(*)")
+      .eq("user_id", user_id)
+      .single();
+
+    if (userDataError) {
+      console.error("Error fetching userData:", userDataError.message);
+
+      return { data: null, userDataError };
+    }
+
+    const caregiverData = Array.isArray(userData.caregiver)
+      ? userData.caregiver[0]
+      : userData.caregiver;
+
+    const detailedCaregiverData: AdminCaregiverDetails = {
+      ...userData,
+      caregiver: caregiverData
+    };
+
+    const { data: orderData, error: orderDataError } = await supabase
+      .from("order")
+      .select("*")
+      .eq("caregiver_id", detailedCaregiverData.caregiver.id);
+
+    if (orderDataError) {
+      console.error("Error fetching orderData:", orderDataError.message);
+
+      return { data: null, orderDataError };
+    }
+
+    const totalOrders = orderData?.length;
+
+    if (totalOrders === 0) return { data: 0, error: null };
+
+    return { data: totalOrders, error: null };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 

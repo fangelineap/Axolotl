@@ -2,7 +2,7 @@
 "use server";
 
 import createSupabaseServerClient from "@/lib/server";
-import { unstable_noStore } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 
 /**
@@ -19,10 +19,24 @@ export async function signInWithEmailAndPassword(
 
   const supabase = await createSupabaseServerClient();
 
-  return supabase.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      console.error("Error while signing in user: ", error);
+
+      return { success: false, message: "Invalid credentials" };
+    }
+
+    return { success: true, data: { userId: data.user.id } };
+  } catch (error) {
+    console.error("An unexpected error occurred: ", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
 }
 
 /**
@@ -54,6 +68,8 @@ export async function registerWithEmailAndPassword(
 
   if (error) {
     console.log("Error while registering user: ", error);
+
+    revalidatePath("/auth/signin?success=false");
 
     return { data: null, error };
   }

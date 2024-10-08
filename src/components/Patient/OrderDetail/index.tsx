@@ -19,6 +19,11 @@ import { fetchMedicine } from "@/app/server-action/caregiver/action";
 
 interface MedecinePreparationProps {
   orderStatus: string;
+  caregiverInfo: {
+    name: string;
+    str: string;
+    profile_photo_url: string;
+  };
   patientInfo: {
     name: string;
     address: string;
@@ -43,6 +48,11 @@ interface MedecinePreparationProps {
     serviceFee: string;
     totalCharge: string;
   };
+  medicineDetail?: {
+    quantity: number;
+    name: string;
+    price: string;
+  }[];
   price: {
     total: string;
     delivery: string;
@@ -61,8 +71,10 @@ interface MedicineType {
 
 const OrderDetail: React.FC<MedecinePreparationProps> = ({
   orderStatus,
+  caregiverInfo,
   patientInfo,
   medicalDetails,
+  medicineDetail,
   serviceDetails,
   price
 }) => {
@@ -77,13 +89,13 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
 
   const [selectedMedications, setSelectedMedications] = useState<
     { quantity: number; name: string; price: string }[]
-  >([]);
-  const [totalPrice, setTotalPrice] = useState<number>(
-    parseInt(price.total.replace(/Rp\.\s/g, "").replace(/\./g, ""))
+  >(medicineDetail ? medicineDetail : []);
+  const [totalPrice, setTotalPrice] = useState<number>(parseInt(price.total));
+  const [deliveryFee, setDeliveryFee] = useState<number>(
+    parseInt(price.delivery)
   );
-  const [deliveryFee, setDeliveryFee] = useState<number>(10000);
   const [totalCharge, setTotalCharge] = useState<number>(
-    parseInt(price.totalCharge.replace(/Rp\.\s/g, "").replace(/\./g, ""))
+    parseInt(price.totalCharge)
   );
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -108,19 +120,26 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
     expired: null
   });
 
+  console.log("selectedMedications", selectedMedications);
   useEffect(() => {
     // Fetch medicine data from the database
-    const loadMedicineList = async () => {
-      try {
-        const medicines: MedicineType[] = await fetchMedicine(); // Fetch data from your database
-        setMedicineList(medicines || []); // Set the medicine list with fetched data
-        setFilteredMedicineList(medicines || []); // Initialize filtered list with full data
-      } catch (err) {
-        console.error("Failed to load medicines", err);
-      }
-    };
+    // const loadMedicineList = async () => {
+    //   try {
+    //     const medicines: MedicineType[] = await fetchMedicine(); // Fetch data from your database
+    //     setMedicineList(medicines || []); // Set the medicine list with fetched data
+    //     setFilteredMedicineList(medicines || []); // Initialize filtered list with full data
+    //   } catch (err) {
+    //     console.error("Failed to load medicines", err);
+    //   }
+    // };
 
-    loadMedicineList();
+    // loadMedicineList();
+    const medPrice = selectedMedications.reduce((acc, med) => {
+      acc += parseInt(med.price) * med.quantity;
+      return acc;
+    }, 0);
+
+    console.log("all meds price", medPrice);
   }, []);
 
   useEffect(() => {
@@ -348,10 +367,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           <h2 className="mb-2 text-xl font-bold">Caregiver Information</h2>
           <div className="my-5 flex">
             <Image
-              src="/images/user/caregiver.png"
+              src={
+                caregiverInfo.profile_photo_url || "/images/user/caregiver.png"
+              }
               height={100}
               width={100}
-              className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight"
+              className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight object-cover"
               alt="CG pfp"
             />
           </div>
@@ -363,17 +384,17 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   <strong>STR Number</strong>
                 </div>
                 <div className="ml-19 flex flex-col gap-y-1">
-                  <div>First and Last Name</div>
-                  <div>STR</div>
+                  <div>{caregiverInfo.name}</div>
+                  <div>{caregiverInfo.str}</div>
                 </div>
               </div>
             ) : (
               <div className="mt-2 flex flex-col gap-y-2">
                 <div>
-                  <strong>Caregiver Name:</strong> First and Last Name
+                  <strong>Caregiver Name:</strong> {caregiverInfo.name}
                 </div>
                 <div>
-                  <strong>STR Number:</strong> STR
+                  <strong>STR Number:</strong> {caregiverInfo.str}
                 </div>
               </div>
             )}
@@ -490,18 +511,15 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
         </div>
 
         {/* Additional Medications */}
-        <div>
+        {/* <div>
           <h2 className="mb-4 text-xl font-bold">Additional Medications</h2>
           <div className="overflow-hidden rounded-lg border border-primary">
             <table className="w-full table-auto text-sm">
               <thead>
-                <tr className="bg-green-light text-white">
+                <tr className=" bg-green-light text-white">
                   <th className="p-2 text-left">Quantity</th>
                   <th className="p-2 text-left">Name</th>
                   <th className="p-2 text-right">Price</th>
-                  {selectedMedications.length > 0 && (
-                    <th className="rounded-tr-lg p-2 text-right">Action</th>
-                  )}
                 </tr>
               </thead>
               <tbody>
@@ -509,32 +527,17 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   <tr key={index}>
                     <td className="border-primary p-2 text-left">
                       <div className="flex w-1/2 justify-between p-2 text-primary">
-                        <button onClick={() => handleDecreaseQuantity(index)}>
-                          <IconCircleMinus size={25} />
-                        </button>
                         <h1 className="text-lg text-black">{med.quantity}</h1>
-                        <button onClick={() => handleIncreaseQuantity(index)}>
-                          <IconCirclePlus size={25} />
-                        </button>
                       </div>
                     </td>
                     <td className="border-primary p-2">{med.name}</td>
                     <td className="border-primary p-2 text-right">
                       Rp. {med.price}
                     </td>
-                    {selectedMedications.length > 0 && (
-                      <td className="border-primary p-2 text-right">
-                        <button onClick={() => handleRemoveMedicine(index)}>
-                          <div className="flex items-center justify-center text-red">
-                            <IconX size={30} />
-                          </div>
-                        </button>
-                      </td>
-                    )}
                   </tr>
                 ))}
                 {/* Summary Rows */}
-                <tr>
+        {/* <tr>
                   <td
                     colSpan={selectedMedications.length > 0 ? 3 : 2}
                     className="border-t border-primary p-2 text-left font-bold"
@@ -570,7 +573,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Right Side */}
@@ -591,203 +594,6 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
         </button>
         <ToastContainer />
       </div>
-
-      {/* Modal for Adding Medicine */}
-      {isModalOpen && currentMedicine && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div
-            className="mx-auto max-h-[90vh] w-full max-w-xs overflow-y-auto rounded-lg 
-            bg-white sm:h-auto sm:max-w-sm md:h-auto md:max-w-md lg:h-auto lg:max-w-md
-            xl:h-auto xl:max-w-xl"
-          >
-            <div className="rounded-t-lg bg-primary px-6 py-4">
-              <h2 className="text-center text-xl font-bold text-white">
-                Add Medicine
-              </h2>
-            </div>
-            <div className=" overflow-y-auto p-6  ">
-              {/* Medicine Photo Section */}
-              <div className="mb-6">
-                <h3 className="mb-2 font-bold text-primary">Medicine Photo</h3>
-                <div className="flex h-48 w-full items-center justify-center rounded-lg border border-primary p-4">
-                  {currentMedicine.medicine_photo ? (
-                    <div className="relative flex h-full w-full items-center justify-center">
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(currentMedicine.medicine_photo)}`}
-                        alt={currentMedicine.medicine_photo}
-                        className="object-contain" // Make image contain within the container
-                        layout="fill" // Fills the container
-                      />
-                    </div>
-                  ) : (
-                    <p>No Image Available</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <h3 className="mb-2 font-bold text-primary">
-                  Medicine Description
-                </h3>
-                <div className="mb-4">
-                  <label className="mb-4 block text-sm font-medium">Name</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine.name}
-                    disabled
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="mb-4 block text-sm font-medium">Type</label>
-                  <select
-                    className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine.type}
-                    disabled
-                  >
-                    <option>{currentMedicine.type}</option>
-                  </select>
-                </div>
-                <div className="mb-4 flex items-center">
-                  <div className="w-1/2">
-                    <label className="mb-4 block text-sm font-medium">
-                      Expired Date
-                    </label>
-                    <div className="mt-1 flex items-center">
-                      <input
-                        type="text"
-                        className="mt-1 block w-full rounded border p-2"
-                        value={currentMedicine.exp_date}
-                        disabled
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-1 w-1/2 pl-4 ">
-                    <label className="mb-4 block text-sm font-medium">
-                      Price
-                    </label>
-                    <div className="relative mt-1 flex items-center">
-                      <span className="absolute left-3 text-gray-500">Rp.</span>
-
-                      <input
-                        type="text"
-                        className="block w-full rounded border p-2 pl-10"
-                        value={currentMedicine.price}
-                        disabled
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  className="rounded bg-gray-500 px-4 py-2 text-white"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="rounded bg-primary px-4 py-2 text-white"
-                  onClick={handleAddMedicine}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal for Adding New Medicine */}
-      {isAddNewMedicineModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-lg rounded-lg bg-white">
-            <div className="rounded-t-lg bg-primary px-6 py-4">
-              <h2 className="text-center text-lg font-bold text-white">
-                Add New Medicine
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="mb-4">
-                <div className="mb-2">
-                  <InputGroupWithChange
-                    customClasses="mb-4"
-                    label="Name"
-                    type="text"
-                    placeholder="Enter medicine name"
-                    required={true}
-                    name="medicineName"
-                    value={newMedicine.name}
-                    onChange={(e) =>
-                      setNewMedicine({ ...newMedicine, name: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="mb-2">
-                  <SelectGroupWithChange
-                    name="Brand"
-                    label="Type"
-                    content={["Branded", "Generic"]}
-                    customClasses="w-full"
-                    required
-                    onChange={(value) =>
-                      setNewMedicine({ ...newMedicine, type: value })
-                    }
-                  />
-                </div>
-                <div className="mb-4 flex items-center">
-                  <div className="w-1/2">
-                    <ExpiredDatePicker
-                      customClasses="mb-3"
-                      label="Expired Date"
-                      required={true}
-                      name="expiredDate"
-                      expired={newMedicine.expired ? newMedicine.expired : ""}
-                      onChange={(date) =>
-                        setNewMedicine({ ...newMedicine, expired: date })
-                      }
-                    />
-                  </div>
-                  <div className="mt-3 w-1/2 pl-4">
-                    <InputGroupWithCurrency
-                      customClasses="mb-6.5"
-                      label="Price"
-                      type="text"
-                      placeholder="Enter medicine price"
-                      required={true}
-                      name="medicinePrice"
-                      value={newMedicine.price}
-                      onChange={(e) =>
-                        setNewMedicine({
-                          ...newMedicine,
-                          price: e.target.value
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  className="rounded bg-gray-500 px-4 py-2 text-white"
-                  onClick={() => {
-                    resetFormNewMedicine(); // Reset the form fields
-                    setIsAddNewMedicineModalOpen(false); // Close the modal
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="rounded bg-primary px-4 py-2 text-white"
-                  onClick={handleSaveNewMedicine}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

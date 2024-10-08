@@ -5,17 +5,17 @@ import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/D
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 interface ViewUserProps {
   user: AdminUserTable;
+  totalOrder: number;
 }
 
-async function ViewUser({ user }: ViewUserProps) {
+async function ViewUser({ user, totalOrder }: ViewUserProps) {
   const user_full_name = user.first_name + " " + user.last_name;
 
   /**
-   * Create reusable date formatters
+   * * Date Formatters
    */
   const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
@@ -38,11 +38,17 @@ async function ViewUser({ user }: ViewUserProps) {
     minute: "2-digit"
   });
 
+  /**
+   * * Helper function to format dates
+   * @param date
+   * @param formatter
+   * @returns
+   */
   const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
     formatter.format(new Date(date));
 
   /**
-   * Format the date & time values
+   * * Formatted Dates
    */
   const formattedReviewDate = user.caregiver?.reviewed_at
     ? formatDate(user.caregiver?.reviewed_at, dateTimeFormatter)
@@ -158,11 +164,13 @@ async function ViewUser({ user }: ViewUserProps) {
                     </div>
                   )}
                 </div>
+
                 <AxolotlButton
                   label="Edit Profile"
                   variant="primary"
                   fontThickness="bold"
-                  customClasses="text-lg"
+                  customWidth
+                  customClasses="text-lg w-fit"
                 />
               </div>
             </div>
@@ -312,7 +320,7 @@ async function ViewUser({ user }: ViewUserProps) {
               {/* Second Column */}
               <div className="flex w-full flex-col gap-4">
                 {/* CAREGIVER */}
-                {(user.role === "Nurse" || user.role === "Midwife") && (
+                {["Nurse", "Midwife"].includes(user.role) && (
                   <>
                     {/* CAREGIVER - Rating */}
                     <div className="flex w-full flex-col">
@@ -322,16 +330,16 @@ async function ViewUser({ user }: ViewUserProps) {
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
                         <DisabledCustomInputGroup
                           label="Total Order"
-                          placeholder="Total Order"
                           horizontal={false}
                           type="text"
+                          value={String(totalOrder)}
                         />
                         <DisabledCustomInputGroup
                           label="Rating"
                           type="text"
                           horizontal={false}
                           isRating
-                          value="4.5+"
+                          value={String(user.caregiver.rate) || "-"}
                         />
                       </div>
                     </div>
@@ -479,7 +487,8 @@ async function ViewUser({ user }: ViewUserProps) {
                     label="Edit Profile"
                     variant="primary"
                     fontThickness="bold"
-                    customClasses="text-lg"
+                    customWidth
+                    customClasses="text-lg w-fit"
                   />
                 </div>
               </div>
