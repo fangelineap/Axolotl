@@ -1,22 +1,48 @@
-import React from "react";
-import { AdminUserTable } from "../../table/data";
-import { getAdminUserByUserID } from "../../actions";
 import AdminLayout from "@/components/Admin/Manage/AdminLayout";
+import UpdateUser from "@/components/Admin/Manage/User/UpdateUser";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import {
+  getAdminCaregiverTotalOrders,
+  getAdminUserByUserID
+} from "../../actions";
+import { AdminUserTable } from "../../table/data";
 
-interface AdminEditUserProfileProps {
-  params: {
-    userId: string;
-  };
+interface AdminEditUserProps {
+  params: { userId: string };
 }
 
-async function fetchData({ params }: AdminEditUserProfileProps) {
+/**
+ * * Fetch Data for Admin Detailed User Page
+ * @param params
+ * @returns
+ */
+async function fetchData({ params }: AdminEditUserProps) {
   const response = await getAdminUserByUserID(params.userId);
 
   return response as AdminUserTable;
 }
 
-export async function generateMetadata({ params }: AdminEditUserProfileProps) {
+/**
+ * * Get Caregiver Total Order
+ * @param user
+ * @returns
+ */
+async function getCaregiverTotalOrders(user: AdminUserTable) {
+  if (["Nurse", "Midwife"].includes(user.role)) {
+    const totalOrder = await getAdminCaregiverTotalOrders(user.user_id);
+
+    return totalOrder.data ?? 0;
+  }
+
+  return 0;
+}
+
+/**
+ * * Generate Metadata for Admin Detailed User Page
+ * @param params
+ * @returns
+ */
+export async function generateMetadata({ params }: AdminEditUserProps) {
   const response = await fetchData({ params });
 
   if (!response) {
@@ -32,8 +58,14 @@ export async function generateMetadata({ params }: AdminEditUserProfileProps) {
   };
 }
 
-async function AdminEditUserProfile({ params }: AdminEditUserProfileProps) {
+/**
+ * * Render Admin Detailed User Page
+ * @param params
+ * @returns
+ */
+async function AdminEditUser({ params }: AdminEditUserProps) {
   const data = await fetchData({ params });
+  const totalOrder = await getCaregiverTotalOrders(data);
 
   if (!data) {
     return (
@@ -54,8 +86,9 @@ async function AdminEditUserProfile({ params }: AdminEditUserProfileProps) {
         subPage="Medicine"
         pageName="View"
       />
+      <UpdateUser user={data} totalOrder={totalOrder} />
     </AdminLayout>
   );
 }
 
-export default AdminEditUserProfile;
+export default AdminEditUser;

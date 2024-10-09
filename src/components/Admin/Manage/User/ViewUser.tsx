@@ -11,7 +11,7 @@ interface ViewUserProps {
   totalOrder: number;
 }
 
-async function ViewUser({ user, totalOrder }: ViewUserProps) {
+function ViewUser({ user, totalOrder }: ViewUserProps) {
   const user_full_name = user.first_name + " " + user.last_name;
 
   /**
@@ -83,7 +83,7 @@ async function ViewUser({ user, totalOrder }: ViewUserProps) {
             {/* Top Section */}
             <div className="flex w-full flex-col items-center justify-start gap-5 md:flex-row">
               <div className="h-40 w-40 overflow-hidden rounded-full border">
-                {user.role === "Nurse" || user.role === "Midwife" ? (
+                {["Nurse", "Midwife"].includes(user.role) ? (
                   <Image
                     src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver.profile_photo)}`}
                     alt="User Profile Photo"
@@ -111,7 +111,7 @@ async function ViewUser({ user, totalOrder }: ViewUserProps) {
                 <h1 className="text-xl font-bold">{user_full_name}</h1>
                 {/* User Role */}
                 <div className="flex flex-col gap-2">
-                  {(user.role === "Nurse" || user.role === "Midwife") && (
+                  {["Nurse", "Midwife"].includes(user.role) && (
                     <div className="flex items-center justify-center gap-2">
                       <div>
                         {user.role === "Nurse" ? (
@@ -275,7 +275,7 @@ async function ViewUser({ user, totalOrder }: ViewUserProps) {
                 </div>
 
                 {/* CAREGIVER - Working Preferences */}
-                {(user.role === "Nurse" || user.role === "Midwife") && (
+                {["Nurse", "Midwife"].includes(user.role) && (
                   <div className="flex w-full flex-col">
                     <h1 className="mb-3 text-heading-6 font-bold text-primary">
                       User Working Preferences

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";
@@ -13,7 +12,6 @@ import { createBrowserClient } from "@supabase/ssr";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,7 +23,6 @@ interface UpdateMedicineProps {
 }
 
 function UpdateMedicine({ medicine }: UpdateMedicineProps) {
-  const router = useRouter();
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
     medicine.medicine_photo ? medicine.medicine_photo : null
   );
@@ -38,6 +35,9 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     exp_date: medicine.exp_date
   });
 
+  /**
+   * * Date Formatter
+   */
   const formatDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
@@ -45,6 +45,10 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     year: "numeric"
   }).format(new Date(formData.exp_date));
 
+  /**
+   * * Handle Input Change
+   * @param e
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -54,6 +58,10 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     });
   };
 
+  /**
+   * * Handling File Changes whenever user changes the image
+   * @param e
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
@@ -61,6 +69,10 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
   };
 
+  /**
+   * * Handle Drop Event
+   * @param e
+   */
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -80,15 +92,28 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
   };
 
+  /**
+   * * Handle Drag Over Event
+   * @param e
+   */
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+  /**
+   * * Handle Drag Leave Event
+   * @returns
+   */
+  const handleDragLeave = () => setIsDragging(false);
 
+  /**
+   * * Upload File to Supabase
+   * @param storage
+   * @param fileName
+   * @param file
+   * @returns
+   */
   async function uploadAdminToStorage(
     storage: string,
     fileName: string,
@@ -99,7 +124,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    const { data: userData, error } = await supabase.auth.getSession();
+    const { data: userData } = await supabase.auth.getSession();
 
     if (userData.session?.user) {
       const { data, error } = await supabase.storage
@@ -117,6 +142,11 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
   }
 
+  /**
+   * * Cancel Upload by Removing Uploaded File from Supabase
+   * @param path
+   * @returns
+   */
   async function cancelUploadAdminToStorage(path: string) {
     try {
       const supabase = createBrowserClient(
@@ -124,9 +154,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
-      const { data, error } = await supabase.storage
-        .from("medicine")
-        .remove([path]);
+      const { error } = await supabase.storage.from("medicine").remove([path]);
 
       if (error) {
         return error;
@@ -138,13 +166,18 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
   }
 
+  /**
+   * * Handle File Upload
+   * @param medicinePhoto
+   * @returns
+   */
   const handleFileUpload = async (medicinePhoto: File) => {
     try {
       const name = uuidv7();
       const extension = medicinePhoto.name.split(".")[1];
       const fileName = `${name}_${Date.now()}.${extension}`;
 
-      const path = await uploadAdminToStorage(
+      await uploadAdminToStorage(
         "medicine",
         fileName,
         medicinePhoto as unknown as string
@@ -160,6 +193,11 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     }
   };
 
+  /**
+   * * Save Updated Medicine
+   * @param form
+   * @returns
+   */
   const saveUpdatedMedicine = async (form: FormData) => {
     if (AdminMedicineValidation(form, medicinePhoto) == false) return;
 
@@ -190,7 +228,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       medicine_photo: pathMedicine
     };
 
-    const { data, error } = await updateAdminMedicineById(updatedMedicine);
+    const { error } = await updateAdminMedicineById(updatedMedicine);
 
     if (error !== null && error !== undefined) {
       await cancelUploadAdminToStorage(pathMedicine as string);

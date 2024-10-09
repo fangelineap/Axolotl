@@ -17,6 +17,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { AdminUserValidation } from "./Validation/AdminUserValidation";
 
 function AddAdmin() {
+  /**
+   * * States & Initial Variables
+   */
   const router = useRouter();
   const [formData, setFormData] = useState<NEW_ADMIN_AUTH_SCHEMA>({
     id: "",
@@ -34,6 +37,9 @@ function AddAdmin() {
     password: ""
   });
 
+  /**
+   * * Date Formatter
+   */
   const formatDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
@@ -41,6 +47,10 @@ function AddAdmin() {
     year: "numeric"
   }).format(new Date(formData.birthdate));
 
+  /**
+   * * Handle Input Change
+   * @param e
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -50,6 +60,11 @@ function AddAdmin() {
     });
   };
 
+  /**
+   * * Save Admin
+   * @param form
+   * @returns
+   */
   const createAdmin = async (form: FormData) => {
     if (AdminUserValidation(form) == false) return;
 

@@ -19,6 +19,9 @@ function ViewMedicine(data: ViewMedicineProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const router = useRouter();
 
+  /**
+   * * Date Formatter
+   */
   const formatDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
@@ -26,6 +29,9 @@ function ViewMedicine(data: ViewMedicineProps) {
     year: "numeric"
   }).format(new Date(data.medicine.exp_date));
 
+  /**
+   * * Handle Image Load
+   */
   const handleImageLoad = () => {
     setImageLoaded(true);
   };

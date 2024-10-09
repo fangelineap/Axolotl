@@ -115,6 +115,8 @@ export async function createAdminNewAdmin(form: NEW_ADMIN_AUTH_SCHEMA) {
 
     return { data: userData, error: null };
   } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
     return { data: null, error };
   }
 }
@@ -243,6 +245,247 @@ export async function getAdminCaregiverTotalOrders(user_id: string) {
     console.error("An unexpected error occurred:", error);
 
     return { data: null, error };
+  }
+}
+
+/**
+ * * Helper Function to update user email
+ * @param email
+ * @param existingEmail
+ * @returns
+ */
+async function updateAdminUserEmail(email: string, existingEmail: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    if (email !== existingEmail) {
+      const { error: updateUserEmailError } = await supabase.auth.updateUser({
+        email
+      });
+
+      if (updateUserEmailError) {
+        console.error(
+          "Error updating user email:",
+          updateUserEmailError.message
+        );
+
+        return false;
+      }
+
+      return true;
+    }
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return false;
+  }
+}
+
+/**
+ * * Helper Function to update user basic data
+ * @param first_name
+ * @param last_name
+ * @param phone_number
+ * @param address
+ * @param gender
+ * @param birthdate
+ * @param user_id
+ * @returns
+ */
+async function updateAdminUserData(
+  first_name: string,
+  last_name: string,
+  phone_number: string,
+  address: string,
+  gender: string,
+  birthdate: Date,
+  user_id: string
+) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { error: updateUserDataError } = await supabase
+      .from("users")
+      .update({
+        first_name,
+        last_name,
+        phone_number,
+        address,
+        gender,
+        birthdate
+      })
+      .eq("user_id", user_id)
+      .single();
+
+    if (updateUserDataError) {
+      console.error("Error updating user data:", updateUserDataError.message);
+
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false };
+  }
+}
+
+/**
+ * * Update User Data
+ * @param user_id
+ * @param form
+ * @returns
+ */
+export async function updateAdminUser(
+  user_id: string,
+  form: AdminUserTable
+): Promise<{ success: boolean }> {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    email,
+    first_name,
+    last_name,
+    phone_number,
+    address,
+    gender,
+    birthdate,
+    caregiver: {
+      employment_type,
+      work_experiences,
+      workplace,
+      cv,
+      degree_certificate,
+      str,
+      sip
+    },
+    patient: { blood_type, height, weight, is_smoking }
+  } = form;
+
+  const validationError = validateRequiredFields({
+    email,
+    first_name,
+    last_name,
+    phone_number,
+    address,
+    gender,
+    birthdate,
+    caregiver: {
+      employment_type,
+      work_experiences,
+      workplace,
+      cv,
+      degree_certificate,
+      str,
+      sip
+    },
+    patient: { blood_type, height, weight, is_smoking }
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false };
+  }
+
+  try {
+    const { data: userRole, error: userRoleError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("user_id", user_id)
+      .single();
+
+    if (userRoleError) {
+      console.error("Error fetching userRole:", userRoleError.message);
+
+      return { success: false };
+    }
+
+    const authSchema = await getUserAuthSchema(user_id);
+
+    if (!authSchema) return { success: false };
+
+    const isEmailChanged = await updateAdminUserEmail(email, authSchema.email!);
+
+    if (!isEmailChanged) return { success: false };
+
+    const updateUserData = await updateAdminUserData(
+      first_name,
+      last_name,
+      phone_number,
+      address,
+      gender,
+      birthdate,
+      user_id
+    );
+
+    if (!updateUserData.success) return { success: false };
+
+    if (userRole.role === "Admin") return { success: true };
+
+    if (userRole.role === "Patient") {
+      const { error: updatePatientDetailedDataError } = await supabase
+        .from("patient")
+        .update({
+          blood_type,
+          height,
+          weight,
+          is_smoking
+        })
+        .eq("user_id", user_id)
+        .single();
+
+      if (updatePatientDetailedDataError) {
+        console.error(
+          "Error updating patient data:",
+          updatePatientDetailedDataError.message
+        );
+
+        return { success: false };
+      }
+
+      return { success: true };
+    }
+
+    if (["Nurse", "Midwife"].includes(userRole.role)) {
+      const { error: updateCaregiverDetailedDataError } = await supabase
+        .from("caregiver")
+        .update({
+          employment_type,
+          work_experiences,
+          workplace,
+          cv,
+          degree_certificate,
+          str,
+          sip
+        })
+        .eq("user_id", user_id)
+        .single();
+
+      if (updateCaregiverDetailedDataError) {
+        console.error(
+          "Error updating caregiver data:",
+          updateCaregiverDetailedDataError.message
+        );
+
+        return { success: false };
+      }
+
+      return { success: true };
+    }
+
+    return { success: false };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false };
   }
 }
 

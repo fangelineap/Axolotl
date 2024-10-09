@@ -15,7 +15,7 @@ const CreateAccount = async ({ searchParams }: any) => {
   if (userSession) {
     if (userSession.role === "Patient") {
       redirect("/patient");
-    } else if (userSession.role === "Nurse" || userSession.role === "Midwife") {
+    } else if (["Nurse", "Midwife"].includes(userSession.role)) {
       redirect("/caregiver");
     } else if (userSession.role === "Admin") {
       redirect("/admin");

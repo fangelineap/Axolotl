@@ -33,6 +33,9 @@ function AddMedicine() {
     exp_date: new Date()
   });
 
+  /**
+   * * Date Formatter
+   */
   const formatDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
@@ -40,6 +43,10 @@ function AddMedicine() {
     year: "numeric"
   }).format(new Date(formData.exp_date));
 
+  /**
+   * * Handle Input Change
+   * @param e
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -49,6 +56,10 @@ function AddMedicine() {
     });
   };
 
+  /**
+   * * Handling File Change
+   * @param e
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
@@ -56,6 +67,10 @@ function AddMedicine() {
     }
   };
 
+  /**
+   * * Handle Drop Event
+   * @param e
+   */
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -75,15 +90,28 @@ function AddMedicine() {
     }
   };
 
+  /**
+   * * Handle Drag Over Event
+   * @param e
+   */
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
+  /**
+   * * Handle Drag Leave Event
+   * @returns
+   */
+  const handleDragLeave = () => setIsDragging(false);
 
+  /**
+   * * Upload File to Supabase
+   * @param storage
+   * @param fileName
+   * @param file
+   * @returns
+   */
   async function uploadAdminToStorage(
     storage: string,
     fileName: string,
@@ -114,6 +142,11 @@ function AddMedicine() {
     }
   }
 
+  /**
+   * * Cancel Upload by Removing Uploaded File from Supabase
+   * @param path
+   * @returns
+   */
   async function cancelUploadAdminToStorage(path: string) {
     try {
       const supabase = createBrowserClient(
@@ -133,6 +166,11 @@ function AddMedicine() {
     }
   }
 
+  /**
+   * * Handle File Upload
+   * @param medicinePhoto
+   * @returns
+   */
   const handleFileUpload = async (medicinePhoto: File) => {
     try {
       const name = uuidv7();
@@ -155,6 +193,11 @@ function AddMedicine() {
     }
   };
 
+  /**
+   * * Save Medicine
+   * @param form
+   * @returns
+   */
   const saveMedicine = async (form: FormData) => {
     if (AdminMedicineValidation(form, medicinePhoto) == false) return;
 

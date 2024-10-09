@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export const metadata: Metadata = getGuestMetadata("sign in");
 
-const SignIn = async ({ searchParams }: any) => {
+const SignIn = async () => {
   /**
    * * Get user from session
    */
@@ -38,10 +38,7 @@ const SignIn = async ({ searchParams }: any) => {
 
   return (
     <DefaultLayout>
-      <SignInComponent
-        searchParams={searchParams}
-        handleRedirectByRole={handleRedirectByRole}
-      />
+      <SignInComponent handleRedirectByRole={handleRedirectByRole} />
     </DefaultLayout>
   );
 };

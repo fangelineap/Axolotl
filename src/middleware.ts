@@ -146,7 +146,7 @@ async function updateSession(request: NextRequest) {
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
   } else if (pathname.startsWith("/caregiver")) {
-    if (userRole === "Nurse" || userRole === "Midwife") {
+    if (["Nurse", "Midwife"].includes(userRole)) {
       const caregiverStatus = (await getCaregiverVerificationStatus(
         userId!
       )) as "Verified" | "Rejected" | "Unverified";

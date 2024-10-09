@@ -14,7 +14,20 @@ import { redirect } from "next/navigation";
 export async function signInWithEmailAndPassword(
   email: string,
   password: string
-) {
+): Promise<
+  | {
+      success: boolean;
+      message: string;
+      data?: undefined;
+    }
+  | {
+      success: boolean;
+      data: {
+        userId: string;
+      };
+      message?: undefined;
+    }
+> {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();

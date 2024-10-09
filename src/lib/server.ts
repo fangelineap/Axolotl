@@ -92,7 +92,7 @@ async function fetchUserDataByRole(
     };
   }
 
-  if (user.role === "Nurse" || user.role === "Midwife") {
+  if (["Nurse", "Midwife"].includes(user.role)) {
     const { data: caregiver, error: caregiverError } = await supabase
       .from("users")
       .select("*, caregiver(*)")
