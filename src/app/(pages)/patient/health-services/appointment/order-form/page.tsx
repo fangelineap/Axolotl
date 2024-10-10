@@ -51,7 +51,7 @@ const PlacingOrder = ({ searchParams }: any) => {
       }
 
       if (data) {
-        setSession(data[0]);
+        setSession(data);
       }
     };
 
@@ -92,6 +92,7 @@ const PlacingOrder = ({ searchParams }: any) => {
     const res = await createAppointment({
       service_type: serviceType,
       caregiver_id: searchParams.caregiver,
+      patient_id: session?.id,
       causes: formData.get("causes")!.toString(),
       main_concern: concern,
       current_medication: formData.get("currentMedication")!.toString(),
@@ -99,7 +100,7 @@ const PlacingOrder = ({ searchParams }: any) => {
       days_of_visit: days,
       appointment_time: searchParams.time,
       appointment_date: searchParams.date,
-      total_payment: days * 500000,
+      total_payment: days * service.price,
       symptoms: selectedAll
     });
 
@@ -330,29 +331,31 @@ const PlacingOrder = ({ searchParams }: any) => {
               {isActive ? (
                 <>
                   <div className="px-5 py-2">
-                    <div className="flex flex-col items-center justify-center rounded-md border-[0.5px] border-red bg-red-light px-3 py-1 text-red">
-                      <h1 className="text-center text-lg font-semibold">
-                        Your transaction will be automatically terminated in
-                      </h1>
-                      <h1 className="text-lg font-semibold">
-                        {Math.floor(seconds / 3600)}:
-                        {Math.floor(seconds / 60) == 60
-                          ? "00"
-                          : Math.floor(seconds / 60)}
-                        :{seconds % 60 == 0 ? "00" : seconds % 60}
-                      </h1>
-                    </div>
+                    {!copied && (
+                      <div className="flex flex-col items-center justify-center rounded-md border-[0.5px] border-red bg-red-light px-3 py-1 text-red">
+                        <h1 className="text-center text-lg font-semibold">
+                          Your transaction will be automatically terminated in
+                        </h1>
+                        <h1 className="text-lg font-semibold">
+                          {Math.floor(seconds / 3600)}:
+                          {Math.floor(seconds / 60) == 60
+                            ? "00"
+                            : Math.floor(seconds / 60)}
+                          :{seconds % 60 == 0 ? "00" : seconds % 60}
+                        </h1>
+                      </div>
+                    )}
                     <div className="mb-1 mt-3 flex justify-between">
                       <h1 className="font-semibold text-stroke-dark">
                         Service Fee
                       </h1>
-                      <h1>Rp. 500.000</h1>
+                      <h1>Rp. {service.price}</h1>
                     </div>
                     <div className="flex justify-between">
                       <h1 className="font-semibold text-stroke-dark">
                         Total Days
                       </h1>
-                      <h1>{days}x visit</h1>
+                      <h1>{serviceType === "Booster" ? 1 : days}x visit</h1>
                     </div>
                     <div className="flex justify-center">
                       <div className="my-5 h-[0.5px] w-full bg-primary"></div>
@@ -361,7 +364,12 @@ const PlacingOrder = ({ searchParams }: any) => {
                       <h1 className="font-semibold text-stroke-dark">
                         Total Charge
                       </h1>
-                      <h1 className="text-lg font-bold">Rp. 500.000</h1>
+                      <h1 className="text-lg font-bold">
+                        Rp.{" "}
+                        {serviceType === "Booster"
+                          ? service.price
+                          : service.price * days}
+                      </h1>
                     </div>
                     <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">
                       <h1 className="mb-1 text-lg font-semibold">
@@ -378,7 +386,6 @@ const PlacingOrder = ({ searchParams }: any) => {
                               "12345-67890-87654"
                             );
                             setCopied(true);
-                            setIsActive(false);
                           } catch (error) {
                             console.log("error");
                           }
@@ -416,7 +423,6 @@ const PlacingOrder = ({ searchParams }: any) => {
                           className={`w-full rounded-sm bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90`}
                           onClick={(e) => {
                             e.preventDefault();
-                            setIsActive(true);
                           }}
                         >
                           Continue

@@ -1,18 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/page";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderDetail from "@/components/Patient/OrderDetail";
 import { getOrderDetail } from "@/app/server-action/patient";
+import { useParams } from "next/navigation";
 
-const medicinePreparation = () => {
+const medicinePreparation = ({ searchParams }: any) => {
   const [data, setData] = useState<any>(null);
+  const params = useParams();
+  const id = params.id as string;
 
   useEffect(() => {
     const getData = async () => {
-      const data = await getOrderDetail("4");
+      const data = await getOrderDetail(id);
 
-      console.log("dataaaaaaa", data);
       if (data) {
         setData(data);
       }
@@ -20,42 +21,6 @@ const medicinePreparation = () => {
 
     getData();
   }, []);
-
-  // Sample data to pass to the NewComponent
-  const sampleData = {
-    orderStatus: "Ongoing",
-    patientInfo: {
-      name: "Axolotl",
-      address: "Jl. Lorem Ipsum, Malang City, East Java, Indonesia, 12345",
-      phoneNumber: "08123456789",
-      birthdate: "34/13/2054"
-    },
-    medicalDetails: {
-      causes: "Post Fractured Left Arm Surgery",
-      mainConcerns: ["Wound Treatment"],
-      currentMedicine: ["Paracetamol", "Ibuprofen"],
-      symptoms: ["Fever"],
-      medicalDescriptions:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Nam ac dolor eget metus scelerisque elementum.",
-      conjectures: "Bokek habis topup valo"
-    },
-    serviceDetails: {
-      orderId: "#123456789",
-      orderDate: "31/06/2024",
-      serviceType: "After Care",
-      totalDays: "2x Visit",
-      startTime: "32/07/2024 23:59",
-      endTime: "33/07/2024 23:59",
-      serviceFee: "2 x Rp. 500.000",
-      totalCharge: "Rp. 1.000.000"
-    },
-
-    price: {
-      total: "Rp. 50.000",
-      delivery: "Rp. 10.000",
-      totalCharge: "Rp. 60.000"
-    }
-  };
 
   return (
     <DefaultLayout>

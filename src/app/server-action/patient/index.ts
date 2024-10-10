@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
-import createSupabaseServerClient from "@/lib/server";
+import createSupabaseServerClient, {
+  getUserDataFromSession
+} from "@/lib/server";
 import { services } from "@/utils/Services";
 import { getProfilePhoto } from "../caregiver";
+import { unstable_noStore } from "next/cache";
+import { PatientOrder } from "@/app/(pages)/caregiver/type/data";
+import { MEDICINE_ORDER_DETAIL } from "@/types/axolotl";
+import { getAdminUserByUserID } from "@/app/(pages)/admin/manage/user/actions";
 
 interface Appointment {
   service_type: string;
   caregiver_id: string;
+  patient_id: string;
   causes: string;
   main_concern: string;
   current_medication: string;
@@ -21,6 +28,7 @@ interface Appointment {
 export async function createAppointment({
   service_type,
   caregiver_id,
+  patient_id,
   causes,
   main_concern,
   current_medication,
@@ -88,8 +96,32 @@ export async function createAppointment({
       })
       .select("id");
 
-    if (data) {
-      console.log("data", data);
+    const user = await getUserDataFromSession();
+    const { data: cgUserData, error: cgUserError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("user_id", caregiver_id);
+    const { data: cgData, error: cgError } = await supabase
+      .from("caregiver")
+      .select("*")
+      .eq("caregiver_id", cgUserData![0].id);
+
+    if (!user || !("patient" in user) || !user.patient?.id) {
+      throw new Error("No caregiver ID found for the logged-in user");
+    }
+
+    const { data: orderData, error: orderError } = await supabase
+      .from("order")
+      .insert({
+        patient_id: user?.patient?.id,
+        caregiver_id: cgData![0].id,
+        appointment_order_id: data![0].id,
+        total_payment: total_payment,
+        update_at: new Date()
+      })
+      .select("*");
+    if (orderData) {
+      console.log("order id", orderData);
     }
 
     if (!error) {
@@ -138,10 +170,33 @@ export async function getOrderDetail(id: string) {
       .eq("id", id)
       .single();
 
-    const { data: medsData, error: medsError } = await supabase
-      .from("medicineOrderDetail")
-      .select("*")
-      .eq("medicine_order_id", data.medicineOrder.id);
+    let meds: any;
+    if (data.medicineOrder) {
+      const { data: medsData, error: medsError } = await supabase
+        .from("medicineOrderDetail")
+        .select("*")
+        .eq("medicine_order_id", data.medicineOrder.id);
+
+      if (medsData) {
+        meds = await Promise.all(
+          medsData.map(async (med: MedicineType) => {
+            const { data: medicineData, error: medicineError } = await supabase
+              .from("medicine")
+              .select("*")
+              .eq("uuid", med.medicine_id)
+              .single();
+
+            if (medicineData) {
+              return {
+                name: medicineData.name,
+                quantity: med.quantity,
+                price: medicineData.price
+              };
+            }
+          })
+        );
+      }
+    }
 
     const { data: userData, error: userError } = await supabase
       .from("users")
@@ -154,27 +209,6 @@ export async function getOrderDetail(id: string) {
       .select("*")
       .eq("id", data.caregiver.caregiver_id)
       .single();
-
-    let meds: any;
-    if (medsData) {
-      meds = await Promise.all(
-        medsData.map(async (med: MedicineType) => {
-          const { data: medicineData, error: medicineError } = await supabase
-            .from("medicine")
-            .select("*")
-            .eq("uuid", med.medicine_id)
-            .single();
-
-          if (medicineData) {
-            return {
-              name: medicineData.name,
-              quantity: med.quantity,
-              price: medicineData.price
-            };
-          }
-        })
-      );
-    }
 
     const serviceFee = services.find(
       (service) => service.name === data.appointment.service_type
@@ -224,5 +258,117 @@ export async function getOrderDetail(id: string) {
     return temp;
   } catch (error) {
     console.log("error", error);
+  }
+}
+
+export async function fetchOrdersByPatient() {
+  unstable_noStore();
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const userData = await getUserDataFromSession();
+
+    if (
+      !userData ||
+      !("patient" in userData) ||
+      !userData.patient?.patient_id
+    ) {
+      throw new Error("No patient ID found for the logged-in user");
+    }
+
+    let patientData: PatientOrder;
+    // Check if caregiver exists in userData
+    if (userData.patient) {
+      patientData = {
+        ...userData,
+        patient: userData.patient
+      } as PatientOrder;
+    } else {
+      throw new Error("Patient data is missing");
+    }
+
+    const patient_id = patientData.patient.id;
+
+    // Query to fetch orders with related appointment, patient, caregiver, and medicine order details
+    const { data, error } = await supabase
+      .from("order")
+      .select(
+        `*, caregiver(*, users (first_name, last_name, address, phone_number, birthdate)), appointment(*), patient(*), medicineOrder(*, medicineOrderDetail(*))`
+      )
+      .eq("patient_id", patient_id);
+
+    if (error) {
+      console.error("Error fetching orders:", error.message);
+
+      return [];
+    }
+
+    if (!data || data.length === 0) {
+      console.warn("No orders found for the caregiver");
+
+      return [];
+    }
+
+    // Loop through each order and fetch the medicine order details
+    const ordersWithDetails = await Promise.all(
+      data.map(async (order: any) => {
+        if (order.medicineOrder && order.medicineOrder.id) {
+          const { data: medicineDetail, error: medicineDetailError } =
+            await supabase
+              .from("medicineOrder")
+              .select("*, medicineOrderDetail(*, medicine(*))")
+              .eq("id", order.medicineOrder.id);
+
+          if (medicineDetailError) {
+            console.error(
+              "Error fetching medicine order details:",
+              medicineDetailError.message
+            );
+
+            return null;
+          }
+
+          // Return combined data with medicineOrderDetail
+          return {
+            ...order,
+            medicineOrder: {
+              ...order.medicineOrder,
+              medicineOrderDetail:
+                medicineDetail?.[0]?.medicineOrderDetail || []
+            }
+          };
+        } else {
+          return order; // Return order without medicineOrder if not found
+        }
+      })
+    );
+
+    // Filter out any null values that might have occurred due to errors in medicine detail fetching
+    const validOrders = ordersWithDetails.filter((order) => order !== null);
+
+    console.log(validOrders);
+
+    // Access and print the array of medicineOrderDetailData
+    validOrders.forEach((order) => {
+      if (
+        order.medicineOrder &&
+        order.medicineOrder.medicineOrderDetail.length > 0
+      ) {
+        console.log("Medicine Order Details:");
+        order.medicineOrder.medicineOrderDetail.forEach(
+          (detail: MEDICINE_ORDER_DETAIL, index: number) => {
+            console.log(`Detail ${index + 1}:`, detail);
+          }
+        );
+      } else {
+        console.log("No medicine order details found for this order.");
+      }
+    });
+
+    return validOrders;
+  } catch (error) {
+    console.error("Error:", error);
+
+    return [];
   }
 }
