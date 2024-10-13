@@ -1,4 +1,4 @@
-import { resetPassword } from "@/app/server-action/auth";
+import { resetPassword } from "@/app/_server-action/auth";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { redirect } from "next/navigation";
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";

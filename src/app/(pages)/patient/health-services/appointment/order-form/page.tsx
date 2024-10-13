@@ -1,8 +1,8 @@
 "use client";
 
 import { getCaregiverById, getUserFromSession } from "@/lib/server";
-import { getCaregiverPhoto } from "@/app/server-action/caregiver";
-import { createAppointment } from "@/app/server-action/patient";
+import { getCaregiverPhoto } from "@/app/_server-action/caregiver";
+import { createAppointment } from "@/app/_server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import Select from "@/components/Axolotl/Select";

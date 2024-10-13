@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { deleteUser } from "@/app/server-action/admin/SupaAdmin";
+import { deleteUser } from "@/app/_server-action/admin/SupaAdmin";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import CheckboxBlood from "@/components/Axolotl/Checkboxes/CheckboxBlood";
 import CheckboxSmoker from "@/components/Axolotl/Checkboxes/CheckboxSmoker";
@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { createClient } from "@/lib/client";
 
 const PersonalInformation = ({ searchParams }: any) => {
   const router = useRouter();
@@ -40,10 +40,7 @@ const PersonalInformation = ({ searchParams }: any) => {
    */
   useEffect(() => {
     const checkSession = async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
 
       const { data: sessionData, error: sessionError } =
         await supabase.auth.getSession();

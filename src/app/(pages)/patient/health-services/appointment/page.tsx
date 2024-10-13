@@ -1,6 +1,6 @@
 "use client";
 
-import { getProfilePhoto } from "@/app/server-action/caregiver";
+import { getProfilePhoto } from "@/app/_server-action/caregiver";
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";

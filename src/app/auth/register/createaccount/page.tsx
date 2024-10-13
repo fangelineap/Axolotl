@@ -1,5 +1,5 @@
 import { getUserFromSession } from "@/lib/server";
-import { registerWithEmailAndPassword } from "@/app/server-action/auth";
+import { registerWithEmailAndPassword } from "@/app/_server-action/auth";
 import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Link from "next/link";

@@ -3,6 +3,7 @@ import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
 import { Modal } from "@mui/material";
 import {
   IconHash,
+  IconMail,
   IconMedicineSyrup,
   IconUserCircle,
   IconX
@@ -70,6 +71,14 @@ function AxolotlModal({
                     {user_full_name}
                   </h3>
                   <div className="flex gap-2">
+                    <IconHash className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">{user.user_id}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <IconMail className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">{user.email}</p>
+                  </div>
+                  <div className="flex gap-2">
                     <IconUserCircle
                       className="text-dark-secondary"
                       stroke={1}
@@ -92,6 +101,7 @@ function AxolotlModal({
                 />
                 <AxolotlButton
                   label="Yes, I'm sure"
+                  isSubmit
                   onClick={onConfirm}
                   variant="danger"
                   fontThickness="bold"
@@ -110,6 +120,7 @@ function AxolotlModal({
                 />
                 <AxolotlButton
                   label="Yes, I'm sure"
+                  isSubmit
                   onClick={onConfirm}
                   variant="primary"
                   fontThickness="bold"
@@ -139,6 +150,7 @@ function AxolotlModal({
               <>
                 <AxolotlButton
                   label="Yes, cancel the registration"
+                  isSubmit
                   onClick={onConfirm}
                   variant="danger"
                   fontThickness="bold"

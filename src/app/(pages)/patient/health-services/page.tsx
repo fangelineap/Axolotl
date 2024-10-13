@@ -1,6 +1,6 @@
 "use client";
 
-import { getProfilePhoto } from "@/app/server-action/caregiver";
+import { getProfilePhoto } from "@/app/_server-action/caregiver";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";

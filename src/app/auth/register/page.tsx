@@ -4,7 +4,6 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = getGuestMetadata("register");
 

@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: AdminShowApprovalProps) {
     };
   }
 
-  const full_name = response.user.first_name + " " + response.user.last_name;
+  const full_name = response.users.first_name + " " + response.users.last_name;
 
   return {
     title: `${full_name} Details`

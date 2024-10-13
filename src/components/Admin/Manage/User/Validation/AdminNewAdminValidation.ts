@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-export const AdminUserValidation = (form: FormData) => {
+export const AdminNewAdminValidation = (form: FormData) => {
   if (
     !form.get("first_name") &&
     !form.get("last_name") &&

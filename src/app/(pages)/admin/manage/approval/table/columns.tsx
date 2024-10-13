@@ -44,8 +44,8 @@ export const columns = [
         </div>
       );
     },
-    id: "User ID",
-    header: "User ID",
+    id: "Caregiver ID",
+    header: "Caregiver ID",
     enableSorting: true,
     enableColumnFilter: true
   }),
@@ -74,7 +74,7 @@ export const columns = [
   ),
   columnHelper.accessor(
     (row) =>
-      `${row.user?.first_name || ""} ${row.user?.last_name || ""}`.trim(),
+      `${row.users?.first_name || ""} ${row.users?.last_name || ""}`.trim(),
     {
       cell: (info) => {
         const user_full_name = info.getValue();
@@ -87,7 +87,7 @@ export const columns = [
       enableColumnFilter: true
     }
   ),
-  columnHelper.accessor("user.role", {
+  columnHelper.accessor("users.role", {
     cell: (info) => {
       const role = info.getValue() as "Midwife" | "Nurse";
       const { bgColor, textColor } = roleDisplay[role];

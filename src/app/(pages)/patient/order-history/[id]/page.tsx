@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderDetail from "@/components/Patient/OrderDetail";
-import { getOrderDetail } from "@/app/server-action/patient";
+import { getOrderDetail } from "@/app/_server-action/patient";
 import { useParams } from "next/navigation";
 
 const medicinePreparation = ({ searchParams }: any) => {

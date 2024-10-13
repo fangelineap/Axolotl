@@ -7,22 +7,26 @@ import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/D
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
-import { createBrowserClient } from "@supabase/ssr";
+import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
+import { createClient } from "@/lib/client";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { uuidv7 } from "uuidv7";
 import { AdminMedicineValidation } from "./Validation/AdminMedicineValidation";
+import { useRouter } from "next/navigation";
 
 interface UpdateMedicineProps {
   medicine: AdminMedicineTable;
 }
 
 function UpdateMedicine({ medicine }: UpdateMedicineProps) {
+  /**
+   * * States & Initial Variables
+   */
+  const router = useRouter();
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
     medicine.medicine_photo ? medicine.medicine_photo : null
   );
@@ -93,18 +97,13 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
   };
 
   /**
-   * * Handle Drag Over Event
+   * * Handle Drag Over & Leave Event
    * @param e
    */
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
-
-  /**
-   * * Handle Drag Leave Event
-   * @returns
-   */
   const handleDragLeave = () => setIsDragging(false);
 
   /**
@@ -119,10 +118,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     fileName: string,
     file: string
   ) {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient();
 
     const { data: userData } = await supabase.auth.getSession();
 
@@ -149,10 +145,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
    */
   async function cancelUploadAdminToStorage(path: string) {
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
 
       const { error } = await supabase.storage.from("medicine").remove([path]);
 
@@ -199,7 +192,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
    * @returns
    */
   const saveUpdatedMedicine = async (form: FormData) => {
-    if (AdminMedicineValidation(form, medicinePhoto) == false) return;
+    if (AdminMedicineValidation(form, medicinePhoto) === false) return;
 
     let pathMedicine: string | undefined = undefined;
 
@@ -245,8 +238,10 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     });
 
     setTimeout(() => {
-      window.location.href = `/admin/manage/medicine/${medicine.uuid}`;
-    }, 1000);
+      router.refresh();
+      router.push(`/admin/manage/medicine/${medicine.uuid}`);
+      router.refresh();
+    }, 500);
   };
 
   return (
@@ -285,7 +280,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                       className="max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain"
                       width={200}
                       height={200}
-                      layout="responsive"
                     />
                   ) : (
                     <Image
@@ -387,7 +381,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                 </Link>
                 <AxolotlButton
                   label="Update Medicine"
-                  type="submit"
+                  isSubmit
                   fontThickness="bold"
                   variant="primary"
                   customClasses="text-lg"

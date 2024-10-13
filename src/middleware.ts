@@ -2,7 +2,7 @@
 
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import { getCaregiverVerificationStatus } from "./app/server-action/auth";
+import { getCaregiverVerificationStatus } from "./app/_server-action/auth";
 
 /**
  * * Handling the page protection between roles
@@ -107,11 +107,9 @@ async function updateSession(request: NextRequest) {
   const { isValid, user, response } = await validateSession(supabase, request);
 
   if (!isValid) {
-    return response;
-  }
+    console.error("Session is invalid:", { isValid, user, response });
 
-  if (user) {
-    console.log(user);
+    return response;
   }
 
   const userId = user?.id;
@@ -122,27 +120,31 @@ async function updateSession(request: NextRequest) {
     .eq("user_id", userId)
     .single();
 
-  if (userData) {
-    console.log(user);
-    console.log(userData);
+  if (!userData) {
+    console.error("Error fetching user data:", { user, userData });
+
+    return response;
   }
 
   const userRole = userData.role;
   const roleRedirect = getRoleRedirect(userRole);
+
+  console.log({ user, userRole, isValid });
 
   // If the user is already on their role-specific page, allow access without redirection
   if (pathname.startsWith(roleRedirect)) {
     return NextResponse.next();
   }
 
-  console.log({ userRole });
+  if (isValid && pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL(roleRedirect, request.url));
+  }
 
   // Handle patient, caregiver, and admin access
   if (pathname.startsWith("/patient")) {
     if (userRole === "Patient") {
       return NextResponse.next();
     } else {
-      // Redirect to the correct role page
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
   } else if (pathname.startsWith("/caregiver")) {
@@ -174,19 +176,16 @@ async function updateSession(request: NextRequest) {
         NextResponse.redirect(new URL("/", request.url))
       );
     } else {
-      // Redirect to the correct role page
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
   } else if (pathname.startsWith("/admin")) {
     if (userRole === "Admin") {
       return NextResponse.next();
     } else {
-      // Redirect to the correct role page
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
   }
 
-  // Default role-based redirection
   return supabaseResponse;
 }
 

@@ -7,19 +7,21 @@ import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/D
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
-import { createBrowserClient } from "@supabase/ssr";
+import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
+import { createClient } from "@/lib/client";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { uuidv7 } from "uuidv7";
 import { AdminMedicineValidation } from "./Validation/AdminMedicineValidation";
 
 function AddMedicine() {
+  /**
+   * * States & Initial Variables
+   */
   const router = useRouter();
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
     null
@@ -91,18 +93,13 @@ function AddMedicine() {
   };
 
   /**
-   * * Handle Drag Over Event
+   * * Handle Drag Over & Leave Event
    * @param e
    */
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
-
-  /**
-   * * Handle Drag Leave Event
-   * @returns
-   */
   const handleDragLeave = () => setIsDragging(false);
 
   /**
@@ -117,10 +114,7 @@ function AddMedicine() {
     fileName: string,
     file: string
   ) {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient();
 
     const { data: userData } = await supabase.auth.getSession();
 
@@ -149,10 +143,7 @@ function AddMedicine() {
    */
   async function cancelUploadAdminToStorage(path: string) {
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
 
       const { error } = await supabase.storage.from("medicine").remove([path]);
 
@@ -199,7 +190,7 @@ function AddMedicine() {
    * @returns
    */
   const saveMedicine = async (form: FormData) => {
-    if (AdminMedicineValidation(form, medicinePhoto) == false) return;
+    if (AdminMedicineValidation(form, medicinePhoto) === false) return;
 
     const pathMedicine = await handleFileUpload(medicinePhoto as File);
 
@@ -240,7 +231,7 @@ function AddMedicine() {
       router.refresh();
       router.replace(`/admin/manage/medicine/`);
       router.refresh();
-    }, 1500);
+    }, 500);
   };
 
   return (
@@ -367,8 +358,8 @@ function AddMedicine() {
                   />
                 </Link>
                 <AxolotlButton
+                  isSubmit
                   label="Add Medicine"
-                  type="submit"
                   fontThickness="bold"
                   variant="primary"
                   customClasses="text-lg"

@@ -24,14 +24,7 @@ export async function getAllAdminApproval() {
       return [];
     }
 
-    const caregiverWithUserDetails: AdminApprovalTable[] = caregivers.map(
-      (caregiver) => ({
-        ...caregiver,
-        user: caregiver.users
-      })
-    );
-
-    return caregiverWithUserDetails;
+    return caregivers as AdminApprovalTable[];
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 

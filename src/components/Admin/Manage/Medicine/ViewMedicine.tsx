@@ -16,8 +16,11 @@ interface ViewMedicineProps {
 }
 
 function ViewMedicine(data: ViewMedicineProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  /**
+   * * States & Initial Variables
+   */
   const router = useRouter();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   /**
    * * Date Formatter
@@ -32,9 +35,7 @@ function ViewMedicine(data: ViewMedicineProps) {
   /**
    * * Handle Image Load
    */
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
+  const handleImageLoad = () => setImageLoaded(true);
 
   return (
     <>
@@ -60,7 +61,6 @@ function ViewMedicine(data: ViewMedicineProps) {
                     className={`max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain ${imageLoaded ? "" : "hidden"}`}
                     width={200}
                     height={200}
-                    layout="responsive"
                     priority
                     onLoad={handleImageLoad}
                   />

@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import { getUserAuthSchema } from "@/app/_server-action/admin/SupaAdmin";
 import { USER, USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { createServerClient } from "@supabase/ssr";
 import { unstable_noStore } from "next/cache";
@@ -163,15 +163,21 @@ export async function getUserDataFromSession() {
 export async function logout() {
   unstable_noStore();
 
+  console.log("Logging out...");
+
   // Sign out locally (One Device)
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut({ scope: "local" });
+
+  console.log("Local signout successful. Clearing session...");
 
   // Clear session cookies server-side
   await supabase.auth.setSession({
     access_token: "",
     refresh_token: ""
   });
+
+  console.log("Session cleared. Redirecting to /auth/signin...");
 
   redirect("/auth/signin");
 }

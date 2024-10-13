@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const RegisterComponent = () => {
   const [role, setRole] = useState<"Caregiver" | "Patient" | "">("");

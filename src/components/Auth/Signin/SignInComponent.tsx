@@ -1,22 +1,35 @@
 "use client";
 
-import { getUser, signInWithEmailAndPassword } from "@/app/server-action/auth";
+import { getUser, signInWithEmailAndPassword } from "@/app/_server-action/auth";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import InputGroup from "@/components/FormElements/InputGroup";
 import Link from "next/link";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { SignInValidation } from "./Validation/SignInValidation";
+import { useRouter } from "next/navigation";
 
-interface SignInComponentProps {
-  handleRedirectByRole: (role: string) => void;
-}
-
-function SignInComponent({ handleRedirectByRole }: SignInComponentProps) {
+function SignInComponent() {
+  const router = useRouter();
   const [showError, setShowError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  /**
+   * * Handle client-side redirect by user role
+   * @param role
+   */
+  const handleRedirectByRole = (role: string) => {
+    const roleBasedRedirects: Record<string, string> = {
+      Patient: "/patient",
+      Nurse: "/caregiver",
+      Midwife: "/caregiver",
+      Admin: "/admin"
+    };
+
+    const redirectPath = roleBasedRedirects[role];
+    router.replace(redirectPath);
+  };
 
   /**
    * * Redirect User after Sign In
@@ -117,7 +130,7 @@ function SignInComponent({ handleRedirectByRole }: SignInComponentProps) {
 
                 <div className="flex justify-center">
                   <AxolotlButton
-                    type="submit"
+                    isSubmit
                     label="Sign In"
                     variant="primary"
                     roundType="medium"

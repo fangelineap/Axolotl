@@ -5,7 +5,7 @@ import {
   createUser,
   deleteUser,
   getUserAuthSchema
-} from "@/app/server-action/admin/SupaAdmin";
+} from "@/app/_server-action/admin/SupaAdmin";
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
 import { AdminUserTable, AdminCaregiverDetails } from "../table/data";

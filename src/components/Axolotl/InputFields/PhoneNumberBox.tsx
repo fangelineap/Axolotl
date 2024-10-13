@@ -11,7 +11,7 @@ interface PhoneNumberBoxProps {
 }
 
 const PhoneNumberBox = ({
-  disabled = true,
+  disabled = false,
   value = "",
   onChange,
   placeholder,

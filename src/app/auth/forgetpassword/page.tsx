@@ -1,4 +1,4 @@
-import { forgetPassword } from "@/app/server-action/auth";
+import { forgetPassword } from "@/app/_server-action/auth";
 import InputGroup from "@/components/FormElements/InputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";

@@ -1,5 +1,5 @@
 "use client";
-import { fetchOrderDetail } from "@/app/server-action/caregiver/action";
+import { fetchOrderDetail } from "@/app/_server-action/caregiver/action";
 import OrderDetail from "@/components/Caregiver/OrderDetail/page";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useParams } from "next/navigation";

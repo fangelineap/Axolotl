@@ -4,19 +4,13 @@ import Link from "next/link";
 interface DownloadLicensesProps {
   licenseTitle: string;
   fileLink: string;
-  cv?: boolean;
-  degree_certificate?: boolean;
-  str?: boolean;
-  sip?: boolean;
+  licenseType: "CV" | "Degree Cretificate" | "STR" | "SIP";
 }
 
 const DownloadLicenses = ({
   licenseTitle,
   fileLink,
-  cv,
-  degree_certificate,
-  str,
-  sip
+  licenseType
 }: DownloadLicensesProps) => {
   const baseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public`;
 
@@ -26,17 +20,17 @@ const DownloadLicenses = ({
   const sip_link = `${baseUrl}/sip/${fileLink}`;
 
   const getFileLink = () => {
-    if (cv) {
-      return cv_link;
-    }
-    if (degree_certificate) {
-      return degree_certificate_link;
-    }
-    if (str) {
-      return str_link;
-    }
-    if (sip) {
-      return sip_link;
+    switch (licenseType) {
+      case "CV":
+        return cv_link;
+      case "Degree Cretificate":
+        return degree_certificate_link;
+      case "STR":
+        return str_link;
+      case "SIP":
+        return sip_link;
+      default:
+        throw new Error(`Unknown license type: ${licenseType}`);
     }
   };
 

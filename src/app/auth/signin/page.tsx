@@ -17,8 +17,7 @@ const SignIn = async () => {
    * * Redirect User after Sign In based on role
    * @param role
    */
-  const handleRedirectByRole = async (role: string) => {
-    "use server";
+  const handleRedirectByRole = (role: string) => {
     const roleBasedRedirects: Record<string, string> = {
       Patient: "/patient",
       Nurse: "/caregiver",
@@ -27,18 +26,18 @@ const SignIn = async () => {
     };
 
     const redirectPath = roleBasedRedirects[role];
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
+
+    redirect(redirectPath);
   };
 
   if (user) {
+    console.log("user", user);
     handleRedirectByRole(user.role);
   }
 
   return (
     <DefaultLayout>
-      <SignInComponent handleRedirectByRole={handleRedirectByRole} />
+      <SignInComponent />
     </DefaultLayout>
   );
 };

@@ -4,7 +4,7 @@ import { DataTable } from "@/components/Tables/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { fetchOrdersByCaregiver } from "@/app/server-action/caregiver/action";
+import { fetchOrdersByCaregiver } from "@/app/_server-action/caregiver/action";
 import type { CaregiverOrderDetails } from "../type/data";
 
 // Define the status color map

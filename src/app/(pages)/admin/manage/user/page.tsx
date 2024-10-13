@@ -1,4 +1,4 @@
-import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import { getUserAuthSchema } from "@/app/_server-action/admin/SupaAdmin";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import { getAdminAllUsers } from "./actions";

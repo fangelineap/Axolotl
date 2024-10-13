@@ -6,15 +6,14 @@ import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup"
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import CustomDatePicker from "@/components/FormElements/DatePicker/CustomDatePicker";
+import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { AdminUserValidation } from "./Validation/AdminUserValidation";
+import { AdminNewAdminValidation } from "./Validation/AdminNewAdminValidation";
 
 function AddAdmin() {
   /**
@@ -66,7 +65,7 @@ function AddAdmin() {
    * @returns
    */
   const createAdmin = async (form: FormData) => {
-    if (AdminUserValidation(form) == false) return;
+    if (AdminNewAdminValidation(form) == false) return;
 
     const userData: NEW_ADMIN_AUTH_SCHEMA = {
       id: "",

@@ -130,7 +130,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         </div>
       ) : (
         <button
-          className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white transition duration-150 ease-in-out hover:bg-gray-cancel-hover hover:text-gray-cancel"
+          className="w-full rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white transition duration-150 ease-in-out hover:bg-gray-cancel-hover hover:text-gray-cancel"
           onClick={() => router.replace("/admin/manage/approval")}
         >
           Go back
