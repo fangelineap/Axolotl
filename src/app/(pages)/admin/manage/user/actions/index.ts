@@ -1,14 +1,19 @@
 "use server";
 
-import createSupabaseServerClient from "@/lib/server";
 import {
   createUser,
   deleteUser,
+  getAdminAuthClient,
   getUserAuthSchema
 } from "@/app/_server-action/admin/SupaAdmin";
+import createSupabaseServerClient from "@/lib/server";
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
-import { AdminUserTable, AdminCaregiverDetails } from "../table/data";
+import {
+  AdminCaregiverDetails,
+  AdminUpdateUser,
+  AdminUserTable
+} from "../table/data";
 
 /**
  * * Validate required fields
@@ -254,16 +259,29 @@ export async function getAdminCaregiverTotalOrders(user_id: string) {
  * @param existingEmail
  * @returns
  */
-async function updateAdminUserEmail(email: string, existingEmail: string) {
+async function updateAdminUserEmail(
+  email: string,
+  existingEmail: string,
+  user_id: string
+) {
   unstable_noStore();
 
-  const supabase = await createSupabaseServerClient();
+  const supabaseAdmin = await getAdminAuthClient();
 
-  try {
-    if (email !== existingEmail) {
-      const { error: updateUserEmailError } = await supabase.auth.updateUser({
-        email
-      });
+  if (email !== existingEmail) {
+    try {
+      const userEmail: {
+        email: string;
+        email_confirm: boolean;
+      } = {
+        email,
+        email_confirm: true
+      };
+
+      const { error: updateUserEmailError } =
+        await supabaseAdmin.updateUserById(user_id, {
+          ...userEmail
+        });
 
       if (updateUserEmailError) {
         console.error(
@@ -275,12 +293,14 @@ async function updateAdminUserEmail(email: string, existingEmail: string) {
       }
 
       return true;
-    }
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
 
-    return false;
+      return false;
+    }
   }
+
+  if (email === existingEmail) return true;
 }
 
 /**
@@ -316,7 +336,8 @@ async function updateAdminUserData(
         phone_number,
         address,
         gender,
-        birthdate
+        birthdate,
+        updated_at: new Date()
       })
       .eq("user_id", user_id)
       .single();
@@ -341,153 +362,155 @@ async function updateAdminUserData(
  * @param form
  * @returns
  */
-export async function updateAdminUser(
-  user_id: string,
-  form: AdminUserTable
-): Promise<{ success: boolean }> {
-  unstable_noStore();
+// export async function updateAdminUser(
+//   type: "caregiver" | "patient",
+//   form: AdminUpdateUser
+// ): Promise<{ success: boolean }> {
+//   unstable_noStore();
 
-  const supabase = await createSupabaseServerClient();
+//   const supabase = await createSupabaseServerClient();
 
-  const {
-    email,
-    first_name,
-    last_name,
-    phone_number,
-    address,
-    gender,
-    birthdate,
-    caregiver: {
-      employment_type,
-      work_experiences,
-      workplace,
-      cv,
-      degree_certificate,
-      str,
-      sip
-    },
-    patient: { blood_type, height, weight, is_smoking }
-  } = form;
+//   const {
+//     user_id,
+//     email,
+//     first_name,
+//     last_name,
+//     phone_number,
+//     address,
+//     gender,
+//     birthdate,
+//   } = form;
 
-  const validationError = validateRequiredFields({
-    email,
-    first_name,
-    last_name,
-    phone_number,
-    address,
-    gender,
-    birthdate,
-    caregiver: {
-      employment_type,
-      work_experiences,
-      workplace,
-      cv,
-      degree_certificate,
-      str,
-      sip
-    },
-    patient: { blood_type, height, weight, is_smoking }
-  });
+//   // Form Validation
+//   const validationError = validateRequiredFields({
+//     user_id,
+//     email,
+//     first_name,
+//     last_name,
+//     phone_number,
+//     address,
+//     gender,
+//     birthdate,
+//     caregiver: {
+//       employment_type,
+//       work_experiences,
+//       workplace,
+//       cv,
+//       degree_certificate,
+//       str,
+//       sip
+//     }
+//   });
 
-  if (validationError) {
-    console.error("Validation error:", validationError);
+//   if (validationError) {
+//     console.error("Validation error:", validationError);
 
-    return { success: false };
-  }
+//     return { success: false };
+//   }
 
-  try {
-    const { data: userRole, error: userRoleError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("user_id", user_id)
-      .single();
+//   try {
+//     const { data: userRole, error: userRoleError } = await supabase
+//       .from("users")
+//       .select("*")
+//       .eq("user_id", user_id)
+//       .single();
 
-    if (userRoleError) {
-      console.error("Error fetching userRole:", userRoleError.message);
+//     if (userRoleError) {
+//       console.error("Error fetching userRole:", userRoleError.message);
 
-      return { success: false };
-    }
+//       return { success: false };
+//     }
 
-    const authSchema = await getUserAuthSchema(user_id);
+//     const authSchema = await getUserAuthSchema(user_id);
 
-    if (!authSchema) return { success: false };
+//     if (!authSchema) return { success: false };
 
-    const isEmailChanged = await updateAdminUserEmail(email, authSchema.email!);
+//     // Update user email if it has changed
+//     const isEmailChanged = await updateAdminUserEmail(
+//       email,
+//       authSchema.email!,
+//       user_id
+//     );
 
-    if (!isEmailChanged) return { success: false };
+//     if (!isEmailChanged) return { success: false };
 
-    const updateUserData = await updateAdminUserData(
-      first_name,
-      last_name,
-      phone_number,
-      address,
-      gender,
-      birthdate,
-      user_id
-    );
+//     // Update user basic data in users table
+//     const updateUserData = await updateAdminUserData(
+//       first_name,
+//       last_name,
+//       phone_number,
+//       address,
+//       gender,
+//       birthdate,
+//       user_id
+//     );
 
-    if (!updateUserData.success) return { success: false };
+//     if (!updateUserData.success) return { success: false };
 
-    if (userRole.role === "Admin") return { success: true };
+//     if (userRole.role === "Admin") return { success: true };
 
-    if (userRole.role === "Patient") {
-      const { error: updatePatientDetailedDataError } = await supabase
-        .from("patient")
-        .update({
-          blood_type,
-          height,
-          weight,
-          is_smoking
-        })
-        .eq("user_id", user_id)
-        .single();
+//     // Server side validation for patient restriction
+//     if (userRole.role === "Patient") return { success: false };
 
-      if (updatePatientDetailedDataError) {
-        console.error(
-          "Error updating patient data:",
-          updatePatientDetailedDataError.message
-        );
+//     if (["Nurse", "Midwife"].includes(userRole.role)) {
+//       // Get detailed caregiver data
+//       const { data: caregiverDetailedData, error: caregiverDetailedDataError } =
+//         await supabase
+//           .from("caregiver")
+//           .select("*, users(*)")
+//           .eq("users.user_id", user_id)
+//           .single();
 
-        return { success: false };
-      }
+//       if (caregiverDetailedDataError) {
+//         console.error(
+//           "Error fetching detailed caregiver data:",
+//           caregiverDetailedDataError.message
+//         );
 
-      return { success: true };
-    }
+//         return { success: false };
+//       }
 
-    if (["Nurse", "Midwife"].includes(userRole.role)) {
-      const { error: updateCaregiverDetailedDataError } = await supabase
-        .from("caregiver")
-        .update({
-          employment_type,
-          work_experiences,
-          workplace,
-          cv,
-          degree_certificate,
-          str,
-          sip
-        })
-        .eq("user_id", user_id)
-        .single();
+//       // Server side validation for caregiver restriction
+//       if (["Rejected", "Unverified"].includes(caregiverDetailedData.status))
+//         return { success: false };
 
-      if (updateCaregiverDetailedDataError) {
-        console.error(
-          "Error updating caregiver data:",
-          updateCaregiverDetailedDataError.message
-        );
+//       const caregiver_id = caregiverDetailedData?.caregiver_id;
 
-        return { success: false };
-      }
+//       // Update detailed caregiver data
+//       const { error: updateCaregiverDetailedDataError } = await supabase
+//         .from("caregiver")
+//         .update({
+//           employment_type,
+//           work_experiences,
+//           workplace,
+//           cv,
+//           degree_certificate,
+//           str,
+//           sip,
+//           updated_at: new Date()
+//         })
+//         .eq("caregiver_id", caregiver_id)
+//         .single();
 
-      return { success: true };
-    }
+//       if (updateCaregiverDetailedDataError) {
+//         console.error(
+//           "Error updating caregiver data:",
+//           updateCaregiverDetailedDataError.message
+//         );
 
-    return { success: false };
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
+//         return { success: false };
+//       }
 
-    return { success: false };
-  }
-}
+//       return { success: true };
+//     }
+
+//     return { success: false };
+//   } catch (error) {
+//     console.error("An unexpected error occurred:", error);
+
+//     return { success: false };
+//   }
+// }
 
 /**
  * * Delete a user

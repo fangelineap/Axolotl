@@ -7,32 +7,13 @@ export const AdminUpdateUserValidation = (
   switch (userType) {
     case "Admin":
       if (
-        !form.get("first_name") &&
-        !form.get("last_name") &&
         !form.get("email") &&
         !form.get("phone_number") &&
-        !form.get("birthdate") &&
-        !form.get("gender") &&
         !form.get("address")
       ) {
         toast.error("Please fill the form.", {
           position: "bottom-right"
         });
-
-        return false;
-      }
-
-      if (
-        (!form.get("first_name") || !form.get("last_name")) &&
-        ((form.get("first_name")?.toString().length ?? 0) < 3 ||
-          (form.get("last_name")?.toString().length ?? 0) < 3)
-      ) {
-        toast.warning(
-          "Please enter a valid first and last name. Both names must be at least 3 characters.",
-          {
-            position: "bottom-right"
-          }
-        );
 
         return false;
       }
@@ -47,22 +28,6 @@ export const AdminUpdateUserValidation = (
 
       if (!form.get("phone_number")) {
         toast.warning("Please enter a phone number.", {
-          position: "bottom-right"
-        });
-
-        return false;
-      }
-
-      if (!form.get("birthdate")) {
-        toast.warning("Please enter a birthdate.", {
-          position: "bottom-right"
-        });
-
-        return false;
-      }
-
-      if (!form.get("gender")) {
-        toast.warning("Please enter a gender.", {
           position: "bottom-right"
         });
 
@@ -95,23 +60,24 @@ export const AdminUpdateUserValidation = (
         return false;
       }
 
-      if (
-        (!form.get("first_name") || !form.get("last_name")) &&
-        ((form.get("first_name")?.toString().length ?? 0) < 3 ||
-          (form.get("last_name")?.toString().length ?? 0) < 3)
-      ) {
-        toast.warning(
-          "Please enter a valid first and last name. Both names must be at least 3 characters.",
-          {
-            position: "bottom-right"
-          }
-        );
+      if (!form.get("employment_type")) {
+        toast.warning("Please enter an Employment Type.", {
+          position: "bottom-right"
+        });
 
         return false;
       }
 
-      if (!form.get("email")) {
-        toast.warning("Please enter an email.", {
+      if (!form.get("workplace")) {
+        toast.warning("Please enter a workplace.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (!form.get("work_experiences")) {
+        toast.warning("Please enter work experiences.", {
           position: "bottom-right"
         });
 

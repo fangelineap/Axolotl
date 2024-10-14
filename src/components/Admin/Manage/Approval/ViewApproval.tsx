@@ -2,6 +2,7 @@ import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/da
 import { getUserAuthSchema } from "@/app/_server-action/admin/SupaAdmin";
 import ApprovalButtons from "@/components/Axolotl/Buttons/ApprovalButtons";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import { USER_AUTH_SCHEMA } from "@/types/axolotl";
@@ -187,10 +188,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
             />
           </div>
 
-          {/* Center Divider */}
-          <div className="hidden lg:flex lg:items-center">
-            <div className="h-full border-l border-primary"></div>
-          </div>
+          <CustomDivider />
 
           {/* Second Column */}
           <div className="flex w-full flex-col gap-4">

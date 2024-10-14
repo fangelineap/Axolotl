@@ -51,11 +51,11 @@ export async function addAdminMedicine(form: AdminMedicineTable) {
     const { data, error: insertError } = await supabase
       .from("medicine")
       .insert({
-        name: name,
-        type: type,
-        price: price,
-        exp_date: exp_date,
-        medicine_photo: medicine_photo
+        name,
+        type,
+        price,
+        exp_date,
+        medicine_photo
       });
 
     if (insertError) {
@@ -131,9 +131,6 @@ export async function getAdminMedicineById(uuid: string) {
 
 /**
  * * Update medicine
- *
- * TODO: Add uuid to Parameter
- *
  * @param form
  * @returns
  */
@@ -163,13 +160,13 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
     const { data, error: updateError } = await supabase
       .from("medicine")
       .update({
-        name: name,
-        type: type,
-        price: price,
-        exp_date: exp_date,
-        medicine_photo: medicine_photo
+        name,
+        type,
+        price,
+        exp_date,
+        medicine_photo
       })
-      .eq("uuid", form.uuid)
+      .eq("uuid", uuid)
       .single();
 
     if (updateError) {

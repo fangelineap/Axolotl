@@ -136,7 +136,7 @@ const OrderDetailPage = () => {
             price: detail.price?.toString() || "N/A"
           }))}
           proofOfService={{
-            imageUrl: orderData.caregiver?.profile_photo_url || ""
+            imageUrl: orderData.caregiver?.profile_photo || ""
           }}
           orderType={orderData.appointment?.id || "N/A"}
           patientName={`${first_name} ${last_name}`}

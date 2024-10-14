@@ -4,10 +4,10 @@ import { addAdminMedicine } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
 import { createClient } from "@/lib/client";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
@@ -29,6 +29,7 @@ function AddMedicine() {
   const [isDragging, setIsDragging] = useState(false);
 
   const [formData, setFormData] = useState<AdminMedicineTable>({
+    uuid: "",
     name: "",
     type: "",
     price: 0,
@@ -204,6 +205,7 @@ function AddMedicine() {
 
     // Update the medicine in the database
     const medicineData: AdminMedicineTable = {
+      uuid: "",
       name: form.get("name")!.toString(),
       type: form.get("type")!.toString(),
       price: parseFloat(form.get("price")!.toString()),

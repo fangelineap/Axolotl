@@ -7,7 +7,7 @@ import { unstable_noStore } from "next/cache";
  * * Get the admin auth client
  * @returns
  */
-async function getAdminAuthClient() {
+export async function getAdminAuthClient() {
   const supabaseAdminClient = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,

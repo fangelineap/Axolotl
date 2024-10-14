@@ -3,6 +3,7 @@
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import { Skeleton } from "@mui/material";
@@ -148,10 +149,11 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
       {/* Container */}
       <div className={`flex w-full flex-col justify-between gap-5`}>
-        {/* Profile with Profile Picture Section */}
+        {/* ROLE BASED RENDERING */}
         {["Nurse", "Midwife", "Patient"].includes(user.role) ? (
           <>
             {/* Top Section */}
+            {/* Profile with Profile Picture Section */}
             <div className="flex w-full flex-col items-center justify-start gap-5 lg:flex-row">
               {!imageLoaded && (
                 <Skeleton
@@ -397,10 +399,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                 )}
               </div>
 
-              {/* Center Divider */}
-              <div className="hidden lg:flex lg:items-center">
-                <div className="h-full border-l border-primary"></div>
-              </div>
+              <CustomDivider />
 
               {/* Second Column */}
               <div className="flex w-full flex-col gap-4">
@@ -603,9 +602,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                     <h1 className="text-heading-6 font-bold text-primary">
                       Admin Personal Data
                     </h1>
-                    <div className="hidden lg:flex lg:items-center">
-                      <div className="w-full border-t border-primary" />
-                    </div>
+                    <CustomDivider horizontal />
                   </div>
 
                   {/* Content */}

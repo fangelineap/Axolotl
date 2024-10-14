@@ -28,8 +28,6 @@ export async function signInWithEmailAndPassword(
       message?: undefined;
     }
 > {
-  unstable_noStore();
-
   const supabase = await createSupabaseServerClient();
 
   try {
@@ -70,8 +68,6 @@ export async function registerWithEmailAndPassword(
   lastName: string,
   role: string
 ) {
-  unstable_noStore();
-
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.signUp({
@@ -110,8 +106,6 @@ export async function registerWithEmailAndPassword(
  * @returns
  */
 export async function forgetPassword(email: string) {
-  unstable_noStore();
-
   const supabase = await createSupabaseServerClient();
 
   return await supabase.auth.resetPasswordForEmail(email, {
@@ -125,8 +119,6 @@ export async function forgetPassword(email: string) {
  * @param code
  */
 export async function resetPassword(password: string, code: string) {
-  unstable_noStore();
-
   const supabase = await createSupabaseServerClient();
 
   const { error: sessionError } =

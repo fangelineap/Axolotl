@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { AdminNewAdminValidation } from "./Validation/AdminNewAdminValidation";
+import CustomDivider from "@/components/Axolotl/CustomDivider";
 
 function AddAdmin() {
   /**
@@ -158,9 +159,7 @@ function AddAdmin() {
                   <h1 className="text-heading-6 font-bold text-primary">
                     Admin Personal Data
                   </h1>
-                  <div className="hidden lg:flex lg:items-center">
-                    <div className="w-full border-t border-primary" />
-                  </div>
+                  <CustomDivider horizontal />
                 </div>
 
                 {/* Content */}
@@ -252,9 +251,7 @@ function AddAdmin() {
               <h1 className="text-heading-6 font-bold text-red">
                 Confidential Zone
               </h1>
-              <div className="hidden lg:flex lg:items-center">
-                <div className="w-full border-t border-red" />
-              </div>
+              <CustomDivider horizontal color="red" />
             </div>
             <div className="flex w-full flex-col items-center justify-center gap-5 md:flex-row md:gap-2">
               <PasswordInput

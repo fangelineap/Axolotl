@@ -15,7 +15,6 @@ export type USER = {
 export type CAREGIVER = {
   id: string;
   profile_photo: string;
-  profile_photo_url?: string;
   employment_type: "Full-time" | "Part-time";
   workplace: string;
   work_experiences: number;
@@ -51,7 +50,7 @@ export type PATIENT = {
 };
 
 export type MEDICINE = {
-  uuid?: string;
+  uuid: string;
   name: string;
   type: string;
   exp_date: Date;
@@ -112,3 +111,9 @@ export type NEW_ADMIN_AUTH_SCHEMA = USER & {
   email: string;
   password: string;
 };
+
+export type CAREGIVER_LICENSES_TYPE =
+  | "cv"
+  | "degree_certificate"
+  | "str"
+  | "sip";

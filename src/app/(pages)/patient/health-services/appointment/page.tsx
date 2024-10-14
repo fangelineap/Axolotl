@@ -82,7 +82,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
               <div className="flex items-start gap-10">
                 <div className="min-w-[100px]">
                   <Image
-                    src={caregiver?.caregiver[0].profile_photo_url!}
+                    src={caregiver?.caregiver[0].profile_photo!}
                     height={100}
                     width={100}
                     className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight"
