@@ -214,9 +214,7 @@ const PersonalInformation = ({ searchParams }: any) => {
           }
 
           setLoading(false);
-          router.push(
-            `/auth/register/createaccount/personalinformation/review?role=${searchParams.role}`
-          );
+          router.replace(`/caregiver/review`);
         }
       }
     } else if (searchParams.role == "Patient") {

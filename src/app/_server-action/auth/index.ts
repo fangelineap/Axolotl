@@ -144,6 +144,23 @@ export async function resetPassword(password: string, code: string) {
 }
 
 /**
+ * * Handle user logout
+ */
+export async function logout() {
+  unstable_noStore();
+
+  console.log("Logging out...");
+
+  // Sign out locally (One Device)
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut({ scope: "local" });
+
+  console.log("Local signout successful. Redirecting to /auth/signin...");
+
+  redirect("/auth/signin");
+}
+
+/**
  * * Get user (FOR SIGN IN PAGE REDIRECT)
  * @param user_id
  * @returns
@@ -204,7 +221,7 @@ export async function getCaregiverVerificationStatus(caregiver_id: string) {
 
     const verificationStatus = statusMap[caregiverData?.status];
 
-    return verificationStatus;
+    return verificationStatus as "Verified" | "Rejected" | "Unverified";
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 

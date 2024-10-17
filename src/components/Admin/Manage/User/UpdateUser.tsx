@@ -331,6 +331,8 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
 
       const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
 
+      if (!pathCV && !pathDegreeCertificate && !pathSTR && !pathSIP) return;
+
       const updatedCaregiverData: AdminUpdateCaregiverDetails = {
         user_id: user.user_id,
         employment_type: form.get("employment_type") as
