@@ -1,56 +1,33 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
-
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import { getCaregiverDataById } from "@/app/_server-action/caregiver";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { createBrowserClient } from "@supabase/ssr";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { getUserFromSession } from "@/lib/server";
+import { CAREGIVER } from "@/types/axolotl";
+import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
+import { Metadata } from "next";
+import Link from "next/link";
 
-const Review = ({ searchParams }: any) => {
-  const [status, setStatus] = useState<
-    "Verified" | "Unverified" | "Rejected" | ""
-  >("");
-  const [notes, setNotes] = useState<string>("");
+export const metadata: Metadata = getCaregiverMetadata("Review");
 
-  const router = useRouter();
+async function fetchCaregiverData() {
+  /**
+   * Get user from session
+   */
+  const { data: caregiverUserData } = await getUserFromSession();
 
-  const checkUser = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+  if (!caregiverUserData) return null;
 
-    const { data: session, error: sessionError } =
-      await supabase.auth.getSession();
+  const { data: caregiverData, error: caregiverError } =
+    await getCaregiverDataById(caregiverUserData.id);
 
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select()
-      .eq("user_id", session.session?.user.id)
-      .limit(1);
+  if (caregiverError) return null;
 
-    if (userData) {
-      const { data, error } = await supabase
-        .from("caregiver")
-        .select("*")
-        .eq("caregiver_id", userData[0].id)
-        .limit(1);
+  return caregiverData as CAREGIVER;
+}
 
-      if (error) {
-        console.log("error ", error);
-      }
-      if (data) {
-        console.log(data);
-        setStatus(data[0].status);
-        setNotes(data[0].notes);
-      }
-    }
-  };
-
-  useEffect(() => {
-    checkUser();
-  }, []);
+async function Review() {
+  const caregiverData = await fetchCaregiverData();
+  const caregiverVerificationStatus = caregiverData?.status;
 
   return (
     <DefaultLayout>
@@ -75,20 +52,17 @@ const Review = ({ searchParams }: any) => {
             </h2>
             <h2>Personal Infomation</h2>
           </div>
-          {searchParams.role === "Caregiver" && (
-            <div className="flex items-center justify-start gap-1">
-              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
-                4
-              </h2>
-              <h2>Review</h2>
-            </div>
-          )}
+          <div className="flex items-center justify-start gap-1">
+            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
+              4
+            </h2>
+            <h2>Review</h2>
+          </div>
           <div className="flex items-center justify-start gap-1">
             <h2
-              className={`flex h-7 w-7 items-center justify-center rounded-full ${status === "Verified" || status === "Rejected" ? "bg-kalbe-light" : "bg-gray-cancel"} font-medium text-white`}
-              // ${searchParams.role === "Caregiver" && window.screen.width > 1000 && "ml-2"}
+              className={`flex h-7 w-7 items-center justify-center rounded-full ${caregiverVerificationStatus === "Verified" || caregiverVerificationStatus === "Rejected" ? "bg-kalbe-light" : "bg-gray-cancel"} font-medium text-white`}
             >
-              {searchParams.role === "Caregiver" ? 5 : 4}
+              5
             </h2>
             <h2>Finish</h2>
           </div>
@@ -98,14 +72,14 @@ const Review = ({ searchParams }: any) => {
       <div className="flex justify-center pb-9 pt-3">
         <div className="w-full min-w-[350px] rounded-[10px] border border-stroke bg-white shadow-1 dark:border-dark-3 dark:bg-gray-dark dark:shadow-card sm:w-4/5 md:w-2/3 lg:w-4/12">
           <div
-            className={`rounded-t-[10px] border-b border-stroke ${status === "Rejected" ? "bg-red" : status === "Verified" ? "bg-kalbe-light" : "bg-yellow-dark"} px-6.5 py-4 dark:border-dark-3`}
+            className={`rounded-t-[10px] border-b border-stroke ${caregiverVerificationStatus === "Rejected" ? "bg-red" : caregiverVerificationStatus === "Verified" ? "bg-kalbe-light" : "bg-yellow-dark"} px-6.5 py-4 dark:border-dark-3`}
           >
             <h3 className="text-center text-xl font-semibold text-white">
               Caregiver Application Status
             </h3>
           </div>
           <div className="flex flex-col items-center justify-center p-6.5">
-            {status == "Verified" ? (
+            {caregiverVerificationStatus == "Verified" ? (
               <svg
                 width="110"
                 height="110"
@@ -120,7 +94,7 @@ const Review = ({ searchParams }: any) => {
                   fill="#1CBF90"
                 />
               </svg>
-            ) : status == "Unverified" ? (
+            ) : caregiverVerificationStatus == "Unverified" ? (
               <svg
                 width="110"
                 height="110"
@@ -155,15 +129,15 @@ const Review = ({ searchParams }: any) => {
             )}
             <div className="flex flex-col items-center justify-center p-5">
               <h1
-                className={`mb-1 text-2xl font-bold ${status == "Verified" ? "text-kalbe-light" : status == "Unverified" ? "text-yellow-dark" : "text-red"}`}
+                className={`mb-1 text-2xl font-bold ${caregiverVerificationStatus == "Verified" ? "text-kalbe-light" : caregiverVerificationStatus == "Unverified" ? "text-yellow-dark" : "text-red"}`}
               >
-                {status == "Verified"
+                {caregiverVerificationStatus == "Verified"
                   ? "Congratulations"
-                  : status == "Unverified"
+                  : caregiverVerificationStatus == "Unverified"
                     ? "Awaiting for approval..."
                     : "We are sorry..."}
               </h1>
-              {status == "Verified" ? (
+              {caregiverVerificationStatus == "Verified" ? (
                 <>
                   <p>
                     Your have been accepted to be a{" "}
@@ -174,34 +148,30 @@ const Review = ({ searchParams }: any) => {
                   <p>Let&apos;s visit your homepage</p>
                 </>
               ) : (
-                status == "Rejected" && (
+                caregiverVerificationStatus == "Rejected" && (
                   <>
                     <p>
                       You are not eligible to be a{" "}
                       <span className="font-semibold text-red">Caregiver</span>
                     </p>
                     <p className="mt-3 text-dark-secondary">Notes:</p>
-                    <p>{notes}</p>
+                    <p>{caregiverData?.notes}</p>
                   </>
                 )
               )}
             </div>
           </div>
-          {status == "Verified" && (
+          {caregiverVerificationStatus == "Verified" && (
             <div className="text-blue-gray-500 mb-6 flex shrink-0 flex-wrap items-center justify-center">
-              <button
-                type="submit"
-                className="w-1/4 cursor-pointer rounded-md bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
-                onClick={() => router.push("/admin")}
-              >
-                Okay
-              </button>
+              <Link href="/caregiver">
+                <AxolotlButton label="Okay" variant="primary" />
+              </Link>
             </div>
           )}
         </div>
       </div>
     </DefaultLayout>
   );
-};
+}
 
 export default Review;
