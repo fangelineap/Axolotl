@@ -1,11 +1,11 @@
 "use client";
 
-import { getProfilePhoto } from "@/app/_server-action/caregiver";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Caregiver = {
   id: string;
@@ -85,11 +85,12 @@ const Page = ({ searchParams }: any) => {
         const updatedData = await Promise.all(
           data.map(async (user: User) => {
             if (user.caregiver && user.caregiver[0]?.profile_photo) {
-              const url = await getProfilePhoto(
+              const url = await getGlobalUserProfilePhoto(
                 user.caregiver[0].profile_photo
               );
               user.caregiver[0].profile_photo_url = url!;
             }
+
             return user;
           })
         );

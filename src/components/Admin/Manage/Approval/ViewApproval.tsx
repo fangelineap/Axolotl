@@ -1,5 +1,5 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
-import { getUserAuthSchema } from "@/app/_server-action/admin/SupaAdmin";
+import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
 import ApprovalButtons from "@/components/Axolotl/Buttons/ApprovalButtons";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
@@ -13,7 +13,7 @@ interface ViewApprovalProps {
 }
 
 async function getUserData(caregiver_id: string) {
-  const response = await getUserAuthSchema(caregiver_id);
+  const response = await adminGetUserAuthSchema(caregiver_id);
   if (!response) {
     return null;
   }

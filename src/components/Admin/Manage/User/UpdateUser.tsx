@@ -401,7 +401,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                   ) : (
                     user.role === "Patient" && (
                       <Image
-                        src="/images/user/patient.png"
+                        src="/images/user/Default Patient Photo.png"
                         alt="Default Patient Profile Photo"
                         width={200}
                         height={200}

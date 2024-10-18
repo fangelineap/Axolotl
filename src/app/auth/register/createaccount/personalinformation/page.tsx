@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { deleteUser } from "@/app/_server-action/admin/SupaAdmin";
+import { adminDeleteUser } from "@/app/_server-action/admin";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import CheckboxBlood from "@/components/Axolotl/Checkboxes/CheckboxBlood";
 import CheckboxSmoker from "@/components/Axolotl/Checkboxes/CheckboxSmoker";
@@ -101,7 +101,7 @@ const PersonalInformation = ({ searchParams }: any) => {
       return;
     }
 
-    await deleteUser(userData.session?.user.id!);
+    await adminDeleteUser(userData.session?.user.id!);
 
     router.replace("/auth/signin");
   };

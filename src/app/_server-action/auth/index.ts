@@ -161,36 +161,6 @@ export async function logout() {
 }
 
 /**
- * * Get user (FOR SIGN IN PAGE REDIRECT)
- * @param user_id
- * @returns
- */
-export async function getUser(user_id: string) {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data, error } = await supabase
-      .from("users")
-      .select()
-      .eq("user_id", user_id);
-
-    if (error) {
-      console.error("Error fetching data:", error.message);
-
-      return null;
-    }
-
-    return data[0].role;
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return null;
-  }
-}
-
-/**
  * * Get caregiver verification status
  * @param caregiver_id
  * @returns

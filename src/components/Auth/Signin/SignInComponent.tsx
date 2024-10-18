@@ -1,6 +1,6 @@
 "use client";
 
-import { getUser, signInWithEmailAndPassword } from "@/app/_server-action/auth";
+import { signInWithEmailAndPassword } from "@/app/_server-action/auth";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import InputGroup from "@/components/FormElements/InputGroup";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { SignInValidation } from "./Validation/SignInValidation";
 import { useRouter } from "next/navigation";
+import { getGlobalUserRole } from "@/app/_server-action/global";
 
 function SignInComponent() {
   const router = useRouter();
@@ -57,7 +58,7 @@ function SignInComponent() {
       return;
     }
 
-    const userRole = await getUser(response.data?.userId!);
+    const userRole = await getGlobalUserRole(response.data?.userId!);
 
     if (!userRole) {
       setShowError(true);

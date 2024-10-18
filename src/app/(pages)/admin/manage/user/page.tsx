@@ -1,4 +1,4 @@
-import { getUserAuthSchema } from "@/app/_server-action/admin/SupaAdmin";
+import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import { getAdminAllUsers } from "./actions";
@@ -17,7 +17,7 @@ async function getUserData() {
 
   const responses = await Promise.all(
     data.map(async (user) => {
-      const response = await getUserAuthSchema(user.user_id);
+      const response = await adminGetUserAuthSchema(user.user_id);
 
       return response ? (response as unknown as AdminUserTable) : null;
     })

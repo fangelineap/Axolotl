@@ -1,46 +1,44 @@
 import { logout } from "@/app/_server-action/auth";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ClickOutside from "@/components/ClickOutside";
 import { getUserDataFromSession } from "@/lib/server";
 import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR, { mutate } from "swr";
 
-const fetchUserData = async () => {
+const fetcher = async () => {
   const user = await getUserDataFromSession();
   if (!user) {
     return null;
   }
 
-  return user as USER_DETAILS_AUTH_SCHEMA;
+  const assertedUser = user as USER_DETAILS_AUTH_SCHEMA;
+
+  let imageUrl;
+  if (assertedUser.role === "Patient") {
+    imageUrl = "/images/user/Default Patient Photo.png";
+  } else if (assertedUser.role === "Admin") {
+    imageUrl = "/images/user/Default Admin Photo.png";
+  } else {
+    const profilePhoto = await getGlobalUserProfilePhoto(
+      assertedUser.caregiver?.profile_photo!
+    );
+    imageUrl = profilePhoto || "/images/user/Default Caregiver Photo.png";
+  }
+
+  return { ...assertedUser, imageUrl };
 };
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState<USER_DETAILS_AUTH_SCHEMA | null>(null);
-  const [userImageUrl, setUserImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchUserData().then((user) => {
-      setUser(user);
-      if (user) {
-        let imageUrl;
-        if (user.role === "Patient") {
-          imageUrl = "/images/user/patient.png";
-        } else if (user.role === "Admin") {
-          imageUrl = "/images/user/Default Admin Photo.png";
-        } else {
-          imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver?.profile_photo || "")}`;
-        }
-        setUserImageUrl(imageUrl);
-      }
-    });
-  }, []);
+  const { data: user } = useSWR("userData", fetcher);
 
   const handleLogout = async () => {
-    setUser(null);
     await logout();
+    mutate("userData", null);
   };
 
   return (
@@ -52,11 +50,11 @@ const DropdownUser = () => {
       >
         <div className="h-12 w-12 overflow-hidden rounded-full border">
           <div className="flex h-full w-full items-center justify-center">
-            {userImageUrl && (
+            {user?.imageUrl && (
               <Image
                 width={200}
                 height={200}
-                src={userImageUrl}
+                src={user.imageUrl}
                 alt="User"
                 priority
                 className="h-full w-full rounded-full object-cover"
@@ -74,11 +72,11 @@ const DropdownUser = () => {
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
             <div className="relative block rounded-full border">
               <div className="h-12 w-12 overflow-hidden">
-                {userImageUrl && (
+                {user?.imageUrl && (
                   <Image
                     width={200}
                     height={200}
-                    src={userImageUrl}
+                    src={user.imageUrl}
                     alt="User"
                     priority
                     className="h-full w-full rounded-full object-cover"

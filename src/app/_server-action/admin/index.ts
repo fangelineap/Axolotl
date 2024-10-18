@@ -1,33 +1,15 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { getAdminAuthClient } from "@/lib/admin";
+import { USER_AUTH_SCHEMA } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
-
-/**
- * * Get the admin auth client
- * @returns
- */
-export async function getAdminAuthClient() {
-  const supabaseAdminClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    }
-  );
-
-  return supabaseAdminClient.auth.admin;
-}
 
 /**
  * * Create a user
  * @param email
  * @param password
  */
-export async function createUser(email: string, password: string) {
+export async function adminCreateUser(email: string, password: string) {
   const supabaseAdmin = await getAdminAuthClient();
 
   try {
@@ -56,7 +38,7 @@ export async function createUser(email: string, password: string) {
  * @param user_id
  * @returns
  */
-export async function getUserAuthSchema(user_id: string) {
+export async function adminGetUserAuthSchema(user_id: string) {
   const supabaseAdmin = await getAdminAuthClient();
 
   try {
@@ -68,9 +50,11 @@ export async function getUserAuthSchema(user_id: string) {
       return null;
     }
 
-    return response?.user;
+    const authSchema = response.user as unknown as USER_AUTH_SCHEMA;
+
+    return authSchema;
   } catch (error) {
-    console.error("Error in getUserAuthSchema:", error);
+    console.error("Error in adminGetUserAuthSchema:", error);
 
     return null;
   }
@@ -81,7 +65,7 @@ export async function getUserAuthSchema(user_id: string) {
  * @param user_id
  * @returns
  */
-export async function deleteUser(user_id: string) {
+export async function adminDeleteUser(user_id: string) {
   unstable_noStore();
 
   try {
@@ -95,7 +79,7 @@ export async function deleteUser(user_id: string) {
 
     return true;
   } catch (error) {
-    console.error("Error in deleteUser:", error);
+    console.error("Error in adminDeleteUser:", error);
 
     return null;
   }

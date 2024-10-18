@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
+import { PatientOrder } from "@/app/(pages)/caregiver/type/data";
 import createSupabaseServerClient, {
   getUserDataFromSession
 } from "@/lib/server";
-import { services } from "@/utils/Services";
-import { getProfilePhoto } from "../caregiver";
-import { unstable_noStore } from "next/cache";
-import { PatientOrder } from "@/app/(pages)/caregiver/type/data";
 import { MEDICINE_ORDER_DETAIL } from "@/types/axolotl";
-import { getAdminUserByUserID } from "@/app/(pages)/admin/manage/user/actions";
+import { services } from "@/utils/Services";
+import { unstable_noStore } from "next/cache";
+import { getGlobalUserProfilePhoto } from "../global";
 
 interface Appointment {
   service_type: string;
@@ -129,6 +128,7 @@ export async function createAppointment({
     }
   } catch (error) {
     console.log("error", error);
+
     return "Error";
   }
 }
@@ -214,7 +214,9 @@ export async function getOrderDetail(id: string) {
       (service) => service.name === data.appointment.service_type
     );
 
-    const profilePhoto = await getProfilePhoto(data.caregiver.profile_photo);
+    const profilePhoto = await getGlobalUserProfilePhoto(
+      data.caregiver.profile_photo
+    );
 
     const temp = {
       orderStatus: data.is_completed ? "Completed" : "Ongoing",

@@ -10,7 +10,7 @@ import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWith
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
 import { FaSearch } from "react-icons/fa";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
-import { fetchMedicine } from "@/app/_server-action/caregiver/action";
+import { fetchMedicine } from "@/app/_server-action/caregiver";
 
 interface MedecinePreparationProps {
   orderStatus: string;

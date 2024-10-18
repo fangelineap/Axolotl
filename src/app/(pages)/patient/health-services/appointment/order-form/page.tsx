@@ -1,7 +1,6 @@
 "use client";
 
 import { getCaregiverById, getUserFromSession } from "@/lib/server";
-import { getCaregiverPhoto } from "@/app/_server-action/caregiver";
 import { createAppointment } from "@/app/_server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
@@ -18,6 +17,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 
 const PlacingOrder = ({ searchParams }: any) => {
   const [concern, setConcern] = useState<string>("");
@@ -46,7 +46,9 @@ const PlacingOrder = ({ searchParams }: any) => {
         setCaregiver(cg[0]);
         setServiceType(searchParams.service);
 
-        const photo = await getCaregiverPhoto(cg[0].caregiver[0].profile_photo);
+        const photo = await getGlobalUserProfilePhoto(
+          cg[0].caregiver[0].profile_photo
+        );
         setProfilePhoto(photo!);
       }
 

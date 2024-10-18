@@ -1,6 +1,6 @@
 "use server";
 
-import { getUserAuthSchema } from "@/app/_server-action/admin/SupaAdmin";
+import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
 import { USER, USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
 import { createServerClient } from "@supabase/ssr";
 import { unstable_noStore } from "next/cache";
@@ -67,9 +67,9 @@ export async function getUserFromSession() {
  * @returns
  */
 async function fetchUserDataByRole(
-  user: any,
+  user: USER,
   supabase: any,
-  authSchema: any
+  authSchema: USER_DETAILS_AUTH_SCHEMA
 ): Promise<USER_DETAILS_AUTH_SCHEMA | null> {
   if (user.role === "Patient") {
     const { data: patient, error: patientError } = await supabase
@@ -151,13 +151,14 @@ export async function getUserDataFromSession() {
     return null;
   }
 
-  const authSchema = await getUserAuthSchema(userId);
+  const authSchema = await adminGetUserAuthSchema(userId);
 
-  return await fetchUserDataByRole(user, supabase, authSchema);
+  return await fetchUserDataByRole(user, supabase, authSchema!);
 }
 
 /**
  * * Get caregiver data by user id
+ * FIXME: IT SHOULD USE THE GETGLOBALCAREGIVERBYID FUNCTION
  * @param id
  * @returns
  */
