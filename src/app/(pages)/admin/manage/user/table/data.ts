@@ -5,10 +5,6 @@ export type AdminUserTable = USER_AUTH_SCHEMA & {
   caregiver: CAREGIVER;
 };
 
-export type AdminCaregiverDetails = USER & {
-  caregiver: CAREGIVER;
-};
-
 export type AdminUpdateCaregiverDetails = {
   user_id: USER["user_id"];
   employment_type: CAREGIVER["employment_type"];

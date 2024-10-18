@@ -1,13 +1,13 @@
-import { getUserFromSession } from "@/lib/server";
-import RegisterComponent from "@/components/Auth/Register/Register";
+import SignInComponent from "@/components/Auth/Signin/SignInComponent";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getUserFromSession } from "@/lib/server";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-export const metadata: Metadata = getGuestMetadata("register");
+export const metadata: Metadata = getGuestMetadata("sign in");
 
-const RegisterInit = async () => {
+const SignIn = async () => {
   /**
    * * Get user from session
    */
@@ -26,20 +26,17 @@ const RegisterInit = async () => {
     };
 
     const redirectPath = roleBasedRedirects[role];
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
+
+    redirect(redirectPath);
   };
 
-  if (user) {
-    handleRedirectByRole(user.role);
-  }
+  if (user) handleRedirectByRole(user.role);
 
   return (
     <DefaultLayout>
-      <RegisterComponent />
+      <SignInComponent />
     </DefaultLayout>
   );
 };
 
-export default RegisterInit;
+export default SignIn;

@@ -5,6 +5,7 @@ import {
   AdminUpdateCaregiverDetails,
   AdminUserTable
 } from "@/app/(pages)/admin/manage/user/table/data";
+import { prepareFileBeforeUpload } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
@@ -12,14 +13,12 @@ import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/Dis
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
-import { createClient } from "@/lib/client";
 import { CAREGIVER_LICENSES_TYPE } from "@/types/axolotl";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { uuidv7 } from "uuidv7";
 import { AdminUpdateUserValidation } from "./Validation/AdminUpdateUserValidation";
 
 interface UpdateUserProps {
@@ -163,92 +162,83 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   ) => setCaregiverLicenses((prev) => ({ ...prev, ...patial }));
 
   /**
-   * * Upload File to Supabase
-   * @param storage
-   * @param fileName
+   * * Helper function to upload a single file
    * @param file
+   * @param allowedTypes
    * @returns
    */
-  async function uploadAdminToStorage(
-    storage: string,
-    fileName: string,
-    file: string
-  ) {
-    const supabase = createClient();
-
-    const { data: userData } = await supabase.auth.getSession();
-
-    if (userData.session?.user) {
-      const { data, error } = await supabase.storage
-        .from(storage)
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false
-        });
-
-      if (error) {
-        return undefined;
-      }
-
-      return data?.path;
+  async function processUploadLicense(
+    file: {
+      key: string;
+      fileValue: File | undefined;
+      userValue: string;
+      pathName: string;
+      errorMsg: string;
+    },
+    allowedTypes: string[]
+  ): Promise<string | null> {
+    if (
+      !file.fileValue ||
+      (typeof file.userValue === "string" &&
+        file.fileValue.name === file.userValue)
+    ) {
+      return file.userValue;
     }
-  }
 
-  /**
-   * * Cancel Upload by Removing Uploaded File from Supabase
-   * @param path
-   * @returns
-   */
-  async function cancelUploadAdminToStorage(
-    license_type: CAREGIVER_LICENSES_TYPE,
-    path: string
-  ) {
-    try {
-      const supabase = createClient();
-
-      const { error } = await supabase.storage
-        .from(license_type)
-        .remove([path]);
-
-      if (error) {
-        return error;
-      }
-
-      return true;
-    } catch (error) {
-      return error;
-    }
-  }
-
-  /**
-   * * Handle File Upload
-   * @param license
-   * @returns
-   */
-  const handleFileUpload = async (
-    license_type: CAREGIVER_LICENSES_TYPE,
-    license: File
-  ) => {
-    try {
-      const name = uuidv7();
-      const extension = license.name.split(".")[1];
-      const fileName = `${name}_${Date.now()}.${extension}`;
-
-      await uploadAdminToStorage(
-        license_type,
-        fileName,
-        license as unknown as string
+    const fileType = file.fileValue.type;
+    if (!allowedTypes.includes(fileType)) {
+      toast.warning(
+        `Invalid file type for ${file.errorMsg}. Only JPG, PNG, or PDF files are allowed.`,
+        {
+          position: "bottom-right"
+        }
       );
 
-      return fileName;
-    } catch (error) {
-      toast.error("Error uploading file: " + error, {
+      return null;
+    }
+
+    const fileName = await prepareFileBeforeUpload(
+      file.key as CAREGIVER_LICENSES_TYPE,
+      file.fileValue
+    );
+
+    if (!fileName) {
+      toast.error(`Error uploading ${file.errorMsg}. Please try again`, {
         position: "bottom-right"
       });
 
-      return undefined;
+      return null;
     }
-  };
+
+    return fileName;
+  }
+
+  /**
+   * * Helper function to separate files before upload
+   * @param files
+   * @param allowedTypes
+   * @returns
+   */
+  async function handleLicensesUpload(
+    files: Array<{
+      key: string;
+      fileValue: File | undefined;
+      userValue: string;
+      pathName: string;
+      errorMsg: string;
+    }>,
+    allowedTypes: string[]
+  ): Promise<{ [key: string]: string | undefined } | null> {
+    const paths: { [key: string]: string | undefined } = {};
+
+    for (const file of files) {
+      const path = await processUploadLicense(file, allowedTypes);
+      if (path === null) return null; // Exit early on error
+      paths[file.pathName] = path;
+    }
+
+    return paths;
+  }
 
   /**
    * * Save Updated User
@@ -259,15 +249,12 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     // ! VALIDATION
     if (user.role === "Patient") return;
 
-    if (
-      user.role === "Admin" &&
-      AdminUpdateUserValidation(form, "Admin") === false
-    )
+    if (user.role === "Admin" && !AdminUpdateUserValidation(form, "Admin"))
       return;
 
     if (
       ["Nurse", "Midwife"].includes(user.role) &&
-      AdminUpdateUserValidation(form, "Caregiver") === false
+      !AdminUpdateUserValidation(form, "Caregiver")
     )
       return;
 
@@ -276,58 +263,43 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
       const files = [
         {
           key: "cv",
-          fileValue: cv,
+          fileValue: cv as File,
           userValue: user.caregiver.cv,
           pathName: "pathCV",
           errorMsg: "CV"
         },
         {
           key: "degree_certificate",
-          fileValue: degree_certificate,
+          fileValue: degree_certificate as File,
           userValue: user.caregiver.degree_certificate,
           pathName: "pathDegreeCertificate",
           errorMsg: "Degree Certificate"
         },
         {
           key: "str",
-          fileValue: str,
+          fileValue: str as File,
           userValue: user.caregiver.str,
           pathName: "pathSTR",
           errorMsg: "STR"
         },
         {
           key: "sip",
-          fileValue: sip,
+          fileValue: sip as File,
           userValue: user.caregiver.sip,
           pathName: "pathSIP",
           errorMsg: "SIP"
         }
       ];
 
-      const paths: { [key: string]: string | undefined } = {};
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "application/pdf"
+      ];
 
-      for (const file of files) {
-        let path: string | undefined;
-
-        if (file.fileValue && file.fileValue !== file.userValue) {
-          path = await handleFileUpload(
-            file.key as CAREGIVER_LICENSES_TYPE,
-            file.fileValue as File
-          );
-
-          if (!path) {
-            toast.error(`Error uploading ${file.errorMsg}. Please try again`, {
-              position: "bottom-right"
-            });
-
-            return;
-          }
-        } else {
-          path = file.userValue;
-        }
-
-        paths[file.pathName] = path;
-      }
+      const paths = await handleLicensesUpload(files, allowedTypes);
+      if (!paths) return;
 
       const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
 

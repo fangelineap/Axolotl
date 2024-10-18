@@ -5,11 +5,12 @@ import {
   adminDeleteUser,
   adminGetUserAuthSchema
 } from "@/app/_server-action/admin";
+import { getGlobalUserDataByUserId } from "@/app/_server-action/global";
 import { getAdminAuthClient } from "@/lib/admin";
 import createSupabaseServerClient from "@/lib/server";
 import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
-import { AdminCaregiverDetails, AdminUserTable } from "../table/data";
+import { AdminUserTable } from "../table/data";
 
 /**
  * * Validate required fields
@@ -205,31 +206,30 @@ export async function getAdminCaregiverTotalOrders(user_id: string) {
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data: userData, error: userDataError } = await supabase
-      .from("users")
-      .select("*, caregiver(*)")
-      .eq("user_id", user_id)
-      .single();
+    const userData = await getGlobalUserDataByUserId(user_id);
 
-    if (userDataError) {
-      console.error("Error fetching userData:", userDataError.message);
+    if (!userData) {
+      console.error("Error fetching user data");
 
-      return { data: null, userDataError };
+      return { data: null, userDataError: "Error fetching user data" };
     }
 
-    const caregiverData = Array.isArray(userData.caregiver)
-      ? userData.caregiver[0]
-      : userData.caregiver;
+    const { data: caregiver, error: caregiverError } = await supabase
+      .from("caregiver")
+      .select("*, users(*)")
+      .eq("caregiver_id", userData.id)
+      .single();
 
-    const detailedCaregiverData: AdminCaregiverDetails = {
-      ...userData,
-      caregiver: caregiverData
-    };
+    if (caregiverError) {
+      console.error("Error fetching userData:", caregiverError.message);
+
+      return { data: null, caregiverError };
+    }
 
     const { data: orderData, error: orderDataError } = await supabase
       .from("order")
       .select("*")
-      .eq("caregiver_id", detailedCaregiverData.caregiver.id);
+      .eq("caregiver_id", caregiver.id);
 
     if (orderDataError) {
       console.error("Error fetching orderData:", orderDataError.message);
@@ -504,7 +504,7 @@ async function updateAdminUserData(
  * @param user_id
  * @returns
  */
-export async function deleteAdminUser(user_id: string) {
+export async function deleteAdminUserFromUserTable(user_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();

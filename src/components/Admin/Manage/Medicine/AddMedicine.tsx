@@ -2,20 +2,22 @@
 
 import { addAdminMedicine } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
+import {
+  removeUploadedFileFromStorage,
+  prepareFileBeforeUpload
+} from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import { createClient } from "@/lib/client";
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { uuidv7 } from "uuidv7";
 import { AdminMedicineValidation } from "./Validation/AdminMedicineValidation";
 
 function AddMedicine() {
@@ -78,12 +80,9 @@ function AddMedicine() {
     e.preventDefault();
     setIsDragging(false);
     const selectedFile = e.dataTransfer.files[0];
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
     if (selectedFile) {
-      if (
-        selectedFile.type === "image/png" ||
-        selectedFile.type === "image/jpeg" ||
-        selectedFile.type === "image/jpg"
-      ) {
+      if (allowedTypes.includes(selectedFile.type)) {
         setMedicinePhoto(selectedFile);
       } else {
         toast.warning("Invalid file type. Only JPG and PNG are allowed.", {
@@ -104,84 +103,23 @@ function AddMedicine() {
   const handleDragLeave = () => setIsDragging(false);
 
   /**
-   * * Upload File to Supabase
-   * @param storage
-   * @param fileName
-   * @param file
-   * @returns
-   */
-  async function uploadAdminToStorage(
-    storage: string,
-    fileName: string,
-    file: string
-  ) {
-    const supabase = createClient();
-
-    const { data: userData } = await supabase.auth.getSession();
-
-    if (userData.session?.user) {
-      const { data, error } = await supabase.storage
-        .from(storage)
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false
-        });
-
-      if (error) {
-        console.error("Error uploading file. Please try again.");
-
-        return undefined;
-      }
-
-      return data?.path;
-    }
-  }
-
-  /**
-   * * Cancel Upload by Removing Uploaded File from Supabase
-   * @param path
-   * @returns
-   */
-  async function cancelUploadAdminToStorage(path: string) {
-    try {
-      const supabase = createClient();
-
-      const { error } = await supabase.storage.from("medicine").remove([path]);
-
-      if (error) {
-        return error;
-      }
-
-      return true;
-    } catch (error) {
-      return error;
-    }
-  }
-
-  /**
    * * Handle File Upload
    * @param medicinePhoto
    * @returns
    */
   const handleFileUpload = async (medicinePhoto: File) => {
     try {
-      const name = uuidv7();
-      const extension = medicinePhoto.name.split(".")[1];
-      const fileName = `${name}_${Date.now()}.${extension}`;
-      await uploadAdminToStorage(
-        "medicine",
-        fileName,
-        medicinePhoto as unknown as string
-      );
+      const fileName = await prepareFileBeforeUpload("medicine", medicinePhoto);
+
+      if (!fileName) return undefined;
 
       return fileName;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      toast.error("Error uploading file. Please try again.", {
+      toast.error("Error uploading file: " + error, {
         position: "bottom-right"
       });
 
-      return;
+      return undefined;
     }
   };
 
@@ -213,10 +151,10 @@ function AddMedicine() {
       medicine_photo: pathMedicine as string
     };
 
-    const { error } = await addAdminMedicine(medicineData);
+    const uploadMedicine = await addAdminMedicine(medicineData);
 
-    if (error !== null && error !== undefined) {
-      await cancelUploadAdminToStorage(pathMedicine as string);
+    if (!uploadMedicine) {
+      await removeUploadedFileFromStorage("medicine", pathMedicine as string);
 
       toast.error("Failed to save medicine. Uploaded photo has been deleted.", {
         position: "bottom-right"
@@ -233,7 +171,7 @@ function AddMedicine() {
       router.refresh();
       router.replace(`/admin/manage/medicine/`);
       router.refresh();
-    }, 500);
+    }, 250);
   };
 
   return (

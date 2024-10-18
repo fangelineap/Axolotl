@@ -23,12 +23,12 @@ import { useState } from "react";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import SelectDataTable from "../Axolotl/SelectDataTable";
 import CustomPagination from "../Pagination/Pagination";
+import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 
 interface DataTableProps<
   T extends {
     id?: number | string;
     uuid?: string;
-    caregiver_id?: string;
     user_id?: string;
   }
 > {
@@ -44,7 +44,6 @@ export function DataTable<
   T extends {
     id?: number | string;
     uuid?: string;
-    caregiver_id?: string;
     user_id?: string;
   }
 >({
@@ -86,15 +85,26 @@ export function DataTable<
                 onClick={() => {
                   showAction(row.original);
 
-                  const idFieldMap: { [key: string]: keyof T } = {
+                  const assertApprovalTable =
+                    row.original as unknown as AdminApprovalTable;
+
+                  const idFieldMap: { [key: string]: keyof T | string } = {
                     "/admin/manage/medicine": "uuid",
-                    "/admin/manage/approval": "caregiver_id",
                     "/admin/manage/user": "user_id"
                   };
 
-                  const id =
-                    row.original[idFieldMap[pathName] as keyof T] ||
-                    row.original.id;
+                  let id: string | number | undefined;
+
+                  if (pathName === "/admin/manage/approval") {
+                    id = assertApprovalTable.users.user_id;
+                  } else {
+                    const idField = idFieldMap[pathName];
+                    id =
+                      (row.original[idField as keyof T] as
+                        | string
+                        | number
+                        | undefined) || row.original.id;
+                  }
 
                   const navigatePath = basePath
                     ? `${basePath}/${id}`

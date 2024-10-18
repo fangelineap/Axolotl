@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
@@ -38,9 +37,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       setOpenRejectionNotesModal(true);
     } else {
       try {
-        const { data, error } = await adminApproveCaregiver(
-          caregiver.caregiver_id
-        );
+        const { error } = await adminApproveCaregiver(caregiver.caregiver_id);
 
         if (error !== null && error !== undefined) {
           toast.error("Something went wrong.", {
@@ -70,7 +67,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
 
   const handleRejectionModal = async (notes: string) => {
     try {
-      const { data, error } = await adminRejectCaregiver(
+      const { error } = await adminRejectCaregiver(
         caregiver.caregiver_id,
         notes
       );

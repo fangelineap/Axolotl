@@ -1,4 +1,4 @@
-import { getGlobalCaregiverDataById } from "@/app/_server-action/global";
+import { getGlobalCaregiverDataByCaregiverId } from "@/app/_server-action/global";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
@@ -18,7 +18,7 @@ async function fetchCaregiverData() {
   if (!caregiverUserData) return null;
 
   const { data: caregiverData, error: caregiverError } =
-    await getGlobalCaregiverDataById(caregiverUserData.id);
+    await getGlobalCaregiverDataByCaregiverId(caregiverUserData.id);
 
   if (caregiverError) return null;
 

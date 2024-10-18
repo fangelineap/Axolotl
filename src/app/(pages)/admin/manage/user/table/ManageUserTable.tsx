@@ -7,7 +7,7 @@ import { columns } from "./columns";
 import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { toast, ToastContainer } from "react-toastify";
-import { deleteAdminUser } from "../actions";
+import { deleteAdminUserFromUserTable } from "../actions";
 import { useRouter } from "next/navigation";
 
 interface ManageUserTableProps {
@@ -32,7 +32,7 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
   const handleModalConfirm = async () => {
     if (selectedUser && selectedUser.user_id) {
       try {
-        await deleteAdminUser(selectedUser.user_id);
+        await deleteAdminUserFromUserTable(selectedUser.user_id);
         toast.success("User deleted successfully", {
           position: "bottom-right"
         });

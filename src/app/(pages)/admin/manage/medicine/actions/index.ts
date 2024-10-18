@@ -48,27 +48,25 @@ export async function addAdminMedicine(form: AdminMedicineTable) {
   }
 
   try {
-    const { data, error: insertError } = await supabase
-      .from("medicine")
-      .insert({
-        name,
-        type,
-        price,
-        exp_date,
-        medicine_photo
-      });
+    const { error } = await supabase.from("medicine").insert({
+      name,
+      type,
+      price,
+      exp_date,
+      medicine_photo
+    });
 
-    if (insertError) {
-      console.error("Error inserting data:", insertError);
+    if (error) {
+      console.error("Error inserting data:", error);
 
-      return { data: null, error: insertError };
+      return false;
     }
 
-    return { data, error: null };
+    return true;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
-    return { data: null, error };
+    return false;
   }
 }
 
@@ -100,10 +98,10 @@ export async function getAdminMedicine() {
 
 /**
  * * Get medicine by id
- * @param uuid
+ * @param medicine_uuid
  * @returns
  */
-export async function getAdminMedicineById(uuid: string) {
+export async function getAdminMedicineById(medicine_uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -112,7 +110,7 @@ export async function getAdminMedicineById(uuid: string) {
     const { data, error } = await supabase
       .from("medicine")
       .select("*")
-      .eq("uuid", uuid)
+      .eq("uuid", medicine_uuid)
       .single();
 
     if (error) {
@@ -185,33 +183,33 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
 
 /**
  * * Delete medicine
- * @param uuid
+ * @param medicine_uuid
  * @returns
  */
-export async function deleteAdminMedicine(uuid: string) {
+export async function deleteAdminMedicine(medicine_uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("medicine")
       .delete()
-      .eq("uuid", uuid)
+      .eq("uuid", medicine_uuid)
       .single();
 
     if (error) {
       console.error("Error deleting data:", error);
 
-      return { data: null, error };
+      return false;
     }
 
     revalidatePath("/admin/manage/medicine");
 
-    return { data, error: null };
+    return true;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
-    return { data: null, error };
+    return false;
   }
 }

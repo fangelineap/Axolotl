@@ -34,15 +34,12 @@ const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
 };
 
 export const columns = [
-  columnHelper.accessor("caregiver_id", {
+  columnHelper.accessor("users.user_id", {
     cell: (info) => {
-      const user_id = info.getValue()?.toString();
+      const uuid = info.getValue()?.toString();
+      const truncatedUuid = uuid ? `${uuid.slice(0, 16)}...` : "";
 
-      return (
-        <div className="flex items-center justify-center text-center">
-          <p>{user_id}</p>
-        </div>
-      );
+      return truncatedUuid;
     },
     id: "Caregiver ID",
     header: "Caregiver ID",
