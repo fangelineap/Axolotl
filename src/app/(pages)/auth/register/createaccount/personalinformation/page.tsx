@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { createClient } from "@/lib/client";
+import AuthStepper from "@/components/Auth/AuthStepper";
 
 const PersonalInformation = ({ searchParams }: any) => {
   const router = useRouter();
@@ -259,44 +260,7 @@ const PersonalInformation = ({ searchParams }: any) => {
   return (
     <DefaultLayout>
       <ToastContainer />
-      <div className="mb-3.5 flex items-center justify-center">
-        <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
-          <div className="flex items-center justify-start gap-1">
-            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
-              1
-            </h2>
-            <h2>Choose Role</h2>
-          </div>
-          <div className="flex items-center justify-start gap-1">
-            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
-              2
-            </h2>
-            <h2>Create Account</h2>
-          </div>
-          <div className="flex items-center justify-start gap-1">
-            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
-              3
-            </h2>
-            <h2>Personal Infomation</h2>
-          </div>
-          {searchParams.role === "Caregiver" && (
-            <div className="flex items-center justify-start gap-1">
-              <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white">
-                4
-              </h2>
-              <h2>Review</h2>
-            </div>
-          )}
-          <div className="flex items-center justify-start gap-1">
-            <h2
-              className={`flex h-7 w-7 items-center justify-center rounded-full bg-gray-cancel font-medium text-white ${searchParams.role === "Caregiver" && "lg:ml-2"}`}
-            >
-              {searchParams.role === "Caregiver" ? 5 : 4}
-            </h2>
-            <h2>Finish</h2>
-          </div>
-        </div>
-      </div>
+      <AuthStepper currentStep={3} />
 
       <div className="flex justify-center pb-9 pt-3">
         {/* <!-- Sign In Form --> */}
