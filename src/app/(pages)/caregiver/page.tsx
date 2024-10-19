@@ -204,13 +204,11 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col sm:p-3 lg:mb-0 lg:flex-row lg:items-start lg:space-x-4">
+                    <div className="flex flex-col gap-2 sm:p-2 lg:mb-0 lg:flex-row lg:items-start lg:space-x-4">
                       <AxolotlButton
                         label="See more"
                         variant="primaryOutlined"
                         onClick={() => handleSeeMore(order)}
-                        customWidth
-                        customClasses="w-fit"
                         fontThickness="bold"
                       />
 
@@ -257,54 +255,6 @@ const Dashboard = () => {
         onClose={closeSecondModal}
         onReject={handleCancel}
       />
-
-      {/* <ReactModal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Cancel Appointment"
-        className="fixed inset-0 z-10 flex items-center justify-center bg-gray-800 bg-opacity-75 p-4"
-        ariaHideApp={false}
-      >
-        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-          <h2 className="mb-4 text-xl font-bold">Confirmation</h2>
-          {selectedAppointment && (
-            <div>
-              <p className="mb-4">
-                Are you sure you want to cancel this appointment?
-              </p>
-              <p className="mb-2">
-                <strong>{selectedAppointment.title}</strong>
-              </p>
-              <p className="text-sm text-gray-500">
-                {selectedAppointment.description}
-              </p>
-              <p className="text-sm text-gray-500">
-                {selectedAppointment.provider}
-              </p>
-              <p className="text-sm text-gray-500">
-                {selectedAppointment.startTime} - {selectedAppointment.endTime}
-              </p>
-              <p className="text-sm text-gray-500">
-                {selectedAppointment.location}
-              </p>
-            </div>
-          )}
-          <div className="mt-6 flex justify-end">
-            <button
-              className="mr-4 rounded-lg bg-gray-cancel px-4 py-2 text-sm font-bold text-white hover:bg-gray-cancel-hover hover:text-black"
-              onClick={closeModal}
-            >
-              No, cancel
-            </button>
-            <button
-              className="rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:bg-red-hover hover:text-red"
-              onClick={handleCancel}
-            >
-              Yes, I&apos;m sure
-            </button>
-          </div>
-        </div>
-      </ReactModal> */}
 
       {/* Second Modal */}
       {/* <ReactModal

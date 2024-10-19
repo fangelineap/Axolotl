@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { fetchOrdersByCaregiver } from "@/app/_server-action/caregiver";
 import type { CaregiverOrderDetails } from "../type/data";
+import { Skeleton } from "@mui/material";
 
 /**
  * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
@@ -107,35 +108,45 @@ const OrderPage = () => {
     router.push(`/order/${orderData.id}?${query}`);
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Show loading while fetching data
-  }
-
-  if (orderData.length === 0) {
-    return <div>No orders found.</div>; // Handle no data case
-  }
-
   return (
     <DefaultLayout>
-      <div>
-        <div className="mb-4 text-sm text-gray-500">
-          <span>Dashboard / </span>
-          <span>Order / </span>
-          <span>Service Order</span>
-        </div>
+      <div className="mb-4 text-sm text-gray-500">
+        <span>Dashboard / </span>
+        <span>Order / </span>
+        <span>Service Order</span>
+      </div>
 
-        <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
-
-        <div className="rounded-lg bg-white p-6 shadow">
-          <DataTable
-            data={orderData} // Pass the data array
-            columns={columns} // Pass the columns configuration
-            basePath="/caregiver/order"
-            showAction={handleShowAction} // Define the action handler
-            initialSorting={[{ id: "Status", desc: false }]}
+      <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
+      {loading ? (
+        // **Render Skeletons when loading is true**
+        <div className="mt-8 flex flex-col items-center justify-center gap-3">
+          {/* Skeleton for the table */}
+          <Skeleton
+            variant="rectangular"
+            width="100%"
+            animation="wave"
+            height={300}
+            className="rounded-lg"
           />
         </div>
-      </div>
+      ) : (
+        // **Render actual content when loading is false**
+        <div>
+          {orderData.length === 0 ? (
+            <div>No orders found.</div>
+          ) : (
+            <div className="rounded-lg bg-white p-6 shadow">
+              <DataTable
+                data={orderData}
+                columns={columns}
+                basePath="/caregiver/order"
+                showAction={handleShowAction}
+                initialSorting={[{ id: "Status", desc: false }]}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </DefaultLayout>
   );
 };
