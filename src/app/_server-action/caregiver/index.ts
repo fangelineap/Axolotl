@@ -5,7 +5,7 @@ import createSupabaseServerClient, {
   getUserDataFromSession,
   getUserFromSession
 } from "@/lib/server";
-import { MEDICINE_ORDER_DETAIL } from "@/types/axolotl";
+import { MEDICINE_ORDER_DETAIL } from "@/types/AxolotlMainType";
 
 import { unstable_noStore } from "next/cache";
 

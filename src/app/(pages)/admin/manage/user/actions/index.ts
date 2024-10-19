@@ -8,7 +8,7 @@ import {
 import { getGlobalUserDataByUserId } from "@/app/_server-action/global";
 import { getAdminAuthClient } from "@/lib/admin";
 import createSupabaseServerClient from "@/lib/server";
-import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
+import { CREATE_NEW_ADMIN_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { unstable_noStore } from "next/cache";
 import { AdminUserTable } from "../table/data";
 
@@ -35,7 +35,7 @@ function validateRequiredFields(fields: Record<string, any>) {
  * @param form
  * @returns
  */
-export async function createAdminNewAdmin(form: NEW_ADMIN_AUTH_SCHEMA) {
+export async function createAdminNewAdmin(form: CREATE_NEW_ADMIN_AUTH_SCHEMA) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();

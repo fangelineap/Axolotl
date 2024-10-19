@@ -13,7 +13,7 @@ import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/Dis
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
-import { CAREGIVER_LICENSES_TYPE } from "@/types/axolotl";
+import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

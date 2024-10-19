@@ -7,7 +7,7 @@ import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
-import { NEW_ADMIN_AUTH_SCHEMA } from "@/types/axolotl";
+import { CREATE_NEW_ADMIN_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -21,7 +21,7 @@ function AddAdmin() {
    * * States & Initial Variables
    */
   const router = useRouter();
-  const [formData, setFormData] = useState<NEW_ADMIN_AUTH_SCHEMA>({
+  const [formData, setFormData] = useState<CREATE_NEW_ADMIN_AUTH_SCHEMA>({
     id: "",
     user_id: "",
     first_name: "",
@@ -68,7 +68,7 @@ function AddAdmin() {
   const createAdmin = async (form: FormData) => {
     if (AdminNewAdminValidation(form) == false) return;
 
-    const userData: NEW_ADMIN_AUTH_SCHEMA = {
+    const userData: CREATE_NEW_ADMIN_AUTH_SCHEMA = {
       id: "",
       user_id: "",
       email: form.get("email")!.toString(),

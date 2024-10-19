@@ -4,7 +4,7 @@ import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { CAREGIVER } from "@/types/axolotl";
+import { CAREGIVER } from "@/types/AxolotlMainType";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
