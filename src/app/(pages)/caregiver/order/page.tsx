@@ -7,11 +7,23 @@ import React, { useEffect, useState } from "react";
 import { fetchOrdersByCaregiver } from "@/app/_server-action/caregiver";
 import type { CaregiverOrderDetails } from "../type/data";
 
-// Define the status color map
-const statusColorClassMap: Record<string, string> = {
-  Ongoing: "bg-yellow-light text-yellow-dark",
-  Canceled: "bg-red-light text-red",
-  Done: "bg-green-light-3 text-green"
+/**
+ * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
+ * @param rowA
+ * @param rowB
+ * @param columnId
+ * @returns
+ */
+const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
+  const order: { [key: string]: number } = {
+    Ongoing: 0,
+    Completed: 1,
+    Canceled: 2
+  };
+  const statusA = rowA.getValue(columnId);
+  const statusB = rowB.getValue(columnId);
+
+  return order[statusA] - order[statusB];
 };
 
 const OrderPage = () => {
@@ -55,22 +67,32 @@ const OrderPage = () => {
       cell: ({ row }) => `${row.original.patient?.users?.first_name || "N/A"}`
     },
     {
-      accessorKey: "is_completed",
+      accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const isCompleted = row.original.is_completed;
-        const status = isCompleted ? "Done" : "Ongoing";
-        const colorClass =
-          statusColorClassMap[status] || "bg-gray-500 text-white";
+        const statusColor: Record<string, string> = {
+          Ongoing: "bg-yellow-light text-yellow-dark",
+          Canceled: "bg-red-light text-red",
+          Completed: "bg-kalbe-ultraLight text-primary"
+        };
+        const status = row.original.status;
+        const colorClass = statusColor[status] || "bg-gray-500 text-white";
 
         return (
-          <span
-            className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
-          >
-            {status}
-          </span>
+          <div className="flex items-center justify-center">
+            <span
+              className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
+            >
+              {status}
+            </span>
+          </div>
         );
-      }
+      },
+      id: "Status",
+      enableSorting: true,
+      enableColumnFilter: true,
+      sortingFn: customStatusSort,
+      filterFn: "equals"
     }
   ];
 
@@ -79,7 +101,7 @@ const OrderPage = () => {
     const query = new URLSearchParams({
       orderType: orderData.appointment.service_type,
       patientName: `${orderData.patient?.users?.first_name}`,
-      status: orderData.is_completed ? "Done" : "Ongoing"
+      status: orderData.status
     }).toString();
 
     router.push(`/order/${orderData.id}?${query}`);
@@ -110,6 +132,7 @@ const OrderPage = () => {
             columns={columns} // Pass the columns configuration
             basePath="/caregiver/order"
             showAction={handleShowAction} // Define the action handler
+            initialSorting={[{ id: "Status", desc: false }]}
           />
         </div>
       </div>

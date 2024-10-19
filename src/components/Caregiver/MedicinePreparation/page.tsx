@@ -10,7 +10,8 @@ import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWith
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
 import { FaSearch } from "react-icons/fa";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
-import { fetchMedicine } from "@/app/_server-action/caregiver";
+import { getGlobalAllMedicine } from "@/app/_server-action/global";
+import { MEDICINE } from "@/types/axolotl";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -45,15 +46,6 @@ interface MedecinePreparationProps {
   };
 }
 
-interface MedicineType {
-  uuid: number;
-  name: string;
-  type: string;
-  price: string;
-  exp_date: string;
-  medicine_photo: string;
-}
-
 const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   orderStatus,
   patientInfo,
@@ -65,26 +57,24 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [medicineList, setMedicineList] = useState<MedicineType[]>([]);
-  const [filteredMedicineList, setFilteredMedicineList] = useState<
-    MedicineType[]
-  >([]);
+  const [medicineList, setMedicineList] = useState<MEDICINE[]>([]);
+  const [filteredMedicineList, setFilteredMedicineList] = useState<MEDICINE[]>(
+    []
+  );
 
   const [selectedMedications, setSelectedMedications] = useState<
-    { quantity: number; name: string; price: string }[]
+    { quantity: number; name: string; price: number }[]
   >([]);
   const [totalPrice, setTotalPrice] = useState<number>(
     parseInt(price.total.replace(/Rp\.\s/g, "").replace(/\./g, ""))
   );
-  const [deliveryFee, setDeliveryFee] = useState<number>(10000);
   const [totalCharge, setTotalCharge] = useState<number>(
     parseInt(price.totalCharge.replace(/Rp\.\s/g, "").replace(/\./g, ""))
   );
 
+  const deliveryFee = 10000;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentMedicine, setCurrentMedicine] = useState<MedicineType | null>(
-    null
-  );
+  const [currentMedicine, setCurrentMedicine] = useState<MEDICINE | null>(null);
 
   const [isAddNewMedicineModalOpen, setIsAddNewMedicineModalOpen] =
     useState<boolean>(false);
@@ -92,13 +82,13 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const [newMedicine, setNewMedicine] = useState<{
     name: string;
     type: string;
-    price: string;
+    price: number;
     quantity: number;
     expired: string | null;
   }>({
     name: "",
     type: "Branded",
-    price: "",
+    price: 0,
     quantity: 1,
     expired: null
   });
@@ -107,7 +97,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     // Fetch medicine data from the database
     const loadMedicineList = async () => {
       try {
-        const medicines: MedicineType[] = await fetchMedicine(); // Fetch data from your database
+        const medicines: MEDICINE[] = await getGlobalAllMedicine(); // Fetch data from your database
         setMedicineList(medicines || []); // Set the medicine list with fetched data
         setFilteredMedicineList(medicines || []); // Initialize filtered list with full data
       } catch (err) {
@@ -129,7 +119,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     }
   }, [searchTerm, medicineList]);
 
-  const handleMedicineSelect = (medicine: MedicineType) => {
+  const handleMedicineSelect = (medicine: MEDICINE) => {
     console.log("Selected Medicine UUID:", medicine.uuid);
     setCurrentMedicine(medicine);
     setIsModalOpen(true); // Open the modal when a medicine is selected
@@ -142,7 +132,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         {
           quantity: 1,
           name: currentMedicine.name,
-          price: currentMedicine.price || "0"
+          price: currentMedicine.price || 0
         }
       ]);
 
@@ -168,7 +158,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     setNewMedicine({
       name: "",
       type: "Branded",
-      price: "",
+      price: 0,
       quantity: 1,
       expired: null
     });
@@ -194,14 +184,12 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       }
     ]);
 
-    parseInt(newMedicine.price.replace(/Rp\.\s/g, "").replace(/\./g, "")) *
-      newMedicine.quantity;
     // Close the modal and reset the new medicine form
     setIsAddNewMedicineModalOpen(false);
     setNewMedicine({
       name: "",
       type: "Branded",
-      price: "",
+      price: 0,
       quantity: 1,
       expired: null
     });
@@ -209,19 +197,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
   useEffect(() => {
     const calculateTotalPrice = () => {
-      const sum = selectedMedications.reduce((acc, med) => {
-        // Ensure med.price is treated as a string and handle null/undefined cases
-        const priceAsString = med.price ? med.price.toString() : "0";
-
-        // Safely perform replace operations
-        const medPrice = parseInt(
-          priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, ""),
-          10 // Ensure base 10 parsing
-        );
-
-        return acc + (isNaN(medPrice) ? 0 : medPrice * med.quantity); // Handle NaN cases
-      }, 0);
-
+      const sum = selectedMedications.reduce(
+        (acc, med) => acc + med.price * med.quantity,
+        0
+      );
       setTotalPrice(sum);
     };
 
@@ -703,7 +682,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       <input
                         type="text"
                         className="mt-1 block w-full rounded border p-2"
-                        value={currentMedicine.exp_date}
+                        value={new Date(
+                          currentMedicine.exp_date
+                        ).toDateString()}
                         disabled
                       />
                     </div>
@@ -802,11 +783,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       placeholder="Enter medicine price"
                       required={true}
                       name="medicinePrice"
-                      value={newMedicine.price}
+                      value={String(newMedicine.price)}
                       onChange={(e) =>
                         setNewMedicine({
                           ...newMedicine,
-                          price: e.target.value
+                          price: e.target.value as unknown as number
                         })
                       }
                     />

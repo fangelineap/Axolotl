@@ -10,7 +10,9 @@ function CustomDivider({
   horizontal = false
 }: CustomDividerProps) {
   return (
-    <div className="hidden lg:flex lg:items-center">
+    <div
+      className={`hidden lg:flex lg:items-center ${horizontal ? "w-full" : "h-full"}`}
+    >
       <div
         className={
           horizontal

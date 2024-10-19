@@ -1,5 +1,5 @@
-import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
+import { MEDICINE, ORDER_APPOINTMENT } from "@/types/axolotl";
 import { Modal } from "@mui/material";
 import {
   IconHash,
@@ -9,7 +9,6 @@ import {
   IconX
 } from "@tabler/icons-react";
 import AxolotlButton from "../Buttons/AxolotlButton";
-import React from "react";
 
 interface AxolotlModalProps {
   isOpen: boolean;
@@ -17,9 +16,17 @@ interface AxolotlModalProps {
   onConfirm: () => void;
   title: string;
   question: string;
-  action?: "delete" | "reject" | "confirm" | "skip" | "approve" | "cancel";
-  medicine?: AdminMedicineTable | null;
+  action?:
+    | "delete"
+    | "reject"
+    | "confirm"
+    | "skip"
+    | "approve"
+    | "cancel"
+    | "cancel appointment";
+  medicine?: MEDICINE | null;
   user?: AdminUserTable | null;
+  order?: ORDER_APPOINTMENT | null;
 }
 
 function AxolotlModal({
@@ -30,7 +37,8 @@ function AxolotlModal({
   question,
   action,
   medicine,
-  user
+  user,
+  order
 }: AxolotlModalProps) {
   const user_full_name = user?.first_name + " " + user?.last_name;
 
@@ -85,6 +93,18 @@ function AxolotlModal({
                     />
                     <p className="text-dark-secondary">{user.role}</p>
                   </div>
+                </div>
+              </div>
+            )}
+            {order && (
+              <div>
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-xl font-medium text-black">
+                    {order.appointment.service_type}
+                  </h3>
+                  <p className="text-dark-secondary">
+                    {order.appointment.main_concern}
+                  </p>
                 </div>
               </div>
             )}
@@ -160,6 +180,25 @@ function AxolotlModal({
                   label="No, continue the registration"
                   onClick={onClose}
                   variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+              </>
+            )}
+            {action === "cancel appointment" && (
+              <>
+                <AxolotlButton
+                  label="No, cancel"
+                  onClick={onClose}
+                  variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="Yes, I'm sure"
+                  isSubmit
+                  onClick={onConfirm}
+                  variant="danger"
                   fontThickness="bold"
                   roundType="regular"
                 />

@@ -31,12 +31,12 @@ interface OrderDetailProps {
   medications: {
     quantity: number;
     name: string;
-    price: string;
+    price: number;
   }[];
   price: {
-    total: string;
-    delivery: string;
-    totalCharge: string;
+    total: number;
+    delivery: number;
+    totalCharge: number;
   };
   proofOfService: {
     imageUrl: string;
@@ -65,6 +65,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
 
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
+
+  console.log(proofOfService.imageUrl);
 
   return (
     <div className="flex flex-col lg:flex-row lg:justify-between">

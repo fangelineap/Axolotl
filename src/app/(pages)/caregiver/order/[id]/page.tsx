@@ -1,60 +1,41 @@
-"use client";
 import { fetchOrderDetail } from "@/app/_server-action/caregiver";
 import OrderDetail from "@/components/Caregiver/OrderDetail/page";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import type { CaregiverOrderDetails } from "../../type/data";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 
-const OrderDetailPage = () => {
-  const params = useParams();
-  const orderId = params.id as string;
+async function getOrderData(orderId: string) {
+  try {
+    const orderData: CaregiverOrderDetails = await fetchOrderDetail(orderId);
 
-  const [orderData, setOrderData] = useState<CaregiverOrderDetails | null>(
-    null
-  );
-  const [loading, setLoading] = useState(true);
-
-  function calculateEndTime(
-    appointmentDate: Date,
-    dayOfVisit: number,
-    appointmentTime: string
-  ): string {
-    const [hours, minutes] = appointmentTime.split(":");
-    const startDate = new Date(appointmentDate);
-    startDate.setHours(parseInt(hours), parseInt(minutes));
-
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + dayOfVisit);
-
-    return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
-  }
-
-  useEffect(() => {
-    const getOrderData = async () => {
-      setLoading(true);
-
-      try {
-        const orders = await fetchOrderDetail(orderId);
-
-        if (!orders) {
-          throw new Error("Failed to fetch orders");
-        }
-        setOrderData(orders);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch order details:", error);
-      }
-    };
-
-    if (orderId) {
-      getOrderData();
+    if (!orderData) {
+      return;
     }
-  }, [orderId]);
 
-  if (loading) {
-    return <div>Loading...</div>;
+    return orderData;
+  } catch (error) {
+    console.error("Failed to fetch order details:", error);
+
+    return;
   }
+}
+function calculateEndTime(
+  appointmentDate: Date,
+  dayOfVisit: number,
+  appointmentTime: string
+): string {
+  const [hours, minutes] = appointmentTime.split(":");
+  const startDate = new Date(appointmentDate);
+  startDate.setHours(parseInt(hours), parseInt(minutes));
+
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + dayOfVisit);
+
+  return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
+}
+
+const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
+  const orderData = await getOrderData(params.id);
 
   if (!orderData) {
     return <div>Order not found</div>;
@@ -67,6 +48,11 @@ const OrderDetailPage = () => {
   const address = user?.address;
   const phone_number = user?.phone_number;
   const birthdate = user?.birthdate;
+  const profile_photo = await getGlobalUserProfilePhoto(
+    orderData.caregiver.profile_photo
+  );
+
+  console.log(orderData);
 
   return (
     <DefaultLayout>
@@ -80,7 +66,7 @@ const OrderDetailPage = () => {
 
       <div>
         <OrderDetail
-          status={orderData?.is_completed ? "Completed" : "Ongoing"}
+          status={orderData.status}
           patientInfo={{
             name: `${first_name} ${last_name}`,
             address: address || "N/A",
@@ -88,21 +74,20 @@ const OrderDetailPage = () => {
             birthdate: String(birthdate) || "N/A"
           }}
           medicalDetails={{
-            causes: orderData?.appointment?.causes || "N/A",
-            mainConcerns: orderData?.appointment?.main_concern || "N/A",
-            currentMedicine:
-              orderData?.appointment?.current_medication || "N/A",
+            causes: orderData.appointment?.causes || "N/A",
+            mainConcerns: orderData.appointment?.main_concern || "N/A",
+            currentMedicine: orderData.appointment?.current_medication || "N/A",
             symptoms:
-              Array.isArray(orderData?.appointment?.symptoms) &&
+              Array.isArray(orderData.appointment?.symptoms) &&
               orderData.appointment.symptoms.length > 0
                 ? orderData.appointment.symptoms
                 : [],
             medicalDescriptions:
-              orderData?.appointment?.medical_description || "N/A",
-            conjectures: orderData?.appointment?.diagnosis || "N/A"
+              orderData.appointment?.medical_description || "N/A",
+            conjectures: orderData.appointment?.diagnosis || "N/A"
           }}
           serviceDetails={{
-            orderId: `#${orderData?.id}`,
+            orderId: `#${orderData.id}`,
             orderDate: orderData.created_at
               ? orderData.created_at.toString()
               : "N/A",
@@ -123,20 +108,17 @@ const OrderDetailPage = () => {
             totalCharge: orderData.total_payment
           }}
           price={{
-            total:
-              orderData.medicineOrder?.sub_total_medicine?.toString() || "N/A",
-            delivery:
-              orderData.medicineOrder?.delivery_fee?.toString() || "N/A",
-            totalCharge:
-              orderData.medicineOrder?.total_price?.toString() || "N/A"
+            total: orderData.medicineOrder?.sub_total_medicine || 0,
+            delivery: orderData.medicineOrder?.delivery_fee || 0,
+            totalCharge: orderData.total_payment || 0
           }}
           medications={orderData.medicines.map((detail) => ({
             quantity: detail.quantity,
             name: detail.name || "Unknown",
-            price: detail.price?.toString() || "N/A"
+            price: detail.quantity * detail.price || 0
           }))}
           proofOfService={{
-            imageUrl: orderData.caregiver?.profile_photo || ""
+            imageUrl: profile_photo || ""
           }}
           orderType={orderData.appointment?.id || "N/A"}
           patientName={`${first_name} ${last_name}`}

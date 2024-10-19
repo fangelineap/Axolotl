@@ -67,7 +67,7 @@ export type APPOINTMENT = {
 
 export type ORDER = {
   id: string;
-  is_completed: boolean;
+  status: string;
   total_payment: number;
   complete_at: Date;
   created_at: Date;
@@ -117,3 +117,7 @@ export type CAREGIVER_LICENSES_TYPE =
   | "degree_certificate"
   | "str"
   | "sip";
+
+export type ORDER_APPOINTMENT = ORDER & {
+  appointment: APPOINTMENT;
+};

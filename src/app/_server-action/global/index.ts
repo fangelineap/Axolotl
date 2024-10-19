@@ -1,7 +1,7 @@
 "use server";
 
 import createSupabaseServerClient from "@/lib/server";
-import { USER } from "@/types/axolotl";
+import { MEDICINE, USER } from "@/types/axolotl";
 import { unstable_noStore } from "next/cache";
 
 /**
@@ -126,5 +126,31 @@ export async function getGlobalCaregiverDataByCaregiverId(
     console.error("An unexpected error occurred:", error);
 
     return { data: null, error };
+  }
+}
+
+/**
+ * * Get all medicine
+ * @returns
+ */
+export async function getGlobalAllMedicine() {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase.from("medicine").select("*");
+
+    if (error) {
+      console.error("Error fetching data:", error);
+
+      return [];
+    }
+
+    return data as MEDICINE[];
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return [];
   }
 }

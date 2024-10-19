@@ -71,32 +71,6 @@ export async function addAdminMedicine(form: AdminMedicineTable) {
 }
 
 /**
- * * Get all medicine
- * @returns
- */
-export async function getAdminMedicine() {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data, error } = await supabase.from("medicine").select("*");
-
-    if (error) {
-      console.error("Error fetching data:", error);
-
-      return [];
-    }
-
-    return data as AdminMedicineTable[];
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return [];
-  }
-}
-
-/**
  * * Get medicine by id
  * @param medicine_uuid
  * @returns
