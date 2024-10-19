@@ -1,5 +1,5 @@
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
-import { MEDICINE, ORDER_APPOINTMENT } from "@/types/axolotl";
+import { MEDICINE, ORDER_APPOINTMENT } from "@/types/AxolotlMainType";
 import { Modal } from "@mui/material";
 import {
   IconHash,

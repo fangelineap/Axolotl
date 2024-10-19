@@ -9,12 +9,14 @@ interface AxolotlRejectionModalProps {
   isOpen: boolean;
   onReject: (notes: string) => void;
   onClose: () => void;
+  from: "approval" | "appointment";
 }
 
 function AxolotlRejectionModal({
   isOpen,
   onReject,
-  onClose
+  onClose,
+  from
 }: AxolotlRejectionModalProps) {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
@@ -28,17 +30,32 @@ function AxolotlRejectionModal({
   };
 
   const handleFormSubmit = () => {
-    if (!notes.trim()) {
-      setError("Rejection reason is required.");
+    switch (from) {
+      case "approval":
+        if (!notes.trim()) {
+          setError("Rejection reason is required.");
 
-      return;
-    }
-    if (notes.trim().length < 10) {
-      setError("Rejection reason must be at least 10 characters.");
+          return;
+        }
+        if (notes.trim().length < 10) {
+          setError("Rejection reason must be at least 10 characters.");
 
-      return;
+          return;
+        }
+        onReject(notes);
+      case "appointment":
+        if (!notes.trim()) {
+          setError("Please add why you cancel this appointment.");
+
+          return;
+        }
+        if (notes.trim().length < 10) {
+          setError("Cancellation reason must be at least 10 characters.");
+
+          return;
+        }
+        onReject(notes);
     }
-    onReject(notes);
   };
 
   return (
@@ -49,14 +66,18 @@ function AxolotlRejectionModal({
       >
         <div className="mx-auto flex w-1/2 max-w-lg flex-col gap-5 rounded-lg bg-white py-3 shadow-lg">
           <div className="flex justify-between border-b border-b-gray-1 px-5 pb-3">
-            <h1 className="text-heading-6 font-bold">Rejection Notes</h1>
+            <h1 className="text-heading-6 font-bold">
+              {from === "approval" ? "Rejection Notes" : "Cancellation Reason"}
+            </h1>
             <button onClick={onClose}>
               <IconX className="text-dark-secondary hover:text-gray-2" />
             </button>
           </div>
           <div className="flex flex-col gap-5 px-5">
             <p className="text-xl text-dark-secondary">
-              Please add why you reject this caregiver
+              {from === "approval"
+                ? "Please add why you reject this caregiver"
+                : "Please add why you cancel this appointment"}
             </p>
             <div className="flex w-full flex-col gap-2">
               <textarea
@@ -76,7 +97,11 @@ function AxolotlRejectionModal({
           <div className="flex items-center justify-center px-5">
             <AxolotlButton
               isSubmit
-              label="Reject this Caregiver"
+              label={
+                from === "approval"
+                  ? "Reject this Caregiver"
+                  : "Cancel this Appointment"
+              }
               variant="danger"
               fontThickness="bold"
               roundType="regular"

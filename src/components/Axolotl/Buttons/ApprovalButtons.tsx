@@ -147,6 +147,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         isOpen={openRejectionNotesModal}
         onClose={handleModalClose}
         onReject={handleRejectionModal}
+        from="approval"
       />
     </div>
   );

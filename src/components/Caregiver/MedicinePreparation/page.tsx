@@ -11,7 +11,7 @@ import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGr
 import { FaSearch } from "react-icons/fa";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
-import { MEDICINE } from "@/types/axolotl";
+import { MEDICINE } from "@/types/AxolotlMainType";
 
 interface MedecinePreparationProps {
   orderStatus: string;

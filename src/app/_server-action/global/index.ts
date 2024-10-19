@@ -1,7 +1,7 @@
 "use server";
 
 import createSupabaseServerClient from "@/lib/server";
-import { MEDICINE, USER } from "@/types/axolotl";
+import { MEDICINE, USER } from "@/types/AxolotlMainType";
 import { unstable_noStore } from "next/cache";
 
 /**
