@@ -76,6 +76,7 @@ export type ORDER = {
   medicine_order_id: string;
   patient_id: string;
   caregiver_id: string;
+  notes?: string;
 };
 
 export type MEDICINE_ORDER = {

@@ -7,7 +7,7 @@ import createSupabaseServerClient, {
 } from "@/lib/server";
 import { MEDICINE_ORDER_DETAIL } from "@/types/AxolotlMainType";
 
-import { unstable_noStore } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 
 export const fetchMedicine = async () => {
   const supabase = await createSupabaseServerClient();
@@ -228,7 +228,7 @@ export async function fetchOngoingOrders() {
     // Filter out any null values that might have occurred due to errors in medicine detail fetching
     const validOrders = ordersWithDetails.filter((order) => order !== null);
 
-    console.log(validOrders);
+    console.log("VALID ORDERS: ", validOrders);
 
     // Access and print the array of medicineOrderDetailData
     validOrders.forEach((order) => {
@@ -365,5 +365,37 @@ export async function fetchOrderDetail(orderId: string) {
       error instanceof Error ? error.message : "Unknown error"
     );
     throw new Error("Failed to fetch order");
+  }
+}
+
+export async function cancelAppointment(orderId: string, notes: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  const updateData = {
+    status: "Canceled",
+    notes,
+    update_at: new Date()
+  };
+
+  try {
+    const { error } = await supabase
+      .from("order")
+      .update(updateData)
+      .eq("id", orderId)
+      .single();
+
+    if (error) {
+      console.error("Error canceling appointment:", error);
+
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Unexpected error:", error);
+
+    return false;
   }
 }
