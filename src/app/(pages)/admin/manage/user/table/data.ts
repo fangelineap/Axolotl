@@ -1,4 +1,5 @@
-import { CAREGIVER, PATIENT, USER, USER_AUTH_SCHEMA } from "@/types/axolotl";
+import { CAREGIVER, PATIENT, USER } from "@/types/AxolotlMainType";
+import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 
 export type AdminUserTable = USER_AUTH_SCHEMA & {
   patient: PATIENT;

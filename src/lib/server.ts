@@ -1,7 +1,8 @@
 "use server";
 
 import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
-import { USER, USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
+import { USER } from "@/types/AxolotlMainType";
+import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { createServerClient } from "@supabase/ssr";
 import { unstable_noStore } from "next/cache";
 import { cookies } from "next/headers";

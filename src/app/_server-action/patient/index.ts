@@ -5,7 +5,7 @@ import { PatientOrder } from "@/app/(pages)/caregiver/type/data";
 import createSupabaseServerClient, {
   getUserDataFromSession
 } from "@/lib/server";
-import { MEDICINE_ORDER_DETAIL } from "@/types/axolotl";
+import { MEDICINE_ORDER_DETAIL } from "@/types/AxolotlMainType";
 import { services } from "@/utils/Services";
 import { unstable_noStore } from "next/cache";
 import { getGlobalUserProfilePhoto } from "../global";

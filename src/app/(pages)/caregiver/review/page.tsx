@@ -1,9 +1,9 @@
-import { getGlobalCaregiverDataByCaregiverId } from "@/app/_server-action/global";
+import { getGlobalCaregiverDataByCaregiverOrUserId } from "@/app/_server-action/global";
 import AuthStepper from "@/components/Auth/AuthStepper";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
-import { CAREGIVER } from "@/types/axolotl";
+import { CAREGIVER } from "@/types/AxolotlMainType";
 import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
 import { IconCheck, IconClock, IconX } from "@tabler/icons-react";
 import { Metadata } from "next";
@@ -20,7 +20,10 @@ async function fetchCaregiverData() {
   if (!caregiverUserData) return null;
 
   const { data: caregiverData, error: caregiverError } =
-    await getGlobalCaregiverDataByCaregiverId(caregiverUserData.id);
+    await getGlobalCaregiverDataByCaregiverOrUserId(
+      "caregiver",
+      caregiverUserData.user_id
+    );
 
   if (caregiverError) return null;
 

@@ -2,7 +2,7 @@ import { logout } from "@/app/_server-action/auth";
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ClickOutside from "@/components/ClickOutside";
 import { getUserDataFromSession } from "@/lib/server";
-import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
+import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";

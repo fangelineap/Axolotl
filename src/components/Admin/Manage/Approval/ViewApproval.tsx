@@ -5,7 +5,7 @@ import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
-import { USER_AUTH_SCHEMA } from "@/types/axolotl";
+import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import Image from "next/image";
 
 interface ViewApprovalProps {

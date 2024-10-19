@@ -1,7 +1,7 @@
 "use server";
 
 import { getAdminAuthClient } from "@/lib/admin";
-import { USER_AUTH_SCHEMA } from "@/types/axolotl";
+import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { unstable_noStore } from "next/cache";
 
 /**

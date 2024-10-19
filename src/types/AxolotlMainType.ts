@@ -100,18 +100,6 @@ export type MEDICINE_ORDER_DETAIL = {
   medicine_id: string;
 };
 
-export type USER_AUTH_SCHEMA = USER & { email: string };
-
-export type USER_DETAILS_AUTH_SCHEMA = USER_AUTH_SCHEMA & {
-  patient?: PATIENT;
-  caregiver?: CAREGIVER;
-};
-
-export type NEW_ADMIN_AUTH_SCHEMA = USER & {
-  email: string;
-  password: string;
-};
-
 export type CAREGIVER_LICENSES_TYPE =
   | "cv"
   | "degree_certificate"

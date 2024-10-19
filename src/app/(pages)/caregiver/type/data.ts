@@ -5,9 +5,9 @@ import {
   MEDICINE_ORDER_DETAIL,
   ORDER,
   PATIENT,
-  USER,
-  USER_AUTH_SCHEMA
-} from "@/types/axolotl";
+  USER
+} from "@/types/AxolotlMainType";
+import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 
 export type CaregiverOrder = USER_AUTH_SCHEMA & {
   caregiver: CAREGIVER;
