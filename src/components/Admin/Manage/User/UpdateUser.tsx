@@ -1,11 +1,15 @@
 "use client";
 
 import {
+  updateAdminCaregiverData,
+  updateAdminUserData
+} from "@/app/(pages)/admin/manage/user/actions";
+import {
   AdminUpdateAdminDetails,
   AdminUpdateCaregiverDetails,
   AdminUserTable
 } from "@/app/(pages)/admin/manage/user/table/data";
-import { prepareFileBeforeUpload } from "@/app/_server-action/storage";
+import { uploadLicenses } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
@@ -13,7 +17,6 @@ import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/Dis
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
-import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -50,17 +53,12 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     }
   });
 
-  const [caregiverLicenses, setCaregiverLicenses] = useState<{
-    cv: File | string;
-    degree_certificate: File | string;
-    str: File | string;
-    sip: File | string;
-  }>({
-    cv: user.caregiver?.cv,
-    degree_certificate: user.caregiver?.degree_certificate,
-    str: user.caregiver?.str,
-    sip: user.caregiver?.sip
-  });
+  const caregiverLicenses = {
+    cv: user.caregiver?.cv as unknown as File,
+    degree_certificate: user.caregiver?.degree_certificate as unknown as File,
+    str: user.caregiver?.str as unknown as File,
+    sip: user.caregiver?.sip as unknown as File
+  };
 
   /**
    * * Date & Time Formatters
@@ -153,94 +151,6 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   const { cv, degree_certificate, str, sip } = caregiverLicenses;
 
   /**
-   * * Handle Caregiver Licenses Change
-   * @param patial
-   * @returns
-   */
-  const setCaregiverLicensesHandler = (
-    patial: Partial<typeof caregiverLicenses>
-  ) => setCaregiverLicenses((prev) => ({ ...prev, ...patial }));
-
-  /**
-   * * Helper function to upload a single file
-   * @param file
-   * @param allowedTypes
-   * @returns
-   */
-  async function processUploadLicense(
-    file: {
-      key: string;
-      fileValue: File | undefined;
-      userValue: string;
-      pathName: string;
-      errorMsg: string;
-    },
-    allowedTypes: string[]
-  ): Promise<string | null> {
-    if (
-      !file.fileValue ||
-      (typeof file.userValue === "string" &&
-        file.fileValue.name === file.userValue)
-    ) {
-      return file.userValue;
-    }
-
-    const fileType = file.fileValue.type;
-    if (!allowedTypes.includes(fileType)) {
-      toast.warning(
-        `Invalid file type for ${file.errorMsg}. Only JPG, PNG, or PDF files are allowed.`,
-        {
-          position: "bottom-right"
-        }
-      );
-
-      return null;
-    }
-
-    const fileName = await prepareFileBeforeUpload(
-      file.key as CAREGIVER_LICENSES_TYPE,
-      file.fileValue
-    );
-
-    if (!fileName) {
-      toast.error(`Error uploading ${file.errorMsg}. Please try again`, {
-        position: "bottom-right"
-      });
-
-      return null;
-    }
-
-    return fileName;
-  }
-
-  /**
-   * * Helper function to separate files before upload
-   * @param files
-   * @param allowedTypes
-   * @returns
-   */
-  async function handleLicensesUpload(
-    files: Array<{
-      key: string;
-      fileValue: File | undefined;
-      userValue: string;
-      pathName: string;
-      errorMsg: string;
-    }>,
-    allowedTypes: string[]
-  ): Promise<{ [key: string]: string | undefined } | null> {
-    const paths: { [key: string]: string | undefined } = {};
-
-    for (const file of files) {
-      const path = await processUploadLicense(file, allowedTypes);
-      if (path === null) return null; // Exit early on error
-      paths[file.pathName] = path;
-    }
-
-    return paths;
-  }
-
-  /**
    * * Save Updated User
    * @param form
    * @returns
@@ -298,7 +208,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
         "application/pdf"
       ];
 
-      const paths = await handleLicensesUpload(files, allowedTypes);
+      const paths = await uploadLicenses(files, allowedTypes);
       if (!paths) return;
 
       const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
@@ -318,7 +228,25 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
         sip: pathSIP!
       };
 
-      console.log({ updatedCaregiverData: updatedCaregiverData });
+      const { success } = await updateAdminCaregiverData(updatedCaregiverData);
+
+      if (!success) {
+        toast.error("Failed to update caregiver. Please try again.", {
+          position: "bottom-right"
+        });
+
+        return;
+      }
+
+      toast.success("Caregiver updated successfully", {
+        position: "bottom-right"
+      });
+
+      setTimeout(() => {
+        router.refresh();
+        router.push(`/admin/manage/user/${user.user_id}`);
+        router.refresh();
+      }, 250);
     }
 
     // ! UPDATE ADMIN
@@ -330,7 +258,25 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
         address: form.get("address")?.toString() || ""
       };
 
-      console.log({ updatedAdminData: updatedAdminData });
+      const { success } = await updateAdminUserData(updatedAdminData);
+
+      if (!success) {
+        toast.error("Failed to update admin. Please try again.", {
+          position: "bottom-right"
+        });
+
+        return;
+      }
+
+      toast.success("Admin updated successfully", {
+        position: "bottom-right"
+      });
+
+      setTimeout(() => {
+        router.refresh();
+        router.push(`/admin/manage/user/${user.user_id}`);
+        router.refresh();
+      }, 250);
     }
   };
 

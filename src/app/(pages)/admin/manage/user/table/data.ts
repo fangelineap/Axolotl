@@ -23,7 +23,3 @@ export type AdminUpdateAdminDetails = {
   phone_number: USER["phone_number"];
   address: USER["address"];
 };
-
-export type AdminUpdateUser = USER_AUTH_SCHEMA & {
-  updateCaregiver: AdminUpdateCaregiverDetails;
-};

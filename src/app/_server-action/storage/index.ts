@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/client";
 import { uuidv7 } from "uuidv7";
 import { toast } from "react-toastify";
+import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
 
 /**
  * * Upload a file to Supabase storage.
@@ -93,4 +94,85 @@ export async function removeUploadedFileFromStorage(
   } catch (error) {
     return error as Error;
   }
+}
+
+/**
+ * * Helper function to upload a single file (CG License)
+ * @param file
+ * @param allowedTypes
+ * @returns
+ */
+async function processUploadLicense(
+  file: {
+    key: string;
+    fileValue: File | undefined;
+    userValue: string;
+    pathName: string;
+    errorMsg: string;
+  },
+  allowedTypes: string[]
+): Promise<string | null> {
+  if (
+    !file.fileValue ||
+    (typeof file.userValue === "string" &&
+      file.fileValue.name === file.userValue)
+  ) {
+    return file.userValue;
+  }
+
+  const fileType = file.fileValue.type;
+  if (!allowedTypes.includes(fileType)) {
+    toast.warning(
+      `Invalid file type for ${file.errorMsg}. Only JPG, PNG, or PDF files are allowed.`,
+      {
+        position: "bottom-right"
+      }
+    );
+
+    return null;
+  }
+
+  const fileName = await prepareFileBeforeUpload(
+    file.key as CAREGIVER_LICENSES_TYPE,
+    file.fileValue
+  );
+
+  if (!fileName) {
+    toast.error(`Error uploading ${file.errorMsg}. Please try again`, {
+      position: "bottom-right"
+    });
+
+    return null;
+  }
+
+  return fileName;
+}
+
+/**
+ * * Function to upload multiple files (CG Licenses)
+ * @param files
+ * @param allowedTypes
+ * @returns
+ */
+export async function uploadLicenses(
+  files: Array<{
+    key: string;
+    fileValue: File | undefined;
+    userValue: string;
+    pathName: string;
+    errorMsg: string;
+  }>,
+  allowedTypes: string[]
+): Promise<{ [key: string]: string | undefined } | null> {
+  const paths: { [key: string]: string | undefined } = {};
+
+  for (const file of files) {
+    const path = await processUploadLicense(file, allowedTypes);
+
+    if (path === null) return null;
+
+    paths[file.pathName] = path;
+  }
+
+  return paths;
 }

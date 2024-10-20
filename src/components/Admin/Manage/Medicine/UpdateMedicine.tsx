@@ -186,7 +186,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       router.refresh();
       router.push(`/admin/manage/medicine/${medicine.uuid}`);
       router.refresh();
-    }, 500);
+    }, 250);
   };
 
   return (
