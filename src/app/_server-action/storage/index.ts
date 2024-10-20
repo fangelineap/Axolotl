@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/client";
+import createSupabaseServerClient from "@/lib/server";
 import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
 import { toast } from "react-toastify";
 import { uuidv7 } from "uuidv7";
@@ -204,7 +205,7 @@ export async function removeLicenses(
  * @returns
  */
 export async function getServerPublicStorageURL(storage: string, path: string) {
-  const supabase = createClient();
+  const supabase = await createSupabaseServerClient();
 
   try {
     const { data } = supabase.storage.from(storage).getPublicUrl(path);
