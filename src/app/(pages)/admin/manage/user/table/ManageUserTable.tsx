@@ -65,7 +65,7 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
         onClose={handleModalClose}
         onConfirm={handleModalConfirm}
         title="Confirmation"
-        question="Are you sure you want to delete this user?"
+        question="Are you sure you want to delete this user? This action cannot be undone."
         action="delete"
         user={selectedUser}
       />

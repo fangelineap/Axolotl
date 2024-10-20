@@ -1,6 +1,7 @@
 "use client";
 
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
+import { getClientPublicStorageURL } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
@@ -21,6 +22,11 @@ function ViewMedicine(data: ViewMedicineProps) {
    */
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  const medicinePhoto = getClientPublicStorageURL(
+    "medicine",
+    data.medicine.medicine_photo as string
+  );
 
   /**
    * * Date Formatter
@@ -56,7 +62,7 @@ function ViewMedicine(data: ViewMedicineProps) {
                     <Skeleton animation="wave" width="80%" height={200} />
                   )}
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(data.medicine.medicine_photo)}`}
+                    src={medicinePhoto}
                     alt="Medicine Photo"
                     className={`max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain ${imageLoaded ? "" : "hidden"}`}
                     width={200}

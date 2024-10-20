@@ -17,12 +17,24 @@ function FileInput({
   onFileSelect,
   name,
   label = "Upload File",
-  accept = ["*"],
+  accept = [],
   isDropzone = false
 }: FileInputProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const fileType: { [key: string]: string } = {
+    "image/jpeg": "JPG",
+    "image/jpg": "JPG",
+    "image/png": "PNG",
+    "application/pdf": "PDF"
+  };
+
+  /**
+   * * Validate File Type
+   */
+  const isValidFileType = (file: File) =>
+    accept.includes("*") || accept.includes(file.type);
 
   /**
    * * Handling File Change
@@ -34,18 +46,13 @@ function FileInput({
       setSelectedFile(file);
       onFileSelect(file);
     } else {
-      toast.warning(`Invalid file type. Allowed types: ${accept.join(", ")}`, {
+      const type = fileType[file!.type];
+      toast.warning(`Invalid file type. Allowed types: ${type}`, {
         position: "bottom-right"
       });
       onFileSelect(null);
     }
   };
-
-  /**
-   * * Validate File Type
-   */
-  const isValidFileType = (file: File) =>
-    accept.includes("*") || accept.includes(file.type);
 
   /**
    * * Handle Drop Event
@@ -59,9 +66,11 @@ function FileInput({
       setSelectedFile(file);
       onFileSelect(file);
     } else {
-      toast.warning(`Invalid file type. Allowed types: ${accept.join(", ")}`, {
+      const type = fileType[file!.type];
+      toast.warning(`Invalid file type. Allowed types: ${type}`, {
         position: "bottom-right"
       });
+      onFileSelect(null);
     }
   };
 

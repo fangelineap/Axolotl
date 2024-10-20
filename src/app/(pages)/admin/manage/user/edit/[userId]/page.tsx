@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: AdminEditUserProps) {
   const user_full_name = response.first_name + " " + response.last_name;
 
   return {
-    title: `Update ${user_full_name} Details`
+    title: `Editing ${user_full_name} Details`
   };
 }
 

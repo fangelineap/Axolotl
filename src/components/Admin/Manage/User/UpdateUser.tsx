@@ -9,24 +9,35 @@ import {
   AdminUpdateCaregiverDetails,
   AdminUserTable
 } from "@/app/(pages)/admin/manage/user/table/data";
-import { uploadLicenses } from "@/app/_server-action/storage";
+import {
+  getClientPublicStorageURL,
+  removeLicenses,
+  uploadLicenses
+} from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
-import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
+import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { AdminUpdateUserValidation } from "./Validation/AdminUpdateUserValidation";
-
+import Link from "next/link";
 interface UpdateUserProps {
   user: AdminUserTable;
   totalOrder: number;
+}
+
+interface Licenses {
+  cv: File | null;
+  degree_certificate: File | null;
+  str: File | null;
+  sip: File | null;
 }
 
 function UpdateUser({ user, totalOrder }: UpdateUserProps) {
@@ -37,27 +48,33 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const user_full_name = user.first_name + " " + user.last_name;
 
+  const caregiverProfilePhoto = getClientPublicStorageURL(
+    "profile_photo",
+    user.caregiver?.profile_photo
+  );
+
   const [formData, setFormData] = useState({
     user_id: user.user_id,
     email: user.email,
     phone_number: user.phone_number,
     address: user.address,
-    updateCaregiver: {
-      employment_type: user.caregiver?.employment_type,
-      work_experiences: user.caregiver?.work_experiences,
-      workplace: user.caregiver?.workplace,
-      cv: user.caregiver?.cv,
-      degree_certificate: user.caregiver?.degree_certificate,
-      str: user.caregiver?.str,
-      sip: user.caregiver?.sip
-    }
+    employment_type: user.caregiver?.employment_type,
+    work_experiences: user.caregiver?.work_experiences,
+    workplace: user.caregiver?.workplace
   });
 
-  const caregiverLicenses = {
-    cv: user.caregiver?.cv as unknown as File,
-    degree_certificate: user.caregiver?.degree_certificate as unknown as File,
-    str: user.caregiver?.str as unknown as File,
-    sip: user.caregiver?.sip as unknown as File
+  const [licenses, setLicenses] = useState<Licenses>({
+    cv: null,
+    degree_certificate: null,
+    str: null,
+    sip: null
+  });
+
+  const existingLicenses = {
+    cv: user.caregiver?.cv,
+    degree_certificate: user.caregiver?.degree_certificate,
+    str: user.caregiver?.str,
+    sip: user.caregiver?.sip
   };
 
   /**
@@ -146,9 +163,45 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   };
 
   /**
+   * * Handle File Change
+   * @param e
+   */
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+
+    if (!selectedFile) {
+      setLicenses((prev) => ({
+        ...prev,
+        [e.target.name]: null
+      }));
+
+      return;
+    }
+
+    setLicenses((prev) => ({
+      ...prev,
+      [e.target.name]: selectedFile
+    }));
+  };
+
+  /**
    * * Extract Caregiver Licenses State
    */
-  const { cv, degree_certificate, str, sip } = caregiverLicenses;
+  const { cv, degree_certificate, str, sip } = licenses;
+
+  /**
+   * * Helper function to remove existing licenses if all update is successful
+   */
+  const removeExistingLicenses = async () => {
+    const licensesToBeRemoved = Object.entries(existingLicenses).map(
+      ([key, value]) => ({
+        storage: key,
+        fileValue: value
+      })
+    );
+
+    await removeLicenses(licensesToBeRemoved);
+  };
 
   /**
    * * Save Updated User
@@ -162,9 +215,16 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     if (user.role === "Admin" && !AdminUpdateUserValidation(form, "Admin"))
       return;
 
+    const allLicenses = {
+      cv,
+      degree_certificate,
+      str,
+      sip
+    };
+
     if (
       ["Nurse", "Midwife"].includes(user.role) &&
-      !AdminUpdateUserValidation(form, "Caregiver")
+      !AdminUpdateUserValidation(form, "Caregiver", allLicenses)
     )
       return;
 
@@ -201,14 +261,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
         }
       ];
 
-      const allowedTypes = [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "application/pdf"
-      ];
-
-      const paths = await uploadLicenses(files, allowedTypes);
+      const paths = await uploadLicenses(files);
       if (!paths) return;
 
       const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
@@ -231,12 +284,20 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
       const { success } = await updateAdminCaregiverData(updatedCaregiverData);
 
       if (!success) {
+        await removeLicenses(
+          Object.values(paths)
+            .filter((path) => path !== undefined)
+            .map((path) => ({ storage: path!, fileValue: path }))
+        );
+
         toast.error("Failed to update caregiver. Please try again.", {
           position: "bottom-right"
         });
 
         return;
       }
+
+      await removeExistingLicenses();
 
       toast.success("Caregiver updated successfully", {
         position: "bottom-right"
@@ -285,7 +346,9 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
       <ToastContainer />
       <form action={saveUpdatedUser}>
         {/* Title */}
-        <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
+        <h1 className="mb-5 text-heading-1 font-bold">
+          Editing User Profile...
+        </h1>
         {/* Container */}
         <div className={`flex w-full flex-col justify-between gap-5`}>
           {/* ROLE BASED RENDERING */}
@@ -308,7 +371,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                 >
                   {["Nurse", "Midwife"].includes(user.role) ? (
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver.profile_photo)}`}
+                      src={caregiverProfilePhoto}
                       alt="User Profile Photo"
                       width={200}
                       height={200}
@@ -587,19 +650,18 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                         User Working Experiences
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
-                        <CustomInputGroup
-                          label="Employment Type"
-                          value={user.caregiver.employment_type}
-                          horizontal={false}
-                          type="text"
+                        <SelectDropdown
+                          value={formData.employment_type}
                           name="employment_type"
                           placeholder="Employment Type"
-                          required
-                          onChange={handleInputChange}
+                          horizontal={false}
+                          content={["Full-time", "Part-time"]}
+                          label="Employment Type"
+                          required={true}
                         />
                         <CustomInputGroup
                           label="Work Experiences"
-                          value={user.caregiver.work_experiences.toString()}
+                          value={formData.work_experiences.toString()}
                           horizontal={false}
                           type="text"
                           isUnit={true}
@@ -612,7 +674,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                       </div>
                       <CustomInputGroup
                         label="Workplace"
-                        value={user.caregiver.workplace}
+                        value={formData.workplace}
                         horizontal={false}
                         type="text"
                         name="workplace"
@@ -627,27 +689,63 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                       <h1 className="mb-3 text-heading-6 font-bold text-primary">
                         User Licenses
                       </h1>
-                      <div className="grid grid-cols-2 gap-x-5">
-                        <FileInput
-                          label="CV"
-                          onFileSelect={() => {}}
-                          name="cv"
-                        />
-                        <FileInput
-                          label="Degree Certificate"
-                          onFileSelect={() => {}}
-                          name="degree_certificate"
-                        />
-                        <FileInput
-                          label="STR"
-                          onFileSelect={() => {}}
-                          name="str"
-                        />
-                        <FileInput
-                          label="SIP"
-                          onFileSelect={() => {}}
-                          name="sip"
-                        />
+                      <div className="grid grid-cols-2 gap-5">
+                        <div className="flex flex-col gap-2">
+                          <label className="font-medium text-dark dark:text-white">
+                            Curriculum Vitae
+                          </label>
+                          <input
+                            type="file"
+                            accept={
+                              "image/png, image/jpeg, image/jpg, application/pdf"
+                            }
+                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
+                            onChange={handleFileChange}
+                            name="cv"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="font-medium text-dark dark:text-white">
+                            Degree Certificate
+                          </label>
+                          <input
+                            type="file"
+                            accept={
+                              "image/png, image/jpeg, image/jpg, application/pdf"
+                            }
+                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
+                            onChange={handleFileChange}
+                            name="degree_certificate"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="font-medium text-dark dark:text-white">
+                            Surat Tanda Registrasi (STR)
+                          </label>
+                          <input
+                            type="file"
+                            accept={
+                              "image/png, image/jpeg, image/jpg, application/pdf"
+                            }
+                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
+                            onChange={handleFileChange}
+                            name="str"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="font-medium text-dark dark:text-white">
+                            Surat Izin Praktik (SIP)
+                          </label>
+                          <input
+                            type="file"
+                            accept={
+                              "image/png, image/jpeg, image/jpg, application/pdf"
+                            }
+                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
+                            onChange={handleFileChange}
+                            name="sip"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -786,14 +884,15 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
           <div className="mt-5 flex w-full items-center justify-end">
             <div className="flex w-full items-center justify-end gap-5 md:w-1/2">
               <div className="flex w-full flex-col items-center justify-center gap-5 md:flex-row md:justify-end">
-                <AxolotlButton
-                  label="Cancel"
-                  variant="dangerOutlined"
-                  fontThickness="bold"
-                  customClasses="text-lg w-full md:w-fit"
-                  customWidth
-                  onClick={() => router.back()}
-                />
+                <Link href={`/admin/manage/user/${user.user_id}`}>
+                  <AxolotlButton
+                    label="Cancel"
+                    variant="dangerOutlined"
+                    fontThickness="bold"
+                    customClasses="text-lg w-full md:w-fit"
+                    customWidth
+                  />
+                </Link>
                 <AxolotlButton
                   label="Save Changes"
                   variant="primary"

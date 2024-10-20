@@ -4,7 +4,8 @@ import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/act
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import {
   removeUploadedFileFromStorage,
-  prepareFileBeforeUpload
+  prepareFileBeforeUpload,
+  getClientPublicStorageURL
 } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
@@ -33,6 +34,11 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
     medicine.medicine_photo ? medicine.medicine_photo : null
   );
   const [isDragging, setIsDragging] = useState(false);
+
+  const medicinePhotoPublicURL = getClientPublicStorageURL(
+    "medicine",
+    medicine.medicine_photo as string
+  );
 
   const [formData, setFormData] = useState({
     name: medicine.name,
@@ -178,6 +184,11 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       return;
     }
 
+    await removeUploadedFileFromStorage(
+      "medicine",
+      medicine.medicine_photo as string
+    );
+
     toast.success("Medicine updated successfully.", {
       position: "bottom-right"
     });
@@ -220,7 +231,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                 {medicinePhoto ? (
                   typeof medicinePhoto === "string" ? (
                     <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(medicine.medicine_photo ?? "")}`}
+                      src={medicinePhotoPublicURL}
                       alt="Medicine Photo"
                       className="max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain"
                       width={200}

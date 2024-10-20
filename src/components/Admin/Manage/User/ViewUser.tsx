@@ -1,11 +1,13 @@
 "use client";
 
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
+import { getClientPublicStorageURL } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
+import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -23,7 +25,13 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
    */
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [editConfirmationModal, setEditConfirmationModal] = useState(false);
   const user_full_name = user.first_name + " " + user.last_name;
+
+  const caregiverProfilePhoto = getClientPublicStorageURL(
+    "profile_photo",
+    user.caregiver.profile_photo
+  );
 
   /**
    * * Date Formatters
@@ -88,6 +96,12 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
   const handleImageLoad = () => setImageLoaded(true);
 
   /**
+   * * Edit Confirmation Modal for Caregiver
+   */
+  const openEditConfirmationModal = () => setEditConfirmationModal(true);
+  const closeEditConfirmationModal = () => setEditConfirmationModal(false);
+
+  /**
    * * Edit Profile Variant
    */
   const isCaregiverUnverifiedOrRejected =
@@ -116,6 +130,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
           return;
         }
+
         if (caregiverStatus === "Rejected") {
           toast.error(
             "Nah fam, this user already been shown the door. No second chances. 🚪👋",
@@ -124,6 +139,13 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
           return;
         }
+
+        if (!editConfirmationModal) {
+          openEditConfirmationModal();
+
+          return;
+        }
+
         break;
 
       case "Patient":
@@ -169,7 +191,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
               >
                 {["Nurse", "Midwife"].includes(user.role) ? (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver.profile_photo)}`}
+                    src={caregiverProfilePhoto}
                     alt="User Profile Photo"
                     width={200}
                     height={200}
@@ -475,7 +497,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                         <DownloadLicenses
                           licenseTitle="Degree Certificate"
                           fileLink={user.caregiver.degree_certificate}
-                          licenseType="Degree Cretificate"
+                          licenseType="Degree Certificate"
                         />
                         <DownloadLicenses
                           licenseTitle="Surat Tanda Registrasi"
@@ -688,6 +710,15 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
           />
         </div>
       </div>
+
+      <AxolotlModal
+        isOpen={editConfirmationModal}
+        onClose={closeEditConfirmationModal}
+        onConfirm={handleEditProfileButton}
+        title="Edit Caregiver Profile"
+        question="Are you sure you want to edit this caregiver? This action is only used to update their licenses. Please prepare the necessary documents first"
+        action="confirm"
+      />
     </>
   );
 }

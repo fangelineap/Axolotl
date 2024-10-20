@@ -66,7 +66,7 @@ function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
         onClose={handleModalClose}
         onConfirm={handleModalConfirm}
         title="Confirmation"
-        question="Are you sure you want to delete this medicine?"
+        question="Are you sure you want to delete this medicine? This action cannot be undone."
         action="delete"
         medicine={selectedMedicine}
       />

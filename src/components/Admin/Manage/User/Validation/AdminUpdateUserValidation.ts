@@ -2,7 +2,13 @@ import { toast } from "react-toastify";
 
 export const AdminUpdateUserValidation = (
   form: FormData,
-  userType: "Admin" | "Caregiver"
+  userType: "Admin" | "Caregiver",
+  licenses?: {
+    cv: File | string | null;
+    degree_certificate: File | string | null;
+    str: File | string | null;
+    sip: File | string | null;
+  }
 ) => {
   switch (userType) {
     case "Admin":
@@ -48,10 +54,7 @@ export const AdminUpdateUserValidation = (
         !form.get("employment_type") &&
         !form.get("work_experiences") &&
         !form.get("workplace") &&
-        !form.get("cv") &&
-        !form.get("degree_certificate") &&
-        !form.get("str") &&
-        !form.get("sip")
+        !licenses
       ) {
         toast.error("Please fill the form.", {
           position: "bottom-right"
@@ -84,7 +87,7 @@ export const AdminUpdateUserValidation = (
         return false;
       }
 
-      if (!form.get("cv")) {
+      if (!licenses?.cv) {
         toast.warning("Please upload a CV.", {
           position: "bottom-right"
         });
@@ -92,7 +95,7 @@ export const AdminUpdateUserValidation = (
         return false;
       }
 
-      if (!form.get("degree_certificate")) {
+      if (!licenses?.degree_certificate) {
         toast.warning("Please upload a Degree Certificate.", {
           position: "bottom-right"
         });
@@ -100,7 +103,7 @@ export const AdminUpdateUserValidation = (
         return false;
       }
 
-      if (!form.get("str")) {
+      if (!licenses?.str) {
         toast.warning("Please upload a Surat Tanda Registrasi.", {
           position: "bottom-right"
         });
@@ -108,7 +111,7 @@ export const AdminUpdateUserValidation = (
         return false;
       }
 
-      if (!form.get("sip")) {
+      if (!licenses?.sip) {
         toast.warning("Please upload a Surat Izin Praktik.", {
           position: "bottom-right"
         });
