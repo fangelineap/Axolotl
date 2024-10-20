@@ -3,6 +3,7 @@ import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ClickOutside from "@/components/ClickOutside";
 import { getUserDataFromSession } from "@/lib/server";
 import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
+import { Skeleton } from "@mui/material";
 import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,22 +35,47 @@ const fetcher = async () => {
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { data: user } = useSWR("userData", fetcher);
+  const [loading, setLoading] = useState(true);
+  const { data: user } = useSWR("userData", fetcher, {
+    onSuccess: () => setLoading(false),
+    onError: () => setLoading(false)
+  });
 
   const handleLogout = async () => {
     await logout();
     mutate("userData", null);
   };
 
+  /**
+   * * Handle Image Load
+   */
+  const handleImageLoad = () => setLoading(false);
+
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
       <Link
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-4"
+        onClick={(e) => {
+          if (loading) {
+            e.preventDefault();
+          } else {
+            setDropdownOpen(!dropdownOpen);
+          }
+        }}
+        className={`flex items-center gap-4 ${loading ? "cursor-not-allowed" : ""}`}
         href="#"
       >
-        <div className="h-12 w-12 overflow-hidden rounded-full border">
+        <div
+          className={`h-12 w-12 overflow-hidden rounded-full border ${loading ? "cursor-not-allowed" : ""}`}
+        >
           <div className="flex h-full w-full items-center justify-center">
+            {loading && (
+              <Skeleton
+                animation="wave"
+                variant="circular"
+                width={100}
+                height={100}
+              />
+            )}
             {user?.imageUrl && (
               <Image
                 width={200}
@@ -58,6 +84,7 @@ const DropdownUser = () => {
                 alt="User"
                 priority
                 className="h-full w-full rounded-full object-cover"
+                onLoad={handleImageLoad}
               />
             )}
           </div>
@@ -72,6 +99,14 @@ const DropdownUser = () => {
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
             <div className="relative block rounded-full border">
               <div className="h-12 w-12 overflow-hidden">
+                {loading && (
+                  <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={48}
+                    height={48}
+                  />
+                )}
                 {user?.imageUrl && (
                   <Image
                     width={200}
@@ -80,6 +115,7 @@ const DropdownUser = () => {
                     alt="User"
                     priority
                     className="h-full w-full rounded-full object-cover"
+                    onLoad={handleImageLoad}
                   />
                 )}
               </div>
@@ -87,12 +123,20 @@ const DropdownUser = () => {
             </div>
 
             <div className="flex w-full flex-col overflow-hidden">
-              <p className="block font-medium text-dark dark:text-white">
-                {user?.first_name} {user?.last_name}
-              </p>
-              <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
-                {user?.email}
-              </p>
+              {loading ? (
+                <Skeleton animation="wave" variant="text" width={100} />
+              ) : (
+                <p className="block font-medium text-dark dark:text-white">
+                  {user?.first_name} {user?.last_name}
+                </p>
+              )}
+              {loading ? (
+                <Skeleton animation="wave" variant="text" width={200} />
+              ) : (
+                <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
+                  {user?.email}
+                </p>
+              )}
             </div>
           </div>
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">

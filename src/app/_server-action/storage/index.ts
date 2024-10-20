@@ -176,3 +176,5 @@ export async function uploadLicenses(
 
   return paths;
 }
+
+// TODO: ADD REMOVE LICENSES FUNCTION
