@@ -1,14 +1,20 @@
 "use client";
-import { fetchOngoingOrders } from "@/app/_server-action/caregiver";
+import {
+  cancelAppointment,
+  fetchOngoingOrders
+} from "@/app/_server-action/caregiver";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import AxolotlRejectionModal from "@/components/Axolotl/Modal/AxolotlRejectionModal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { ORDER } from "@/types/AxolotlMainType";
+import { CAREGIVER_SCHEDULE_ORDER } from "@/types/AxolotlMultipleTypes";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 // Helper function to format the date
 const formatDate = (date: Date) => {
@@ -24,15 +30,19 @@ const formatDate = (date: Date) => {
 
 const Dashboard = () => {
   const today = new Date();
-  const [orders, setOrders] = useState<{ [key: string]: any[] }>({});
+  const [orders, setOrders] = useState<{
+    [key: string]: CAREGIVER_SCHEDULE_ORDER[];
+  }>({});
   const [openCancelModal, setOpenCancelModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [openCancelNoteModal, setOpenCancelNoteModal] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [isCanceled, setIsCanceled] = useState(false);
   const router = useRouter();
 
-  const groupOrdersByDate = (orders: any[]) => {
+  const [orderId, setOrderId] = useState<ORDER["id"]>("");
+
+  const groupOrdersByDate = (orders: CAREGIVER_SCHEDULE_ORDER[]) => {
     return orders.reduce(
       (groupedOrders, order) => {
         const dateKey = formatDate(
@@ -45,41 +55,66 @@ const Dashboard = () => {
 
         return groupedOrders;
       },
-      {} as { [key: string]: any[] }
+      {} as { [key: string]: CAREGIVER_SCHEDULE_ORDER[] }
     );
+  };
+
+  const handleFilter = (data: CAREGIVER_SCHEDULE_ORDER[]) => {
+    // Filter orders that are today or in the future
+    const filteredOrders = data.filter((order) => {
+      const appointmentDate = new Date(
+        order.appointment?.appointment_date
+      ).setHours(0, 0, 0, 0);
+      const todayDate = new Date().setHours(0, 0, 0, 0);
+
+      return appointmentDate >= todayDate;
+    });
+
+    // Group the filtered orders by date
+    const groupedOrders = groupOrdersByDate(filteredOrders);
+
+    // Update the state with the grouped orders
+    setOrders(groupedOrders);
+    console.log("ORDERS: ", groupedOrders);
   };
 
   // Fetch orders from the backend
   useEffect(() => {
     const getOrders = async () => {
-      setLoading(true);
-      const data = await fetchOngoingOrders();
-      if (data) {
-        const filteredOrders = data.filter((order) => {
-          const appointmentDate = new Date(
-            order.appointment.appointment_date
-          ).setHours(0, 0, 0, 0);
-          // Only show orders that are today or in the future
-          const todayDate = new Date().setHours(0, 0, 0, 0);
+      try {
+        setLoading(true);
 
-          return appointmentDate >= todayDate; // Compare dates without considering time
-        });
+        // Fetch data from the backend
+        const data = await fetchOngoingOrders();
+        console.log("DATA: ", data);
 
-        const groupedOrders = groupOrdersByDate(filteredOrders);
-        setOrders(groupedOrders);
+        if (data) {
+          // Call handleFilter with the fetched data
+          handleFilter(data);
+        } else {
+          // Handle the case where data is undefined or null
+          setOrders({});
+        }
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        // Handle error state if necessary
+      } finally {
+        setLoading(false);
+        setIsCanceled(false);
       }
-      setLoading(false);
     };
 
     getOrders();
-  }, []);
+  }, [isCanceled]);
 
   const openFirstModal = (appointment: any) => {
+    setOrderId(appointment.id);
     setSelectedAppointment(appointment);
     setOpenCancelModal(true);
   };
 
   const closeFirstModal = () => {
+    setOrderId("");
     setOpenCancelModal(false);
     setSelectedAppointment(null);
   };
@@ -89,9 +124,39 @@ const Dashboard = () => {
     setOpenCancelNoteModal(true);
   };
 
-  const closeSecondModal = () => setOpenCancelNoteModal(false);
+  const closeSecondModal = () => {
+    setOrderId("");
+    setOpenCancelNoteModal(false);
+    setOpenCancelModal(false);
+  };
 
-  const handleCancel = () => openSecondModal();
+  const handleCancel = async (notes: string) => {
+    try {
+      const cancel = await cancelAppointment(orderId, notes);
+
+      if (!cancel) {
+        toast.error("Failed to perform the action. Please try again.", {
+          position: "bottom-right"
+        });
+
+        return;
+      }
+
+      toast.success("Appointment canceled successfully", {
+        position: "bottom-right"
+      });
+
+      setIsCanceled(true);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to perform the action. Please try again.", {
+        position: "bottom-right"
+      });
+    } finally {
+      router.refresh();
+      closeSecondModal();
+    }
+  };
 
   const handleSeeMore = (order: any) => {
     router.push(`/caregiver/order/${order.id}`);
@@ -99,6 +164,7 @@ const Dashboard = () => {
 
   return (
     <DefaultLayout>
+      <ToastContainer />
       <nav className="mb-2 text-sm text-gray-600">Dashboard / Schedule</nav>
       <h1 className="text-5xl font-bold">Schedule</h1>
       {loading && (
@@ -176,8 +242,8 @@ const Dashboard = () => {
                             alt="Profile"
                           />
                           <span className="ml-2">
-                            {order.patient?.users?.first_name}{" "}
-                            {order.patient?.users?.last_name}
+                            {order.patient.users?.first_name}{" "}
+                            {order.patient.users?.last_name}
                           </span>
                         </div>
                         <div className="flex items-center">
@@ -199,7 +265,7 @@ const Dashboard = () => {
                             alt="Location"
                           />
                           <span className="ml-2">
-                            {order.patient?.users?.address}
+                            {order.patient.users?.address}
                           </span>
                         </div>
                       </div>
@@ -238,8 +304,6 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* First Modal */}
-
       <AxolotlModal
         isOpen={openCancelModal}
         onClose={closeFirstModal}
@@ -254,44 +318,8 @@ const Dashboard = () => {
         isOpen={openCancelNoteModal}
         onClose={closeSecondModal}
         onReject={handleCancel}
+        from="appointment"
       />
-
-      {/* Second Modal */}
-      {/* <ReactModal
-        isOpen={reasonModalIsOpen}
-        onRequestClose={closeReasonModal}
-        contentLabel="Cancellation Reason"
-        className="fixed inset-0 z-10 flex items-center justify-center bg-gray-800 bg-opacity-75 p-4"
-        ariaHideApp={false}
-      >
-        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-          <h2 className="mb-4 text-xl font-bold">Confirmation</h2>
-          <p className="mb-4">
-            To confirm, type your reason why you cancel this appointment
-          </p>
-          <textarea
-            className="w-full rounded-lg border border-gray-300 p-2"
-            rows={4}
-            placeholder="Type your reason here..."
-            value={cancellationReason}
-            onChange={(e) => setCancellationReason(e.target.value)}
-          />
-          <div className="mt-6 flex justify-end">
-            <button
-              className="mr-4 rounded-lg bg-gray-cancel px-4 py-2 text-sm font-bold text-white hover:bg-gray-cancel-hover hover:text-black"
-              onClick={closeReasonModal}
-            >
-              Cancel
-            </button>
-            <button
-              className="rounded-lg bg-red px-4 py-2 text-sm font-bold text-white hover:bg-red-hover hover:text-red"
-              onClick={handleFinalCancel}
-            >
-              Cancel this appointment
-            </button>
-          </div>
-        </div>
-      </ReactModal> */}
     </DefaultLayout>
   );
 };
