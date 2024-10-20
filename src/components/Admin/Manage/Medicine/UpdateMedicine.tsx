@@ -3,18 +3,17 @@
 import { updateAdminMedicineById } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import {
-  removeUploadedFileFromStorage,
+  getClientPublicStorageURL,
   prepareFileBeforeUpload,
-  getClientPublicStorageURL
+  removeUploadedFileFromStorage
 } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import { IconUpload } from "@tabler/icons-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -33,7 +32,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
     medicine.medicine_photo ? medicine.medicine_photo : null
   );
-  const [isDragging, setIsDragging] = useState(false);
 
   const medicinePhotoPublicURL = getClientPublicStorageURL(
     "medicine",
@@ -69,47 +67,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
       [name]: value
     });
   };
-
-  /**
-   * * Handling File Changes whenever user changes the image
-   * @param e
-   */
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      setMedicinePhoto(selectedFile);
-    }
-  };
-
-  /**
-   * * Handle Drop Event
-   * @param e
-   */
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const selectedFile = e.dataTransfer.files[0];
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (selectedFile) {
-      if (allowedTypes.includes(selectedFile.type)) {
-        setMedicinePhoto(selectedFile);
-      } else {
-        toast.warning("Invalid file type. Only JPG and PNG are allowed.", {
-          position: "bottom-right"
-        });
-      }
-    }
-  };
-
-  /**
-   * * Handle Drag Over & Leave Event
-   * @param e
-   */
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-  const handleDragLeave = () => setIsDragging(false);
 
   /**
    * * Handle File Upload
@@ -211,7 +168,15 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
           {/* Left Side */}
           <div className="w-[100%] lg:mr-11 lg:w-[65%]">
             <div className="mb-4 flex flex-col gap-2">
-              <h1 className="text-lg font-semibold">Product Photo</h1>
+              <FileInput
+                name="medicinePhoto"
+                accept={["image/jpg", "image/jpeg", "image/png"]}
+                onFileSelect={(file) => setMedicinePhoto(file)}
+                label="Upload Medicine Photo"
+                isDropzone={true}
+                existingFile={medicinePhotoPublicURL}
+              />
+              {/* <h1 className="text-lg font-semibold">Product Photo</h1>
               <div
                 id="FileUpload"
                 className={`relative flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${medicinePhoto ? "bg-white" : "bg-kalbe-ultraLight"} ${isDragging ? "border-4 border-dashed" : ""}`}
@@ -263,7 +228,7 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                     )}
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
             <div className="flex flex-col">
               <DisabledCustomInputGroup

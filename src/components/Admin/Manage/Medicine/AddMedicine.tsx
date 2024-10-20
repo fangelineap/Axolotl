@@ -3,17 +3,16 @@
 import { addAdminMedicine } from "@/app/(pages)/admin/manage/medicine/actions";
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import {
-  removeUploadedFileFromStorage,
-  prepareFileBeforeUpload
+  prepareFileBeforeUpload,
+  removeUploadedFileFromStorage
 } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
-import { IconUpload } from "@tabler/icons-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -28,7 +27,6 @@ function AddMedicine() {
   const [medicinePhoto, setMedicinePhoto] = useState<string | File | null>(
     null
   );
-  const [isDragging, setIsDragging] = useState(false);
 
   const [formData, setFormData] = useState<AdminMedicineTable>({
     uuid: "",
@@ -60,47 +58,6 @@ function AddMedicine() {
       [name]: value
     });
   };
-
-  /**
-   * * Handling File Change
-   * @param e
-   */
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      setMedicinePhoto(selectedFile);
-    }
-  };
-
-  /**
-   * * Handle Drop Event
-   * @param e
-   */
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const selectedFile = e.dataTransfer.files[0];
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (selectedFile) {
-      if (allowedTypes.includes(selectedFile.type)) {
-        setMedicinePhoto(selectedFile);
-      } else {
-        toast.warning("Invalid file type. Only JPG and PNG are allowed.", {
-          position: "bottom-right"
-        });
-      }
-    }
-  };
-
-  /**
-   * * Handle Drag Over & Leave Event
-   * @param e
-   */
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-  const handleDragLeave = () => setIsDragging(false);
 
   /**
    * * Handle File Upload
@@ -185,49 +142,13 @@ function AddMedicine() {
           {/* Left Side */}
           <div className="w-[100%] lg:mr-11 lg:w-[65%]">
             <div className="mb-4 flex flex-col gap-2">
-              <h1 className="text-lg font-semibold">Product Photo</h1>
-              <div
-                id="FileUpload"
-                className={`relative flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${medicinePhoto ? "bg-white" : "bg-kalbe-ultraLight"} ${isDragging ? "border-4 border-dashed" : ""}`}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-              >
-                <input
-                  aria-label="Upload Photo"
-                  type="file"
-                  name="medicinePhoto"
-                  id="medicinePhoto"
-                  accept="image/png, image/jpg, image/jpeg"
-                  className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
-                  onChange={handleFileChange}
-                />
-                {medicinePhoto ? (
-                  <Image
-                    src={URL.createObjectURL(medicinePhoto as Blob)}
-                    alt="Medicine Photo"
-                    className="max-h-[25%] max-w-[90%] rounded-xl border border-primary object-contain"
-                    width={200}
-                    height={200}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center">
-                    {isDragging ? (
-                      <h1 className="text-lg font-medium">Release to upload</h1>
-                    ) : (
-                      <>
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray p-2">
-                          <IconUpload size={32} className="mb-2 text-primary" />
-                        </div>
-                        <h1 className="font-medium">
-                          Drop files here to upload
-                        </h1>
-                        <p className="text-dark-secondary">JPG & PNG</p>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
+              <FileInput
+                name="medicinePhoto"
+                accept={["image/jpg", "image/jpeg", "image/png"]}
+                onFileSelect={(file) => setMedicinePhoto(file)}
+                label="Upload Medicine Photo"
+                isDropzone={true}
+              />
             </div>
             <div className="flex flex-col">
               <DisabledCustomInputGroup

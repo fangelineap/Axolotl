@@ -156,25 +156,3 @@ export async function getUserDataFromSession() {
 
   return await fetchUserDataByRole(user, supabase, authSchema!);
 }
-
-/**
- * * Get caregiver data by user id
- * FIXME: IT SHOULD USE THE GETGLOBALCAREGIVERBYID FUNCTION
- * @param id
- * @returns
- */
-export async function getCaregiverById(id: string) {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("users")
-    .select("*, caregiver(*)")
-    .eq("user_id", id);
-
-  if (error) {
-    return null;
-  }
-
-  return data;
-}
