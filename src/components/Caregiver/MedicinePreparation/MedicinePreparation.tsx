@@ -1,19 +1,19 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import { getGlobalAllMedicine } from "@/app/_server-action/global";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import FileInput from "@/components/Axolotl/InputFields/FileInput";
+import ExpiredDatePicker from "@/components/FormElements/DatePicker/ExpiredDatePicker";
+import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
+import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
+import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectGroupWithChange";
+import { MEDICINE } from "@/types/AxolotlMainType";
+import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
+import "flatpickr/dist/flatpickr.min.css";
 import Image from "next/image";
-import { useDropzone, FileRejection } from "react-dropzone";
+import React, { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ExpiredDatePicker from "@/components/FormElements/DatePicker/ExpiredDatePicker";
-import "flatpickr/dist/flatpickr.min.css";
-import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectGroupWithChange";
-import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
-import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
-import { FaSearch } from "react-icons/fa";
-import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
-import { getGlobalAllMedicine } from "@/app/_server-action/global";
-import { MEDICINE } from "@/types/AxolotlMainType";
-import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -55,8 +55,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   serviceDetails,
   price
 }) => {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [uploadedImage, setUploadedImage] = useState<string | File | null>(
+    null
+  );
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [medicineList, setMedicineList] = useState<MEDICINE[]>([]);
@@ -239,47 +240,21 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     setSelectedMedications((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Updated onDrop function with additional checks
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      const file = acceptedFiles[0];
-
-      if (file && file instanceof Blob) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setUploadedImage(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-        setErrorMessage(""); // Clear any previous error messages
-      } else {
-        toast.error("Error reading file. Please try again.");
-      }
+  const handleFileSelect = (file: File | null) => {
+    if (file) {
+      setUploadedImage(file);
     }
-  }, []);
+  };
 
-  const onDropRejected = useCallback((fileRejections: FileRejection[]) => {
-    console.log("Rejected files:", fileRejections);
-    fileRejections.forEach((file) => {
-      if (file.errors.some((e) => e.code === "file-invalid-type")) {
-        toast.warning(
-          "File type not supported. Please upload a JPG or PNG file.",
-          {
-            position: "top-right"
-          }
-        );
-      }
-    });
-  }, []);
+  const getImagePreview = () => {
+    if (uploadedImage instanceof File) {
+      return URL.createObjectURL(uploadedImage); // Generate a URL for previewing the image
+    } else if (typeof uploadedImage === "string") {
+      return uploadedImage; // Use the image URL if it's a string
+    }
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    onDropRejected,
-    accept: {
-      "image/jpeg": [],
-      "image/png": []
-    },
-    maxFiles: 1
-  });
+    return null;
+  };
 
   // Disable background scroll when modal is open
   useEffect(() => {
@@ -560,13 +535,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           <p className="text-md mb-4 text-left font-extrabold">
             Proof of Service
           </p>
-          {errorMessage && (
-            <p className="mb-2 text-center text-red-500">{errorMessage}</p>
-          )}
           {uploadedImage ? (
             <div className="mt-4 flex flex-col gap-3 rounded-lg border p-4">
               <Image
-                src={uploadedImage}
+                src={getImagePreview()!}
                 alt="Uploaded Proof of Service"
                 className="mx-auto h-auto max-w-full rounded-lg"
                 width={350}
@@ -580,30 +552,13 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               </button>
             </div>
           ) : (
-            <div
-              {...getRootProps()}
-              className="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-kalbe-light bg-green-50 hover:bg-green-100"
-            >
-              <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center">
-                <div className="mb-2 rounded-full bg-gray-100 p-2">
-                  <svg
-                    width="54"
-                    height="54"
-                    viewBox="0 0 54 54"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M25.875 35.0483V15.5858L20.6325 20.8283L19.0395 19.2127L27 11.25L34.9628 19.2127L33.3698 20.8305L28.125 15.5858V35.0483H25.875ZM14.886 42.75C13.8495 42.75 12.9847 42.4035 12.2917 41.7105C11.5987 41.0175 11.2515 40.152 11.25 39.114V33.6623H13.5V39.114C13.5 39.4605 13.644 39.7785 13.932 40.068C14.22 40.3575 14.5372 40.5015 14.8837 40.5H39.1163C39.4613 40.5 39.7785 40.356 40.068 40.068C40.3575 39.78 40.5015 39.462 40.5 39.114V33.6623H42.75V39.114C42.75 40.1505 42.4035 41.0153 41.7105 41.7083C41.0175 42.4013 40.152 42.7485 39.114 42.75H14.886Z"
-                      fill="#1CBF90"
-                    />
-                  </svg>
-                </div>
-                <p className="text-black">Drop files here to upload</p>
-                <p className="text-sm text-gray-400">JPG & PNG</p>
-              </div>
-            </div>
+            <FileInput
+              onFileSelect={handleFileSelect}
+              name="service_proof"
+              label=""
+              accept={["image/jpg", "image/jpeg", "image/png"]}
+              isDropzone={true} // To use the dropzone style
+            />
           )}
         </div>
 

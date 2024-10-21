@@ -1,6 +1,6 @@
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 
 // TODO: IMPLEMENT THIS FILE INPUT IN REGISTER & EDIT USER
@@ -25,6 +25,10 @@ function FileInput({
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const acceptString = accept.join(", ");
+
+  useEffect(() => {
+    console.log("FileInput component rendered");
+  }, []);
 
   const fileType: { [key: string]: string } = {
     "image/jpeg": "JPEG",
@@ -87,7 +91,9 @@ function FileInput({
 
   const handleDragLeave = () => setIsDragging(false);
 
-  const handleClick = () => inputRef.current?.click();
+  const handleClick = () => {
+    inputRef.current?.click();
+  };
 
   return (
     <div className="mb-3 flex flex-col gap-2">
@@ -113,6 +119,9 @@ function FileInput({
             className="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
             onChange={handleFileChange}
             name={name}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
           />
           {selectedFile ? (
             <Image
