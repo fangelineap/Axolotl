@@ -1,5 +1,6 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ApprovalButtons from "@/components/Axolotl/Buttons/ApprovalButtons";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
@@ -29,6 +30,10 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
 
   const cg_full_name =
     caregiver.users.first_name + " " + caregiver.users.last_name;
+
+  const caregiverProfilePhoto = await getGlobalUserProfilePhoto(
+    caregiver.profile_photo
+  );
 
   /**
    * * Date Formatters
@@ -82,7 +87,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
         <div className="flex w-full flex-col items-center gap-10 lg:flex-row">
           <div className="h-40 w-40 overflow-hidden rounded-full">
             <Image
-              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(caregiver.profile_photo)}`}
+              src={caregiverProfilePhoto!}
               alt="Caregiver Profile Photo"
               width={200}
               height={200}
@@ -235,7 +240,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                 <DownloadLicenses
                   licenseTitle="Degree Certificate"
                   fileLink={caregiver.degree_certificate}
-                  licenseType="Degree Cretificate"
+                  licenseType="Degree Certificate"
                 />
                 <DownloadLicenses
                   licenseTitle="Surat Tanda Registrasi"

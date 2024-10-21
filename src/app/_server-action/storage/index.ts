@@ -1,9 +1,8 @@
-// utils/fileUploadUtils.ts
-
 import { createClient } from "@/lib/client";
-import { uuidv7 } from "uuidv7";
-import { toast } from "react-toastify";
+import createSupabaseServerClient from "@/lib/server";
 import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
+import { toast } from "react-toastify";
+import { uuidv7 } from "uuidv7";
 
 /**
  * * Upload a file to Supabase storage.
@@ -87,7 +86,7 @@ export async function removeUploadedFileFromStorage(
     const { error } = await supabase.storage.from(storage).remove([path]);
 
     if (error) {
-      return error;
+      return error as Error;
     }
 
     return true;
@@ -102,34 +101,19 @@ export async function removeUploadedFileFromStorage(
  * @param allowedTypes
  * @returns
  */
-async function processUploadLicense(
-  file: {
-    key: string;
-    fileValue: File | undefined;
-    userValue: string;
-    pathName: string;
-    errorMsg: string;
-  },
-  allowedTypes: string[]
-): Promise<string | null> {
+async function processUploadLicense(file: {
+  key: string;
+  fileValue: File | undefined;
+  userValue: string;
+  pathName: string;
+  errorMsg: string;
+}): Promise<string | null> {
   if (
     !file.fileValue ||
     (typeof file.userValue === "string" &&
       file.fileValue.name === file.userValue)
   ) {
     return file.userValue;
-  }
-
-  const fileType = file.fileValue.type;
-  if (!allowedTypes.includes(fileType)) {
-    toast.warning(
-      `Invalid file type for ${file.errorMsg}. Only JPG, PNG, or PDF files are allowed.`,
-      {
-        position: "bottom-right"
-      }
-    );
-
-    return null;
   }
 
   const fileName = await prepareFileBeforeUpload(
@@ -161,13 +145,12 @@ export async function uploadLicenses(
     userValue: string;
     pathName: string;
     errorMsg: string;
-  }>,
-  allowedTypes: string[]
+  }>
 ): Promise<{ [key: string]: string | undefined } | null> {
   const paths: { [key: string]: string | undefined } = {};
 
   for (const file of files) {
-    const path = await processUploadLicense(file, allowedTypes);
+    const path = await processUploadLicense(file);
 
     if (path === null) return null;
 
@@ -177,4 +160,80 @@ export async function uploadLicenses(
   return paths;
 }
 
-// TODO: ADD REMOVE LICENSES FUNCTION
+/**
+ * * Function to remove multiple files (CG Licenses)
+ * @param files
+ * @returns
+ */
+export async function removeLicenses(
+  files: Array<{
+    storage: string;
+    fileValue: string | undefined;
+  }>
+): Promise<{ success: boolean }> {
+  try {
+    for (const file of files) {
+      if (file.fileValue) {
+        const response = await removeUploadedFileFromStorage(
+          file.storage,
+          file.fileValue
+        );
+
+        if (response instanceof Error) {
+          console.error("Error while removing licenses:", response);
+
+          return { success: false };
+        }
+      }
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error(
+      "An unexpected error occurred while removing licenses:",
+      error
+    );
+
+    return { success: false };
+  }
+}
+
+/**
+ * * Function to get public storage URL in server component
+ * @param storage
+ * @param path
+ * @returns
+ */
+export async function getServerPublicStorageURL(storage: string, path: string) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data } = supabase.storage.from(storage).getPublicUrl(path);
+
+    if (!data) {
+      console.error("Error fetching public storage URL");
+
+      return null;
+    }
+
+    const publicURL = data.publicUrl;
+
+    return publicURL;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return null;
+  }
+}
+
+/**
+ * * Function to get public storage URL in client component
+ * @param storage
+ * @param path
+ * @returns
+ */
+export function getClientPublicStorageURL(storage: string, path: string) {
+  const loweredStorage = storage.toLowerCase();
+
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${loweredStorage}/${encodeURIComponent(path)}`;
+}

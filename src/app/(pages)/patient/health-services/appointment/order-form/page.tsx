@@ -11,6 +11,7 @@ import Select from "@/components/Axolotl/Select";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
+import { CAREGIVER } from "@/types/AxolotlMainType";
 import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import { services } from "@/utils/Services";
 import {
@@ -44,10 +45,13 @@ const PlacingOrder = ({ searchParams }: any) => {
   useEffect(() => {
     const getSession = async () => {
       const { data, error } = await getUserFromSession();
-      const cg = (await getGlobalCaregiverDataByCaregiverOrUserId(
-        "users",
-        searchParams.caregiver
-      )) as unknown as USER_CAREGIVER;
+      const { data: getCaregiverData } =
+        await getGlobalCaregiverDataByCaregiverOrUserId(
+          "users",
+          searchParams.caregiver
+        );
+
+      const cg = getCaregiverData.caregiver[0] as CAREGIVER;
 
       if (cg) {
         setCaregiver(cg);

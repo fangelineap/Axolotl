@@ -418,14 +418,14 @@ export async function updateAdminCaregiverData(
       return { success: false };
     }
 
-    const caregiverDetailedData =
-      getCaregiverDetailedData.caregiver as CAREGIVER;
+    const caregiverDetailedData = getCaregiverDetailedData
+      .caregiver[0] as CAREGIVER;
 
     // Server side validation for caregiver status
     if (["Rejected", "Unverified"].includes(caregiverDetailedData.status))
       return { success: false };
 
-    const caregiver_id = caregiverDetailedData.caregiver_id;
+    const caregiver_id = caregiverDetailedData.id;
 
     // Update detailed caregiver data
     const {
@@ -443,7 +443,7 @@ export async function updateAdminCaregiverData(
         sip,
         updated_at: new Date()
       })
-      .eq("caregiver_id", caregiver_id)
+      .eq("id", caregiver_id)
       .single();
 
     if (updatedCaregiverDetailedDataError) {

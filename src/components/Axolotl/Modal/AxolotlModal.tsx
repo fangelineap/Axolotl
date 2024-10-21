@@ -48,7 +48,7 @@ function AxolotlModal({
   return (
     <Modal open={isOpen} onClose={onClose}>
       <div className="flex min-h-screen items-center justify-center font-normal">
-        <div className="mx-auto flex w-1/2 max-w-lg flex-col gap-5 rounded-lg bg-white py-3 shadow-lg">
+        <div className="mx-auto flex w-1/2 max-w-lg flex-col gap-5 rounded-lg bg-white py-5 shadow-lg">
           <div className="flex justify-between border-b border-b-gray-1 px-5 pb-3">
             <h1 className="text-heading-6 font-bold">{title}</h1>
             <button onClick={onClose}>
