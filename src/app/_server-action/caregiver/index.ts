@@ -7,27 +7,7 @@ import createSupabaseServerClient, {
 } from "@/lib/server";
 import { MEDICINE_ORDER_DETAIL } from "@/types/AxolotlMainType";
 
-import { revalidatePath, unstable_noStore } from "next/cache";
-
-export const fetchMedicine = async () => {
-  const supabase = await createSupabaseServerClient();
-  try {
-    const { data, error } = await supabase.from("medicine").select("*");
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log("Error fetching medicine:", error.message);
-      throw new Error("Failed to fetch medicine");
-    } else {
-      console.log("Unknown error fetching medicine");
-      throw new Error("An unknown error occurred while fetching medicine");
-    }
-  }
-};
+import { unstable_noStore } from "next/cache";
 
 export async function fetchOrdersByCaregiver() {
   unstable_noStore();
@@ -399,3 +379,60 @@ export async function cancelAppointment(orderId: string, notes: string) {
     return false;
   }
 }
+
+export async function medicinePreparation(orderId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const currentUser = await getUserFromSession();
+    if (!currentUser || !currentUser.data) {
+      throw new Error("Unable to retrieve user session");
+    }
+
+    // Fetch the basic order data along with the necessary relationships, excluding medicineOrder
+    const { data: orderData, error: orderError } = await supabase
+      .from("order")
+      .select(
+        `
+        *,
+        patient(*, users(*)),
+        caregiver(*, users(user_id)),
+        appointment(*)
+      `
+      )
+      .eq("id", orderId)
+      .single(); // Fetch one record
+
+    if (orderError || !orderData) {
+      throw new Error(orderError?.message || "Order not found");
+    }
+
+    // Check authorization
+    const isAuthorized =
+      currentUser.data.id === orderData.caregiver?.caregiver_id &&
+      currentUser.data.user_id === orderData.caregiver?.users?.user_id;
+
+    if (!isAuthorized) {
+      throw new Error("You are not authorized to access this order");
+    }
+
+    const user = orderData.patient?.users || {};
+
+    // Combine the order data and user data
+    const combinedData = {
+      ...orderData,
+      user
+      // No 'medicines' field since we don't need it here
+    };
+
+    return combinedData; // Return the combined data
+  } catch (error) {
+    console.error(
+      "Error fetching order:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
+    throw new Error("Failed to fetch order");
+  }
+}
+
+export async function finishOrder() {}

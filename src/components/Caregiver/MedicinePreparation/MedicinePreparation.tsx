@@ -1,3 +1,4 @@
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useDropzone, FileRejection } from "react-dropzone";
@@ -12,6 +13,7 @@ import { FaSearch } from "react-icons/fa";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
 import { MEDICINE } from "@/types/AxolotlMainType";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -19,12 +21,12 @@ interface MedecinePreparationProps {
     name: string;
     address: string;
     phoneNumber: string;
-    birthdate: string;
+    birthdate: Date;
   };
   medicalDetails: {
     causes: string;
-    mainConcerns: string[];
-    currentMedicine: string[];
+    mainConcerns: string;
+    currentMedicine: string;
     symptoms: string[];
     medicalDescriptions: string;
     conjectures: string;
@@ -33,16 +35,16 @@ interface MedecinePreparationProps {
     orderId: string;
     orderDate: string;
     serviceType: string;
-    totalDays: string;
+    totalDays: number;
     startTime: string;
     endTime: string;
-    serviceFee: string;
-    totalCharge: string;
+    serviceFee: number;
+    totalCharge: number;
   };
   price: {
-    total: string;
-    delivery: string;
-    totalCharge: string;
+    total: number;
+    delivery: number;
+    totalCharge: number;
   };
 }
 
@@ -65,12 +67,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const [selectedMedications, setSelectedMedications] = useState<
     { quantity: number; name: string; price: number }[]
   >([]);
-  const [totalPrice, setTotalPrice] = useState<number>(
-    parseInt(price.total.replace(/Rp\.\s/g, "").replace(/\./g, ""))
-  );
-  const [totalCharge, setTotalCharge] = useState<number>(
-    parseInt(price.totalCharge.replace(/Rp\.\s/g, "").replace(/\./g, ""))
-  );
+  const [totalPrice, setTotalPrice] = useState<number>(price.total);
+  const [totalCharge, setTotalCharge] = useState<number>(price.totalCharge);
 
   const deliveryFee = 10000;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -335,7 +333,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 <div>{patientInfo.name}</div>
                 <div>{patientInfo.address}</div>
                 <div>{patientInfo.phoneNumber}</div>
-                <div>{patientInfo.birthdate}</div>
+                <div>{patientInfo.birthdate.toString()}</div>
               </div>
             </div>
           ) : (
@@ -350,7 +348,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 <strong>Phone Number:</strong> {patientInfo.phoneNumber}
               </div>
               <div>
-                <strong>Birthdate:</strong> {patientInfo.birthdate}
+                <strong>Birthdate:</strong> {patientInfo.birthdate.toString()}
               </div>
             </div>
           )}
@@ -369,8 +367,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             </div>
             <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
               <div>{medicalDetails.causes}</div>
-              <div>{medicalDetails.mainConcerns.join(", ")}</div>
-              <div>{medicalDetails.currentMedicine.join(", ")}</div>
+              <div>{medicalDetails.mainConcerns}</div>
+              <div>{medicalDetails.currentMedicine}</div>
               <div>{medicalDetails.symptoms.join(", ")}</div>
             </div>
           </div>
@@ -608,12 +606,14 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             </div>
           )}
         </div>
-        <button
-          className="mt-4 w-full rounded border border-primary bg-primary py-2 text-lg font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary"
-          onClick={() => alert("Order Finished!")}
-        >
-          Finish Order
-        </button>
+
+        <AxolotlButton
+          label="Finish Order"
+          variant="primary"
+          isSubmit={true}
+          customClasses="mt-4"
+          fontThickness="bold"
+        />
         <ToastContainer />
       </div>
 

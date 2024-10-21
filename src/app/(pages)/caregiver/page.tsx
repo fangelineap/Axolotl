@@ -11,7 +11,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { ORDER } from "@/types/AxolotlMainType";
 import { CAREGIVER_SCHEDULE_ORDER } from "@/types/AxolotlMultipleTypes";
 import { Skeleton } from "@mui/material";
-import Image from "next/image";
+import { IconClock, IconMapPin, IconUserCircle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -105,6 +105,7 @@ const Dashboard = () => {
     };
 
     getOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCanceled]);
 
   const openFirstModal = (appointment: any) => {
@@ -160,6 +161,10 @@ const Dashboard = () => {
 
   const handleSeeMore = (order: any) => {
     router.push(`/caregiver/order/${order.id}`);
+  };
+
+  const handleMedicinePreparation = (orderId: string) => {
+    router.push(`/caregiver/order/${orderId}/prepare/${orderId}`);
   };
 
   return (
@@ -235,11 +240,9 @@ const Dashboard = () => {
                       </p>
                       <div className="mb-2 mt-1 text-sm text-gray-600">
                         <div className="flex items-center">
-                          <Image
-                            width={16}
-                            height={16}
-                            src="/images/icon/profile-icon.svg"
-                            alt="Profile"
+                          <IconUserCircle
+                            className="text-dark-secondary "
+                            stroke={1}
                           />
                           <span className="ml-2">
                             {order.patient.users?.first_name}{" "}
@@ -247,22 +250,18 @@ const Dashboard = () => {
                           </span>
                         </div>
                         <div className="flex items-center">
-                          <Image
-                            width={16}
-                            height={16}
-                            src="/images/icon/clock-icon.svg"
-                            alt="Calendar"
+                          <IconClock
+                            className="text-dark-secondary "
+                            stroke={1}
                           />
                           <span className="ml-2">
                             {order.appointment?.appointment_time}
                           </span>
                         </div>
                         <div className=" flex items-center">
-                          <Image
-                            width={16}
-                            height={16}
-                            src="/images/icon/location-icon.svg"
-                            alt="Location"
+                          <IconMapPin
+                            className="text-dark-secondary "
+                            stroke={1}
                           />
                           <span className="ml-2">
                             {order.patient.users?.address}
@@ -276,6 +275,7 @@ const Dashboard = () => {
                         variant="primaryOutlined"
                         onClick={() => handleSeeMore(order)}
                         fontThickness="bold"
+                        roundType="regular"
                       />
 
                       <CustomDivider color="gray-1" />
@@ -287,12 +287,15 @@ const Dashboard = () => {
                           variant="secondary"
                           onClick={() => openFirstModal(order)}
                           fontThickness="bold"
+                          roundType="regular"
                         />
 
                         <AxolotlButton
                           label="Medicine Preparation"
                           variant="primary"
+                          onClick={() => handleMedicinePreparation(order.id)}
                           fontThickness="bold"
+                          roundType="regular"
                         />
                       </div>
                     </div>

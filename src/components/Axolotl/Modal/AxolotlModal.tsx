@@ -1,14 +1,17 @@
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
-import { MEDICINE, ORDER_APPOINTMENT } from "@/types/AxolotlMainType";
+import { MEDICINE } from "@/types/AxolotlMainType";
 import { Modal } from "@mui/material";
 import {
+  IconClock,
   IconHash,
   IconMail,
+  IconMapPin,
   IconMedicineSyrup,
   IconUserCircle,
   IconX
 } from "@tabler/icons-react";
 import AxolotlButton from "../Buttons/AxolotlButton";
+import { CAREGIVER_SCHEDULE_ORDER } from "@/types/AxolotlMultipleTypes";
 
 interface AxolotlModalProps {
   isOpen: boolean;
@@ -26,7 +29,7 @@ interface AxolotlModalProps {
     | "cancel appointment";
   medicine?: MEDICINE | null;
   user?: AdminUserTable | null;
-  order?: ORDER_APPOINTMENT | null;
+  order?: CAREGIVER_SCHEDULE_ORDER | null;
 }
 
 function AxolotlModal({
@@ -105,6 +108,28 @@ function AxolotlModal({
                   <p className="text-dark-secondary">
                     {order.appointment.main_concern}
                   </p>
+                  <div className="flex gap-2">
+                    <IconUserCircle
+                      className="text-dark-secondary"
+                      stroke={1}
+                    />
+                    <p className="text-dark-secondary">
+                      {order.patient.users.first_name}{" "}
+                      {order.patient.users.last_name}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <IconClock className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">
+                      {order.appointment.appointment_time}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <IconMapPin className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">
+                      {order.patient.users.address}
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

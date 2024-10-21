@@ -1,25 +1,24 @@
-import { fetchOrderDetail } from "@/app/_server-action/caregiver";
-import OrderDetail from "@/components/Caregiver/OrderDetail/OrderDetail";
+import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/MedicinePreparation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import type { CaregiverOrderDetails } from "../../type/data";
-import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
-import { redirect } from "next/navigation";
+import { medicinePreparation } from "@/app/_server-action/caregiver";
+import { CaregiverOrderDetails } from "@/app/(pages)/caregiver/type/data";
 
-async function getOrderData(orderId: string) {
+async function getMedicinePreparationData(id: string) {
   try {
-    const orderData: CaregiverOrderDetails = await fetchOrderDetail(orderId);
+    const data: CaregiverOrderDetails = await medicinePreparation(id);
 
-    if (!orderData) {
-      return;
+    if (!data) {
+      return null;
     }
 
-    return orderData;
+    return data;
   } catch (error) {
-    console.error("Failed to fetch order details:", error);
+    console.error("Failed to fetch medicine preparation details:", error);
 
-    return;
+    return null;
   }
 }
+
 function calculateEndTime(
   appointmentDate: Date,
   dayOfVisit: number,
@@ -35,50 +34,48 @@ function calculateEndTime(
   return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
 }
 
-const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
-  const orderData = await getOrderData(params.id);
+const MedicinePreparationPage = async ({
+  params
+}: {
+  params: { orderId: string };
+}) => {
+  const orderData = await getMedicinePreparationData(params.orderId);
 
   if (!orderData) {
     return <div>Order not found</div>;
   }
 
   // Extract user and patient data from orderData
-  const user = orderData.user;
+  const user = orderData.patient?.users;
   const first_name = user?.first_name;
   const last_name = user?.last_name;
   const address = user?.address;
   const phone_number = user?.phone_number;
   const birthdate = user?.birthdate;
-  const profile_photo = await getGlobalUserProfilePhoto(
-    orderData.caregiver.profile_photo
-  );
-
-  if (orderData.status === "Ongoing") {
-    redirect(`/caregiver/order/${params.id}/prepare/${params.id}`);
-  }
 
   return (
     <DefaultLayout>
       <div className="mb-4 text-sm text-gray-500">
         <span>Dashboard / </span>
         <span>Order / </span>
-        <span>Service Order</span>
+        <span>Medicine Preparation</span>
       </div>
 
-      <h1 className="mb-6 text-5xl font-bold text-gray-800">Order Details</h1>
-
+      <h1 className="mb-6 text-5xl font-bold text-gray-800">
+        Preparing Medicine...
+      </h1>
       <div>
-        <OrderDetail
-          status={orderData.status}
+        <MedicinePreparation
+          orderStatus={orderData.status}
           patientInfo={{
             name: `${first_name} ${last_name}`,
-            address: address || "N/A",
-            phoneNumber: phone_number || "N/A",
-            birthdate: String(birthdate) || "N/A"
+            address: address,
+            phoneNumber: phone_number,
+            birthdate: birthdate
           }}
           medicalDetails={{
-            causes: orderData.appointment?.causes || "N/A",
-            mainConcerns: orderData.appointment?.main_concern || "N/A",
+            causes: orderData.appointment?.causes,
+            mainConcerns: orderData.appointment?.main_concern,
             currentMedicine: orderData.appointment?.current_medication || "N/A",
             symptoms:
               Array.isArray(orderData.appointment?.symptoms) &&
@@ -115,20 +112,10 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
             delivery: orderData.medicineOrder?.delivery_fee || 0,
             totalCharge: orderData.total_payment || 0
           }}
-          medications={orderData.medicines.map((detail) => ({
-            quantity: detail.quantity,
-            name: detail.name || "Unknown",
-            price: detail.quantity * detail.price || 0
-          }))}
-          proofOfService={{
-            imageUrl: profile_photo || ""
-          }}
-          orderType={orderData.appointment?.id || "N/A"}
-          patientName={`${first_name} ${last_name}`}
         />
       </div>
     </DefaultLayout>
   );
 };
 
-export default OrderDetailPage;
+export default MedicinePreparationPage;
