@@ -19,15 +19,17 @@ import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
+import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { AdminUpdateUserValidation } from "./Validation/AdminUpdateUserValidation";
-import Link from "next/link";
+
 interface UpdateUserProps {
   user: AdminUserTable;
   totalOrder: number;
@@ -160,28 +162,6 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
       ...formData,
       [name]: value
     });
-  };
-
-  /**
-   * * Handle File Change
-   * @param e
-   */
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-
-    if (!selectedFile) {
-      setLicenses((prev) => ({
-        ...prev,
-        [e.target.name]: null
-      }));
-
-      return;
-    }
-
-    setLicenses((prev) => ({
-      ...prev,
-      [e.target.name]: selectedFile
-    }));
   };
 
   /**
@@ -690,62 +670,61 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                         User Licenses
                       </h1>
                       <div className="grid grid-cols-2 gap-5">
-                        <div className="flex flex-col gap-2">
-                          <label className="font-medium text-dark dark:text-white">
-                            Curriculum Vitae
-                          </label>
-                          <input
-                            type="file"
-                            accept={
-                              "image/png, image/jpeg, image/jpg, application/pdf"
-                            }
-                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
-                            onChange={handleFileChange}
-                            name="cv"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <label className="font-medium text-dark dark:text-white">
-                            Degree Certificate
-                          </label>
-                          <input
-                            type="file"
-                            accept={
-                              "image/png, image/jpeg, image/jpg, application/pdf"
-                            }
-                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
-                            onChange={handleFileChange}
-                            name="degree_certificate"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <label className="font-medium text-dark dark:text-white">
-                            Surat Tanda Registrasi (STR)
-                          </label>
-                          <input
-                            type="file"
-                            accept={
-                              "image/png, image/jpeg, image/jpg, application/pdf"
-                            }
-                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
-                            onChange={handleFileChange}
-                            name="str"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <label className="font-medium text-dark dark:text-white">
-                            Surat Izin Praktik (SIP)
-                          </label>
-                          <input
-                            type="file"
-                            accept={
-                              "image/png, image/jpeg, image/jpg, application/pdf"
-                            }
-                            className="w-full cursor-pointer rounded-md border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-gray file:px-3 file:py-2 file:text-body-sm file:font-medium file:text-dark-secondary file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary"
-                            onChange={handleFileChange}
-                            name="sip"
-                          />
-                        </div>
+                        <FileInput
+                          name="cv"
+                          accept={[
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "application/pdf"
+                          ]}
+                          label="Curriculum Vitae"
+                          onFileSelect={(file) =>
+                            setLicenses((prev) => ({ ...prev, cv: file }))
+                          }
+                        />
+                        <FileInput
+                          name="degree_certificate"
+                          accept={[
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "application/pdf"
+                          ]}
+                          label="Degree Certificate"
+                          onFileSelect={(file) =>
+                            setLicenses((prev) => ({
+                              ...prev,
+                              degree_certificate: file
+                            }))
+                          }
+                        />
+                        <FileInput
+                          name="str"
+                          accept={[
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "application/pdf"
+                          ]}
+                          label="Surat Tanda Registrasi (STR)"
+                          onFileSelect={(file) =>
+                            setLicenses((prev) => ({ ...prev, str: file }))
+                          }
+                        />
+                        <FileInput
+                          name="sip"
+                          accept={[
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "application/pdf"
+                          ]}
+                          label="Surat Izin Praktik (SIP)"
+                          onFileSelect={(file) =>
+                            setLicenses((prev) => ({ ...prev, sip: file }))
+                          }
+                        />
                       </div>
                     </div>
                   </div>

@@ -11,16 +11,12 @@ function CustomDivider({
 }: CustomDividerProps) {
   return (
     <div
-      className={`hidden lg:flex lg:items-center ${horizontal ? "w-full" : "h-full"}`}
-    >
-      <div
-        className={
-          horizontal
-            ? `w-full border-t border-${color}`
-            : `border-${color} h-full border-l`
-        }
-      />
-    </div>
+      className={
+        horizontal
+          ? `w-full border-t border-${color}`
+          : `border-${color} border-l`
+      }
+    />
   );
 }
 

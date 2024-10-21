@@ -139,11 +139,11 @@ function AddAdmin() {
               {/* Alert */}
               <div className="flex h-[60%] w-full flex-col items-center justify-center gap-2 rounded-lg border border-yellow bg-yellow-light pt-4 text-yellow">
                 <IconAlertTriangle size={50} />
-                <div className="flex w-full flex-col items-center justify-start gap-2 p-4 pt-0">
+                <div className="flex w-full flex-col items-center justify-center gap-2 p-4 pt-0">
                   <h1 className="text-xl font-bold md:text-heading-6">
                     !! WARNING !!
                   </h1>
-                  <p>
+                  <p className="text-center">
                     This action should be performed with caution. This is only
                     performed by professionals. Do not try at home
                   </p>

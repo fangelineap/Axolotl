@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
 
-const fetcher = async () => {
+async function fetcher() {
   const user = await getUserDataFromSession();
   if (!user) {
     return null;
@@ -31,7 +31,7 @@ const fetcher = async () => {
   }
 
   return { ...assertedUser, imageUrl };
-};
+}
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);

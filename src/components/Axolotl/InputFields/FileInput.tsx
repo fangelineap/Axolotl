@@ -3,11 +3,11 @@ import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 
-// TODO: IMPLEMENT THIS FILE INPUT IN REGISTER & EDIT USER
+// TODO: IMPLEMENT THIS FILE INPUT IN REGISTER
 interface FileInputProps {
   onFileSelect: (file: File | null) => void;
   name: string;
-  label?: string;
+  label: string;
   accept?: string[];
   isDropzone?: boolean;
   existingFile?: string | null;

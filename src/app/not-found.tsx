@@ -1,3 +1,5 @@
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import { getUserFromSession } from "@/lib/server";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +9,30 @@ export const metadata: Metadata = {
   title: "Axolotl - 404 Not Found"
 };
 
-function NotFound() {
+async function getCurrentUser() {
+  const { data: currentUser, error: currentUserError } =
+    await getUserFromSession();
+
+  if (currentUserError) return null;
+
+  return currentUser;
+}
+
+async function NotFound() {
+  const data = await getCurrentUser();
+  const userRole = data?.role.toLowerCase() as keyof typeof roleHomepage;
+
+  const roleHomepage: {
+    [key in "nurse" | "midwife" | "patient" | "admin"]: string;
+  } = {
+    nurse: "/caregiver",
+    midwife: "/caregiver",
+    patient: "/patient",
+    admin: "/admin"
+  };
+
+  const homepageLink = userRole ? roleHomepage[userRole] : "/";
+
   return (
     <div className="flex min-h-screen w-screen flex-col items-center justify-center gap-5 text-center">
       <h1 className="text-heading-1 font-bold">404 Not Found</h1>
@@ -16,10 +41,11 @@ function NotFound() {
           The page you are looking for does not exist.
         </h2>
         <p className="text-lg">Please check the URL and try again.</p>
-        <Link href="/" passHref>
-          <button className="rounded border border-primary bg-primary px-3 py-2 text-center font-bold text-white hover:bg-kalbe-ultraLight hover:text-primary">
-            Let&apos;s go back to Home
-          </button>
+        <Link href={homepageLink} passHref>
+          <AxolotlButton
+            label="Let's go back to your Homepage"
+            variant="primary"
+          />
         </Link>
       </div>
 

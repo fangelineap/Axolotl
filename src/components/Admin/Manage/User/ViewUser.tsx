@@ -30,7 +30,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
   const caregiverProfilePhoto = getClientPublicStorageURL(
     "profile_photo",
-    user.caregiver.profile_photo
+    user.caregiver?.profile_photo
   );
 
   /**

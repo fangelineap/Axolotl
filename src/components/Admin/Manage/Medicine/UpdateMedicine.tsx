@@ -176,59 +176,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
                 isDropzone={true}
                 existingFile={medicinePhotoPublicURL}
               />
-              {/* <h1 className="text-lg font-semibold">Product Photo</h1>
-              <div
-                id="FileUpload"
-                className={`relative flex h-auto min-h-65 w-full cursor-pointer appearance-none items-center justify-center rounded-lg border border-primary px-4 py-8 ${medicinePhoto ? "bg-white" : "bg-kalbe-ultraLight"} ${isDragging ? "border-4 border-dashed" : ""}`}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-              >
-                <input
-                  aria-label="Upload Photo"
-                  type="file"
-                  name="medicinePhoto"
-                  id="medicinePhoto"
-                  accept="image/png, image/jpg, image/jpeg"
-                  className="absolute inset-0 z-50 m-0 h-full w-full cursor-pointer p-0 opacity-0 outline-none"
-                  onChange={handleFileChange}
-                />
-                {medicinePhoto ? (
-                  typeof medicinePhoto === "string" ? (
-                    <Image
-                      src={medicinePhotoPublicURL}
-                      alt="Medicine Photo"
-                      className="max-h-[25%] max-w-[80%] rounded-xl border border-primary object-contain"
-                      width={200}
-                      height={200}
-                    />
-                  ) : (
-                    <Image
-                      src={URL.createObjectURL(medicinePhoto)}
-                      alt="Medicine Photo"
-                      className="max-h-[25%] max-w-[90%] rounded-xl border border-primary object-contain"
-                      width={200}
-                      height={200}
-                    />
-                  )
-                ) : (
-                  <div className="flex flex-col items-center justify-center">
-                    {isDragging ? (
-                      <h1 className="text-lg font-medium">Release to upload</h1>
-                    ) : (
-                      <>
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray p-2">
-                          <IconUpload size={32} className="mb-2 text-primary" />
-                        </div>
-                        <h1 className="font-medium">
-                          Drop files here to upload
-                        </h1>
-                        <p className="text-dark-secondary">JPG & PNG</p>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div> */}
             </div>
             <div className="flex flex-col">
               <DisabledCustomInputGroup
