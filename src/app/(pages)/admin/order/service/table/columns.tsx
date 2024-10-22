@@ -28,6 +28,25 @@ const statusDisplay: Record<
 
 const columnHelper = createColumnHelper<AdminOrderServiceLogsTable>();
 
+/**
+ * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
+ * @param rowA
+ * @param rowB
+ * @param columnId
+ * @returns
+ */
+const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
+  const order: { [key: string]: number } = {
+    Ongoing: 0,
+    Completed: 1,
+    Canceled: 2
+  };
+  const statusA = rowA.getValue(columnId);
+  const statusB = rowB.getValue(columnId);
+
+  return order[statusA] - order[statusB];
+};
+
 export const columns = [
   columnHelper.accessor("id", {
     cell: (info) => {
@@ -81,6 +100,7 @@ export const columns = [
     id: "Status",
     header: "Status",
     enableSorting: true,
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    sortingFn: customStatusSort
   })
 ];

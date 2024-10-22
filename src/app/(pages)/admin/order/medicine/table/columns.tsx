@@ -26,7 +26,36 @@ const statusDisplay: Record<
   Completed: { bgColor: "bg-kalbe-ultraLight", textColor: "text-primary" }
 };
 
+/**
+ * * Date Formatters
+ */
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric"
+});
+
 const columnHelper = createColumnHelper<AdminOrderMedicineLogsTable>();
+
+/**
+ * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
+ * @param rowA
+ * @param rowB
+ * @param columnId
+ * @returns
+ */
+const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
+  const order: { [key: string]: number } = {
+    Ongoing: 0,
+    Completed: 1,
+    Canceled: 2
+  };
+  const statusA = rowA.getValue(columnId);
+  const statusB = rowB.getValue(columnId);
+
+  return order[statusA] - order[statusB];
+};
 
 export const columns = [
   columnHelper.accessor("id", {
@@ -44,6 +73,18 @@ export const columns = [
     enableSorting: true,
     enableColumnFilter: true
   }),
+  columnHelper.accessor("created_at", {
+    cell: (info) => {
+      const created_at = info.getValue();
+      const formattedDate = dateFormatter.format(new Date(created_at));
+
+      return formattedDate;
+    },
+    id: "Created Date",
+    header: "Created Date",
+    enableSorting: true,
+    enableColumnFilter: true
+  }),
   columnHelper.accessor((row) => userFullName(row, "caregiver"), {
     cell: (info) => info.getValue(),
     id: "Caregiver Name",
@@ -55,13 +96,6 @@ export const columns = [
     cell: (info) => info.getValue(),
     id: "Patient Name",
     header: "Patient Name",
-    enableSorting: true,
-    enableColumnFilter: true
-  }),
-  columnHelper.accessor((row) => `${row.appointment.service_type}`, {
-    cell: (info) => info.getValue(),
-    id: "Service Type",
-    header: "Service Type",
     enableSorting: true,
     enableColumnFilter: true
   }),
@@ -81,6 +115,7 @@ export const columns = [
     id: "Status",
     header: "Status",
     enableSorting: true,
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    sortingFn: customStatusSort
   })
 ];

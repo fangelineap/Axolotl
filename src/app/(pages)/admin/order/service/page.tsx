@@ -1,12 +1,10 @@
 import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
-import { Metadata } from "next";
 import { getAdminAllOrderServiceLogs } from "./actions";
 import OrderServiceLogsTable from "./table/OrderServiceLogsTable";
+import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 
-export const metadata: Metadata = {
-  title: "Axolotl - Admin Order Service Logs"
-};
+export const metadata = getAdminMetadata("Order Service");
 
 async function getOrderServiceLogs() {
   const data = await getAdminAllOrderServiceLogs();
