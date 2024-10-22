@@ -13,7 +13,7 @@ import { getAdminAuthClient } from "@/lib/admin";
 import createSupabaseServerClient from "@/lib/server";
 import { CREATE_NEW_ADMIN_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { unstable_noStore } from "next/cache";
-import { CAREGIVER } from "../../../../../../types/AxolotlMainType";
+import { CAREGIVER } from "@/types/AxolotlMainType";
 import {
   AdminUpdateAdminDetails,
   AdminUpdateCaregiverDetails,
@@ -149,11 +149,19 @@ export async function getAdminAllUsers() {
       return [];
     }
 
-    const filterData: AdminUserTable[] = data?.filter(
-      (user: AdminUserTable) => user.user_id !== null
+    if (!data || data.length === 0) return [];
+
+    const responses = await Promise.all(
+      data
+        .map(async (user) => {
+          const response = await adminGetUserAuthSchema(user.user_id);
+
+          return response ? { ...user, email: response.email } : null;
+        })
+        .filter((response) => response !== null)
     );
 
-    return filterData;
+    return responses as AdminUserTable[];
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -295,7 +303,7 @@ async function updateAdminUserEmail(
 }
 
 /**
- * * Helper Function to update user basic data
+ * * Update admin data
  * @param userData
  * @param user_id
  * @returns
@@ -361,7 +369,7 @@ export async function updateAdminUserData(
 }
 
 /**
- * * Helper function to update caregiver data
+ * * Update caregiver data
  * @param supabase
  * @param user_id
  * @param caregiverData

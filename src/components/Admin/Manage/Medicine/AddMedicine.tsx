@@ -16,7 +16,7 @@ import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { AdminMedicineValidation } from "./Validation/AdminMedicineValidation";
 
 function AddMedicine() {
@@ -132,106 +132,99 @@ function AddMedicine() {
   };
 
   return (
-    <>
-      <ToastContainer />
-      <form action={saveMedicine}>
-        {/* Title */}
-        <h1 className="mb-5 text-heading-1 font-bold">Add Medicine</h1>
-        {/* Container */}
-        <div className="flex flex-col justify-between lg:flex-row">
-          {/* Left Side */}
-          <div className="w-[100%] lg:mr-11 lg:w-[65%]">
-            <div className="mb-4 flex flex-col gap-2">
-              <FileInput
-                name="medicinePhoto"
-                accept={["image/jpg", "image/jpeg", "image/png"]}
-                onFileSelect={(file) => setMedicinePhoto(file)}
-                label="Upload Medicine Photo"
-                isDropzone={true}
-              />
-            </div>
-            <div className="flex flex-col">
-              <DisabledCustomInputGroup
-                label="Product ID"
-                value="This will be auto-generated"
-                type="text"
-                horizontal
-              />
-              <CustomInputGroup
-                name="name"
-                label="Name"
-                placeholder="Medicine Name"
-                type="text"
-                onChange={handleInputChange}
-                required={true}
-                horizontal
-              />
-              <SelectDropdown
-                content={["Generic", "Branded"]}
-                name="type"
-                placeholder="Select Medicine Type"
-                horizontal={true}
-                label="Type"
-                required={true}
-              />
-              <CustomDatePicker
-                name="exp_date"
-                label="Exp. Date"
-                placeholder={formatDate}
-                required={true}
-                horizontal
-              />
-            </div>
+    <form action={saveMedicine}>
+      {/* Title */}
+      <h1 className="mb-5 text-heading-1 font-bold">Add Medicine</h1>
+      {/* Container */}
+      <div className="flex flex-col justify-between lg:flex-row">
+        {/* Left Side */}
+        <div className="w-[100%] lg:mr-11 lg:w-[65%]">
+          <div className="mb-4 flex flex-col gap-2">
+            <FileInput
+              name="medicinePhoto"
+              accept={["image/jpg", "image/jpeg", "image/png"]}
+              onFileSelect={(file) => setMedicinePhoto(file)}
+              label="Upload Medicine Photo"
+              isDropzone={true}
+            />
           </div>
+          <div className="flex flex-col">
+            <DisabledCustomInputGroup
+              label="Product ID"
+              value="This will be auto-generated"
+              type="text"
+              horizontal
+            />
+            <CustomInputGroup
+              name="name"
+              label="Name"
+              placeholder="Medicine Name"
+              type="text"
+              onChange={handleInputChange}
+              required={true}
+              horizontal
+            />
+            <SelectDropdown
+              content={["Generic", "Branded"]}
+              name="type"
+              placeholder="Select Medicine Type"
+              horizontal={true}
+              label="Type"
+              required={true}
+            />
+            <CustomDatePicker
+              name="exp_date"
+              label="Exp. Date"
+              placeholder={formatDate}
+              required={true}
+              horizontal
+            />
+          </div>
+        </div>
 
-          {/* Right Side */}
-          <div className="w-[100%] lg:w-[35%]">
-            <div className="flex flex-col rounded-lg border border-gray-1 bg-white p-5">
-              <div className="mb-5 flex items-center justify-center text-primary">
-                <h1 className="text-center text-heading-4 font-bold">
-                  Pricing
-                </h1>
-              </div>
-              <div className="flex flex-col gap-5">
-                <PriceBox
-                  name="price"
-                  placeholder="Enter price"
-                  value={
-                    typeof formData.price === "number" ? formData.price : ""
-                  }
-                  disabled={false}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    setFormData({
-                      ...formData,
-                      price: inputValue === "" ? 0 : parseFloat(inputValue)
-                    });
-                  }}
-                  required={true}
-                />
-                <Link href={"/admin/manage/medicine"}>
-                  <AxolotlButton
-                    label="Cancel"
-                    fontThickness="bold"
-                    variant="dangerOutlined"
-                    customClasses="text-lg"
-                    roundType="regular"
-                  />
-                </Link>
+        {/* Right Side */}
+        <div className="w-[100%] lg:w-[35%]">
+          <div className="flex flex-col rounded-lg border border-gray-1 bg-white p-5">
+            <div className="mb-5 flex items-center justify-center text-primary">
+              <h1 className="text-center text-heading-4 font-bold">Pricing</h1>
+            </div>
+            <div className="flex flex-col gap-5">
+              <PriceBox
+                name="price"
+                placeholder="Enter price"
+                value={typeof formData.price === "number" ? formData.price : ""}
+                disabled={false}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setFormData({
+                    ...formData,
+                    price: inputValue === "" ? 0 : parseFloat(inputValue)
+                  });
+                }}
+                required={true}
+              />
+              <Link href={"/admin/manage/medicine"}>
                 <AxolotlButton
-                  isSubmit
-                  label="Add Medicine"
+                  label="Cancel"
                   fontThickness="bold"
-                  variant="primary"
+                  variant="dangerOutlined"
                   customClasses="text-lg"
                   roundType="regular"
                 />
-              </div>
+              </Link>
+              <AxolotlButton
+                isSubmit
+                label="Add Medicine"
+                fontThickness="bold"
+                variant="primary"
+                customClasses="text-lg"
+                roundType="regular"
+              />
             </div>
           </div>
         </div>
-      </form>
-    </>
+      </div>
+    </form>
   );
 }
 

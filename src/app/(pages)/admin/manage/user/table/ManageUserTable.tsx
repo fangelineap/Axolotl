@@ -1,23 +1,24 @@
 "use client";
 
-import { DataTable } from "@/components/Tables/DataTable";
-import React, { useState } from "react";
-import { AdminUserTable } from "./data";
-import { columns } from "./columns";
-import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
-import { toast, ToastContainer } from "react-toastify";
-import { deleteAdminUserFromUserTable } from "../actions";
+import { DataTable } from "@/components/Tables/DataTable";
+import { getUserFromSession } from "@/lib/server";
+import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { deleteAdminUserFromUserTable } from "../actions";
+import { columns } from "./columns";
+import { AdminUserTable } from "./data";
 
 interface ManageUserTableProps {
   initialData: AdminUserTable[];
 }
 
 function ManageUserTable({ initialData }: ManageUserTableProps) {
+  const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUserTable | null>(null);
-  const router = useRouter();
 
   const handleDeleteClick = (user: AdminUserTable) => {
     setSelectedUser(user);
@@ -30,6 +31,32 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
   };
 
   const handleModalConfirm = async () => {
+    const { data: currentUser, error: currentUserError } =
+      await getUserFromSession();
+
+    if (currentUserError || !currentUser) {
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right"
+      });
+
+      handleModalClose();
+
+      return;
+    }
+
+    if (selectedUser?.user_id === currentUser.user_id) {
+      toast.error(
+        "Deleting yourself? I mean, it’s one way to quit your job, but I wouldn’t recommend it.",
+        {
+          position: "bottom-right"
+        }
+      );
+
+      handleModalClose();
+
+      return;
+    }
+
     if (selectedUser && selectedUser.user_id) {
       try {
         await deleteAdminUserFromUserTable(selectedUser.user_id);
@@ -51,7 +78,6 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
 
   return (
     <div className="mb-10">
-      <ToastContainer />
       <DataTable
         data={initialData}
         columns={columns as ColumnDef<AdminUserTable>[]}

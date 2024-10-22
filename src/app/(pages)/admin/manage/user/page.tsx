@@ -1,11 +1,8 @@
-import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
+import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import { getAdminAllUsers } from "./actions";
-import { AdminUserTable } from "./table/data";
 import ManageUserTable from "./table/ManageUserTable";
-import React from "react";
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 export const metadata = getAdminMetadata("Manage User");
 
 async function getUserData() {
@@ -15,34 +12,7 @@ async function getUserData() {
     return [];
   }
 
-  const responses = await Promise.all(
-    data.map(async (user) => {
-      const response = await adminGetUserAuthSchema(user.user_id);
-
-      return response ? (response as unknown as AdminUserTable) : null;
-    })
-  );
-
-  const validResponses = responses.filter((response) => response !== null);
-
-  if (validResponses.length < data.length) {
-    return [];
-  }
-
-  const combinedData = data.map((userData) => {
-    const userAuth = validResponses.find(
-      (response) => response?.id === userData.user_id
-    );
-
-    const combined: AdminUserTable = {
-      ...userData,
-      email: userAuth?.email || ""
-    };
-
-    return combined;
-  });
-
-  return combinedData;
+  return data;
 }
 
 async function AdminManageUser() {
