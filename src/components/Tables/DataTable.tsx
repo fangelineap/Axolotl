@@ -38,6 +38,7 @@ interface DataTableProps<
   deleteAction?: (rowData: T) => void;
   basePath?: string;
   initialSorting?: ColumnSort[];
+  selectInputOptions?: string[];
 }
 
 export function DataTable<
@@ -52,7 +53,8 @@ export function DataTable<
   showAction,
   deleteAction,
   basePath,
-  initialSorting = []
+  initialSorting = [],
+  selectInputOptions
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
@@ -236,11 +238,15 @@ export function DataTable<
                           </button>
                         </div>
 
-                        {header.column.getCanFilter() ? (
-                          header.column.id === "Status" ? (
+                        {header.column.getCanFilter() &&
+                          (header.column.id === "Status" ? (
                             <SelectDataTable
                               title="Status"
-                              options={["Verified", "Unverified", "Rejected"]}
+                              options={
+                                selectInputOptions
+                                  ? selectInputOptions
+                                  : ["Verified", "Unverified", "Rejected"]
+                              }
                               value={
                                 (header.column.getFilterValue() as string) || ""
                               }
@@ -282,8 +288,7 @@ export function DataTable<
                               }
                               className="mt-2 w-full rounded border border-gray-1 p-2 text-sm font-normal focus:border-primary focus:outline-none"
                             />
-                          )
-                        ) : null}
+                          ))}
                       </div>
                     )}
                   </th>

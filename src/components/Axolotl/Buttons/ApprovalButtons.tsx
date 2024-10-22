@@ -3,7 +3,7 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 import {
   adminApproveCaregiver,
@@ -109,7 +109,6 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
 
   return (
     <div className="flex w-full items-center justify-end">
-      <ToastContainer />
       {status === "Unverified" ? (
         <div className="flex w-full items-center justify-center gap-5">
           <AxolotlButton

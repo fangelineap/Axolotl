@@ -13,8 +13,14 @@ import { validateSession } from "./utils/auth/ValidateSession";
 function isGuestPage(pathname: string): boolean {
   const guestPages = ["/", "/guest/about", "/guest/careers"];
 
-  if (guestPages.includes(pathname) || pathname.startsWith("/auth"))
+  if (guestPages.includes(pathname)) return true;
+
+  if (
+    pathname.startsWith("/auth/signin") ||
+    pathname.startsWith("/auth/register")
+  ) {
     return true;
+  }
 
   return false;
 }

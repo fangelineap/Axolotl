@@ -12,7 +12,7 @@ import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 interface ViewUserProps {
   user: AdminUserTable;
@@ -165,7 +165,6 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
   return (
     <>
-      <ToastContainer />
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
 

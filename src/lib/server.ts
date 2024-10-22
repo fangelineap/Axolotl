@@ -124,7 +124,7 @@ async function fetchUserDataByRole(
 }
 
 /**
- * * Get all user detailed data from users table
+ * * Get user data from session, then fetch user data (users table)
  * * and its corresponding auth schema (patient or caregiver)
  * @returns
  */
