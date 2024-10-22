@@ -435,4 +435,126 @@ export async function medicinePreparation(orderId: string) {
   }
 }
 
-export async function finishOrder() {}
+export async function finishOrder(
+  orderId: string,
+  proofOfServiceFile: File | null,
+  medicine: { id: string; quantity: number; price: number }[]
+) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const currentUser = await getUserFromSession();
+    if (!currentUser || !currentUser.data) {
+      throw new Error("Unable to retrieve user session");
+    }
+
+    // Step 1: Upload the proof_of_service image to Supabase storage (if provided)
+    let proofOfServiceUrl = null;
+    if (proofOfServiceFile) {
+      const { data: imageData, error: imageError } = await supabase.storage
+        .from("proofs_of_service") // Replace with your actual storage bucket
+        .upload(
+          `order_${orderId}/${proofOfServiceFile.name}`,
+          proofOfServiceFile
+        );
+
+      if (imageError) {
+        throw new Error(
+          "Failed to upload proof of service image: " + imageError.message
+        );
+      }
+
+      proofOfServiceUrl = imageData?.path || null; // Save the file path for storing in the database
+    }
+    // Step 2: Update the `order` table with the proof_of_service URL
+    const { error: updateOrderError } = await supabase
+      .from("order")
+      .update({
+        proof_of_service: proofOfServiceUrl
+      })
+      .eq("id", orderId);
+
+    if (updateOrderError) {
+      throw new Error(
+        "Failed to update order with proof of service: " +
+          updateOrderError.message
+      );
+    }
+
+    // Step 3: Insert a new record into the `medicine_order` table
+    const totalQty = medicine.reduce((sum, med) => sum + med.quantity, 0); // Total quantity of medicines
+    const subTotal = medicine.reduce(
+      (sum, med) => sum + med.price * med.quantity,
+      0
+    ); // Subtotal of medicine prices
+    const deliveryFee = 10000; // Example delivery fee, you can change this
+    const totalPrice = subTotal + deliveryFee; // Total price
+
+    const { data: medicineOrderData, error: medicineOrderError } =
+      await supabase
+        .from("medicine_order")
+        .insert({
+          total_qty: totalQty,
+          sub_total_medicine: subTotal,
+          delivery_fee: deliveryFee,
+          total_price: totalPrice,
+          is_paid: false, // Set payment status as unpaid initially
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select("id")
+        .single(); // Return the newly inserted record's ID
+
+    if (medicineOrderError) {
+      throw new Error(
+        "Failed to create medicine order: " + medicineOrderError.message
+      );
+    }
+
+    const medicineOrderId = medicineOrderData?.id;
+
+    // Step 4: Update the `order` table with the `medicine_order_id`
+    const { error: updateMedicineOrderIdError } = await supabase
+      .from("order")
+      .update({
+        medicine_order_id: medicineOrderId
+      })
+      .eq("id", orderId);
+
+    if (updateMedicineOrderIdError) {
+      throw new Error(
+        "Failed to update order with medicine order ID: " +
+          updateMedicineOrderIdError.message
+      );
+    }
+
+    // Step 5: Insert ordered medicines into the `medicine_order_detail` table
+    const medicineOrderDetails = medicine.map((med) => ({
+      quantity: med.quantity,
+      total_price: med.price * med.quantity,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      medicine_id: med.id, // Reference to the medicine table
+      medicine_order_id: medicineOrderId // Reference to the newly created medicine_order
+    }));
+
+    const { error: medicineOrderDetailsError } = await supabase
+      .from("medicine_order_detail")
+      .insert(medicineOrderDetails);
+
+    if (medicineOrderDetailsError) {
+      throw new Error(
+        "Failed to insert medicine order details: " +
+          medicineOrderDetailsError.message
+      );
+    }
+
+    return { success: true, message: "Order finished successfully!" };
+  } catch (error) {
+    console.error(
+      "Error finishing order:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
+    throw new Error("Failed to finish order");
+  }
+}

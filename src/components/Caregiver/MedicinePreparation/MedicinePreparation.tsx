@@ -256,6 +256,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     return null;
   };
 
+  const handleFinishOrder = async () => {
+    console.log("Order finished");
+  };
+
   // Disable background scroll when modal is open
   useEffect(() => {
     if (isModalOpen || isAddNewMedicineModalOpen) {
@@ -568,6 +572,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           isSubmit={true}
           customClasses="mt-4"
           fontThickness="bold"
+          onClick={handleFinishOrder}
         />
         <ToastContainer />
       </div>
