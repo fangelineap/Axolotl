@@ -42,7 +42,7 @@ const MedicinePreparationPage = async ({
   const orderData = await getMedicinePreparationData(params.orderId);
 
   if (!orderData) {
-    return <div>Order not found</div>;
+    throw new Error("Failed to fetch order data");
   }
 
   // Extract user and patient data from orderData

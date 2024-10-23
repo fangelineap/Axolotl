@@ -1,6 +1,8 @@
 "use client";
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
+import { getClientPublicStorageURL } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import ExpiredDatePicker from "@/components/FormElements/DatePicker/ExpiredDatePicker";
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
@@ -48,6 +50,23 @@ interface MedecinePreparationProps {
   };
 }
 
+function renderFields(fieldName: string[], fieldValue: string[]) {
+  return (
+    <div className="mt-2 flex w-full flex-col items-center justify-start gap-7 sm:flex-row">
+      <div className="flex w-40 flex-col gap-y-1">
+        {fieldName.map((field, index) => (
+          <strong key={index}>{field}</strong>
+        ))}
+      </div>
+      <div className="mt-2 flex flex-1 flex-col gap-y-1 sm:mt-0">
+        {fieldValue.map((value, index) => (
+          <span key={index}>{value}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   orderStatus,
   patientInfo,
@@ -75,6 +94,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentMedicine, setCurrentMedicine] = useState<MEDICINE | null>(null);
 
+  const medicinePhoto = getClientPublicStorageURL(
+    "medicine",
+    currentMedicine?.medicine_photo as string
+  );
+
   const [isAddNewMedicineModalOpen, setIsAddNewMedicineModalOpen] =
     useState<boolean>(false);
 
@@ -91,6 +115,15 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     quantity: 1,
     expired: null
   });
+
+  const currencyFormatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR"
+  });
+
+  const formattedTotalPrice = currencyFormatter.format(totalPrice);
+  const formattedTotalCharge = currencyFormatter.format(totalCharge);
+  const formattedDeliveryFee = currencyFormatter.format(deliveryFee);
 
   useEffect(() => {
     // Fetch medicine data from the database
@@ -126,24 +159,33 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
   const handleAddMedicine = () => {
     if (currentMedicine) {
-      setSelectedMedications((prev) => [
-        ...prev,
-        {
-          quantity: 1,
-          name: currentMedicine.name,
-          price: currentMedicine.price || 0
+      setSelectedMedications((prev) => {
+        const existingMedicineIndex = prev.findIndex(
+          (med) => med.name === currentMedicine.name
+        );
+
+        if (existingMedicineIndex !== -1) {
+          // If the medicine already exists, update its quantity
+          return prev.map((med, index) =>
+            index === existingMedicineIndex
+              ? { ...med, quantity: med.quantity + 1 }
+              : med
+          );
+        } else {
+          // If the medicine doesn't exist, add it to the list
+          return [
+            ...prev,
+            {
+              quantity: 1,
+              name: currentMedicine.name,
+              price: currentMedicine.price || 0
+            }
+          ];
         }
-      ]);
+      });
 
-      const priceAsString = currentMedicine.price
-        ? currentMedicine.price.toString()
-        : "0";
-
-      const cleanedPrice = parseInt(
-        priceAsString.replace(/Rp\.\s/g, "").replace(/\./g, "")
-      );
-
-      setTotalPrice((prev) => prev + (isNaN(cleanedPrice) ? 0 : cleanedPrice));
+      // Add the price of the selected medicine to the total price
+      setTotalPrice((prev) => prev + currentMedicine.price);
       setIsModalOpen(false); // Close the modal after adding the medicine
       setSearchTerm(""); // Clear the search term
     }
@@ -240,12 +282,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     setSelectedMedications((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleFileSelect = (file: File | null) => {
-    if (file) {
-      setUploadedImage(file);
-    }
-  };
-
   const getImagePreview = () => {
     if (uploadedImage instanceof File) {
       return URL.createObjectURL(uploadedImage); // Generate a URL for previewing the image
@@ -301,20 +337,15 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         <div className="mb-6">
           <h2 className="text-xl font-bold">Patient Information</h2>
           {isMdOrLarger ? (
-            <div className=" mt-2 flex flex-row ">
-              <div className=" flex flex-col gap-y-1">
-                <strong>Patient Name</strong>
-                <strong>Address</strong>
-                <strong>Phone Number</strong>
-                <strong>Birthdate</strong>
-              </div>
-              <div className="ml-19 flex flex-col gap-y-1">
-                <div>{patientInfo.name}</div>
-                <div>{patientInfo.address}</div>
-                <div>{patientInfo.phoneNumber}</div>
-                <div>{patientInfo.birthdate.toString()}</div>
-              </div>
-            </div>
+            renderFields(
+              ["Patient Name", "Address", "Phone Number", "Birthdate"],
+              [
+                patientInfo.name,
+                patientInfo.address,
+                patientInfo.phoneNumber,
+                patientInfo.birthdate.toString()
+              ]
+            )
           ) : (
             <div className="mt-2 flex flex-col gap-y-2">
               <div>
@@ -336,20 +367,18 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         {/* Medical Concerns & Conjecture (Medical Details) */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Medical Concerns & Conjecture</h2>
-          <div className="mt-2 flex flex-col sm:flex-row">
-            <div className="flex flex-col gap-y-1">
-              <strong>Causes</strong>
-              <strong>Main Concerns</strong>
-              <strong>Current Medicine</strong>
-              <strong>Symptoms</strong>
-              <strong>Medical Descriptions</strong>
-            </div>
-            <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
-              <div>{medicalDetails.causes}</div>
-              <div>{medicalDetails.mainConcerns}</div>
-              <div>{medicalDetails.currentMedicine}</div>
-              <div>{medicalDetails.symptoms.join(", ")}</div>
-            </div>
+          {renderFields(
+            ["Causes", "Main Concerns", "Current Medicine", "Symptoms"],
+            [
+              medicalDetails.causes,
+              medicalDetails.mainConcerns,
+              medicalDetails.currentMedicine,
+              medicalDetails.symptoms.join(", ")
+            ]
+          )}
+
+          <div className="mt-2 flex flex-1 flex-col gap-y-1 font-bold">
+            Medical Description
           </div>
           <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
 
@@ -368,42 +397,31 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         {/* Service Details */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Service Details</h2>
-          <div className="flex flex-col gap-y-1">
-            <div className="flex">
-              <strong className="mr-19.5">Order ID</strong>
-              <div className="ml-8">{serviceDetails.orderId}</div>{" "}
-            </div>
-            <div className="flex">
-              <strong className="mr-15">Order Date</strong>
-              <div className="ml-8">{serviceDetails.orderDate}</div>
-            </div>
-            <div className="my-2 w-full border-b border-gray-400"></div>{" "}
-            {/* Full-width horizontal line */}
-            <div className="flex">
-              <strong className="mr-12">Service Type</strong>
-              <div className="ml-8">{serviceDetails.serviceType}</div>
-            </div>
-            <div className="flex">
-              <strong className="mr-3">Total Days of Visit</strong>
-              <div className="ml-8">{serviceDetails.totalDays}</div>
-            </div>
-            <div className="flex">
-              <strong className="mr-6.5">Start Date/Time</strong>
-              <div className="ml-8">{serviceDetails.startTime}</div>
-            </div>
-            <div className="flex">
-              <strong className="mr-8">End Date/Time</strong>
-              <div className="ml-8">{serviceDetails.endTime}</div>
-            </div>
-            <div className="flex">
-              <strong className="mr-14.5">Service Fee</strong>
-              <div className="ml-8">{serviceDetails.serviceFee}</div>
-            </div>
-            <div className="flex">
-              <strong className="mr-12.5">Total Charge</strong>
-              <div className="ml-8">{serviceDetails.totalCharge}</div>
-            </div>
-          </div>
+          {renderFields(
+            ["Order ID", "Order Date"],
+            [
+              serviceDetails.orderId,
+              new Date(serviceDetails.orderDate).toLocaleString()
+            ]
+          )}
+
+          {/* Divider */}
+          <CustomDivider horizontal color="black" />
+
+          {renderFields(
+            [
+              "Service Type",
+              "Total Days of Visit",
+              "Start Date/Time",
+              "End Date/Time"
+            ],
+            [
+              serviceDetails.serviceType,
+              String(serviceDetails.totalDays),
+              serviceDetails.startTime,
+              serviceDetails.endTime
+            ]
+          )}
         </div>
 
         {/* Additional Medications */}
@@ -449,12 +467,12 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             )}
           </div>
           <div className="overflow-hidden rounded-lg border border-primary">
-            <table className="w-full table-auto text-sm">
+            <table className=" w-full table-auto">
               <thead>
                 <tr className="bg-green-light text-white">
-                  <th className="p-2 text-left">Quantity</th>
-                  <th className="p-2 text-left">Name</th>
-                  <th className="p-2 text-right">Price</th>
+                  <th className="px-5  py-2 text-left font-bold">Name</th>
+                  <th className="px-5 py-2 text-right font-bold">Price</th>
+                  <th className="px-5  py-2 text-left font-bold">Quantity</th>
                   {selectedMedications.length > 0 && (
                     <th className="rounded-tr-lg p-2 text-right">Action</th>
                   )}
@@ -463,7 +481,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               <tbody>
                 {selectedMedications.map((med, index) => (
                   <tr key={index}>
-                    <td className="border-primary p-2 text-left">
+                    <td className="border-primary px-4 py-2 text-left">
                       <div className="flex w-1/2 justify-between p-2 text-primary">
                         <button onClick={() => handleDecreaseQuantity(index)}>
                           <IconCircleMinus size={25} />
@@ -474,12 +492,12 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                         </button>
                       </div>
                     </td>
-                    <td className="border-primary p-2">{med.name}</td>
-                    <td className="border-primary p-2 text-right">
-                      Rp. {med.price}
+                    <td className="border-primary px-4 py-2">{med.name}</td>
+                    <td className="border-primary px-4 py-2 text-right">
+                      {currencyFormatter.format(med.price)}
                     </td>
                     {selectedMedications.length > 0 && (
-                      <td className="border-primary p-2 text-right">
+                      <td className="border-primary px-4 py-2 text-right">
                         <button onClick={() => handleRemoveMedicine(index)}>
                           <div className="flex items-center justify-center text-red">
                             <IconX size={30} />
@@ -493,34 +511,34 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 <tr>
                   <td
                     colSpan={selectedMedications.length > 0 ? 3 : 2}
-                    className="border-t border-primary p-2 text-left font-bold"
+                    className="border-t border-primary py-2 pl-5 text-left font-bold "
                   >
                     Total Price
                   </td>
-                  <td className="border-t border-primary p-2 text-right">
-                    Rp. {totalPrice.toLocaleString("id-ID")}
+                  <td className="border-t border-primary py-2 pr-5 text-right">
+                    {formattedTotalPrice}
                   </td>
                 </tr>
                 <tr>
                   <td
                     colSpan={selectedMedications.length > 0 ? 3 : 2}
-                    className="border-primary p-2 text-left font-bold"
+                    className="border-primary py-2 pl-5 text-left font-bold"
                   >
                     Delivery Fee
                   </td>
-                  <td className="border-primary p-2 text-right">
-                    Rp. {deliveryFee.toLocaleString("id-ID")}
+                  <td className="border-primary py-2 pr-5 text-right">
+                    {formattedDeliveryFee}
                   </td>
                 </tr>
                 <tr>
                   <td
                     colSpan={selectedMedications.length > 0 ? 3 : 2}
-                    className="rounded-bl-lg border-primary p-2 text-left font-bold"
+                    className="rounded-bl-lg border-primary py-2 pl-5 text-left font-bold"
                   >
                     Total Charge
                   </td>
-                  <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
-                    Rp.{totalCharge.toLocaleString("id-ID")}
+                  <td className="rounded-br-lg border-primary py-2 pr-5 text-right font-bold text-black">
+                    {formattedTotalCharge}
                   </td>
                 </tr>
               </tbody>
@@ -557,7 +575,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             </div>
           ) : (
             <FileInput
-              onFileSelect={handleFileSelect}
+              onFileSelect={(file) => setUploadedImage(file)}
               name="service_proof"
               label=""
               accept={["image/jpg", "image/jpeg", "image/png"]}
@@ -598,7 +616,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                   {currentMedicine.medicine_photo ? (
                     <div className="relative flex h-full w-full items-center justify-center">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/medicine/${encodeURIComponent(currentMedicine.medicine_photo)}`}
+                        src={medicinePhoto}
                         alt={currentMedicine.medicine_photo}
                         className="object-contain" // Make image contain within the container
                         layout="fill" // Fills the container
