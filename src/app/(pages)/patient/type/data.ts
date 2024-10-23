@@ -1,22 +1,20 @@
 import {
   CAREGIVER,
-  MEDICINE,
   MEDICINE_ORDER,
-  MEDICINE_ORDER_DETAIL,
   ORDER,
   PATIENT,
   USER
 } from "@/types/AxolotlMainType";
 import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 
-export type CaregiverOrder = USER_AUTH_SCHEMA & {
-  caregiver: CAREGIVER;
+export type PatientOrder = USER_AUTH_SCHEMA & {
+  patient: PATIENT;
 };
 
-export type CaregiverOrderDetails = ORDER & {
-  patient: PATIENT & { users: USER };
+export type PatientOrderDetails = ORDER & {
+  patient: PATIENT;
   user: USER;
-  caregiver: CAREGIVER;
+  caregiver: CAREGIVER & { users: USER };
   appointment: {
     id: string;
     service_type: string;
@@ -37,10 +35,4 @@ export type CaregiverOrderDetails = ORDER & {
     quantity: number;
     price: number;
   }[];
-};
-
-export type CaregiverInsertMedicineDetails = CaregiverOrderDetails & {
-  medicineOrder: MEDICINE_ORDER & {
-    orderDetail: (MEDICINE_ORDER_DETAIL & { medicine: MEDICINE })[];
-  };
 };

@@ -1,14 +1,12 @@
 import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
-import { Metadata } from "next";
+import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import { getAdminAllOrderMedicineLogs } from "./actions";
 import OrderMedicineLogs from "./table/OrderMedicineLogsTable";
 
-export const metadata: Metadata = {
-  title: "Axolotl - Admin Order Medicine Logs"
-};
+export const metadata = getAdminMetadata("Order Medicine");
 
-async function getOrderServiceLogs() {
+async function getOrderMedicineLogs() {
   const data = await getAdminAllOrderMedicineLogs();
 
   if (!data.length) return [];
@@ -17,7 +15,7 @@ async function getOrderServiceLogs() {
 }
 
 async function AdminOrderMedicine() {
-  const data = await getOrderServiceLogs();
+  const data = await getOrderMedicineLogs();
 
   return (
     <div className="bg-gray">

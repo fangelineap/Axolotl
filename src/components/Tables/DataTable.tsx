@@ -38,7 +38,7 @@ interface DataTableProps<
   deleteAction?: (rowData: T) => void;
   basePath?: string;
   initialSorting?: ColumnSort[];
-  selectInputOptions?: string[];
+  selectStatusOptions?: string[];
 }
 
 export function DataTable<
@@ -54,7 +54,7 @@ export function DataTable<
   deleteAction,
   basePath,
   initialSorting = [],
-  selectInputOptions
+  selectStatusOptions
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
@@ -243,8 +243,8 @@ export function DataTable<
                             <SelectDataTable
                               title="Status"
                               options={
-                                selectInputOptions
-                                  ? selectInputOptions
+                                selectStatusOptions
+                                  ? selectStatusOptions
                                   : ["Verified", "Unverified", "Rejected"]
                               }
                               value={
@@ -269,6 +269,22 @@ export function DataTable<
                             <SelectDataTable
                               title="Medicine Type"
                               options={["Generic", "Branded"]}
+                              value={
+                                (header.column.getFilterValue() as string) || ""
+                              }
+                              onChange={(value) =>
+                                header.column.setFilterValue(value)
+                              }
+                            />
+                          ) : header.column.id === "Service Type" ? (
+                            <SelectDataTable
+                              title="Service Type"
+                              options={[
+                                "After Care",
+                                "Neonatal Care",
+                                "Elderly Care",
+                                "Booster"
+                              ]}
                               value={
                                 (header.column.getFilterValue() as string) || ""
                               }

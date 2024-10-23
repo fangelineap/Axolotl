@@ -4,7 +4,7 @@ import { DataTable } from "@/components/Tables/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import type { PatientOrderDetails } from "../../caregiver/type/data";
+import type { PatientOrderDetails } from "../type/data";
 import { fetchOrdersByPatient } from "@/app/_server-action/patient";
 
 // Define the status color map
@@ -59,7 +59,7 @@ const OrderHistory = () => {
       accessorKey: "is_completed",
       header: "Status",
       cell: ({ row }) => {
-        const isCompleted = row.original.is_completed;
+        const isCompleted = row.original.status;
         const status = isCompleted ? "Done" : "Ongoing";
         const colorClass =
           statusColorClassMap[status] || "bg-gray-500 text-white";
@@ -80,7 +80,7 @@ const OrderHistory = () => {
     const query = new URLSearchParams({
       orderType: orderData.appointment.service_type,
       caregiverName: `${orderData.caregiver?.users?.first_name}`,
-      status: orderData.is_completed ? "Done" : "Ongoing"
+      status: orderData.status
     }).toString();
 
     router.push(`/order-detail/${orderData.id}?${query}`);

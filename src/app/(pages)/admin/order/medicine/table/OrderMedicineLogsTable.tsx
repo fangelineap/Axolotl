@@ -10,8 +10,6 @@ interface OrderMedicineLogsProps {
 }
 
 function OrderMedicineLogs({ initialData }: OrderMedicineLogsProps) {
-  console.log({ initialData });
-
   return (
     <div className="mb-10">
       <DataTable
@@ -19,7 +17,7 @@ function OrderMedicineLogs({ initialData }: OrderMedicineLogsProps) {
         columns={columns as ColumnDef<AdminOrderMedicineLogsTable>[]}
         showAction={(row: AdminOrderMedicineLogsTable) => row}
         initialSorting={[{ id: "Status", desc: false }]}
-        selectInputOptions={["Canceled", "Ongoing", "Completed"]}
+        selectStatusOptions={["Canceled", "Ongoing", "Completed"]}
       />
     </div>
   );

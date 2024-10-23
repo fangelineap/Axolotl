@@ -57,9 +57,7 @@ const PlacingOrder = ({ searchParams }: any) => {
         setCaregiver(cg);
         setServiceType(searchParams.service);
 
-        const photo = await getGlobalUserProfilePhoto(
-          cg.caregiver.profile_photo
-        );
+        const photo = await getGlobalUserProfilePhoto(cg.profile_photo);
         setProfilePhoto(photo!);
       }
 
