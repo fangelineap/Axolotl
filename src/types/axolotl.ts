@@ -101,6 +101,10 @@ export type MEDICINE_ORDER_DETAIL = {
   medicine_id: string;
 };
 
+export type MEDICINE_ORDER_DETAIL_WITH_MEDICINE = MEDICINE_ORDER_DETAIL & {
+  medicine: MEDICINE;
+};
+
 export type USER_AUTH_SCHEMA = USER & { email: string };
 
 export type USER_DETAILS_AUTH_SCHEMA = USER_AUTH_SCHEMA & {

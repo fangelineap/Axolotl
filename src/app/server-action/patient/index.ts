@@ -372,3 +372,32 @@ export async function fetchOrdersByPatient() {
     return [];
   }
 }
+
+export async function fetchMedicineOrderById(id: string) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("medicineOrder")
+      .select("*")
+      .eq("id", id);
+
+    if (data) {
+      try {
+        const { data: detailData, error: detailError } = await supabase
+          .from("medicineOrderDetail")
+          .select("*, medicine(*)")
+          .eq("medicine_order_id", id);
+
+        return {
+          ...data[0],
+          medicineOrderDetail: detailData
+        };
+      } catch (error) {
+        console.log("Error when fetching medicine order detail", error);
+      }
+    }
+  } catch (error) {
+    console.log("Error when fetching medicine order", error);
+  }
+}
