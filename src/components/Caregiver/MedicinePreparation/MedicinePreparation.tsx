@@ -118,7 +118,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
-    currency: "IDR"
+    currency: "IDR",
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0
   });
 
   const formattedTotalPrice = currencyFormatter.format(totalPrice);
@@ -215,25 +217,23 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       return;
     }
 
+    const medicinePrice = parseInt(
+      newMedicine.price.toString().replace(/\./g, "")
+    );
+
     // Add the new medicine to the medicine list
     setSelectedMedications((prev) => [
       ...prev,
       {
         quantity: newMedicine.quantity,
         name: newMedicine.name,
-        price: newMedicine.price
+        price: isNaN(medicinePrice) ? 0 : medicinePrice
       }
     ]);
 
     // Close the modal and reset the new medicine form
     setIsAddNewMedicineModalOpen(false);
-    setNewMedicine({
-      name: "",
-      type: "Branded",
-      price: 0,
-      quantity: 1,
-      expired: null
-    });
+    resetFormNewMedicine();
   };
 
   useEffect(() => {
@@ -426,7 +426,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
         {/* Additional Medications */}
         <div>
-          <h2 className="mb-4 text-xl font-bold">Additional Medications</h2>
+          <h2 className="text-xl font-bold">Additional Medications</h2>
           <div className="relative mb-4 flex w-full justify-end">
             <div className="flex items-center">
               <input
@@ -470,9 +470,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <table className=" w-full table-auto">
               <thead>
                 <tr className="bg-green-light text-white">
-                  <th className="px-5  py-2 text-left font-bold">Name</th>
+                  <th className="px-5 py-2 text-left font-bold">Quantity</th>
+                  <th className="px-5 py-2 text-left font-bold">Name</th>
                   <th className="px-5 py-2 text-right font-bold">Price</th>
-                  <th className="px-5  py-2 text-left font-bold">Quantity</th>
                   {selectedMedications.length > 0 && (
                     <th className="rounded-tr-lg p-2 text-right">Action</th>
                   )}
@@ -481,8 +481,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               <tbody>
                 {selectedMedications.map((med, index) => (
                   <tr key={index}>
-                    <td className="border-primary px-4 py-2 text-left">
-                      <div className="flex w-1/2 justify-between p-2 text-primary">
+                    <td className="border-primary px-2 py-2 text-left">
+                      <div className="flex w-1/2 justify-between gap-3 p-2 text-primary">
                         <button onClick={() => handleDecreaseQuantity(index)}>
                           <IconCircleMinus size={25} />
                         </button>
@@ -492,12 +492,12 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                         </button>
                       </div>
                     </td>
-                    <td className="border-primary px-4 py-2">{med.name}</td>
-                    <td className="border-primary px-4 py-2 text-right">
+                    <td className="border-primary px-5 py-2">{med.name}</td>
+                    <td className="border-primary px-5 py-2 text-right">
                       {currencyFormatter.format(med.price)}
                     </td>
                     {selectedMedications.length > 0 && (
-                      <td className="border-primary px-4 py-2 text-right">
+                      <td className="border-primary px-5 py-2 text-right">
                         <button onClick={() => handleRemoveMedicine(index)}>
                           <div className="flex items-center justify-center text-red">
                             <IconX size={30} />
@@ -599,7 +599,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       {isModalOpen && currentMedicine && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div
-            className="mx-auto max-h-[90vh] w-full max-w-xs overflow-y-auto rounded-lg 
+            className="mx-auto w-full max-w-xs overflow-y-auto rounded-lg 
             bg-white sm:h-auto sm:max-w-sm md:h-auto md:max-w-md lg:h-auto lg:max-w-md
             xl:h-auto xl:max-w-xl"
           >
@@ -643,13 +643,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 </div>
                 <div className="mb-4">
                   <label className="mb-4 block text-sm font-medium">Type</label>
-                  <select
+                  <input
                     className="mt-1 block w-full rounded border p-2"
                     value={currentMedicine.type}
                     disabled
-                  >
-                    <option>{currentMedicine.type}</option>
-                  </select>
+                  />
                 </div>
                 <div className="mb-4 flex items-center">
                   <div className="w-1/2">
@@ -761,13 +759,20 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                       placeholder="Enter medicine price"
                       required={true}
                       name="medicinePrice"
-                      value={String(newMedicine.price)}
-                      onChange={(e) =>
+                      value={
+                        newMedicine.price
+                          ? newMedicine.price.toLocaleString("id-ID")
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const price = parseInt(
+                          e.target.value.replace(/\./g, "")
+                        );
                         setNewMedicine({
                           ...newMedicine,
-                          price: e.target.value as unknown as number
-                        })
-                      }
+                          price: isNaN(price) ? 0 : price
+                        });
+                      }}
                     />
                   </div>
                 </div>
