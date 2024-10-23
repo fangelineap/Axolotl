@@ -20,6 +20,7 @@ const Conjecture = ({ searchParams }: any) => {
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

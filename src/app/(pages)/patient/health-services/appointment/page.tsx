@@ -62,6 +62,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
     if (searchParams.caregiver) {
       getCaregiver();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log("cg", caregiver);
