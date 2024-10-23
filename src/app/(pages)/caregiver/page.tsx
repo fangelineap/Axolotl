@@ -4,7 +4,6 @@ import {
   fetchOngoingOrders
 } from "@/app/_server-action/caregiver";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
-import CustomDivider from "@/components/Axolotl/CustomDivider";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import AxolotlRejectionModal from "@/components/Axolotl/Modal/AxolotlRejectionModal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
@@ -14,7 +13,7 @@ import { Skeleton } from "@mui/material";
 import { IconClock, IconMapPin, IconUserCircle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 // Helper function to format the date
 const formatDate = (date: Date) => {
@@ -75,7 +74,6 @@ const Dashboard = () => {
 
     // Update the state with the grouped orders
     setOrders(groupedOrders);
-    console.log("ORDERS: ", groupedOrders);
   };
 
   // Fetch orders from the backend
@@ -86,7 +84,6 @@ const Dashboard = () => {
 
         // Fetch data from the backend
         const data = await fetchOngoingOrders();
-        console.log("DATA: ", data);
 
         if (data) {
           // Call handleFilter with the fetched data
@@ -143,10 +140,6 @@ const Dashboard = () => {
         return;
       }
 
-      toast.success("Appointment canceled successfully", {
-        position: "bottom-right"
-      });
-
       setIsCanceled(true);
     } catch (error) {
       console.error(error);
@@ -154,13 +147,16 @@ const Dashboard = () => {
         position: "bottom-right"
       });
     } finally {
-      router.refresh();
-      closeSecondModal();
-    }
-  };
+      toast.success("Appointment canceled successfully", {
+        position: "bottom-right"
+      });
 
-  const handleSeeMore = (order: any) => {
-    router.push(`/caregiver/order/${order.id}`);
+      closeSecondModal();
+
+      setTimeout(() => {
+        router.refresh();
+      }, 1000);
+    }
   };
 
   const handleMedicinePreparation = (orderId: string) => {
@@ -169,7 +165,6 @@ const Dashboard = () => {
 
   return (
     <DefaultLayout>
-      <ToastContainer />
       <nav className="mb-2 text-sm text-gray-600">Dashboard / Schedule</nav>
       <h1 className="text-5xl font-bold">Schedule</h1>
       {loading && (
@@ -206,7 +201,7 @@ const Dashboard = () => {
       )}
       <div className={`${loading ? "hidden" : ""}`}>
         {Object.keys(orders).length === 0 ? (
-          <div className="ml-3 mr-3 mt-4 rounded-lg border border-gray-300 p-4 text-center">
+          <div className="ml-3 mr-3 mt-4 rounded-lg border border-gray-dark p-4 text-center">
             You don&apos;t have any appointments today.
           </div>
         ) : (
@@ -228,9 +223,10 @@ const Dashboard = () => {
               {orders[date].map((order) => (
                 <div
                   key={order.id}
-                  className="ml-3 mr-3 mt-4 rounded-lg border border-gray-1 p-4"
+                  className="ml-3 mr-3 mt-4 rounded-lg border border-gray-dark p-4"
                 >
                   <div className="flex flex-col lg:flex-row lg:justify-between">
+                    <div className="mt-1 h-5 border-l-4 border-l-green-500 pl-1" />
                     <div className=" flex-1 lg:mb-0">
                       <h3 className="text-lg font-bold">
                         {order.appointment.service_type}
@@ -269,18 +265,8 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2 sm:p-2 lg:mb-0 lg:flex-row lg:items-start lg:space-x-4">
-                      <AxolotlButton
-                        label="See more"
-                        variant="primaryOutlined"
-                        onClick={() => handleSeeMore(order)}
-                        fontThickness="bold"
-                        roundType="regular"
-                      />
-
-                      <CustomDivider color="gray-1" />
-                      {/* <div className="hidden lg:block lg:h-20 lg:border-l lg:border-gray-400"></div> */}
-
+                    <div className="flex flex-col gap-2 sm:p-2 lg:mb-0 lg:flex-row lg:items-center lg:space-x-4">
+                      <div className="h-full border-l border-gray-dark" />
                       <div className="flex flex-col gap-2">
                         <AxolotlButton
                           label="Cancel Appointment"
