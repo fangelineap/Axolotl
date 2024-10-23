@@ -3,7 +3,10 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import DisabledCustomInputGroup from "../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
-import { MEDICINE, MEDICINE_ORDER_DETAIL_WITH_MEDICINE } from "@/types/axolotl";
+import {
+  MEDICINE,
+  MEDICINE_ORDER_DETAIL_WITH_MEDICINE
+} from "@/types/AxolotlMainType";
 
 interface MedicineProps {
   selectAll: boolean;

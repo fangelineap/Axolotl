@@ -58,6 +58,10 @@ export type MEDICINE = {
   medicine_photo?: string;
 };
 
+export type MEDICINE_ORDER_DETAIL_WITH_MEDICINE = MEDICINE_ORDER_DETAIL & {
+  medicine: MEDICINE;
+};
+
 export type APPOINTMENT = {
   service_type: string;
   appointment_time: string;

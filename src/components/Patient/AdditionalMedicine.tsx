@@ -3,8 +3,11 @@
 import React, { useEffect, useState } from "react";
 import Medicine from "./Medicine";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
-import { fetchMedicineOrderById } from "@/app/server-action/patient";
-import { MEDICINE, MEDICINE_ORDER_DETAIL_WITH_MEDICINE } from "@/types/axolotl";
+import { fetchMedicineOrderById } from "@/app/_server-action/patient";
+import {
+  MEDICINE,
+  MEDICINE_ORDER_DETAIL_WITH_MEDICINE
+} from "@/types/AxolotlMainType";
 
 interface MedicineProps {
   id: string;
