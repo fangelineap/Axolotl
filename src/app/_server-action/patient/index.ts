@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
-import { PatientOrder } from "@/app/(pages)/caregiver/type/data";
+import { PatientOrder } from "@/app/(pages)/patient/type/data";
 import createSupabaseServerClient, {
   getUserDataFromSession
 } from "@/lib/server";

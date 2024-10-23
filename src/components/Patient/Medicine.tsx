@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
-import DisabledCustomInputGroup from "../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import React from "react";
 import {
   MEDICINE,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
@@ -26,7 +25,6 @@ interface MedicineProps {
 }
 
 const Medicine = ({
-  selectAll,
   selection,
   setSelection,
   medicineDetail

@@ -1,19 +1,8 @@
 "use client";
 
 import { getOrder } from "@/app/_server-action/patient";
-import Accordion from "@/components/Axolotl/Accordion";
-import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
-import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import {
-  IconAlertCircleFilled,
-  IconCircleMinus,
-  IconCirclePlus,
-  IconCirclePlusFilled,
-  IconCircleX,
-  IconCircleXFilled,
-  IconX
-} from "@tabler/icons-react";
+import { IconAlertCircleFilled } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 
 const Conjecture = ({ searchParams }: any) => {

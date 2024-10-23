@@ -5,7 +5,7 @@ import OrderDetail from "@/components/Patient/OrderDetail";
 import { getOrderDetail } from "@/app/_server-action/patient";
 import { useParams } from "next/navigation";
 
-const medicinePreparation = ({ searchParams }: any) => {
+const MedicinePreparation = () => {
   const [data, setData] = useState<any>(null);
   const params = useParams();
   const id = params.id as string;
@@ -66,4 +66,4 @@ const medicinePreparation = ({ searchParams }: any) => {
   );
 };
 
-export default medicinePreparation;
+export default MedicinePreparation;

@@ -40,7 +40,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
       );
 
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("users")
           .select("*, caregiver(*)")
           .eq("user_id", searchParams.caregiver)

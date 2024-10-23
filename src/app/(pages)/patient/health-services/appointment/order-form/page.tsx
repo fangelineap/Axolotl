@@ -12,7 +12,6 @@ import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
 import { CAREGIVER } from "@/types/AxolotlMainType";
-import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import { services } from "@/utils/Services";
 import {
   IconCircleMinus,
@@ -44,7 +43,7 @@ const PlacingOrder = ({ searchParams }: any) => {
 
   useEffect(() => {
     const getSession = async () => {
-      const { data, error } = await getUserFromSession();
+      const { data } = await getUserFromSession();
       const { data: getCaregiverData } =
         await getGlobalCaregiverDataByCaregiverOrUserId(
           "users",
@@ -289,7 +288,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                 Add Symtoms That Match Your Condition
               </h1>
               <div className="mb-3 grid grid-flow-row grid-cols-4 gap-2">
-                {selectedAll.map((selected, index) => (
+                {selectedAll.map((selected) => (
                   <div
                     key={selected}
                     className="flex items-center justify-between gap-2 rounded-full border-2 border-primary bg-white px-2 py-1 text-primary"
@@ -398,7 +397,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                             );
                             setCopied(true);
                           } catch (error) {
-                            console.log("error");
+                            console.log("error", error);
                           }
                         }}
                       >

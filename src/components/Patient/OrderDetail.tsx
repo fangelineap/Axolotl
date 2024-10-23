@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useDropzone, FileRejection } from "react-dropzone";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "flatpickr/dist/flatpickr.min.css";
 import { IconMessage } from "@tabler/icons-react";
@@ -47,15 +46,6 @@ interface MedecinePreparationProps {
     delivery: string;
     totalCharge: string;
   };
-}
-
-interface MedicineType {
-  uuid: number;
-  name: string;
-  type: string;
-  price: string;
-  exp_date: string;
-  medicine_photo: string;
 }
 
 const OrderDetail: React.FC<MedecinePreparationProps> = ({
