@@ -49,7 +49,6 @@ const Page = ({ searchParams }: any) => {
   const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
   const [caregiver, setCaregiver] = useState<User[]>([]);
   const [filtered, setFiltered] = useState<User[]>([]);
-  const [profilePhoto, setProfilePhoto] = useState<any[]>([]);
   const [rating, setRating] = useState<number[]>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 1,
@@ -58,11 +57,6 @@ const Page = ({ searchParams }: any) => {
         ? Math.ceil(filtered.length / 5)
         : Math.ceil(caregiver.length / 5)
   });
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
 
   useEffect(() => {
     const getUser = async () => {
@@ -671,7 +665,7 @@ const Page = ({ searchParams }: any) => {
                   {pagination.pageIndex > 3 ? (
                     <>
                       {[...Array(2)].map((_, index) => (
-                        <li>
+                        <li key={index}>
                           <a
                             onClick={() => {
                               if (index + 1 < pagination.pageSize) {
@@ -704,7 +698,7 @@ const Page = ({ searchParams }: any) => {
                     </>
                   ) : (
                     [...Array(pagination.pageIndex)].map((_, index) => (
-                      <li>
+                      <li key={index}>
                         <a
                           onClick={() => {
                             if (index + 1 < pagination.pageSize) {
