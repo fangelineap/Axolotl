@@ -1,64 +1,90 @@
-import { getUserDataFromSession, logout } from "@/lib/server";
+import { logout } from "@/app/_server-action/auth";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ClickOutside from "@/components/ClickOutside";
-import { USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
+import { getUserDataFromSession } from "@/lib/server";
+import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
+import { Skeleton } from "@mui/material";
 import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR, { mutate } from "swr";
 
-const fetchUserData = async () => {
+async function fetcher() {
   const user = await getUserDataFromSession();
   if (!user) {
     return null;
   }
 
-  return user as USER_DETAILS_AUTH_SCHEMA;
-};
+  const assertedUser = user as USER_DETAILS_AUTH_SCHEMA;
+
+  let imageUrl;
+  if (assertedUser.role === "Patient") {
+    imageUrl = "/images/user/Default Patient Photo.png";
+  } else if (assertedUser.role === "Admin") {
+    imageUrl = "/images/user/Default Admin Photo.png";
+  } else {
+    const profilePhoto = await getGlobalUserProfilePhoto(
+      assertedUser.caregiver?.profile_photo!
+    );
+    imageUrl = profilePhoto || "/images/user/Default Caregiver Photo.png";
+  }
+
+  return { ...assertedUser, imageUrl };
+}
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState<USER_DETAILS_AUTH_SCHEMA | null>(null);
-  const [userImageUrl, setUserImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchUserData().then((user) => {
-      setUser(user);
-      if (user) {
-        let imageUrl;
-        if (user.role === "Patient") {
-          imageUrl = "/images/user/patient.png";
-        } else if (user.role === "Admin") {
-          imageUrl = "/images/user/Default Admin Photo.png";
-        } else {
-          imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver?.profile_photo || "")}`;
-        }
-        setUserImageUrl(imageUrl);
-      }
-    });
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const { data: user } = useSWR("userData", fetcher, {
+    onSuccess: () => setLoading(false),
+    onError: () => setLoading(false)
+  });
 
   const handleLogout = async () => {
-    setUser(null);
     await logout();
+    mutate("userData", null);
   };
+
+  /**
+   * * Handle Image Load
+   */
+  const handleImageLoad = () => setLoading(false);
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
       <Link
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex items-center gap-4"
+        onClick={(e) => {
+          if (loading) {
+            e.preventDefault();
+          } else {
+            setDropdownOpen(!dropdownOpen);
+          }
+        }}
+        className={`flex items-center gap-4 ${loading ? "cursor-not-allowed" : ""}`}
         href="#"
       >
-        <div className="h-12 w-12 overflow-hidden rounded-full border">
+        <div
+          className={`h-12 w-12 overflow-hidden rounded-full border ${loading ? "cursor-not-allowed" : ""}`}
+        >
           <div className="flex h-full w-full items-center justify-center">
-            {userImageUrl && (
+            {loading && (
+              <Skeleton
+                animation="wave"
+                variant="circular"
+                width={100}
+                height={100}
+              />
+            )}
+            {user?.imageUrl && (
               <Image
                 width={200}
                 height={200}
-                src={userImageUrl}
+                src={user.imageUrl}
                 alt="User"
                 priority
                 className="h-full w-full rounded-full object-cover"
+                onLoad={handleImageLoad}
               />
             )}
           </div>
@@ -73,14 +99,23 @@ const DropdownUser = () => {
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
             <div className="relative block rounded-full border">
               <div className="h-12 w-12 overflow-hidden">
-                {userImageUrl && (
+                {loading && (
+                  <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={48}
+                    height={48}
+                  />
+                )}
+                {user?.imageUrl && (
                   <Image
                     width={200}
                     height={200}
-                    src={userImageUrl}
+                    src={user.imageUrl}
                     alt="User"
                     priority
                     className="h-full w-full rounded-full object-cover"
+                    onLoad={handleImageLoad}
                   />
                 )}
               </div>
@@ -88,12 +123,20 @@ const DropdownUser = () => {
             </div>
 
             <div className="flex w-full flex-col overflow-hidden">
-              <p className="block font-medium text-dark dark:text-white">
-                {user?.first_name} {user?.last_name}
-              </p>
-              <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
-                {user?.email}
-              </p>
+              {loading ? (
+                <Skeleton animation="wave" variant="text" width={100} />
+              ) : (
+                <p className="block font-medium text-dark dark:text-white">
+                  {user?.first_name} {user?.last_name}
+                </p>
+              )}
+              {loading ? (
+                <Skeleton animation="wave" variant="text" width={200} />
+              ) : (
+                <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
+                  {user?.email}
+                </p>
+              )}
             </div>
           </div>
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">

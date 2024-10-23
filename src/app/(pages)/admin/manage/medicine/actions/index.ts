@@ -48,62 +48,34 @@ export async function addAdminMedicine(form: AdminMedicineTable) {
   }
 
   try {
-    const { data, error: insertError } = await supabase
-      .from("medicine")
-      .insert({
-        name: name,
-        type: type,
-        price: price,
-        exp_date: exp_date,
-        medicine_photo: medicine_photo
-      });
-
-    if (insertError) {
-      console.error("Error inserting data:", insertError);
-
-      return { data: null, error: insertError };
-    }
-
-    return { data, error: null };
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return { data: null, error };
-  }
-}
-
-/**
- * * Get all medicine
- * @returns
- */
-export async function getAdminMedicine() {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data, error } = await supabase.from("medicine").select("*");
+    const { error } = await supabase.from("medicine").insert({
+      name,
+      type,
+      price,
+      exp_date,
+      medicine_photo
+    });
 
     if (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error inserting data:", error);
 
-      return [];
+      return false;
     }
 
-    return data as AdminMedicineTable[];
+    return true;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
-    return [];
+    return false;
   }
 }
 
 /**
  * * Get medicine by id
- * @param uuid
+ * @param medicine_uuid
  * @returns
  */
-export async function getAdminMedicineById(uuid: string) {
+export async function getAdminMedicineById(medicine_uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
@@ -112,7 +84,7 @@ export async function getAdminMedicineById(uuid: string) {
     const { data, error } = await supabase
       .from("medicine")
       .select("*")
-      .eq("uuid", uuid)
+      .eq("uuid", medicine_uuid)
       .single();
 
     if (error) {
@@ -131,9 +103,6 @@ export async function getAdminMedicineById(uuid: string) {
 
 /**
  * * Update medicine
- *
- * TODO: Add uuid to Parameter
- *
  * @param form
  * @returns
  */
@@ -163,13 +132,13 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
     const { data, error: updateError } = await supabase
       .from("medicine")
       .update({
-        name: name,
-        type: type,
-        price: price,
-        exp_date: exp_date,
-        medicine_photo: medicine_photo
+        name,
+        type,
+        price,
+        exp_date,
+        medicine_photo
       })
-      .eq("uuid", form.uuid)
+      .eq("uuid", uuid)
       .single();
 
     if (updateError) {
@@ -188,33 +157,33 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
 
 /**
  * * Delete medicine
- * @param uuid
+ * @param medicine_uuid
  * @returns
  */
-export async function deleteAdminMedicine(uuid: string) {
+export async function deleteAdminMedicine(medicine_uuid: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("medicine")
       .delete()
-      .eq("uuid", uuid)
+      .eq("uuid", medicine_uuid)
       .single();
 
     if (error) {
       console.error("Error deleting data:", error);
 
-      return { data: null, error };
+      return false;
     }
 
     revalidatePath("/admin/manage/medicine");
 
-    return { data, error: null };
+    return true;
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
-    return { data: null, error };
+    return false;
   }
 }

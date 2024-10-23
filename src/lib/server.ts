@@ -1,11 +1,11 @@
 "use server";
 
-import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
-import { USER, USER_DETAILS_AUTH_SCHEMA } from "@/types/axolotl";
+import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
+import { USER } from "@/types/AxolotlMainType";
+import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { createServerClient } from "@supabase/ssr";
 import { unstable_noStore } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 /**
  * * Default Supabase Server Client
@@ -68,9 +68,9 @@ export async function getUserFromSession() {
  * @returns
  */
 async function fetchUserDataByRole(
-  user: any,
+  user: USER,
   supabase: any,
-  authSchema: any
+  authSchema: USER_DETAILS_AUTH_SCHEMA
 ): Promise<USER_DETAILS_AUTH_SCHEMA | null> {
   if (user.role === "Patient") {
     const { data: patient, error: patientError } = await supabase
@@ -124,7 +124,7 @@ async function fetchUserDataByRole(
 }
 
 /**
- * * Get all user detailed data from users table
+ * * Get user data from session, then fetch user data (users table)
  * * and its corresponding auth schema (patient or caregiver)
  * @returns
  */
@@ -152,47 +152,7 @@ export async function getUserDataFromSession() {
     return null;
   }
 
-  const authSchema = await getUserAuthSchema(userId);
+  const authSchema = await adminGetUserAuthSchema(userId);
 
-  return await fetchUserDataByRole(user, supabase, authSchema);
-}
-
-/**
- * * Handle user logout
- */
-export async function logout() {
-  unstable_noStore();
-
-  // Sign out locally (One Device)
-  const supabase = await createSupabaseServerClient();
-  await supabase.auth.signOut({ scope: "local" });
-
-  // Clear session cookies server-side
-  await supabase.auth.setSession({
-    access_token: "",
-    refresh_token: ""
-  });
-
-  redirect("/auth/signin");
-}
-
-/**
- * * Get caregiver data by user id
- * @param id
- * @returns
- */
-export async function getCaregiverById(id: string) {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("users")
-    .select("*, caregiver(*)")
-    .eq("user_id", id);
-
-  if (error) {
-    return null;
-  }
-
-  return data;
+  return await fetchUserDataByRole(user, supabase, authSchema!);
 }

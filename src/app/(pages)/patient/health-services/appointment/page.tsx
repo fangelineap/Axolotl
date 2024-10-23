@@ -1,14 +1,14 @@
 "use client";
 
-import { getProfilePhoto } from "@/app/server-action/caregiver";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { CAREGIVER } from "@/types/axolotl";
+import { CAREGIVER } from "@/types/AxolotlMainType";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type User = {
   id: string;
@@ -46,7 +46,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
           .eq("user_id", searchParams.caregiver)
           .limit(1);
         if (data) {
-          const url = await getProfilePhoto(
+          const url = await getGlobalUserProfilePhoto(
             data[0].caregiver[0]?.profile_photo
           );
           data[0].caregiver[0].profile_photo_url = url!;
@@ -82,7 +82,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
               <div className="flex items-start gap-10">
                 <div className="min-w-[100px]">
                   <Image
-                    src={caregiver?.caregiver[0].profile_photo_url!}
+                    src={caregiver?.caregiver[0].profile_photo!}
                     height={100}
                     width={100}
                     className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight"

@@ -1,14 +1,17 @@
-import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
+import { MEDICINE } from "@/types/AxolotlMainType";
 import { Modal } from "@mui/material";
 import {
+  IconClock,
   IconHash,
+  IconMail,
+  IconMapPin,
   IconMedicineSyrup,
   IconUserCircle,
   IconX
 } from "@tabler/icons-react";
 import AxolotlButton from "../Buttons/AxolotlButton";
-import React from "react";
+import { CAREGIVER_SCHEDULE_ORDER } from "@/types/AxolotlMultipleTypes";
 
 interface AxolotlModalProps {
   isOpen: boolean;
@@ -16,9 +19,17 @@ interface AxolotlModalProps {
   onConfirm: () => void;
   title: string;
   question: string;
-  action?: "delete" | "reject" | "confirm" | "skip" | "approve" | "cancel";
-  medicine?: AdminMedicineTable | null;
+  action?:
+    | "delete"
+    | "reject"
+    | "confirm"
+    | "skip"
+    | "approve"
+    | "cancel"
+    | "cancel appointment";
+  medicine?: MEDICINE | null;
   user?: AdminUserTable | null;
+  order?: CAREGIVER_SCHEDULE_ORDER | null;
 }
 
 function AxolotlModal({
@@ -29,14 +40,15 @@ function AxolotlModal({
   question,
   action,
   medicine,
-  user
+  user,
+  order
 }: AxolotlModalProps) {
   const user_full_name = user?.first_name + " " + user?.last_name;
 
   return (
     <Modal open={isOpen} onClose={onClose}>
       <div className="flex min-h-screen items-center justify-center font-normal">
-        <div className="mx-auto flex w-1/2 max-w-lg flex-col gap-5 rounded-lg bg-white py-3 shadow-lg">
+        <div className="mx-auto flex w-1/2 max-w-lg flex-col gap-5 rounded-lg bg-white py-5 shadow-lg">
           <div className="flex justify-between border-b border-b-gray-1 px-5 pb-3">
             <h1 className="text-heading-6 font-bold">{title}</h1>
             <button onClick={onClose}>
@@ -70,11 +82,53 @@ function AxolotlModal({
                     {user_full_name}
                   </h3>
                   <div className="flex gap-2">
+                    <IconHash className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">{user.user_id}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <IconMail className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">{user.email}</p>
+                  </div>
+                  <div className="flex gap-2">
                     <IconUserCircle
                       className="text-dark-secondary"
                       stroke={1}
                     />
                     <p className="text-dark-secondary">{user.role}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {order && (
+              <div>
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-xl font-medium text-black">
+                    {order.appointment.service_type}
+                  </h3>
+                  <p className="text-dark-secondary">
+                    {order.appointment.main_concern}
+                  </p>
+                  <div className="flex gap-2">
+                    <IconUserCircle
+                      className="text-dark-secondary"
+                      stroke={1}
+                    />
+                    <p className="text-dark-secondary">
+                      {order.patient.users.first_name}{" "}
+                      {order.patient.users.last_name}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <IconClock className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">
+                      {order.appointment.appointment_time}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <IconMapPin className="text-dark-secondary" stroke={1} />
+                    <p className="text-dark-secondary">
+                      {order.patient.users.address}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -92,6 +146,7 @@ function AxolotlModal({
                 />
                 <AxolotlButton
                   label="Yes, I'm sure"
+                  isSubmit
                   onClick={onConfirm}
                   variant="danger"
                   fontThickness="bold"
@@ -110,6 +165,7 @@ function AxolotlModal({
                 />
                 <AxolotlButton
                   label="Yes, I'm sure"
+                  isSubmit
                   onClick={onConfirm}
                   variant="primary"
                   fontThickness="bold"
@@ -139,6 +195,7 @@ function AxolotlModal({
               <>
                 <AxolotlButton
                   label="Yes, cancel the registration"
+                  isSubmit
                   onClick={onConfirm}
                   variant="danger"
                   fontThickness="bold"
@@ -148,6 +205,25 @@ function AxolotlModal({
                   label="No, continue the registration"
                   onClick={onClose}
                   variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+              </>
+            )}
+            {action === "cancel appointment" && (
+              <>
+                <AxolotlButton
+                  label="No, cancel"
+                  onClick={onClose}
+                  variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="Yes, I'm sure"
+                  isSubmit
+                  onClick={onConfirm}
+                  variant="danger"
                   fontThickness="bold"
                   roundType="regular"
                 />

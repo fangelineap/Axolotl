@@ -1,6 +1,6 @@
 "use client";
 
-import { getOrder } from "@/app/server-action/patient";
+import { getOrder } from "@/app/_server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";

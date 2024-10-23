@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 import {
   adminApproveCaregiver,
@@ -38,9 +37,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
       setOpenRejectionNotesModal(true);
     } else {
       try {
-        const { data, error } = await adminApproveCaregiver(
-          caregiver.caregiver_id
-        );
+        const { error } = await adminApproveCaregiver(caregiver.caregiver_id);
 
         if (error !== null && error !== undefined) {
           toast.error("Something went wrong.", {
@@ -70,7 +67,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
 
   const handleRejectionModal = async (notes: string) => {
     try {
-      const { data, error } = await adminRejectCaregiver(
+      const { error } = await adminRejectCaregiver(
         caregiver.caregiver_id,
         notes
       );
@@ -112,7 +109,6 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
 
   return (
     <div className="flex w-full items-center justify-end">
-      <ToastContainer />
       {status === "Unverified" ? (
         <div className="flex w-full items-center justify-center gap-5">
           <AxolotlButton
@@ -130,7 +126,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         </div>
       ) : (
         <button
-          className="w-1/2 rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white transition duration-150 ease-in-out hover:bg-gray-cancel-hover hover:text-gray-cancel"
+          className="w-full rounded-md border border-gray-cancel bg-gray-cancel p-2 font-bold text-white transition duration-150 ease-in-out hover:bg-gray-cancel-hover hover:text-gray-cancel"
           onClick={() => router.replace("/admin/manage/approval")}
         >
           Go back
@@ -150,6 +146,7 @@ function ApprovalButtons({ status, caregiver }: ApprovalButtonsProps) {
         isOpen={openRejectionNotesModal}
         onClose={handleModalClose}
         onReject={handleRejectionModal}
+        from="approval"
       />
     </div>
   );

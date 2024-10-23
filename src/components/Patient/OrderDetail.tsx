@@ -130,7 +130,8 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           <div className="my-5 flex">
             <Image
               src={
-                caregiverInfo.profile_photo_url || "/images/user/caregiver.png"
+                caregiverInfo.profile_photo_url ||
+                "/images/user/Default Caregiver Photo.png"
               }
               height={100}
               width={100}

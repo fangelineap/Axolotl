@@ -1,4 +1,8 @@
+"use client";
+
+import { CircularProgress } from "@mui/material";
 import React from "react";
+import { useFormStatus } from "react-dom";
 
 interface AxolotlButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,6 +22,7 @@ interface AxolotlButtonProps
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
   customWidth?: boolean;
+  isSubmit?: boolean;
 }
 
 const AxolotlButton = ({
@@ -29,6 +34,7 @@ const AxolotlButton = ({
   startIcon,
   endIcon,
   customWidth = false,
+  isSubmit = false,
   ...props
 }: AxolotlButtonProps) => {
   const baseStyles = {
@@ -61,15 +67,32 @@ const AxolotlButton = ({
     bold: "font-bold"
   };
 
-  const buttonClass = `${baseStyles[variant]} ${roundStyles[roundType]} ${fontThicknessStyles[fontThickness]} border ${customWidth ? "" : "w-full"} px-3 py-2 transition duration-150 ease-in-out ${endIcon || startIcon ? "flex items-center gap-2 justify-center" : ""} ${customClasses}`;
+  const buttonClass = `${baseStyles[variant]} ${roundStyles[roundType]} ${fontThicknessStyles[fontThickness]} border ${customWidth ? "" : "w-full"} ${endIcon || startIcon ? "flex items-center gap-2 justify-center" : ""} px-3 py-2 transition duration-150 ease-in-out whitespace-nowrap disabled:cursor-not-allowed ${customClasses}`;
+
+  const { pending } = useFormStatus();
+  const buttonType = isSubmit ? "submit" : undefined;
 
   return (
-    <button className={buttonClass} {...props}>
+    <button
+      className={buttonClass}
+      type={buttonType}
+      disabled={isSubmit ? pending : false}
+      {...props}
+    >
       {startIcon}
 
-      {label}
-
-      {endIcon}
+      {isSubmit && pending ? (
+        <div className="flex items-center justify-center gap-2">
+          {label}
+          {endIcon}
+          <CircularProgress color="inherit" size={20} />
+        </div>
+      ) : (
+        <>
+          {label}
+          {endIcon}
+        </>
+      )}
     </button>
   );
 };

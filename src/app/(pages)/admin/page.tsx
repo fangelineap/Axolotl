@@ -22,11 +22,11 @@ const AdminDashboard = () => {
       </h1>
 
       <div className="flex w-full items-center justify-center">
-        <div className="flex w-[85%] flex-col items-center justify-between gap-5 p-8 xl:flex-row xl:items-start xl:gap-0 xl:p-15">
+        <div className="flex w-[90%] flex-col items-center justify-between gap-5 p-8 xl:flex-row xl:items-start xl:gap-0 xl:p-15">
           <Image
             src={"/images/freepik/admin-home.svg"}
             alt="Admin Home"
-            width={400}
+            width={500}
             height={390}
             className="hidden xl:block"
           />

@@ -2,7 +2,28 @@
 
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import { getCaregiverVerificationStatus } from "./app/server-action/auth";
+import { getCaregiverVerificationStatus } from "./app/_server-action/auth";
+import { validateSession } from "./utils/auth/ValidateSession";
+
+/**
+ * * Check if the pathname matches any guest page pattern
+ * @param pathname
+ * @returns
+ */
+function isGuestPage(pathname: string): boolean {
+  const guestPages = ["/", "/guest/about", "/guest/careers"];
+
+  if (guestPages.includes(pathname)) return true;
+
+  if (
+    pathname.startsWith("/auth/signin") ||
+    pathname.startsWith("/auth/register")
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 /**
  * * Handling the page protection between roles
@@ -21,37 +42,6 @@ function getRoleRedirect(userRole: string): string {
 }
 
 /**
- * * Validate the current session with the last session stored in the browser
- * @param supabase
- * @param request
- * @returns
- */
-async function validateSession(
-  supabase: ReturnType<typeof createServerClient>,
-  request: NextRequest
-) {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
-
-  // If error exists, session might be invalid or expired
-  if (error || !user) {
-    const response = NextResponse.redirect(
-      new URL("/auth/signin", request.url)
-    );
-
-    // Clear session cookies
-    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
-    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
-
-    return { isValid: false, response };
-  }
-
-  return { isValid: true, user };
-}
-
-/**
  * * Update the session based on the user's role
  * @param request
  * @returns
@@ -59,17 +49,7 @@ async function validateSession(
 async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const guestPages = [
-    "/auth/signin",
-    "/auth/register",
-    "/auth/resetpassword",
-    "/auth/forgetpassword",
-    "/",
-    "/guest/about",
-    "/guest/careers"
-  ];
-
-  if (guestPages.includes(pathname)) {
+  if (isGuestPage(pathname)) {
     return NextResponse.next();
   }
 
@@ -101,17 +81,13 @@ async function updateSession(request: NextRequest) {
     }
   );
 
-  /**
-   * ! Validate the user's session
-   */
+  // User Session Validation with Cookie
   const { isValid, user, response } = await validateSession(supabase, request);
 
-  if (!isValid) {
-    return response;
-  }
+  if (!isValid || !user) {
+    console.error("Session is invalid:", { isValid, user, response });
 
-  if (user) {
-    console.log(user);
+    return response;
   }
 
   const userId = user?.id;
@@ -122,71 +98,63 @@ async function updateSession(request: NextRequest) {
     .eq("user_id", userId)
     .single();
 
-  if (userData) {
-    console.log(user);
-    console.log(userData);
+  if (!userData) {
+    console.error("Error fetching user data:", { user, userData });
+
+    return response;
   }
 
   const userRole = userData.role;
   const roleRedirect = getRoleRedirect(userRole);
 
-  // If the user is already on their role-specific page, allow access without redirection
-  if (pathname.startsWith(roleRedirect)) {
+  console.log({ userData, userRole, isValid });
+
+  if (isValid && pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL(roleRedirect, request.url));
+  }
+
+  // ! ADMIN
+  if (pathname.startsWith("/admin")) {
+    if (userRole !== "Admin") {
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+    }
+
     return NextResponse.next();
   }
 
-  console.log({ userRole });
-
-  // Handle patient, caregiver, and admin access
+  // ! PATIENT
   if (pathname.startsWith("/patient")) {
-    if (userRole === "Patient") {
-      return NextResponse.next();
-    } else {
-      // Redirect to the correct role page
+    if (userRole !== "Patient") {
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
-  } else if (pathname.startsWith("/caregiver")) {
-    if (["Nurse", "Midwife"].includes(userRole)) {
-      const caregiverStatus = (await getCaregiverVerificationStatus(
-        userId!
-      )) as "Verified" | "Rejected" | "Unverified";
 
-      const caregiverRedirects: {
-        [key in "Verified" | "Rejected" | "Unverified"]: NextResponse;
-      } = {
-        Verified: NextResponse.next(),
-        Rejected: NextResponse.redirect(
-          new URL(
-            "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-            request.url
-          )
-        ),
-        Unverified: NextResponse.redirect(
-          new URL(
-            "/auth/register/createaccount/personalinformation/review?role=Caregiver",
-            request.url
-          )
-        )
-      };
-
-      return (
-        (caregiverStatus !== null && caregiverRedirects[caregiverStatus]) ||
-        NextResponse.redirect(new URL("/", request.url))
-      );
-    } else {
-      // Redirect to the correct role page
-      return NextResponse.redirect(new URL(roleRedirect, request.url));
-    }
-  } else if (pathname.startsWith("/admin")) {
-    if (userRole === "Admin") {
-      return NextResponse.next();
-    } else {
-      // Redirect to the correct role page
-      return NextResponse.redirect(new URL(roleRedirect, request.url));
-    }
+    return NextResponse.next();
   }
 
-  // Default role-based redirection
+  // ! CAREGIVER
+  if (pathname.startsWith("/caregiver")) {
+    if (!["Nurse", "Midwife"].includes(userRole)) {
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+    }
+
+    const caregiverStatus = await getCaregiverVerificationStatus(userData.id);
+
+    if (!caregiverStatus)
+      return NextResponse.redirect(new URL("/", request.url));
+
+    console.log({ caregiverStatus });
+
+    if (isValid && ["Rejected", "Unverified"].includes(caregiverStatus)) {
+      if (pathname !== "/caregiver/review") {
+        return NextResponse.redirect(new URL("/caregiver/review", request.url));
+      }
+
+      return NextResponse.next();
+    }
+
+    if (isValid && caregiverStatus === "Verified") return NextResponse.next();
+  }
+
   return supabaseResponse;
 }
 

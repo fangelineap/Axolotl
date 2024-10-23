@@ -1,19 +1,20 @@
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
-import { getUserAuthSchema } from "@/app/server-action/admin/SupaAdmin";
+import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
+import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ApprovalButtons from "@/components/Axolotl/Buttons/ApprovalButtons";
+import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
-import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
-import { USER_AUTH_SCHEMA } from "@/types/axolotl";
+import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import Image from "next/image";
-import React from "react";
 
 interface ViewApprovalProps {
   caregiver: AdminApprovalTable;
 }
 
 async function getUserData(caregiver_id: string) {
-  const response = await getUserAuthSchema(caregiver_id);
+  const response = await adminGetUserAuthSchema(caregiver_id);
   if (!response) {
     return null;
   }
@@ -22,10 +23,17 @@ async function getUserData(caregiver_id: string) {
 }
 
 async function ViewApproval({ caregiver }: ViewApprovalProps) {
-  const cg_user_data = await getUserData(caregiver.user.user_id);
+  /**
+   * * Initial Variables
+   */
+  const cg_user_data = await getUserData(caregiver.users.user_id);
 
   const cg_full_name =
-    caregiver.user.first_name + " " + caregiver.user.last_name;
+    caregiver.users.first_name + " " + caregiver.users.last_name;
+
+  const caregiverProfilePhoto = await getGlobalUserProfilePhoto(
+    caregiver.profile_photo
+  );
 
   /**
    * * Date Formatters
@@ -64,7 +72,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   );
 
   const formattedBirthDate = formatDate(
-    caregiver.user.birthdate,
+    caregiver.users.birthdate,
     dateFormatter
   );
 
@@ -72,16 +80,18 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
     <>
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
+
       {/* Container */}
       <div className="flex w-full flex-col justify-between gap-5">
         {/* Profile Section */}
         <div className="flex w-full flex-col items-center gap-10 lg:flex-row">
           <div className="h-40 w-40 overflow-hidden rounded-full">
             <Image
-              src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(caregiver.profile_photo)}`}
+              src={caregiverProfilePhoto!}
               alt="Caregiver Profile Photo"
               width={200}
               height={200}
+              priority
               className="h-full w-full object-cover"
             />
           </div>
@@ -89,15 +99,17 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
             <h1 className="text-xl font-bold">{cg_full_name}</h1>
             <div className="flex gap-2 lg:flex-col">
               <div className="flex">
-                {caregiver.user.role === "Nurse" ? (
+                {caregiver.users.role === "Nurse" ? (
                   <div className="rounded-md border border-yellow bg-yellow-light p-2">
                     <p className="font-bold text-yellow">
-                      {caregiver.user.role}
+                      {caregiver.users.role}
                     </p>
                   </div>
                 ) : (
                   <div className="rounded-md border border-blue bg-blue-light p-2">
-                    <p className="font-bold text-blue">{caregiver.user.role}</p>
+                    <p className="font-bold text-blue">
+                      {caregiver.users.role}
+                    </p>
                   </div>
                 )}
               </div>
@@ -141,21 +153,21 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
             <h1 className="mb-3 text-heading-6 font-bold text-primary">
               User Personal Data
             </h1>
-            <div className="flex w-full gap-5">
+            <div className="flex w-full flex-col md:flex-row md:gap-5">
               <DisabledCustomInputGroup
                 label="First Name"
-                value={caregiver.user.first_name}
+                value={caregiver.users.first_name}
                 horizontal={false}
                 type="text"
               />
               <DisabledCustomInputGroup
                 label="Last Name"
-                value={caregiver.user.last_name}
+                value={caregiver.users.last_name}
                 horizontal={false}
                 type="text"
               />
             </div>
-            <div className="flex w-full gap-5">
+            <div className="flex w-full flex-col md:flex-row md:gap-5">
               <DisabledCustomInputGroup
                 label="Email"
                 value={cg_user_data?.email}
@@ -164,7 +176,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
               />
               <DisabledPhoneNumberBox
                 placeholder="081XXXXXXXX"
-                value={Number(caregiver.user.phone_number)}
+                value={Number(caregiver.users.phone_number)}
               />
             </div>
             <DisabledCustomInputGroup
@@ -175,16 +187,13 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
             />
             <DisabledCustomInputGroup
               label="Address"
-              value={caregiver.user.address}
+              value={caregiver.users.address}
               horizontal={false}
               type="text"
             />
           </div>
 
-          {/* Center Divider */}
-          <div className="hidden lg:flex lg:items-center">
-            <div className="h-full border-l border-primary"></div>
-          </div>
+          <CustomDivider />
 
           {/* Second Column */}
           <div className="flex w-full flex-col gap-4">
@@ -193,7 +202,7 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
               <h1 className="mb-3 text-heading-6 font-bold text-primary">
                 User Working Experiences
               </h1>
-              <div className="flex w-full gap-5">
+              <div className="flex w-full flex-col md:flex-row md:gap-5">
                 <DisabledCustomInputGroup
                   label="Employment Type"
                   value={caregiver.employment_type}
@@ -226,22 +235,22 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                 <DownloadLicenses
                   licenseTitle="Curriculum Vitae"
                   fileLink={caregiver.cv}
-                  cv
+                  licenseType="CV"
                 />
                 <DownloadLicenses
                   licenseTitle="Degree Certificate"
                   fileLink={caregiver.degree_certificate}
-                  degree_certificate
+                  licenseType="Degree Certificate"
                 />
                 <DownloadLicenses
                   licenseTitle="Surat Tanda Registrasi"
                   fileLink={caregiver.str}
-                  str
+                  licenseType="STR"
                 />
                 <DownloadLicenses
                   licenseTitle="Surat Izin Praktik"
                   fileLink={caregiver.sip}
-                  sip
+                  licenseType="SIP"
                 />
               </div>
             </div>
@@ -250,24 +259,26 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
       </div>
 
       {/* Rejection Notes */}
-      {caregiver.status === "Rejected" ? (
+      {caregiver.status === "Rejected" && (
         <div className="mt-3 flex w-full flex-col justify-center gap-2">
-          <h1 className="mb-3 text-heading-6 font-bold text-primary">
+          <h1 className="mb-3 text-heading-6 font-bold text-red">
             Rejection Notes
           </h1>
           <textarea
             title="Rejection Notes"
             value={caregiver.notes}
             disabled
-            className="h-20 w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark"
+            className="h-20 max-h-40 min-h-fit w-full rounded-md border border-red bg-red-light px-3 py-2 font-normal text-red outline-none transition"
           />
         </div>
-      ) : null}
+      )}
 
       {/* Button Group */}
       <div className="mt-5 flex w-full items-center justify-end">
         <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
-          <h1 className="visible mb-3 text-center text-heading-6 font-bold text-primary md:hidden">
+          <h1
+            className={`visible mb-3 text-center text-heading-6 font-bold text-primary md:hidden ${caregiver.status === "Rejected" ? "hidden" : ""}`}
+          >
             Reject/Approve
           </h1>
           <ApprovalButtons status={caregiver.status} caregiver={caregiver} />

@@ -1,3 +1,3 @@
-import { CAREGIVER, USER } from "@/types/axolotl";
+import { CAREGIVER, USER } from "@/types/AxolotlMainType";
 
-export type AdminApprovalTable = CAREGIVER & { user: USER };
+export type AdminApprovalTable = CAREGIVER & { users: USER };

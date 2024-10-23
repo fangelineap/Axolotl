@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import type { PatientOrderDetails } from "../../caregiver/type/data";
-import { fetchOrdersByPatient } from "@/app/server-action/patient";
+import { fetchOrdersByPatient } from "@/app/_server-action/patient";
 
 // Define the status color map
 const statusColorClassMap: Record<string, string> = {

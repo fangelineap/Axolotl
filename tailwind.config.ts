@@ -30,18 +30,18 @@ const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}"
   ],
   darkMode: "class",
   theme: {
     fontFamily: {
-      satoshi: ["Satoshi", "sans-serif"],
+      satoshi: ["Satoshi", "sans-serif"]
     },
     screens: {
       "2xsm": "375px",
       xsm: "425px",
       "3xl": "2000px",
-      ...defaultTheme.screens,
+      ...defaultTheme.screens
     },
     extend: {
       colors: {
@@ -60,7 +60,7 @@ const config: Config = {
           5: "#6B7280",
           6: "#9CA3AF",
           7: "#D1D5DB",
-          8: "#E5E7EB",
+          8: "#E5E7EB"
         },
         gray: {
           DEFAULT: "#E9ECEF", // Light White
@@ -75,7 +75,7 @@ const config: Config = {
           4: "#D1D5DB",
           5: "#9CA3AF",
           6: "#6B7280",
-          7: "#374151",
+          7: "#374151"
         },
         green: {
           DEFAULT: "#1CBF90",
@@ -88,8 +88,8 @@ const config: Config = {
             4: "#F0FFF0", // Kalbe ultra light
             5: "#C2F3D6",
             6: "#DAF8E6",
-            7: "#E9FBF0",
-          },
+            7: "#E9FBF0"
+          }
         },
         red: {
           DEFAULT: "#EE4D4D", // Kalbe Danger
@@ -101,8 +101,8 @@ const config: Config = {
             3: "#FBC0C0",
             4: "#FDD8D8",
             5: "#FEEBEB",
-            6: "#FEF3F3",
-          },
+            6: "#FEF3F3"
+          }
         },
         blue: {
           DEFAULT: "#3E8DD8", // Kalbe Medicine/Awaiting
@@ -112,46 +112,46 @@ const config: Config = {
             2: "#8099EC",
             3: "#ADBCF2",
             4: "#C3CEF6",
-            5: "#E1E8FF",
-          },
+            5: "#E1E8FF"
+          }
         },
         orange: {
           light: {
-            DEFAULT: "#F59460",
-          },
+            DEFAULT: "#F59460"
+          }
         },
         yellow: {
           DEFAULT: "#F09D30", // Kalbe Warning
-          hover: "#FFE97F",
+          hover: "#FFF6E1",
           dark: {
             DEFAULT: "#F09D30", // Kalbe Warning
-            2: "#D97706",
+            2: "#D97706"
           },
           light: {
             DEFAULT: "#FFF6E1", // BG Kalbe Warning
-            4: "#FFFBEB",
-          },
+            4: "#FFFBEB"
+          }
         },
         kalbe: {
           dark: {
-            DEFAULT: "#26725C",
+            DEFAULT: "#26725C"
           },
           medium: {
-            DEFAULT: "#2B9879",
+            DEFAULT: "#2B9879"
           },
           light: {
-            DEFAULT: "#1CBF90",
+            DEFAULT: "#1CBF90"
           },
           veryLight: {
-            DEFAULT: "#D4EDD6",
+            DEFAULT: "#D4EDD6"
           },
           proLight: {
-            DEFAULT: "#E0F7E2",
+            DEFAULT: "#E0F7E2"
           },
           ultraLight: {
-            DEFAULT: "#F0FFF0",
-          },
-        },
+            DEFAULT: "#F0FFF0"
+          }
+        }
       },
       fontSize: {
         "heading-1": ["60px", "72px"],
@@ -162,7 +162,7 @@ const config: Config = {
         "heading-6": ["24px", "30px"],
         "body-2xlg": ["22px", "28px"],
         "body-sm": ["14px", "22px"],
-        "body-xs": ["12px", "20px"],
+        "body-xs": ["12px", "20px"]
       },
       spacing: {
         4.5: "1.125rem",
@@ -252,7 +252,7 @@ const config: Config = {
         187.5: "46.875rem",
         203: "50.75rem",
         230: "57.5rem",
-        242.5: "60.625rem",
+        242.5: "60.625rem"
       },
       maxWidth: {
         2.5: "0.625rem",
@@ -293,20 +293,20 @@ const config: Config = {
         242.5: "60.625rem",
         270: "67.5rem",
         280: "70rem",
-        292.5: "73.125rem",
+        292.5: "73.125rem"
       },
       maxHeight: {
         35: "8.75rem",
         70: "17.5rem",
         90: "22.5rem",
         550: "34.375rem",
-        300: "18.75rem",
+        300: "18.75rem"
       },
       minWidth: {
         22.5: "5.625rem",
         42.5: "10.625rem",
         47.5: "11.875rem",
-        75: "18.75rem",
+        75: "18.75rem"
       },
       zIndex: {
         999999: "999999",
@@ -315,30 +315,30 @@ const config: Config = {
         999: "999",
         99: "99",
         9: "9",
-        1: "1",
+        1: "1"
       },
       opacity: {
-        65: ".65",
+        65: ".65"
       },
       aspectRatio: {
         "4/3": "4 / 3",
-        "21/9": "21 / 9",
+        "21/9": "21 / 9"
       },
       backgroundImage: {
-        video: "url('../images/video/video.png')",
+        video: "url('../images/video/video.png')"
       },
       content: {
-        "icon-copy": 'url("../images/icon/icon-copy-alt.svg")',
+        "icon-copy": 'url("../images/icon/icon-copy-alt.svg")'
       },
       transitionProperty: {
         width: "width",
         stroke: "stroke",
-        "transform-opacity": "transform, opacity",
+        "transform-opacity": "transform, opacity"
       },
       borderWidth: {
         6: "6px",
         10: "10px",
-        12: "12px",
+        12: "12px"
       },
       boxShadow: {
         default: "0px 4px 7px 0px rgba(0, 0, 0, 0.14)",
@@ -364,7 +364,7 @@ const config: Config = {
         4: "0px 13px 40px 0px rgba(13, 10, 44, 0.22), 0px -8px 18px 0px rgba(13, 10, 44, 0.04)",
         5: "0px 10px 30px 0px rgba(85, 106, 235, 0.12), 0px 4px 10px 0px rgba(85, 106, 235, 0.04), 0px -18px 38px 0px rgba(85, 106, 235, 0.04)",
         6: "0px 12px 34px 0px rgba(13, 10, 44, 0.08), 0px 34px 26px 0px rgba(13, 10, 44, 0.05)",
-        7: "0px 18px 25px 0px rgba(113, 116, 152, 0.05)",
+        7: "0px 18px 25px 0px rgba(113, 116, 152, 0.05)"
       },
       dropShadow: {
         card: "0px 8px 13px rgba(0, 0, 0, 0.07)",
@@ -372,11 +372,11 @@ const config: Config = {
         2: "0px 1px 4px rgba(0, 0, 0, 0.12)",
         3: "0px 0px 4px rgba(0, 0, 0, 0.15)",
         4: "0px 0px 2px rgba(0, 0, 0, 0.2)",
-        5: "0px 1px 5px rgba(0, 0, 0, 0.2)",
+        5: "0px 1px 5px rgba(0, 0, 0, 0.2)"
       },
       keyframes: {
         linspin: {
-          "100%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(360deg)" }
         },
         easespin: {
           "12.5%": { transform: "rotate(135deg)" },
@@ -386,38 +386,38 @@ const config: Config = {
           "62.5%": { transform: "rotate(675deg)" },
           "75%": { transform: "rotate(810deg)" },
           "87.5%": { transform: "rotate(945deg)" },
-          "100%": { transform: "rotate(1080deg)" },
+          "100%": { transform: "rotate(1080deg)" }
         },
         "left-spin": {
           "0%": { transform: "rotate(130deg)" },
           "50%": { transform: "rotate(-5deg)" },
-          "100%": { transform: "rotate(130deg)" },
+          "100%": { transform: "rotate(130deg)" }
         },
         "right-spin": {
           "0%": { transform: "rotate(-130deg)" },
           "50%": { transform: "rotate(5deg)" },
-          "100%": { transform: "rotate(-130deg)" },
+          "100%": { transform: "rotate(-130deg)" }
         },
         rotating: {
           "0%, 100%": { transform: "rotate(360deg)" },
-          "50%": { transform: "rotate(0deg)" },
+          "50%": { transform: "rotate(0deg)" }
         },
         topbottom: {
           "0%, 100%": { transform: "translate3d(0, -100%, 0)" },
-          "50%": { transform: "translate3d(0, 0, 0)" },
+          "50%": { transform: "translate3d(0, 0, 0)" }
         },
         bottomtop: {
           "0%, 100%": { transform: "translate3d(0, 0, 0)" },
-          "50%": { transform: "translate3d(0, -100%, 0)" },
+          "50%": { transform: "translate3d(0, -100%, 0)" }
         },
         line: {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(100%)" },
+          "50%": { transform: "translateY(100%)" }
         },
         "line-revert": {
           "0%, 100%": { transform: "translateY(100%)" },
-          "50%": { transform: "translateY(0)" },
-        },
+          "50%": { transform: "translateY(0)" }
+        }
       },
       animation: {
         linspin: "linspin 1568.2353ms linear infinite",
@@ -435,10 +435,10 @@ const config: Config = {
         "spin-3": "spin 3s linear infinite",
         line1: "line 10s infinite linear",
         line2: "line-revert 8s infinite linear",
-        line3: "line 7s infinite linear",
-      },
-    },
+        line3: "line 7s infinite linear"
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };
 export default config;

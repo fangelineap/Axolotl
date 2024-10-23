@@ -1,25 +1,24 @@
 "use client";
 
-import { DataTable } from "@/components/Tables/DataTable";
-import React, { useState } from "react";
-import { AdminMedicineTable } from "./data";
-import { columns } from "./columns";
-import { ColumnDef } from "@tanstack/react-table";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
-import { deleteAdminMedicine } from "../actions";
-import { toast, ToastContainer } from "react-toastify";
+import { DataTable } from "@/components/Tables/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import "react-toastify/dist/ReactToastify.css";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { deleteAdminMedicine } from "../actions";
+import { columns } from "./columns";
+import { AdminMedicineTable } from "./data";
 
 interface ManageMedicineTableProps {
   initialData: AdminMedicineTable[];
 }
 
 function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
+  const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] =
     useState<AdminMedicineTable | null>(null);
-  const router = useRouter();
 
   const handleDeleteClick = (medicine: AdminMedicineTable) => {
     setSelectedMedicine(medicine);
@@ -53,7 +52,6 @@ function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
 
   return (
     <div className="mb-10">
-      <ToastContainer />
       <DataTable
         data={initialData}
         columns={columns as ColumnDef<AdminMedicineTable>[]}
@@ -67,7 +65,7 @@ function ManageMedicineTable({ initialData }: ManageMedicineTableProps) {
         onClose={handleModalClose}
         onConfirm={handleModalConfirm}
         title="Confirmation"
-        question="Are you sure you want to delete this medicine?"
+        question="Are you sure you want to delete this medicine? This action cannot be undone."
         action="delete"
         medicine={selectedMedicine}
       />

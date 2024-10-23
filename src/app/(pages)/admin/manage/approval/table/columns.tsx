@@ -34,18 +34,15 @@ const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
 };
 
 export const columns = [
-  columnHelper.accessor("caregiver_id", {
+  columnHelper.accessor("users.user_id", {
     cell: (info) => {
-      const user_id = info.getValue()?.toString();
+      const uuid = info.getValue()?.toString();
+      const truncatedUuid = uuid ? `${uuid.slice(0, 16)}...` : "";
 
-      return (
-        <div className="flex items-center justify-center text-center">
-          <p>{user_id}</p>
-        </div>
-      );
+      return truncatedUuid;
     },
-    id: "User ID",
-    header: "User ID",
+    id: "Caregiver ID",
+    header: "Caregiver ID",
     enableSorting: true,
     enableColumnFilter: true
   }),
@@ -74,7 +71,7 @@ export const columns = [
   ),
   columnHelper.accessor(
     (row) =>
-      `${row.user?.first_name || ""} ${row.user?.last_name || ""}`.trim(),
+      `${row.users?.first_name || ""} ${row.users?.last_name || ""}`.trim(),
     {
       cell: (info) => {
         const user_full_name = info.getValue();
@@ -87,7 +84,7 @@ export const columns = [
       enableColumnFilter: true
     }
   ),
-  columnHelper.accessor("user.role", {
+  columnHelper.accessor("users.role", {
     cell: (info) => {
       const role = info.getValue() as "Midwife" | "Nurse";
       const { bgColor, textColor } = roleDisplay[role];

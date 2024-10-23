@@ -1,13 +1,18 @@
 "use client";
 
-import { getCaregiverById, getUserFromSession } from "@/lib/server";
-import { getCaregiverPhoto } from "@/app/server-action/caregiver";
-import { createAppointment } from "@/app/server-action/patient";
+import {
+  getGlobalCaregiverDataByCaregiverOrUserId,
+  getGlobalUserProfilePhoto
+} from "@/app/_server-action/global";
+import { createAppointment } from "@/app/_server-action/patient";
 import Accordion from "@/components/Axolotl/Accordion";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import Select from "@/components/Axolotl/Select";
 import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { getUserFromSession } from "@/lib/server";
+import { CAREGIVER } from "@/types/AxolotlMainType";
+import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import { services } from "@/utils/Services";
 import {
   IconCircleMinus,
@@ -40,13 +45,19 @@ const PlacingOrder = ({ searchParams }: any) => {
   useEffect(() => {
     const getSession = async () => {
       const { data, error } = await getUserFromSession();
-      const cg = await getCaregiverById(searchParams.caregiver);
+      const { data: getCaregiverData } =
+        await getGlobalCaregiverDataByCaregiverOrUserId(
+          "users",
+          searchParams.caregiver
+        );
+
+      const cg = getCaregiverData.caregiver[0] as CAREGIVER;
 
       if (cg) {
-        setCaregiver(cg[0]);
+        setCaregiver(cg);
         setServiceType(searchParams.service);
 
-        const photo = await getCaregiverPhoto(cg[0].caregiver[0].profile_photo);
+        const photo = await getGlobalUserProfilePhoto(cg.profile_photo);
         setProfilePhoto(photo!);
       }
 

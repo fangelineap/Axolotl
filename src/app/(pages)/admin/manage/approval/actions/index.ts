@@ -3,6 +3,7 @@
 import createSupabaseServerClient from "@/lib/server";
 import { unstable_noStore } from "next/cache";
 import { AdminApprovalTable } from "../table/data";
+import { getGlobalUserDataByUserId } from "@/app/_server-action/global";
 
 /**
  * * Get all caregiver
@@ -24,14 +25,7 @@ export async function getAllAdminApproval() {
       return [];
     }
 
-    const caregiverWithUserDetails: AdminApprovalTable[] = caregivers.map(
-      (caregiver) => ({
-        ...caregiver,
-        user: caregiver.users
-      })
-    );
-
-    return caregiverWithUserDetails;
+    return caregivers as AdminApprovalTable[];
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -41,28 +35,36 @@ export async function getAllAdminApproval() {
 
 /**
  * * Get single caregiver
- * @param caregiver_id
+ * @param user_id
  * @returns
  */
-export async function getSingleAdminApprovalById(caregiver_id: string) {
+export async function getSingleAdminApprovalById(user_id: string) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { data: caregivers, error } = await supabase
+    const userData = await getGlobalUserDataByUserId(user_id);
+
+    if (!userData) {
+      console.error("Error fetching user data");
+
+      return [];
+    }
+
+    const { data: caregiver, error } = await supabase
       .from("caregiver")
       .select("*, users(*)")
-      .eq("caregiver_id", caregiver_id)
+      .eq("caregiver_id", userData.id)
       .single();
 
     if (error) {
-      console.error("Error fetching caregivers data:", error.message);
+      console.error("Error fetching caregiver data:", error.message);
     }
 
     const caregiverWithUserDetails: AdminApprovalTable = {
-      ...caregivers,
-      user: caregivers.users
+      ...caregiver,
+      users: caregiver.users
     };
 
     return caregiverWithUserDetails;

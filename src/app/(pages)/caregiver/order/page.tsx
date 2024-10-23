@@ -4,14 +4,27 @@ import { DataTable } from "@/components/Tables/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { fetchOrdersByCaregiver } from "@/app/server-action/caregiver/action";
+import { fetchOrdersByCaregiver } from "@/app/_server-action/caregiver";
 import type { CaregiverOrderDetails } from "../type/data";
+import { Skeleton } from "@mui/material";
 
-// Define the status color map
-const statusColorClassMap: Record<string, string> = {
-  Ongoing: "bg-yellow-light text-yellow-dark",
-  Canceled: "bg-red-light text-red",
-  Done: "bg-green-light-3 text-green"
+/**
+ * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
+ * @param rowA
+ * @param rowB
+ * @param columnId
+ * @returns
+ */
+const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
+  const order: { [key: string]: number } = {
+    Ongoing: 0,
+    Completed: 1,
+    Canceled: 2
+  };
+  const statusA = rowA.getValue(columnId);
+  const statusB = rowB.getValue(columnId);
+
+  return order[statusA] - order[statusB];
 };
 
 const OrderPage = () => {
@@ -55,22 +68,32 @@ const OrderPage = () => {
       cell: ({ row }) => `${row.original.patient?.users?.first_name || "N/A"}`
     },
     {
-      accessorKey: "is_completed",
+      accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const isCompleted = row.original.is_completed;
-        const status = isCompleted ? "Done" : "Ongoing";
-        const colorClass =
-          statusColorClassMap[status] || "bg-gray-500 text-white";
+        const statusColor: Record<string, string> = {
+          Ongoing: "bg-yellow-light text-yellow-dark",
+          Canceled: "bg-red-light text-red",
+          Completed: "bg-kalbe-ultraLight text-primary"
+        };
+        const status = row.original.status;
+        const colorClass = statusColor[status] || "bg-gray-500 text-white";
 
         return (
-          <span
-            className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
-          >
-            {status}
-          </span>
+          <div className="flex items-center justify-center">
+            <span
+              className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
+            >
+              {status}
+            </span>
+          </div>
         );
-      }
+      },
+      id: "Status",
+      enableSorting: true,
+      enableColumnFilter: true,
+      sortingFn: customStatusSort,
+      filterFn: "equals"
     }
   ];
 
@@ -79,40 +102,51 @@ const OrderPage = () => {
     const query = new URLSearchParams({
       orderType: orderData.appointment.service_type,
       patientName: `${orderData.patient?.users?.first_name}`,
-      status: orderData.is_completed ? "Done" : "Ongoing"
+      status: orderData.status
     }).toString();
 
     router.push(`/order/${orderData.id}?${query}`);
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Show loading while fetching data
-  }
-
-  if (orderData.length === 0) {
-    return <div>No orders found.</div>; // Handle no data case
-  }
-
   return (
     <DefaultLayout>
-      <div>
-        <div className="mb-4 text-sm text-gray-500">
-          <span>Dashboard / </span>
-          <span>Order / </span>
-          <span>Service Order</span>
-        </div>
+      <div className="mb-4 text-sm text-gray-500">
+        <span>Dashboard / </span>
+        <span>Order / </span>
+        <span>Service Order</span>
+      </div>
 
-        <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
-
-        <div className="rounded-lg bg-white p-6 shadow">
-          <DataTable
-            data={orderData} // Pass the data array
-            columns={columns} // Pass the columns configuration
-            basePath="/caregiver/order"
-            showAction={handleShowAction} // Define the action handler
+      <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
+      {loading ? (
+        // **Render Skeletons when loading is true**
+        <div className="mt-8 flex flex-col items-center justify-center gap-3">
+          {/* Skeleton for the table */}
+          <Skeleton
+            variant="rectangular"
+            width="100%"
+            animation="wave"
+            height={300}
+            className="rounded-lg"
           />
         </div>
-      </div>
+      ) : (
+        // **Render actual content when loading is false**
+        <div>
+          {orderData.length === 0 ? (
+            <div>No orders found.</div>
+          ) : (
+            <div className="rounded-lg bg-white p-6 shadow">
+              <DataTable
+                data={orderData}
+                columns={columns}
+                basePath="/caregiver/order"
+                showAction={handleShowAction}
+                initialSorting={[{ id: "Status", desc: false }]}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </DefaultLayout>
   );
 };

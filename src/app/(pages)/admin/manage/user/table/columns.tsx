@@ -33,11 +33,7 @@ export const columns = [
   columnHelper.accessor(
     (row) => `${row.first_name || ""} ${row.last_name || ""}`.trim(),
     {
-      cell: (info) => {
-        const user_full_name = info.getValue();
-
-        return user_full_name;
-      },
+      cell: (info) => info.getValue(),
       id: "User Name",
       header: "User Name",
       enableSorting: true,

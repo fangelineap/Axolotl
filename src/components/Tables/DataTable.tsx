@@ -23,12 +23,12 @@ import { useState } from "react";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import SelectDataTable from "../Axolotl/SelectDataTable";
 import CustomPagination from "../Pagination/Pagination";
+import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 
 interface DataTableProps<
   T extends {
     id?: number | string;
     uuid?: string;
-    caregiver_id?: string;
     user_id?: string;
   }
 > {
@@ -38,13 +38,13 @@ interface DataTableProps<
   deleteAction?: (rowData: T) => void;
   basePath?: string;
   initialSorting?: ColumnSort[];
+  selectStatusOptions?: string[];
 }
 
 export function DataTable<
   T extends {
     id?: number | string;
     uuid?: string;
-    caregiver_id?: string;
     user_id?: string;
   }
 >({
@@ -53,7 +53,8 @@ export function DataTable<
   showAction,
   deleteAction,
   basePath,
-  initialSorting = []
+  initialSorting = [],
+  selectStatusOptions
 }: DataTableProps<T>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFilter[]>([]);
@@ -86,15 +87,26 @@ export function DataTable<
                 onClick={() => {
                   showAction(row.original);
 
-                  const idFieldMap: { [key: string]: keyof T } = {
+                  const assertApprovalTable =
+                    row.original as unknown as AdminApprovalTable;
+
+                  const idFieldMap: { [key: string]: keyof T | string } = {
                     "/admin/manage/medicine": "uuid",
-                    "/admin/manage/approval": "caregiver_id",
                     "/admin/manage/user": "user_id"
                   };
 
-                  const id =
-                    row.original[idFieldMap[pathName] as keyof T] ||
-                    row.original.id;
+                  let id: string | number | undefined;
+
+                  if (pathName === "/admin/manage/approval") {
+                    id = assertApprovalTable.users.user_id;
+                  } else {
+                    const idField = idFieldMap[pathName];
+                    id =
+                      (row.original[idField as keyof T] as
+                        | string
+                        | number
+                        | undefined) || row.original.id;
+                  }
 
                   const navigatePath = basePath
                     ? `${basePath}/${id}`
@@ -226,11 +238,15 @@ export function DataTable<
                           </button>
                         </div>
 
-                        {header.column.getCanFilter() ? (
-                          header.column.id === "Status" ? (
+                        {header.column.getCanFilter() &&
+                          (header.column.id === "Status" ? (
                             <SelectDataTable
                               title="Status"
-                              options={["Verified", "Unverified", "Rejected"]}
+                              options={
+                                selectStatusOptions
+                                  ? selectStatusOptions
+                                  : ["Verified", "Unverified", "Rejected"]
+                              }
                               value={
                                 (header.column.getFilterValue() as string) || ""
                               }
@@ -260,6 +276,22 @@ export function DataTable<
                                 header.column.setFilterValue(value)
                               }
                             />
+                          ) : header.column.id === "Service Type" ? (
+                            <SelectDataTable
+                              title="Service Type"
+                              options={[
+                                "After Care",
+                                "Neonatal Care",
+                                "Elderly Care",
+                                "Booster"
+                              ]}
+                              value={
+                                (header.column.getFilterValue() as string) || ""
+                              }
+                              onChange={(value) =>
+                                header.column.setFilterValue(value)
+                              }
+                            />
                           ) : (
                             <input
                               type="text"
@@ -272,8 +304,7 @@ export function DataTable<
                               }
                               className="mt-2 w-full rounded border border-gray-1 p-2 text-sm font-normal focus:border-primary focus:outline-none"
                             />
-                          )
-                        ) : null}
+                          ))}
                       </div>
                     )}
                   </th>

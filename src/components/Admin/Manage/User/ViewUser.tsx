@@ -1,10 +1,18 @@
+"use client";
+
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
+import { getClientPublicStorageURL } from "@/app/_server-action/storage";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
+import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
+import { Skeleton } from "@mui/material";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 interface ViewUserProps {
   user: AdminUserTable;
@@ -12,7 +20,18 @@ interface ViewUserProps {
 }
 
 function ViewUser({ user, totalOrder }: ViewUserProps) {
+  /**
+   * * States & Initial Variables
+   */
+  const router = useRouter();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [editConfirmationModal, setEditConfirmationModal] = useState(false);
   const user_full_name = user.first_name + " " + user.last_name;
+
+  const caregiverProfilePhoto = getClientPublicStorageURL(
+    "profile_photo",
+    user.caregiver?.profile_photo
+  );
 
   /**
    * * Date Formatters
@@ -71,46 +90,135 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
     ? formatDate(user.caregiver?.schedule_end_date, timeFormatter)
     : "-";
 
+  /**
+   * * Handle Image Load
+   */
+  const handleImageLoad = () => setImageLoaded(true);
+
+  /**
+   * * Edit Confirmation Modal for Caregiver
+   */
+  const openEditConfirmationModal = () => setEditConfirmationModal(true);
+  const closeEditConfirmationModal = () => setEditConfirmationModal(false);
+
+  /**
+   * * Edit Profile Variant
+   */
+  const isCaregiverUnverifiedOrRejected =
+    ["Nurse", "Midwife"].includes(user.role) &&
+    ["Unverified", "Rejected"].includes(user.caregiver?.status || "");
+
+  const editProfileVariant =
+    isCaregiverUnverifiedOrRejected || user.role === "Patient"
+      ? "secondary"
+      : "primary";
+
+  /**
+   * * Handle Edit Profile
+   */
+  const handleEditProfileButton = () => {
+    switch (user.role) {
+      case "Nurse":
+      case "Midwife":
+        const caregiverStatus = user.caregiver?.status;
+
+        if (caregiverStatus === "Unverified") {
+          toast.error(
+            "Bruh, verify this user first. This ain't LinkedIn endorsements. 🔍",
+            { position: "bottom-right" }
+          );
+
+          return;
+        }
+
+        if (caregiverStatus === "Rejected") {
+          toast.error(
+            "Nah fam, this user already been shown the door. No second chances. 🚪👋",
+            { position: "bottom-right" }
+          );
+
+          return;
+        }
+
+        if (!editConfirmationModal) {
+          openEditConfirmationModal();
+
+          return;
+        }
+
+        break;
+
+      case "Patient":
+        toast.error(
+          "Lmao, nah. You're not editing patient profile. Go edit your life decisions instead. 😂✋",
+          { position: "bottom-right" }
+        );
+
+        return;
+
+      default:
+        break;
+    }
+
+    router.push(`/admin/manage/user/edit/${user.user_id}`);
+  };
+
   return (
     <>
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
+
       {/* Container */}
       <div className={`flex w-full flex-col justify-between gap-5`}>
-        {/* Profile with Profile Picture Section */}
+        {/* ROLE BASED RENDERING */}
         {["Nurse", "Midwife", "Patient"].includes(user.role) ? (
           <>
             {/* Top Section */}
-            <div className="flex w-full flex-col items-center justify-start gap-5 md:flex-row">
-              <div className="h-40 w-40 overflow-hidden rounded-full border">
+            {/* Profile with Profile Picture Section */}
+            <div className="flex w-full flex-col items-center justify-start gap-5 lg:flex-row">
+              {!imageLoaded && (
+                <Skeleton
+                  animation="wave"
+                  variant="circular"
+                  width={160}
+                  height={160}
+                  className="rounded-full object-cover"
+                />
+              )}
+              <div
+                className={`h-40 w-40 overflow-hidden rounded-full border ${imageLoaded ? "" : "hidden"}`}
+              >
                 {["Nurse", "Midwife"].includes(user.role) ? (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile_photo/${encodeURIComponent(user.caregiver.profile_photo)}`}
+                    src={caregiverProfilePhoto}
                     alt="User Profile Photo"
                     width={200}
                     height={200}
                     priority
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full object-cover ${imageLoaded ? "" : "hidden"}`}
+                    onLoad={handleImageLoad}
                   />
                 ) : (
                   user.role === "Patient" && (
                     <Image
-                      src="/images/user/patient.png"
+                      src="/images/user/Default Patient Photo.png"
                       alt="Default Patient Profile Photo"
                       width={200}
                       height={200}
                       priority
-                      className="h-full w-full object-cover"
+                      className={`h-full w-full object-cover ${imageLoaded ? "" : "hidden"}`}
+                      onLoad={handleImageLoad}
                     />
                   )
                 )}
               </div>
               {/* User Basic Data */}
               <div className="mb-4 flex flex-col items-center justify-center gap-2 lg:mb-0 lg:items-start">
-                {/* User Full Name */}
                 <h1 className="text-xl font-bold">{user_full_name}</h1>
+
                 {/* User Role */}
                 <div className="flex flex-col gap-2">
+                  {/* Caregiver Role */}
                   {["Nurse", "Midwife"].includes(user.role) && (
                     <div className="flex items-center justify-center gap-2">
                       <div>
@@ -124,15 +232,14 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                           </div>
                         )}
                       </div>
-                      {/* If User is Caregiver, then display verification status */}
-                      <div>
-                        {user.caregiver.status === "Unverified" ? (
+                      <div className="flex">
+                        {user.caregiver?.status === "Unverified" ? (
                           <div className="rounded-md border border-blue bg-blue-light p-2">
                             <p className="font-bold text-blue">
                               Awaiting for verification
                             </p>
                           </div>
-                        ) : user.caregiver.status === "Verified" ? (
+                        ) : user.caregiver?.status === "Verified" ? (
                           <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
                             <p className="font-bold text-primary">
                               Verified on:{" "}
@@ -157,7 +264,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                     </div>
                   )}
 
-                  {/* If User is Patient, then display role */}
+                  {/* Patient Role */}
                   {user.role === "Patient" && (
                     <div className="bg-primary-ultraLight flex items-center justify-center rounded-md border border-primary p-2">
                       <p className="font-bold text-primary">{user.role}</p>
@@ -167,16 +274,17 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
                 <AxolotlButton
                   label="Edit Profile"
-                  variant="primary"
+                  variant={editProfileVariant}
                   fontThickness="bold"
                   customWidth
                   customClasses="text-lg w-fit"
+                  onClick={handleEditProfileButton}
                 />
               </div>
             </div>
 
             {/* Bottom Section */}
-            <div className="flex w-full flex-col gap-5 md:flex-row lg:justify-between">
+            <div className="flex w-full flex-col gap-5 lg:flex-row lg:justify-between">
               {/* First Column */}
               <div className="flex w-full flex-col gap-4">
                 {/* User Personal Data */}
@@ -312,10 +420,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                 )}
               </div>
 
-              {/* Center Divider */}
-              <div className="hidden lg:flex lg:items-center">
-                <div className="h-full border-l border-primary"></div>
-              </div>
+              <CustomDivider />
 
               {/* Second Column */}
               <div className="flex w-full flex-col gap-4">
@@ -339,7 +444,11 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                           type="text"
                           horizontal={false}
                           isRating
-                          value={String(user.caregiver.rate) || "-"}
+                          value={
+                            user.caregiver.rate
+                              ? String(user.caregiver.rate)
+                              : "-"
+                          }
                         />
                       </div>
                     </div>
@@ -382,22 +491,22 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                         <DownloadLicenses
                           licenseTitle="Curriculum Vitae"
                           fileLink={user.caregiver.cv}
-                          cv
+                          licenseType="CV"
                         />
                         <DownloadLicenses
                           licenseTitle="Degree Certificate"
                           fileLink={user.caregiver.degree_certificate}
-                          degree_certificate
+                          licenseType="Degree Certificate"
                         />
                         <DownloadLicenses
                           licenseTitle="Surat Tanda Registrasi"
                           fileLink={user.caregiver.str}
-                          str
+                          licenseType="STR"
                         />
                         <DownloadLicenses
                           licenseTitle="Surat Izin Praktik"
                           fileLink={user.caregiver.sip}
-                          sip
+                          licenseType="SIP"
                         />
                       </div>
                     </div>
@@ -467,14 +576,26 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
               {/* Left Section */}
               {/* Profile with Profile Picture Section */}
               <div className="flex h-full w-full flex-row items-center justify-center gap-10 rounded-md border border-primary py-4 md:max-w-[25%] md:flex-col md:gap-2">
-                <div className="h-25 w-25 overflow-hidden rounded-full border">
+                {!imageLoaded && (
+                  <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={160}
+                    height={160}
+                    className="rounded-full object-cover"
+                  />
+                )}
+                <div
+                  className={`h-40 w-40 overflow-hidden rounded-full border ${imageLoaded ? "" : "hidden"}`}
+                >
                   <Image
                     src="/images/user/Default Admin Photo.png"
                     alt="Default Admin Profile Photo"
                     width={200}
                     height={200}
                     priority
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full object-cover ${imageLoaded ? "" : "hidden"}`}
+                    onLoad={handleImageLoad}
                   />
                 </div>
                 {/* User Basic Data */}
@@ -489,6 +610,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                     fontThickness="bold"
                     customWidth
                     customClasses="text-lg w-fit"
+                    onClick={handleEditProfileButton}
                   />
                 </div>
               </div>
@@ -501,9 +623,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                     <h1 className="text-heading-6 font-bold text-primary">
                       Admin Personal Data
                     </h1>
-                    <div className="hidden lg:flex lg:items-center">
-                      <div className="w-full border-t border-primary" />
-                    </div>
+                    <CustomDivider horizontal />
                   </div>
 
                   {/* Content */}
@@ -560,23 +680,44 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
             </div>
           )
         )}
+      </div>
 
-        {/* Button Group */}
-        <div className="flex w-full items-center justify-end">
-          <div className="flex w-1/2 items-center justify-end gap-5 md:w-1/4">
-            <div className="w-3/4 md:w-[75%] md:min-w-[50%]">
-              <Link href={"/admin/manage/user"}>
-                <AxolotlButton
-                  label="Go back"
-                  variant="secondary"
-                  fontThickness="bold"
-                  customClasses="text-lg"
-                />
-              </Link>
-            </div>
-          </div>
+      {/* CAREGIVER - Rejection Notes */}
+      {user.caregiver?.status === "Rejected" && (
+        <div className="mt-3 flex w-full flex-col justify-center gap-2">
+          <h1 className="mb-3 text-heading-6 font-bold text-red">
+            Rejection Notes
+          </h1>
+          <textarea
+            title="Rejection Notes"
+            value={user.caregiver.notes}
+            disabled
+            className="h-20 max-h-40 min-h-fit w-full rounded-md border border-red bg-red-light px-3 py-2 font-normal text-red outline-none transition"
+          />
+        </div>
+      )}
+
+      {/* Button Group */}
+      <div className="mt-5 flex w-full items-center justify-end">
+        <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
+          <AxolotlButton
+            label="Go back"
+            variant="secondary"
+            fontThickness="bold"
+            customClasses="text-lg"
+            onClick={() => router.replace("/admin/manage/user")}
+          />
         </div>
       </div>
+
+      <AxolotlModal
+        isOpen={editConfirmationModal}
+        onClose={closeEditConfirmationModal}
+        onConfirm={handleEditProfileButton}
+        title="Edit Caregiver Profile"
+        question="Are you sure you want to edit this caregiver? This action is only used to update their licenses. Please prepare the necessary documents first"
+        action="confirm"
+      />
     </>
   );
 }

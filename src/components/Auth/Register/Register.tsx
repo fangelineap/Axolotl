@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const RegisterComponent = () => {
   const [role, setRole] = useState<"Caregiver" | "Patient" | "">("");
@@ -42,7 +41,7 @@ const RegisterComponent = () => {
                 >
                   <div className="flex items-center justify-start gap-4">
                     <Image
-                      src="/images/user/caregiver.png"
+                      src="/images/user/Default Caregiver Photo.png"
                       className={`max-h-12 max-w-12 rounded-full border md:max-h-18 md:max-w-18 ${role === "Caregiver" ? "bg-kalbe-veryLight" : ""}`}
                       alt="Caregiver"
                       width={200}
@@ -76,7 +75,7 @@ const RegisterComponent = () => {
                 >
                   <div className="flex items-center justify-start gap-4">
                     <Image
-                      src="/images/user/patient.png"
+                      src="/images/user/Default Patient Photo.png"
                       className={`max-h-12 max-w-12 rounded-full border md:max-h-18 md:max-w-18 ${role === "Patient" ? "bg-kalbe-veryLight" : ""}`}
                       alt="Patient"
                       height={200}

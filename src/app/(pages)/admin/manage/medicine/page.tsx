@@ -1,13 +1,13 @@
+import { getGlobalAllMedicine } from "@/app/_server-action/global";
 import AdminLayout from "@/components/Admin/Manage/AdminLayout";
 import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
-import { getAdminMedicine } from "./actions";
 import ManageMedicineTable from "./table/ManageMedicineTable";
 
 export const metadata = getAdminMetadata("Manage Medicine");
 
 async function AdminManageMedicine() {
-  const data = await getAdminMedicine();
+  const data = await getGlobalAllMedicine();
 
   return (
     <div className="bg-gray">
