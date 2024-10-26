@@ -104,7 +104,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             <p className="font-bold text-gray-600">Current Status</p>
             <span
               className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
-                orderStatus === "Done"
+                orderStatus === "Completed"
                   ? "bg-green-500"
                   : orderStatus === "Ongoing"
                     ? "bg-yellow-500"
@@ -340,7 +340,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
       {/* Right Side */}
       <div className="w-full max-w-md rounded-lg bg-white p-6">
         <button
-          className="disabled pointer-events-none mb-4 w-full rounded border border-dark-secondary bg-dark-secondary py-2 text-lg font-bold text-white"
+          className={`${medicineDetail ? "border-primary bg-primary" : "disabled border-dark-secondary bg-dark-secondary"} pointer-events-none mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
           onClick={() => alert("Order Finished!")}
         >
           Additional Medicine

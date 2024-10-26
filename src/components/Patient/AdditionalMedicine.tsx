@@ -8,6 +8,7 @@ import {
   MEDICINE,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
+import AxolotlModal from "../Axolotl/Modal/AxolotlModal";
 
 interface MedicineProps {
   id: string;
@@ -37,6 +38,7 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
   const [selection, setSelection] = useState<
     MEDICINE_ORDER_DETAIL_WITH_MEDICINE[]
   >([] as MEDICINE_ORDER_DETAIL_WITH_MEDICINE[]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (selectAll) {
@@ -49,6 +51,7 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
   useEffect(() => {
     const getData = async () => {
       const data = await fetchMedicineOrderById(medicineOrder);
+      console.log("data order", data);
       setMedicine(data);
 
       console.log("medicine data", data.medicineOrderDetail);
@@ -56,6 +59,10 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
 
     getData();
   }, []);
+
+  const handleConfirmModal = () => {
+    console.log("hi");
+  };
 
   return (
     <div className="">
@@ -66,26 +73,29 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
 
       <div className="flex flex-col gap-5 lg:flex-row">
         <div className="w-[100%] lg:mr-7 lg:w-[65%]">
-          <div className="mb-5.5 flex items-center justify-between rounded-md border border-stroke px-5 py-3">
-            <div className="flex">
-              <input
-                className="mr-2"
-                type="checkbox"
-                checked={
-                  selection.length > 0
-                    ? selection.length === medicine.medicineOrderDetail.length
-                      ? true
+          {!medicine.is_paid && (
+            <div className="mb-5.5 flex items-center justify-between rounded-md border border-stroke px-5 py-3">
+              <div className="flex">
+                <input
+                  className="mr-2"
+                  type="checkbox"
+                  checked={
+                    selection.length > 0
+                      ? selection.length === medicine.medicineOrderDetail.length
+                        ? true
+                        : false
                       : false
-                    : false
-                }
-                onClick={() => {
-                  setSelectAll(!selectAll);
-                }}
-              />
-              <h1 className="font-semibold">Select All ({selection.length})</h1>
+                  }
+                  onClick={() => {
+                    setSelectAll(!selectAll);
+                  }}
+                />
+                <h1 className="font-semibold">
+                  Select All ({selection.length})
+                </h1>
+              </div>
             </div>
-            <button className="font-semibold text-kalbe-light">Delete</button>
-          </div>
+          )}
 
           {/* Products */}
           <div className="flex flex-col gap-5 rounded-md border border-stroke px-5 py-7">
@@ -98,6 +108,7 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
                     selection={selection}
                     setSelection={setSelection}
                     medicineDetail={meds}
+                    is_paid={medicine.is_paid}
                   />
                   {index !== medicine.medicineOrderDetail.length - 1 && (
                     <div className="h-[1px] w-[100%] bg-stroke"></div>
@@ -149,22 +160,47 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
             </h1>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <AxolotlButton
-              label="Continue to Payment"
-              onClick={() => {}}
-              variant="primary"
-              fontThickness="bold"
-            />
-            <AxolotlButton
-              label="Skip This Step"
-              onClick={() => {}}
-              variant="primaryOutlined"
-              fontThickness="bold"
-            />
-          </div>
+          {medicine.is_paid ? (
+            <div>
+              <h1 className="mb-2 text-lg font-semibold">Payment Status</h1>
+              <div className="mb-3.5 rounded-[7px] border border-primary bg-kalbe-proLight p-1.5 text-center text-primary">
+                <h1 className="text-lg font-semibold">Verified</h1>
+              </div>
+              <AxolotlButton
+                label="Finish"
+                onClick={() => {}}
+                variant="primary"
+                fontThickness="bold"
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <AxolotlButton
+                label="Continue to Payment"
+                onClick={() => setIsOpen(true)}
+                variant="primary"
+                fontThickness="bold"
+              />
+              <AxolotlButton
+                label="Skip This Step"
+                onClick={() => {}}
+                variant="primaryOutlined"
+                fontThickness="bold"
+              />
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Modal */}
+      <AxolotlModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onConfirm={handleConfirmModal}
+        title="Confirmation"
+        question="Are you sure you want to skip this step?"
+        action="skip"
+      />
     </div>
   );
 };

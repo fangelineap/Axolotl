@@ -219,7 +219,7 @@ export async function getOrderDetail(id: string) {
     );
 
     const temp = {
-      orderStatus: data.is_completed ? "Completed" : "Ongoing",
+      orderStatus: data.status,
       caregiverInfo: {
         name: cgData.first_name + " " + cgData.last_name,
         str: data.caregiver.str,

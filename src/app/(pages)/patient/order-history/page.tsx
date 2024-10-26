@@ -56,11 +56,11 @@ const OrderHistory = () => {
       cell: ({ row }) => `${row.original.caregiver?.users?.first_name || "N/A"}`
     },
     {
-      accessorKey: "is_completed",
+      accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
         const isCompleted = row.original.status;
-        const status = isCompleted ? "Done" : "Ongoing";
+        const status = isCompleted;
         const colorClass =
           statusColorClassMap[status] || "bg-gray-500 text-white";
 

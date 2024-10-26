@@ -15,6 +15,7 @@ const MedicinePreparation = () => {
       const data = await getOrderDetail(id);
 
       if (data) {
+        console.log("data", data);
         setData(data);
       }
     };

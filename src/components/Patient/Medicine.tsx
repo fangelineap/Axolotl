@@ -13,6 +13,7 @@ interface MedicineProps {
   setSelection: React.Dispatch<
     React.SetStateAction<MEDICINE_ORDER_DETAIL_WITH_MEDICINE[]>
   >;
+  is_paid: boolean;
   medicineDetail: {
     id: string;
     quantity: number;
@@ -27,22 +28,25 @@ interface MedicineProps {
 const Medicine = ({
   selection,
   setSelection,
-  medicineDetail
+  medicineDetail,
+  is_paid
 }: MedicineProps) => {
   return (
     <div className="flex justify-between">
       <div className="flex items-start gap-5">
-        <input
-          type="checkbox"
-          checked={selection.includes(medicineDetail)}
-          onClick={() =>
-            setSelection(
-              selection.includes(medicineDetail)
-                ? selection.filter((item) => item.id !== medicineDetail.id)
-                : [...selection, medicineDetail]
-            )
-          }
-        />
+        {!is_paid && (
+          <input
+            type="checkbox"
+            checked={selection.includes(medicineDetail)}
+            onClick={() =>
+              setSelection(
+                selection.includes(medicineDetail)
+                  ? selection.filter((item) => item.id !== medicineDetail.id)
+                  : [...selection, medicineDetail]
+              )
+            }
+          />
+        )}
         <Image
           src="/images/user/caregiver.png"
           width={50}
