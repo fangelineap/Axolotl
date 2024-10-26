@@ -135,6 +135,7 @@ const Page = ({ searchParams }: any) => {
     }
 
     setFiltered(filteredCG);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rating, location]);
 
   console.log("caregiver", caregiver);
@@ -530,7 +531,7 @@ const Page = ({ searchParams }: any) => {
                     </div>
                   ))
                 ) : (
-                  <div>There's no data</div>
+                  <div>There&apos;s no data</div>
                 )
               ) : (
                 caregiver.map((cg, index) => (

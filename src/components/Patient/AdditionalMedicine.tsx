@@ -46,6 +46,7 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
     } else {
       setSelection([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectAll]);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const AdditionalMedicine = ({ medicineOrder }: { medicineOrder: string }) => {
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleConfirmModal = () => {

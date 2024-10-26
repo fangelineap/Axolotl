@@ -81,6 +81,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
     };
 
     calculateTotalPrice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
