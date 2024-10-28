@@ -1,6 +1,7 @@
-import { getClientPublicStorageURL } from "@/app/_server-action/storage";
+import { getServerPrivateStorageURL } from "@/app/_server-action/storage";
 import { IconDownload } from "@tabler/icons-react";
 import Link from "next/link";
+import AxolotlButton from "./AxolotlButton";
 
 interface DownloadLicensesProps {
   licenseTitle: string;
@@ -8,11 +9,21 @@ interface DownloadLicensesProps {
   licenseType: "CV" | "Degree Certificate" | "STR" | "SIP";
 }
 
-const DownloadLicenses = ({
+async function getLicenseURL(licenseType: string, fileLink: string) {
+  const publicURL = await getServerPrivateStorageURL(licenseType, fileLink);
+
+  if (!publicURL) {
+    return null;
+  }
+
+  return publicURL;
+}
+
+async function DownloadLicenses({
   licenseTitle,
   fileLink,
   licenseType
-}: DownloadLicensesProps) => {
+}: DownloadLicensesProps) {
   const licenseSource = {
     CV: "cv",
     "Degree Certificate": "degree_certificate",
@@ -20,19 +31,19 @@ const DownloadLicenses = ({
     SIP: "sip"
   };
 
-  const publicURL = getClientPublicStorageURL(
-    licenseSource[licenseType],
-    fileLink
-  );
+  const publicURL = await getLicenseURL(licenseSource[licenseType], fileLink);
 
   return (
-    <Link href={publicURL} target="_blank" rel="noopener noreferrer" passHref>
-      <button className="flex w-full items-center justify-between gap-2 rounded-md border border-primary bg-primary px-4 py-2 text-white transition duration-150 ease-in-out hover:bg-kalbe-ultraLight hover:text-primary">
-        <h1 className="max-w-xs truncate font-bold">{licenseTitle}</h1>
-        <IconDownload />
-      </button>
+    <Link href={publicURL!} target="_blank" rel="noopener noreferrer" passHref>
+      <AxolotlButton
+        variant="primary"
+        label={licenseTitle}
+        fontThickness="medium"
+        customClasses="justify-between"
+        endIcon={<IconDownload />}
+      />
     </Link>
   );
-};
+}
 
 export default DownloadLicenses;

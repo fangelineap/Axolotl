@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/client";
 import createSupabaseServerClient from "@/lib/server";
 import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
+import { unstable_noStore } from "next/cache";
 import { toast } from "react-toastify";
 import { uuidv7 } from "uuidv7";
 
@@ -236,4 +237,35 @@ export function getClientPublicStorageURL(storage: string, path: string) {
   const loweredStorage = storage.toLowerCase();
 
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${loweredStorage}/${encodeURIComponent(path)}`;
+}
+
+export async function getServerPrivateStorageURL(
+  storage: string,
+  path: string
+) {
+  unstable_noStore();
+
+  console.log({ storage, path });
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data } = await supabase.storage
+      .from(storage)
+      .createSignedUrl(path, 900);
+
+    if (!data) {
+      console.error("Error fetching private storage URL");
+
+      return null;
+    }
+
+    console.log(data.signedUrl);
+
+    return data.signedUrl;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return null;
+  }
 }

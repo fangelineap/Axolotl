@@ -190,7 +190,7 @@ const GuestHeader: React.FC<HeaderProps> = ({
           <div className="ml-auto">
             <Link href="/auth/signin" className="w-full">
               <AxolotlButton
-                label="Login"
+                label="Sign In"
                 variant="primary"
                 roundType="regular"
                 fontThickness="medium"

@@ -1,24 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { adminDeleteUser } from "@/app/_server-action/admin";
-import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
+import AuthStepper from "@/components/Auth/AuthStepper";
 import CheckboxBlood from "@/components/Axolotl/Checkboxes/CheckboxBlood";
 import CheckboxSmoker from "@/components/Axolotl/Checkboxes/CheckboxSmoker";
-import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import InputGroup from "@/components/FormElements/InputGroup";
 import SelectGroupTwo from "@/components/FormElements/SelectGroup/SelectGroupTwo";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { createClient } from "@/lib/client";
 import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import { createClient } from "@/lib/client";
-import AuthStepper from "@/components/Auth/AuthStepper";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
+// TODO: Add error state when the user data is not completed from the searchParams
+// FIXME: Refactor this page
 const PersonalInformation = ({ searchParams }: any) => {
   const router = useRouter();
 
@@ -259,8 +259,7 @@ const PersonalInformation = ({ searchParams }: any) => {
 
   return (
     <DefaultLayout>
-      <ToastContainer />
-      <AuthStepper currentStep={3} />
+      <AuthStepper currentStep={3} role={searchParams.role} />
 
       <div className="flex justify-center pb-9 pt-3">
         {/* <!-- Sign In Form --> */}
@@ -953,7 +952,7 @@ const PersonalInformation = ({ searchParams }: any) => {
         onClose={handleCloseModal}
         onConfirm={confirmCancelRegistration}
         title="Cancel Registration"
-        question={`Are you sure you want to cancel your registration? This action cannot be undone.`}
+        question={`Are you sure you want to cancel your registration? Your account will be deleted and you must re-register to Axolotl.`}
         action="cancel"
       />
       {searchParams.role != null && finished && (

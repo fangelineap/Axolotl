@@ -20,7 +20,7 @@ const PasswordInput = ({
 
   return (
     <div className="relative w-full">
-      <label className="mb-2 block text-body-sm font-medium text-dark dark:text-white">
+      <label className="mb-2 block font-medium text-dark dark:text-white">
         {label}
         <span className="ml-1 text-red">*</span>
       </label>

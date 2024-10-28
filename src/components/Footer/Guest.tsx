@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const GuestPatientFooter = () => {
+const GuestFooter = () => {
   return (
     <footer className="mt-auto w-full border-t border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark">
       <div className="flex flex-col items-center justify-between px-5 pt-10 md:ml-10 md:flex-row md:px-2 lg:ml-10 2xl:px-10">
@@ -93,4 +93,4 @@ const GuestPatientFooter = () => {
   );
 };
 
-export default GuestPatientFooter;
+export default GuestFooter;

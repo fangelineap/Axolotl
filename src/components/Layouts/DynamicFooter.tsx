@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
 import { usePathname } from "next/navigation";
 import CGAdminFooter from "../Footer/CGAdmin";
-import GuestPatientFooter from "../Footer/GuestPatient";
-import OrderPatientFooter from "../Footer/OrderPatient";
+import GuestFooter from "../Footer/Guest";
+import PatientFooter from "../Footer/Patient";
 
 const DynamicFooter = () => {
   const pathname = usePathname();
@@ -14,15 +13,11 @@ const DynamicFooter = () => {
 
   if (pathname.startsWith("/auth")) return null;
 
-  if (
-    (pathname.startsWith("/patient") &&
-      !pathname.includes("health-services")) ||
-    pathname.startsWith("/")
-  )
-    return <GuestPatientFooter />;
+  if (pathname.startsWith("/") || pathname.startsWith("/guest"))
+    return <GuestFooter />;
 
   if (pathname.startsWith("/patient") && !pathname.includes("health-services"))
-    return <OrderPatientFooter />;
+    return <PatientFooter />;
 };
 
 export default DynamicFooter;

@@ -2,7 +2,10 @@
 
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import { getCaregiverVerificationStatus } from "./app/_server-action/auth";
+import {
+  getCaregiverVerificationStatus,
+  getIncompleteUserPersonalInformation
+} from "./app/_server-action/auth";
 import { validateSession } from "./utils/auth/ValidateSession";
 
 /**
@@ -12,12 +15,11 @@ import { validateSession } from "./utils/auth/ValidateSession";
  */
 function isGuestPage(pathname: string): boolean {
   const guestPages = ["/", "/guest/about", "/guest/careers"];
-
-  if (guestPages.includes(pathname)) return true;
+  const authPaths = ["/auth/signin", "/auth/register"];
 
   if (
-    pathname.startsWith("/auth/signin") ||
-    pathname.startsWith("/auth/register")
+    guestPages.includes(pathname) ||
+    authPaths.some((auth) => pathname.startsWith(auth))
   ) {
     return true;
   }
@@ -90,7 +92,7 @@ async function updateSession(request: NextRequest) {
     return response;
   }
 
-  const userId = user?.id;
+  const userId = user.id;
 
   const { data: userData } = await supabase
     .from("users")
@@ -99,7 +101,7 @@ async function updateSession(request: NextRequest) {
     .single();
 
   if (!userData) {
-    console.error("Error fetching user data:", { user, userData });
+    console.error("Error fetching user data:", { user });
 
     return response;
   }
@@ -107,14 +109,63 @@ async function updateSession(request: NextRequest) {
   const userRole = userData.role;
   const roleRedirect = getRoleRedirect(userRole);
 
-  console.log({ userData, userRole, isValid });
-
   if (isValid && pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL(roleRedirect, request.url));
   }
 
+  const userPersonalData = await getIncompleteUserPersonalInformation(
+    userId,
+    userRole
+  );
+
+  console.log({
+    Middleware: {
+      User: {
+        userData,
+        userRole
+      },
+      Validity: {
+        Session: isValid,
+        isPersonalDataFetched: userPersonalData.success,
+        isPersonalDataCompleted: userPersonalData.is_complete,
+        PersonalDataMessage: userPersonalData.message
+      }
+    }
+  });
+
+  // ! INCOMPLETE USER DATA
+  if (
+    userPersonalData.success &&
+    !userPersonalData.is_complete &&
+    userRole !== "Admin"
+  ) {
+    if (pathname !== "/registration/personal-information") {
+      const updatedRole = ["Nurse", "Midwife"].includes(userRole)
+        ? "Caregiver"
+        : "Patient";
+
+      return NextResponse.redirect(
+        new URL(
+          `/registration/personal-information?role=${updatedRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          request.url
+        )
+      );
+    }
+
+    return NextResponse.next();
+  }
+
+  // ! COMPLETED USER DATA
+  if (userPersonalData.success && userPersonalData.is_complete) {
+    if (pathname.startsWith("/registration/personal-information")) {
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+    }
+
+    return NextResponse.next();
+  }
+
   // ! ADMIN
-  if (pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/admin") && userRole !== "Admin") {
     if (userRole !== "Admin") {
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }

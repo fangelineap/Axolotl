@@ -803,7 +803,6 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                       />
                       <PhoneNumberBox
                         placeholder="081XXXXXXXX"
-                        disabled={false}
                         name="phone_number"
                         required
                         value={
