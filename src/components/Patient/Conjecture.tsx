@@ -17,6 +17,7 @@ const Conjecture = ({ conjecture }: { conjecture: string }) => {
     };
 
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

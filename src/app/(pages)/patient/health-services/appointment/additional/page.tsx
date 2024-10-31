@@ -31,7 +31,10 @@ const page = ({ searchParams }: any) => {
 
       {/* Content */}
       <div className="px-7">
-        <AdditionalMedicine medicineOrder={searchParams.medicineId} />
+        <AdditionalMedicine
+          medicineOrder={searchParams.medicineId}
+          payment={searchParams.payment}
+        />
       </div>
     </DefaultLayout>
   );

@@ -5,7 +5,10 @@ import { PatientOrder } from "@/app/(pages)/patient/type/data";
 import createSupabaseServerClient, {
   getUserDataFromSession
 } from "@/lib/server";
-import { MEDICINE_ORDER_DETAIL } from "@/types/AxolotlMainType";
+import {
+  MEDICINE_ORDER_DETAIL,
+  MEDICINE_ORDER_DETAIL_WITH_MEDICINE
+} from "@/types/AxolotlMainType";
 import { services } from "@/utils/Services";
 import { unstable_noStore } from "next/cache";
 import { getGlobalUserProfilePhoto } from "../global";
@@ -401,5 +404,67 @@ export async function fetchMedicineOrderById(id: string) {
     }
   } catch (error) {
     console.log("Error when fetching medicine order", error);
+  }
+}
+
+export async function handleAdditionalMedicinePayment(
+  medicineOrderId: string,
+  medicine: MEDICINE_ORDER_DETAIL_WITH_MEDICINE[]
+) {
+  const supabase = await createSupabaseServerClient();
+
+  const setFilteredMedicineOrder = async (medicineOrderDetailId: string) => {
+    try {
+      await supabase
+        .from("medicineOrderDetail")
+        .delete()
+        .eq("id", medicineOrderDetailId);
+    } catch (error) {
+      console.log("Error", error);
+    }
+  };
+
+  try {
+    const { data: medicineDetail, error: medicineDetailError } = await supabase
+      .from("medicineOrderDetail")
+      .select("*")
+      .eq("medicine_order_id", medicineOrderId);
+
+    if (medicineDetail) {
+      medicineDetail.forEach((medDetail) => {
+        let flag = false;
+        medicine.map((meds) => {
+          if (meds.id === medDetail.id) {
+            flag = true;
+          }
+        });
+
+        if (flag === false) {
+          setFilteredMedicineOrder(medDetail.id);
+        }
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("medicineOrder")
+      .update({
+        total_qty: medicine.reduce((acc, curr) => acc + curr.quantity, 0),
+        sub_total_medicine: medicine.reduce(
+          (acc, curr) => acc + curr.total_price,
+          0
+        ),
+        total_price:
+          medicine.reduce((acc, curr) => acc + curr.total_price, 0) + 10000,
+        is_paid: true,
+        paid_at: new Date(),
+        updated_at: new Date()
+      })
+      .eq("id", medicineOrderId);
+
+    if (data) {
+      return "Success";
+    }
+  } catch (error) {
+    console.log("Error", error);
   }
 }
