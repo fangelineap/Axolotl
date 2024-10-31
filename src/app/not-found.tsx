@@ -20,7 +20,7 @@ async function getCurrentUser() {
 
 async function NotFound() {
   const data = await getCurrentUser();
-  const userRole = data?.role.toLowerCase() as keyof typeof roleHomepage;
+  const userRole = data?.role?.toLowerCase() as keyof typeof roleHomepage;
 
   const roleHomepage: {
     [key in "nurse" | "midwife" | "patient" | "admin"]: string;
@@ -31,7 +31,11 @@ async function NotFound() {
     admin: "/admin"
   };
 
-  const homepageLink = userRole ? roleHomepage[userRole] : "/";
+  const homepageLink = ["nurse", "midwife", "patient", "admin"].includes(
+    userRole
+  )
+    ? roleHomepage[userRole]
+    : "/";
 
   return (
     <div className="flex min-h-screen w-screen flex-col items-center justify-center gap-5 text-center">

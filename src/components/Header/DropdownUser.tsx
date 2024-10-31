@@ -12,22 +12,31 @@ import useSWR, { mutate } from "swr";
 
 async function fetcher() {
   const user = await getUserDataFromSession();
+
   if (!user) {
     return null;
   }
 
+  let imageUrl;
   const assertedUser = user as USER_DETAILS_AUTH_SCHEMA;
 
-  let imageUrl;
-  if (assertedUser.role === "Patient") {
+  if (user.role === "Patient") {
     imageUrl = "/images/user/Default Patient Photo.png";
-  } else if (assertedUser.role === "Admin") {
+  }
+
+  if (user.role === "Admin") {
     imageUrl = "/images/user/Default Admin Photo.png";
-  } else {
+  }
+
+  if (user.role === "Caregiver") {
+    imageUrl = "/images/user/Default Caregiver Photo.png";
+  }
+
+  if (["Nurse", "Midwife"].includes(user.role)) {
     const profilePhoto = await getGlobalUserProfilePhoto(
       assertedUser.caregiver?.profile_photo!
     );
-    imageUrl = profilePhoto || "/images/user/Default Caregiver Photo.png";
+    imageUrl = profilePhoto;
   }
 
   return { ...assertedUser, imageUrl };
@@ -80,7 +89,7 @@ const DropdownUser = () => {
               <Image
                 width={200}
                 height={200}
-                src={user.imageUrl}
+                src={user?.imageUrl}
                 alt="User"
                 priority
                 className="h-full w-full rounded-full object-cover"
@@ -111,7 +120,7 @@ const DropdownUser = () => {
                   <Image
                     width={200}
                     height={200}
-                    src={user.imageUrl}
+                    src={user?.imageUrl}
                     alt="User"
                     priority
                     className="h-full w-full rounded-full object-cover"

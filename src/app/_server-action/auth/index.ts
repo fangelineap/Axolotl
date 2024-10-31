@@ -116,7 +116,7 @@ export async function registerWithEmailAndPassword(userData: {
       first_name,
       last_name,
       phone_number,
-      role: role === "Caregiver" ? null : role,
+      role: role,
       user_id: userId
     };
 

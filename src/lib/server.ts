@@ -113,13 +113,6 @@ async function fetchUserDataByRole(
     };
   }
 
-  if (user.role === "Admin") {
-    return {
-      ...user,
-      email: authSchema?.email
-    };
-  }
-
   return null;
 }
 
@@ -154,5 +147,14 @@ export async function getUserDataFromSession() {
 
   const authSchema = await adminGetUserAuthSchema(userId);
 
-  return await fetchUserDataByRole(user, supabase, authSchema!);
+  if (["Admin", "Caregiver"].includes(user.role)) {
+    return {
+      ...user,
+      email: authSchema?.email
+    };
+  }
+
+  if (!["Admin", "Caregiver"].includes(user.role)) {
+    return await fetchUserDataByRole(user, supabase, authSchema!);
+  }
 }

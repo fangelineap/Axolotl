@@ -35,6 +35,7 @@ function isGuestPage(pathname: string): boolean {
 function getRoleRedirect(userRole: string): string {
   const roleRedirects: { [key: string]: string } = {
     Patient: "/patient",
+    Caregiver: "/caregiver",
     Nurse: "/caregiver",
     Midwife: "/caregiver",
     Admin: "/admin"
@@ -121,8 +122,9 @@ async function updateSession(request: NextRequest) {
   const userValidity = {
     Middleware: {
       User: {
-        user_name: userData.first_name + " " + userData.last_name,
         user_id: userId,
+        user_name: userData.first_name + " " + userData.last_name,
+        email: user.email,
         userRole
       },
       Validity: {
@@ -137,19 +139,23 @@ async function updateSession(request: NextRequest) {
   console.log(userValidity);
 
   // ! INCOMPLETE USER DATA
-  if (
-    userPersonalData.success &&
-    !userPersonalData.is_complete &&
-    userRole !== "Admin"
-  ) {
+  if (userPersonalData.success && !userPersonalData.is_complete) {
     if (pathname !== "/registration/personal-information") {
-      const updatedRole = ["Nurse", "Midwife"].includes(userRole)
-        ? "Caregiver"
-        : "Patient";
-
       return NextResponse.redirect(
         new URL(
-          `/registration/personal-information?role=${updatedRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          request.url
+        )
+      );
+    }
+
+    // If there is a invalid role query parameter with the current user role
+    const urlRole = new URL(request.url).searchParams.get("role");
+
+    if (urlRole && urlRole !== userRole) {
+      return NextResponse.redirect(
+        new URL(
+          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
           request.url
         )
       );
@@ -186,7 +192,7 @@ async function updateSession(request: NextRequest) {
 
   // ! CAREGIVER
   if (pathname.startsWith("/caregiver")) {
-    if (!["Nurse", "Midwife"].includes(userRole)) {
+    if (!["Nurse", "Midwife", "Caregiver"].includes(userRole)) {
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
 
