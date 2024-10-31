@@ -1,13 +1,13 @@
-import RegisterComponent from "@/components/Auth/Register/RegisterComponent";
+import CreateAccountComponent from "@/components/Auth/CreateAccount/CreateAccountComponent";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-export const metadata: Metadata = getGuestMetadata("register");
+export const metadata: Metadata = getGuestMetadata("create account");
 
-const RegisterInit = async () => {
+const CreateAccount = async ({ searchParams }: any) => {
   /**
    * * Get user from session
    */
@@ -26,18 +26,17 @@ const RegisterInit = async () => {
     };
 
     const redirectPath = roleBasedRedirects[role];
-    if (redirectPath) {
-      redirect(redirectPath);
-    }
+
+    redirect(redirectPath);
   };
 
   if (user) handleRedirectByRole(user.role);
 
   return (
     <DefaultLayout>
-      <RegisterComponent />
+      <CreateAccountComponent searchParams={searchParams} />
     </DefaultLayout>
   );
 };
 
-export default RegisterInit;
+export default CreateAccount;

@@ -1,12 +1,7 @@
 import React from "react";
 
-interface Step {
-  label: string;
-  number: number;
-}
-
 interface AuthStepperProps {
-  steps: Step[];
+  role: string;
   currentStep: number;
   caregiverVerificationStatus?: string;
 }
@@ -33,41 +28,59 @@ function StepIndicator({
 }
 
 function AuthStepper({
-  steps,
+  role,
   currentStep,
   caregiverVerificationStatus = ""
 }: AuthStepperProps) {
-  const dynamicStep =
-    caregiverVerificationStatus === "Verified" ? 5 : currentStep;
-
-  return (
-    <div className="mb-3.5 flex items-center justify-center">
-      <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
-        {steps.map((step) => {
-          const isActive = dynamicStep;
-
-          return (
-            <StepIndicator
-              key={step.number}
-              label={step.label}
-              number={step.number}
-              isActive={isActive === dynamicStep}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-AuthStepper.defaultProps = {
-  steps: [
+  const caregiverSteps = [
     { label: "Choose Role", number: 1 },
     { label: "Create Account", number: 2 },
     { label: "Personal Information", number: 3 },
     { label: "Review", number: 4 },
     { label: "Finish", number: 5 }
-  ]
-};
+  ];
+
+  const patientSteps = [
+    { label: "Choose Role", number: 1 },
+    { label: "Create Account", number: 2 },
+    { label: "Personal Information", number: 3 },
+    { label: "Finish", number: 4 }
+  ];
+
+  const dynamicStep =
+    caregiverVerificationStatus === "Verified" ? 5 : currentStep;
+
+  return (
+    <div className="mb-5 flex items-center justify-center">
+      <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
+        {role === "Patient"
+          ? patientSteps.map((step) => {
+              const isActive = step.number <= dynamicStep;
+
+              return (
+                <StepIndicator
+                  key={step.number}
+                  label={step.label}
+                  number={step.number}
+                  isActive={isActive}
+                />
+              );
+            })
+          : caregiverSteps.map((step) => {
+              const isActive = step.number <= dynamicStep;
+
+              return (
+                <StepIndicator
+                  key={step.number}
+                  label={step.label}
+                  number={step.number}
+                  isActive={isActive}
+                />
+              );
+            })}
+      </div>
+    </div>
+  );
+}
 
 export default AuthStepper;

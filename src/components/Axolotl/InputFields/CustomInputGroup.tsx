@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 interface CustomInputGroupProps {
@@ -7,7 +9,7 @@ interface CustomInputGroupProps {
   horizontal: boolean;
   placeholder: string;
   required: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
 
   // Additional Props

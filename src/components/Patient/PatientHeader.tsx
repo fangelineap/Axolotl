@@ -107,7 +107,7 @@ const PatientHeader: React.FC<HeaderProps> = ({
               </div>
             </Link>
           </div>
-          <div className="flex flex-grow justify-center">
+          <div className="flex flex-grow items-center">
             <ul className="flex items-center gap-5 py-3">
               <li>
                 <Link href="/patient">

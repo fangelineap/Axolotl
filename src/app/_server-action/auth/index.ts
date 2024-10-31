@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
 import createSupabaseServerClient from "@/lib/server";
-import { revalidatePath, unstable_noStore } from "next/cache";
+import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
+import { adminDeleteUser } from "../admin";
+import { USER } from "../../../types/AxolotlMainType";
 
 /**
  * * Sign in with email and password
@@ -54,50 +55,89 @@ export async function signInWithEmailAndPassword(
  * * Register with email and password
  * @param email
  * @param password
- * @param phoneNumber
- * @param firstName
- * @param lastName
+ * @param first_name
+ * @param last_name
+ * @param phone_number
  * @param role
  * @returns
  */
-export async function registerWithEmailAndPassword(
-  email: string,
-  password: string,
-  phoneNumber: string,
-  firstName: string,
-  lastName: string,
-  role: string
-) {
+export async function registerWithEmailAndPassword(userData: {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+}): Promise<
+  | {
+      success: boolean;
+      message: string;
+      data?: undefined;
+    }
+  | {
+      success: boolean;
+      data: {
+        userId: string;
+      };
+      message?: undefined;
+    }
+> {
   const supabase = await createSupabaseServerClient();
 
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password
-  });
+  const { email, password, first_name, last_name, phone_number, role } =
+    userData;
 
-  if (error) {
-    console.log("Error while registering user: ", error);
+  try {
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password
+    });
 
-    revalidatePath("/auth/signin?success=false");
+    if (authError || !authData.user) {
+      console.error("Error while registering user: ", authError);
 
-    return { data: null, error };
+      if (
+        authError?.status === 422 ||
+        authError?.code === "user_already_exists"
+      ) {
+        return {
+          success: false,
+          message:
+            "You again? Looks like you've already got an account. Don't be shy, just sign in 🙃"
+        };
+      }
+
+      return { success: false, message: "Failed to register user" };
+    }
+
+    const userId = authData.user?.id;
+
+    const newUserData = {
+      first_name,
+      last_name,
+      phone_number,
+      role: role === "Caregiver" ? null : role,
+      user_id: userId
+    };
+
+    const { error: userError } = await supabase
+      .from("users")
+      .insert(newUserData);
+
+    if (userError) {
+      console.error("Error while registering user: ", userError);
+
+      await adminDeleteUser(userId);
+
+      return { success: false, message: "Failed to register user" };
+    }
+
+    return { success: true, data: { userId: userId } };
+  } catch (error) {
+    console.error("An unexpected error occurred: ", error);
+
+    return { success: false, message: "Unexpected error occurred" };
   }
-
-  const userId = data.user?.id;
-
-  if (!userId) {
-    throw new Error("User ID not found");
-  }
-
-  const userInsertData = {
-    first_name: firstName,
-    last_name: lastName,
-    phone_number: phoneNumber,
-    role: role === "Caregiver" ? undefined : role,
-    user_id: userId
-  };
-
-  return await supabase.from("users").insert(userInsertData);
 }
 
 /**
@@ -158,6 +198,126 @@ export async function logout() {
   console.log("Local signout successful. Redirecting to /auth/signin...");
 
   redirect("/auth/signin");
+}
+
+/**
+ * * Helper function to check User Personal Information Data based on their Roles
+ * @param supabase
+ * @param userData
+ * @param userRole
+ * @returns
+ */
+async function checkUserRoleData(
+  supabase: any,
+  userData: USER,
+  userRole: string
+) {
+  switch (userRole) {
+    case "Patient":
+      const { data: patientData } = await supabase
+        .from("patient")
+        .select("*")
+        .eq("patient_id", userData.id)
+        .or(
+          "blood_type.is.null, height.is.null, weight.is.null, is_smoking.is.null, med_freq_times.is.null, med_freq_day.is.null, illness_history.is.null"
+        )
+        .single();
+
+      if (patientData) {
+        console.error("Patient data is incomplete:", patientData);
+
+        return {
+          success: true,
+          is_complete: false,
+          message: "Patient data is incomplete"
+        };
+      }
+
+      console.error("Patient User data is incomplete:", userData);
+
+      return {
+        success: true,
+        is_complete: false,
+        message: "Patient User data is incomplete"
+      };
+
+    case "Nurse":
+    case "Midwife":
+      const { data: caregiverData } = await supabase
+        .from("caregiver")
+        .select("*")
+        .eq("caregiver_id", userData.id)
+        .or(
+          "profile_photo.is.null, employment_type.is.null,workplace.is.null, work_experiences.is.null, cv.is.null, degree_certificate.is.null, str.is.null, sip.is.null, status.is.Unverified"
+        )
+        .single();
+
+      if (caregiverData) {
+        console.error("Caregiver data is incomplete:", caregiverData);
+
+        return {
+          success: true,
+          is_complete: false,
+          message: "Caregiver data is incomplete"
+        };
+      }
+
+      console.error("Caregiver User data is incomplete:", userData);
+
+      return {
+        success: true,
+        is_complete: false,
+        message: "Caregiver User data is incomplete"
+      };
+
+    default:
+      return {
+        success: true,
+        is_complete: true,
+        message: "All User Personal Information data is completed"
+      };
+  }
+}
+
+/**
+ * * Get incomplete user personal information
+ * @param userId
+ * @returns
+ */
+export async function getIncompleteUserPersonalInformation(
+  userId: string,
+  userRole: string
+) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .eq("user_id", userId)
+      .or("address.is.null, gender.is.null, birthdate.is.null")
+      .single();
+
+    const userData = data as unknown as USER;
+
+    if (userData) return await checkUserRoleData(supabase, userData, userRole);
+
+    return {
+      success: true,
+      is_complete: true,
+      message: "All User Personal Information data is completed"
+    };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return {
+      success: false,
+      is_complete: false,
+      message: "Unexpected error occurred"
+    };
+  }
 }
 
 /**

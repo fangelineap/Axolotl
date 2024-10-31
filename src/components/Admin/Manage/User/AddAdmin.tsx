@@ -194,7 +194,6 @@ function AddAdmin() {
                   />
                   <PhoneNumberBox
                     placeholder="081XXXXXXXX"
-                    disabled={false}
                     name="phone_number"
                     required
                     value={

@@ -127,7 +127,7 @@ const AuthHeader: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
             ) : (
               <Link href="/auth/signin">
                 <AxolotlButton
-                  label="Login"
+                  label="Sign In"
                   variant="primary"
                   roundType="regular"
                   fontThickness="medium"

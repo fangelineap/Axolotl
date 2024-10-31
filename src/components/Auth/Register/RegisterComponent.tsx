@@ -6,14 +6,13 @@ import { IconSquare } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const RegisterComponent = () => {
   const [role, setRole] = useState<"Caregiver" | "Patient" | "">("");
 
   return (
     <div className="mx-4 my-12 flex h-full w-auto justify-center md:mx-20 md:my-15">
-      <ToastContainer />
       {/* <!-- Account Registration Form --> */}
       <div className="w-full lg:max-w-[50%]">
         <div className="rounded-t-xl border border-primary bg-primary py-3">
@@ -126,7 +125,7 @@ const RegisterComponent = () => {
 
               <Link
                 href={{
-                  pathname: "/auth/register/createaccount",
+                  pathname: "/auth/register/create-account",
                   query: { role: role }
                 }}
                 className="flex justify-center"
