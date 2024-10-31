@@ -114,14 +114,15 @@ async function updateSession(request: NextRequest) {
   }
 
   const userPersonalData = await getIncompleteUserPersonalInformation(
-    userId,
+    userData.id,
     userRole
   );
 
-  console.log({
+  const userValidity = {
     Middleware: {
       User: {
-        userData,
+        user_name: userData.first_name + " " + userData.last_name,
+        user_id: userId,
         userRole
       },
       Validity: {
@@ -131,7 +132,9 @@ async function updateSession(request: NextRequest) {
         PersonalDataMessage: userPersonalData.message
       }
     }
-  });
+  };
+
+  console.log(userValidity);
 
   // ! INCOMPLETE USER DATA
   if (
@@ -155,17 +158,16 @@ async function updateSession(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ! COMPLETED USER DATA
-  if (userPersonalData.success && userPersonalData.is_complete) {
-    if (pathname.startsWith("/registration/personal-information")) {
-      return NextResponse.redirect(new URL(roleRedirect, request.url));
-    }
-
-    return NextResponse.next();
+  if (
+    userPersonalData.success &&
+    userPersonalData.is_complete &&
+    pathname.startsWith("/registration/personal-information")
+  ) {
+    return NextResponse.redirect(new URL(roleRedirect, request.url));
   }
 
   // ! ADMIN
-  if (pathname.startsWith("/admin") && userRole !== "Admin") {
+  if (pathname.startsWith("/admin")) {
     if (userRole !== "Admin") {
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }

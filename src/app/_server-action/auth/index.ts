@@ -202,80 +202,85 @@ export async function logout() {
 
 /**
  * * Helper function to check User Personal Information Data based on their Roles
- * @param supabase
- * @param userData
+ * @param userId
  * @param userRole
  * @returns
  */
-async function checkUserRoleData(
-  supabase: any,
-  userData: USER,
-  userRole: string
-) {
-  switch (userRole) {
-    case "Patient":
-      const { data: patientData } = await supabase
-        .from("patient")
-        .select("*")
-        .eq("patient_id", userData.id)
-        .or(
-          "blood_type.is.null, height.is.null, weight.is.null, is_smoking.is.null, med_freq_times.is.null, med_freq_day.is.null, illness_history.is.null"
-        )
-        .single();
+async function checkUserRoleData(userId: string, userRole: string) {
+  unstable_noStore();
 
-      if (patientData) {
-        console.error("Patient data is incomplete:", patientData);
+  const supabase = await createSupabaseServerClient();
 
-        return {
-          success: true,
-          is_complete: false,
-          message: "Patient data is incomplete"
-        };
-      }
+  try {
+    switch (userRole) {
+      case "Patient":
+        const { data: patientData } = await supabase
+          .from("patient")
+          .select("*")
+          .eq("patient_id", userId)
+          .or(
+            "and(blood_type.is.null, height.is.null, weight.is.null, is_smoking.is.null, med_freq_times.is.null, med_freq_day.is.null, illness_history.is.null)"
+          )
+          .single();
 
-      console.error("Patient User data is incomplete:", userData);
+        if (patientData) {
+          console.error("Patient data is incomplete:", patientData);
 
-      return {
-        success: true,
-        is_complete: false,
-        message: "Patient User data is incomplete"
-      };
-
-    case "Nurse":
-    case "Midwife":
-      const { data: caregiverData } = await supabase
-        .from("caregiver")
-        .select("*")
-        .eq("caregiver_id", userData.id)
-        .or(
-          "profile_photo.is.null, employment_type.is.null,workplace.is.null, work_experiences.is.null, cv.is.null, degree_certificate.is.null, str.is.null, sip.is.null, status.is.Unverified"
-        )
-        .single();
-
-      if (caregiverData) {
-        console.error("Caregiver data is incomplete:", caregiverData);
+          return {
+            success: true,
+            is_complete: false,
+            message: "Patient data is incomplete"
+          };
+        }
 
         return {
           success: true,
-          is_complete: false,
-          message: "Caregiver data is incomplete"
+          is_complete: true,
+          message: "Patient User data is complete"
         };
-      }
 
-      console.error("Caregiver User data is incomplete:", userData);
+      case "Nurse":
+      case "Midwife":
+        const { data: caregiverData } = await supabase
+          .from("caregiver")
+          .select("*")
+          .eq("caregiver_id", userId)
+          .or(
+            "profile_photo.is.null,employment_type.is.null,workplace.is.null,work_experiences.is.null,cv.is.null,degree_certificate.is.null,str.is.null,sip.is.null,status.eq.Unverified"
+          )
+          .single();
 
-      return {
-        success: true,
-        is_complete: false,
-        message: "Caregiver User data is incomplete"
-      };
+        if (caregiverData) {
+          console.error("Caregiver data is incomplete:", caregiverData);
 
-    default:
-      return {
-        success: true,
-        is_complete: true,
-        message: "All User Personal Information data is completed"
-      };
+          return {
+            success: true,
+            is_complete: false,
+            message: "Caregiver data is incomplete"
+          };
+        }
+
+        return {
+          success: true,
+          is_complete: true,
+          message: "Caregiver User data is complete"
+        };
+
+      default:
+        return {
+          success: false,
+          is_complete: false,
+          message: "Something went wrong"
+        };
+    }
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      is_complete: false,
+      message: "Unexpected error occurred"
+    };
   }
 }
 
@@ -296,18 +301,40 @@ export async function getIncompleteUserPersonalInformation(
     const { data } = await supabase
       .from("users")
       .select("*")
-      .eq("user_id", userId)
+      .eq("id", userId)
       .or("address.is.null, gender.is.null, birthdate.is.null")
       .single();
 
     const userData = data as unknown as USER;
 
-    if (userData) return await checkUserRoleData(supabase, userData, userRole);
+    if (userData) {
+      return {
+        success: true,
+        is_complete: false,
+        message: "User data is incomplete"
+      };
+    }
+
+    const checkUserRoleInformationData = await checkUserRoleData(
+      userId,
+      userRole
+    );
+
+    if (
+      checkUserRoleInformationData?.success &&
+      !checkUserRoleInformationData?.is_complete
+    ) {
+      return {
+        success: true,
+        is_complete: false,
+        message: checkUserRoleInformationData?.message
+      };
+    }
 
     return {
       success: true,
       is_complete: true,
-      message: "All User Personal Information data is completed"
+      message: "User data and Personal Information data is completed"
     };
   } catch (error) {
     console.error("An unexpected error occurred:", error);

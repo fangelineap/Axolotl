@@ -1,5 +1,3 @@
-import React from "react";
-
 interface DisabledPhoneNumberBoxProps {
   value?: number | string;
   placeholder: string;

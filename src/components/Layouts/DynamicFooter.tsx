@@ -11,13 +11,18 @@ const DynamicFooter = () => {
   if (pathname.startsWith("/admin") || pathname.startsWith("/caregiver"))
     return <CGAdminFooter />;
 
+  if (pathname.includes("/patient/health-services/appointment")) return null;
+
+  if (
+    pathname.startsWith("/patient") ||
+    !pathname.includes("/patient/health-services/appointment")
+  )
+    return <PatientFooter />;
+
   if (pathname.startsWith("/auth")) return null;
 
   if (pathname.startsWith("/") || pathname.startsWith("/guest"))
     return <GuestFooter />;
-
-  if (pathname.startsWith("/patient") && !pathname.includes("health-services"))
-    return <PatientFooter />;
 };
 
 export default DynamicFooter;

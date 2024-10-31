@@ -113,6 +113,7 @@ async function Review() {
     <DefaultLayout>
       {/* Stepper */}
       <AuthStepper
+        role="Caregiver"
         currentStep={4}
         caregiverVerificationStatus={caregiverVerificationStatus}
       />

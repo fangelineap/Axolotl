@@ -2,7 +2,7 @@ import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/da
 import { adminGetUserAuthSchema } from "@/app/_server-action/admin";
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import ApprovalButtons from "@/components/Axolotl/Buttons/ApprovalButtons";
-import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import ServerDownloadLicenses from "@/components/Axolotl/Buttons/ServerDownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
@@ -232,22 +232,22 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
                 User Licenses
               </h1>
               <div className="grid grid-cols-2 gap-5">
-                <DownloadLicenses
+                <ServerDownloadLicenses
                   licenseTitle="Curriculum Vitae"
                   fileLink={caregiver.cv}
                   licenseType="CV"
                 />
-                <DownloadLicenses
+                <ServerDownloadLicenses
                   licenseTitle="Degree Certificate"
                   fileLink={caregiver.degree_certificate}
                   licenseType="Degree Certificate"
                 />
-                <DownloadLicenses
+                <ServerDownloadLicenses
                   licenseTitle="Surat Tanda Registrasi"
                   fileLink={caregiver.str}
                   licenseType="STR"
                 />
-                <DownloadLicenses
+                <ServerDownloadLicenses
                   licenseTitle="Surat Izin Praktik"
                   fileLink={caregiver.sip}
                   licenseType="SIP"

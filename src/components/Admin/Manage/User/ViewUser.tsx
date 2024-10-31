@@ -1,9 +1,9 @@
 "use client";
 
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
-import { getClientPublicStorageURL } from "@/app/_server-action/storage";
+import { getClientPublicStorageURL } from "@/app/_server-action/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
-import DownloadLicenses from "@/components/Axolotl/Buttons/DownloadLicenses";
+import ClientDownloadLicenses from "@/components/Axolotl/Buttons/ClientDownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
@@ -488,24 +488,24 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                         User Licenses
                       </h1>
                       <div className="grid grid-cols-2 gap-5">
-                        <DownloadLicenses
+                        <ClientDownloadLicenses
                           licenseTitle="Curriculum Vitae"
-                          fileLink={user.caregiver.cv}
+                          fileLink={user.caregiver.cv ?? ""}
                           licenseType="CV"
                         />
-                        <DownloadLicenses
+                        <ClientDownloadLicenses
                           licenseTitle="Degree Certificate"
-                          fileLink={user.caregiver.degree_certificate}
+                          fileLink={user.caregiver.degree_certificate ?? ""}
                           licenseType="Degree Certificate"
                         />
-                        <DownloadLicenses
+                        <ClientDownloadLicenses
                           licenseTitle="Surat Tanda Registrasi"
-                          fileLink={user.caregiver.str}
+                          fileLink={user.caregiver.str ?? ""}
                           licenseType="STR"
                         />
-                        <DownloadLicenses
+                        <ClientDownloadLicenses
                           licenseTitle="Surat Izin Praktik"
-                          fileLink={user.caregiver.sip}
+                          fileLink={user.caregiver.sip ?? ""}
                           licenseType="SIP"
                         />
                       </div>

@@ -18,7 +18,7 @@ const GuestFooter = () => {
                 />
               </div>
             </Link>
-            <span className="mt-4 text-center font-extrabold md:mt-2 md:text-left">
+            <span className="mt-4 text-center font-bold md:mt-2 md:text-left">
               To improve Health for a Better Life, by
             </span>
             <span className="text-center md:text-left">

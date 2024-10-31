@@ -1,9 +1,9 @@
-import { getServerPrivateStorageURL } from "@/app/_server-action/storage";
+import { getServerPrivateStorageURL } from "@/app/_server-action/storage/server";
 import { IconDownload } from "@tabler/icons-react";
 import Link from "next/link";
 import AxolotlButton from "./AxolotlButton";
 
-interface DownloadLicensesProps {
+interface ServerDownloadLicensesProps {
   licenseTitle: string;
   fileLink: string;
   licenseType: "CV" | "Degree Certificate" | "STR" | "SIP";
@@ -19,11 +19,11 @@ async function getLicenseURL(licenseType: string, fileLink: string) {
   return publicURL;
 }
 
-async function DownloadLicenses({
+async function ServerDownloadLicenses({
   licenseTitle,
   fileLink,
   licenseType
-}: DownloadLicensesProps) {
+}: ServerDownloadLicensesProps) {
   const licenseSource = {
     CV: "cv",
     "Degree Certificate": "degree_certificate",
@@ -46,4 +46,4 @@ async function DownloadLicenses({
   );
 }
 
-export default DownloadLicenses;
+export default ServerDownloadLicenses;

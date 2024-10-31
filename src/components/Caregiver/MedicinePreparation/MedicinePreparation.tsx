@@ -1,6 +1,6 @@
 "use client";
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
-import { getClientPublicStorageURL } from "@/app/_server-action/storage";
+import { getClientPublicStorageURL } from "@/app/_server-action/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
