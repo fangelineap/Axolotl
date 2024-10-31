@@ -13,7 +13,7 @@ import {
   getClientPublicStorageURL,
   removeLicenses,
   uploadLicenses
-} from "@/app/_server-action/storage";
+} from "@/app/_server-action/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";

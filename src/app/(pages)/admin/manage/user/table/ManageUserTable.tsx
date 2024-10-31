@@ -46,7 +46,7 @@ function ManageUserTable({ initialData }: ManageUserTableProps) {
 
     if (selectedUser?.user_id === currentUser.user_id) {
       toast.error(
-        "Deleting yourself? I mean, it’s one way to quit your job, but I wouldn’t recommend it.",
+        "Deleting yourself? I mean, it's one way to quit your job, but I wouldn’t recommend it.",
         {
           position: "bottom-right"
         }

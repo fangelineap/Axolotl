@@ -6,7 +6,7 @@ import {
   getClientPublicStorageURL,
   prepareFileBeforeUpload,
   removeUploadedFileFromStorage
-} from "@/app/_server-action/storage";
+} from "@/app/_server-action/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
