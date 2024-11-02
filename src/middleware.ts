@@ -143,7 +143,7 @@ async function updateSession(request: NextRequest) {
     if (pathname !== "/registration/personal-information") {
       return NextResponse.redirect(
         new URL(
-          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information=${userPersonalData.is_complete}`,
           request.url
         )
       );
@@ -155,7 +155,7 @@ async function updateSession(request: NextRequest) {
     if (urlRole && urlRole !== userRole) {
       return NextResponse.redirect(
         new URL(
-          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information=${userPersonalData.is_complete}`,
           request.url
         )
       );

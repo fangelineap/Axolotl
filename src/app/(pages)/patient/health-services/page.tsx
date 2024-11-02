@@ -2,7 +2,7 @@
 
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { createBrowserClient } from "@supabase/ssr";
+import { createSupabaseClient } from "@/lib/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -60,16 +60,7 @@ const Page = ({ searchParams }: any) => {
 
   useEffect(() => {
     const getUser = async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!,
-        {
-          auth: {
-            autoRefreshToken: false,
-            persistSession: false
-          }
-        }
-      );
+      const supabase = createSupabaseClient();
 
       const { data } = await supabase
         .from("users")

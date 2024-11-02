@@ -7,7 +7,7 @@ interface CustomProps {
   name: string;
   placeholder: string;
   content: Array<string>;
-  horizontal: boolean;
+  horizontal?: boolean;
   value?: string;
 }
 

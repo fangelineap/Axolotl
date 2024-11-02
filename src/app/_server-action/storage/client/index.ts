@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/client";
+import { createSupabaseClient } from "@/lib/client";
 import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
 import { toast } from "react-toastify";
 import { uuidv7 } from "uuidv7";
@@ -15,7 +15,7 @@ export async function uploadFileToStorage(
   fileName: string,
   file: File
 ): Promise<string | undefined> {
-  const supabase = createClient();
+  const supabase = createSupabaseClient();
 
   const { data: userData } = await supabase.auth.getSession();
 
@@ -80,7 +80,7 @@ export async function removeUploadedFileFromStorage(
   path: string
 ): Promise<boolean | Error> {
   try {
-    const supabase = createClient();
+    const supabase = createSupabaseClient();
 
     const { error } = await supabase.storage.from(storage).remove([path]);
 

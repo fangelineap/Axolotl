@@ -1,10 +1,32 @@
 "use server";
 
+import {
+  CaregiverPersonalInformation,
+  PatientPersonalInformation
+} from "@/app/(pages)/registration/personal-information/type";
 import createSupabaseServerClient from "@/lib/server";
+import { USER } from "@/types/AxolotlMainType";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { adminDeleteUser } from "../admin";
-import { USER } from "../../../types/AxolotlMainType";
+
+/**
+ * * Validate required fields
+ * @param fields
+ * @returns
+ */
+function validateRequiredFields(fields: Record<string, any>) {
+  for (const [key, value] of Object.entries(fields)) {
+    if (!value) {
+      return {
+        name: `Missing ${key}`,
+        message: `${key} is required`
+      };
+    }
+  }
+
+  return null;
+}
 
 /**
  * * Sign in with email and password
@@ -31,10 +53,18 @@ export async function signInWithEmailAndPassword(
 > {
   const supabase = await createSupabaseServerClient();
 
+  const validationError = validateRequiredFields({ email, password });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password
+      email,
+      password
     });
 
     if (error) {
@@ -86,6 +116,21 @@ export async function registerWithEmailAndPassword(userData: {
 
   const { email, password, first_name, last_name, phone_number, role } =
     userData;
+
+  const validationError = validateRequiredFields({
+    email,
+    password,
+    first_name,
+    last_name,
+    phone_number,
+    role
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
 
   try {
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -198,6 +243,45 @@ export async function logout() {
   console.log("Local signout successful. Redirecting to /auth/signin...");
 
   redirect("/auth/signin");
+}
+
+/**
+ * * Get caregiver verification status
+ * @param caregiver_id
+ * @returns
+ */
+export async function getCaregiverVerificationStatus(caregiver_id: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data: caregiverData, error: caregiverError } = await supabase
+      .from("caregiver")
+      .select("*")
+      .eq("caregiver_id", caregiver_id)
+      .single();
+
+    if (caregiverError) {
+      console.error("Error fetching data:", caregiverError.message);
+
+      return null;
+    }
+
+    const statusMap: Record<string, string> = {
+      Verified: "Verified",
+      Rejected: "Rejected",
+      Unverified: "Unverified"
+    };
+
+    const verificationStatus = statusMap[caregiverData?.status];
+
+    return verificationStatus as "Verified" | "Rejected" | "Unverified";
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return null;
+  }
 }
 
 /**
@@ -347,41 +431,10 @@ export async function getIncompleteUserPersonalInformation(
   }
 }
 
-/**
- * * Get caregiver verification status
- * @param caregiver_id
- * @returns
- */
-export async function getCaregiverVerificationStatus(caregiver_id: string) {
-  unstable_noStore();
+export async function savePatientPersonalInformation(
+  form: PatientPersonalInformation
+) {}
 
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data: caregiverData, error: caregiverError } = await supabase
-      .from("caregiver")
-      .select("*")
-      .eq("caregiver_id", caregiver_id)
-      .single();
-
-    if (caregiverError) {
-      console.error("Error fetching data:", caregiverError.message);
-
-      return null;
-    }
-
-    const statusMap: Record<string, string> = {
-      Verified: "Verified",
-      Rejected: "Rejected",
-      Unverified: "Unverified"
-    };
-
-    const verificationStatus = statusMap[caregiverData?.status];
-
-    return verificationStatus as "Verified" | "Rejected" | "Unverified";
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return null;
-  }
-}
+export async function saveCaregiverPersonalInformation(
+  form: CaregiverPersonalInformation
+) {}

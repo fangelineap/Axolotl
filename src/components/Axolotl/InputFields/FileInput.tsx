@@ -1,6 +1,6 @@
 import { IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 // TODO: IMPLEMENT THIS FILE INPUT IN REGISTER
@@ -11,6 +11,7 @@ interface FileInputProps {
   accept?: string[];
   isDropzone?: boolean;
   existingFile?: string | null;
+  required?: boolean;
 }
 
 function FileInput({
@@ -19,7 +20,8 @@ function FileInput({
   label = "Upload File",
   accept = ["image/jpg", "image/jpeg", "image/png", "application/pdf"],
   isDropzone = false,
-  existingFile = null
+  existingFile = null,
+  required = false
 }: FileInputProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -97,14 +99,12 @@ function FileInput({
 
   return (
     <div className="mb-3 flex flex-col gap-2">
-      <label
-        className={`text-dark dark:text-white ${isDropzone ? "text-lg font-semibold" : "font-medium"}`}
-      >
-        {label}
+      <label className="font-medium text-dark dark:text-white">
+        {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
       {isDropzone ? (
         <div
-          className={`relative flex h-auto min-h-65 w-full cursor-pointer items-center justify-center rounded-lg border border-primary px-4 py-8 ${
+          className={`relative flex h-auto min-h-60 w-full cursor-pointer items-center justify-center rounded-lg border border-primary px-4 py-8 ${
             selectedFile || existingFile ? "bg-white" : "bg-kalbe-ultraLight"
           } ${isDragging ? "border-4 border-dashed" : ""}`}
           onDrop={handleDrop}
