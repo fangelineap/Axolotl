@@ -1,6 +1,15 @@
 "use client";
 
+import {
+  CaregiverPersonalInformation,
+  PatientPersonalInformation,
+  UserPersonalInformation
+} from "@/app/(pages)/registration/personal-information/type";
 import { adminDeleteUser } from "@/app/_server-action/admin";
+import {
+  prepareFileBeforeUpload,
+  uploadLicenses
+} from "@/app/_server-action/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CheckboxBlood from "@/components/Axolotl/Checkboxes/CheckboxBlood";
 import CheckboxSmoker from "@/components/Axolotl/Checkboxes/CheckboxSmoker";
@@ -14,23 +23,35 @@ import { createSupabaseClient } from "@/lib/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import AuthStepper from "../AuthStepper";
+import { PersonalInformationValidation } from "./Validation/PersonalInformationValidation";
 
 interface PersonalInformationComponentProps {
   paramsRole: string;
 }
 
+interface Licenses {
+  cv: File | null;
+  degree_certificate: File | null;
+  str: File | null;
+  sip: File | null;
+}
+
 function PersonalInformationComponent({
   paramsRole
 }: PersonalInformationComponentProps) {
+  /**
+   * * States & Initial Variables
+   */
   const router = useRouter();
+  const [profilePhoto, setProfilePhoto] = useState<string | File | null>(null);
 
-  const [profilePhoto, setProfilePhoto] = useState<any>(null);
-  const [cv, setCv] = useState<any>(null);
-  const [certificate, setCertificate] = useState<any>(null);
-  const [str, setStr] = useState<any>(null);
-  const [sip, setSip] = useState<any>(null);
+  const [licenses, setLicenses] = useState<Licenses>({
+    cv: null,
+    degree_certificate: null,
+    str: null,
+    sip: null
+  });
 
   const [blood, setBlood] = useState<"A" | "B" | "AB" | "O" | "">("");
   const [isSmoking, setIsSmoking] = useState<"Yes" | "No" | "">("");
@@ -38,13 +59,13 @@ function PersonalInformationComponent({
   const [openCancelModal, setOpenCancelModal] = useState<boolean>(false);
 
   /**
-   * Handle the cancel modal
+   * * Handle the cancel modal
    */
   const handleOpenModal = () => setOpenCancelModal(true);
   const handleCloseModal = () => setOpenCancelModal(false);
 
   /**
-   * Clear User
+   * * Handle Cancel Registration
    */
   const confirmCancelRegistration = async () => {
     const supabase = createSupabaseClient();
@@ -59,129 +80,107 @@ function PersonalInformationComponent({
   };
 
   /**
-   * Handle User Registration
+   * * Save User Personal Information
+   * @param form
+   * @returns
    */
-  const uploadToStorage = async (storage: string, file: string) => {
-    const supabase = createSupabaseClient();
-
-    const { data: userData, error } = await supabase.auth.getSession();
-
-    if (userData.session?.user) {
-      const { data, error } = await supabase.storage
-        .from(storage)
-        .upload(`${userData.session.user.id}-${Date.now()}`, file, {
-          cacheControl: "3600",
-          upsert: false
-        });
-
-      if (error) {
-        return error;
-      }
-
-      return data?.path;
-    }
-
-    return error;
-  };
 
   const addPersonalInfo = async (form: FormData) => {
-    if (form.get("birthdate")?.toString() === "") {
-      toast.warning("Please fill the birthdate field", {
-        position: "bottom-right"
-      });
-
+    // ! VALIDATION
+    if (
+      paramsRole === "Caregiver" &&
+      !PersonalInformationValidation(form, "Caregiver", profilePhoto, licenses)
+    )
       return;
+
+    if (
+      paramsRole === "Patient" &&
+      !PersonalInformationValidation(form, "Patient")
+    )
+      return;
+
+    // ! USER PERSONAL INFORMATION
+    const userPersonalData: UserPersonalInformation = {
+      address: form.get("address")?.toString() || "",
+      gender: form.get("gender")?.toString() || "",
+      birthdate: new Date(form.get("birthdate")?.toString() || "")
+    };
+
+    console.log({ userPersonalData });
+
+    // ! CAREGIVER PERSONAL INFORMATION
+    if (paramsRole === "Caregiver") {
+      const profilePhotoPath = await prepareFileBeforeUpload(
+        "profile_photo",
+        profilePhoto as File
+      );
+
+      if (!profilePhotoPath) return;
+
+      const licenseFiles = [
+        {
+          key: "cv",
+          fileValue: licenses.cv as File,
+          pathName: "pathCV",
+          errorMsg: "CV"
+        },
+        {
+          key: "degree_certificate",
+          fileValue: licenses.degree_certificate as File,
+          pathName: "pathDegreeCertificate",
+          errorMsg: "Degree Certificate"
+        },
+        {
+          key: "str",
+          fileValue: licenses.str as File,
+          pathName: "pathSTR",
+          errorMsg: "STR"
+        },
+        {
+          key: "sip",
+          fileValue: licenses.sip as File,
+          pathName: "pathSIP",
+          errorMsg: "SIP"
+        }
+      ];
+
+      const paths = await uploadLicenses(licenseFiles);
+
+      if (!paths) return;
+
+      const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
+
+      const caregiverPersonalData: CaregiverPersonalInformation = {
+        profile_photo: profilePhotoPath,
+        employment_type: form.get("employment_type") as
+          | "Full-time"
+          | "Part-time",
+        work_experiences: form.get("work_experiences") as unknown as number,
+        workplace: form.get("workplace")?.toString() || "",
+        cv: pathCV!,
+        degree_certificate: pathDegreeCertificate!,
+        str: pathSTR!,
+        sip: pathSIP!
+      };
+
+      console.log({ caregiverPersonalData });
     }
 
-    const supabase = createSupabaseClient();
+    // ! PATIENT PERSONAL INFORMATION
+    if (paramsRole === "Patient") {
+      const patientPersonalData: PatientPersonalInformation = {
+        blood_type: form.get("blood_type") as "A" | "B" | "AB" | "O",
+        height: form.get("height") as unknown as number,
+        weight: form.get("weight") as unknown as number,
+        is_smoking: form.get("is_smoking") === "Yes" ? true : false,
+        allergies: form.get("allergies")?.toString() || "",
+        current_medication: form.get("current_medication")?.toString() || "",
+        med_freq_times: form.get("med_freq_times") as unknown as number,
+        med_freq_day: form.get("med_freq_day") as unknown as number,
+        illness_history: form.get("illness_history")?.toString() || ""
+      };
 
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getSession();
-
-    if (paramsRole === "Caregiver") {
-      const { data: updateData, error: updateError } = await supabase
-        .from("users")
-        .update({
-          address: form.get("currentLocation"),
-          gender: form.get("gender"),
-          birthdate: form.get("birthdate")?.toString(),
-          role: form.get("role")
-        })
-        .eq("user_id", sessionData.session?.user.id);
-
-      const pathProfile = await uploadToStorage("profile_photo", profilePhoto);
-      const pathCv = await uploadToStorage("cv", cv);
-      const pathCertificate = await uploadToStorage(
-        "degree_certificate",
-        certificate
-      );
-      const pathSip = await uploadToStorage("sip", sip);
-      const pathStr = await uploadToStorage("str", str);
-
-      if (pathProfile && pathCv && pathCertificate && pathSip && pathStr) {
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select()
-          .eq("user_id", sessionData.session?.user.id);
-
-        if (userData) {
-          const { data: insertData, error: insertError } = await supabase
-            .from("caregiver")
-            .update({
-              profile_photo: pathProfile,
-              employment_type: form.get("employmentType"),
-              workplace: form.get("workplace"),
-              work_experiences: form.get("workExperiences"),
-              cv: pathCv,
-              degree_certificate: pathCertificate,
-              sip: pathSip,
-              str: pathStr,
-              rate: 0
-            })
-            .eq("caregiver_id", userData[0].id);
-
-          if (insertError) {
-            toast.error("An error occured while uploading your data", {
-              position: "bottom-right"
-            });
-
-            return;
-          }
-
-          router.replace(`/caregiver/review`);
-        }
-      }
-    } else if (paramsRole === "Patient") {
-      // form validation
-      if (blood === "" || isSmoking === "") {
-        toast.warning("Please fill all fields", { position: "bottom-right" });
-
-        return;
-      }
-
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select()
-        .eq("user_id", sessionData.session?.user.id);
-
-      if (userData) {
-        const { data, error } = await supabase.from("patient").insert({
-          blood_type: blood,
-          height: form.get("height"),
-          weight: form.get("weight"),
-          is_smoking: isSmoking,
-          allergies: form.get("allergies"),
-          current_medication: form.get("medication"),
-          med_freq_times: form.get("medicineQuantity"),
-          med_freq_day: form.get("medicineFrequency"),
-          illness_history: form.get("illnessHistory"),
-          patient_id: userData[0].id
-        });
-
-        if (error) {
-          return;
-        }
-      }
+      console.log({ patientPersonalData });
     }
   };
 
@@ -205,8 +204,7 @@ function PersonalInformationComponent({
               <div className="p-6.5">
                 {paramsRole === "Patient" && (
                   // ! PATIENT'S FORM
-                  <div className="flex flex-col justify-center gap-5">
-                    {/* Top Section */}
+                  <div className="flex flex-col justify-center gap-3">
                     <div className="flex flex-col justify-center gap-x-10 gap-y-5 lg:flex-row">
                       {/* First Column */}
                       <div className="w-full">
@@ -236,16 +234,7 @@ function PersonalInformationComponent({
                             placeholder="Street, Subdistrict, District/City, Province"
                             required
                           />
-                          <div className="mb-3 flex w-full flex-col gap-2">
-                            <label
-                              className="font-medium text-dark dark:text-white"
-                              htmlFor="bloodType"
-                            >
-                              Blood Type
-                              <span className="ml-1 text-red">*</span>
-                            </label>
-                            <CheckboxBlood blood={blood} setBlood={setBlood} />
-                          </div>
+                          <CheckboxBlood blood={blood} setBlood={setBlood} />
                         </div>
                         <div className="mb-3 flex flex-col gap-5 lg:flex-row">
                           <CustomInputGroup
@@ -260,15 +249,7 @@ function PersonalInformationComponent({
                             placeholder="50"
                           />
                           <div className="mb-3 flex w-full flex-col gap-2">
-                            <label
-                              className="font-medium text-dark dark:text-white"
-                              htmlFor="bloodType"
-                            >
-                              Are you a smoker?
-                              <span className="ml-1 text-red">*</span>
-                            </label>
                             <CheckboxSmoker
-                              name="isSmoking"
                               isSmoking={isSmoking}
                               setIsSmoking={setIsSmoking}
                             />
@@ -292,7 +273,7 @@ function PersonalInformationComponent({
                           />
                           <div className="flex flex-col gap-5 lg:flex-row">
                             <CustomInputGroup
-                              name="medication"
+                              name="current_medication"
                               label="Medication"
                               type="text"
                               placeholder="e.g. Divask"
@@ -300,8 +281,8 @@ function PersonalInformationComponent({
                             />
                             <CustomInputGroup
                               label="Medication Frequency"
-                              name="medicineQuantity"
-                              secondName="medicineFrequency"
+                              name="med_freq_times"
+                              secondName="med_freq_day"
                               isMultipleUnit
                               unit="qty"
                               secondUnit="/day"
@@ -312,7 +293,7 @@ function PersonalInformationComponent({
                           </div>
                           <CustomInputGroup
                             isTextArea
-                            name="illnessHistory"
+                            name="illness_history"
                             label="Illness History"
                             type="text"
                             required
@@ -334,9 +315,9 @@ function PersonalInformationComponent({
                           About You
                         </h1>
                         <FileInput
-                          name="profilePhoto"
+                          name="profile_photo"
                           label="Recent Profile Photo"
-                          onFileSelect={setProfilePhoto}
+                          onFileSelect={(file) => setProfilePhoto(file)}
                           isDropzone
                           accept={["image/png", "image/jpg", "image/jpeg"]}
                           required
@@ -357,7 +338,7 @@ function PersonalInformationComponent({
                           />
                         </div>
                         <CustomInputGroup
-                          name="currentLocation"
+                          name="address"
                           label="Current Location"
                           type="text"
                           placeholder="Street, Subdistrict, District/City, Province"
@@ -406,9 +387,11 @@ function PersonalInformationComponent({
                           />
                         </div>
                         <FileInput
-                          name="CVDocument"
+                          name="cv"
                           label="Submit Your CV"
-                          onFileSelect={setCv}
+                          onFileSelect={(file) =>
+                            setLicenses({ ...licenses, cv: file })
+                          }
                           isDropzone
                           accept={[
                             "image/png",
@@ -428,8 +411,13 @@ function PersonalInformationComponent({
                       <div className="flex flex-col justify-between gap-x-10 gap-y-5 lg:flex-row">
                         <div className="w-full">
                           <FileInput
-                            onFileSelect={setCertificate}
-                            name="degreeSertificate"
+                            onFileSelect={(file) =>
+                              setLicenses({
+                                ...licenses,
+                                degree_certificate: file
+                              })
+                            }
+                            name="degree_certificate"
                             label="Degree Sertificate"
                             isDropzone
                             accept={[
@@ -443,7 +431,9 @@ function PersonalInformationComponent({
                         </div>
                         <div className="w-full">
                           <FileInput
-                            onFileSelect={setSip}
+                            onFileSelect={(file) =>
+                              setLicenses({ ...licenses, sip: file })
+                            }
                             name="sip"
                             label="SIP"
                             isDropzone
@@ -458,7 +448,9 @@ function PersonalInformationComponent({
                         </div>
                         <div className="w-full">
                           <FileInput
-                            onFileSelect={setStr}
+                            onFileSelect={(file) =>
+                              setLicenses({ ...licenses, str: file })
+                            }
                             name="str"
                             label="STR"
                             isDropzone
@@ -515,7 +507,8 @@ function PersonalInformationComponent({
         question={`Are you sure you want to cancel your registration? Your account will be deleted and you must re-register to Axolotl.`}
         action="cancel"
       />
-      {paramsRole != null && finished && (
+
+      {/* {paramsRole != null && finished && (
         <>
           <div
             className={`pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 ${finished ? "opacity-100" : "opacity-0"} backdrop-blur-sm transition-opacity duration-300`}
@@ -563,7 +556,7 @@ function PersonalInformationComponent({
             </div>
           </div>
         </>
-      )}
+      )} */}
     </>
   );
 }

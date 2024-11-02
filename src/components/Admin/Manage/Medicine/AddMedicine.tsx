@@ -60,27 +60,6 @@ function AddMedicine() {
   };
 
   /**
-   * * Handle File Upload
-   * @param medicinePhoto
-   * @returns
-   */
-  const handleFileUpload = async (medicinePhoto: File) => {
-    try {
-      const fileName = await prepareFileBeforeUpload("medicine", medicinePhoto);
-
-      if (!fileName) return undefined;
-
-      return fileName;
-    } catch (error) {
-      toast.error("Error uploading file: " + error, {
-        position: "bottom-right"
-      });
-
-      return undefined;
-    }
-  };
-
-  /**
    * * Save Medicine
    * @param form
    * @returns
@@ -88,7 +67,10 @@ function AddMedicine() {
   const saveMedicine = async (form: FormData) => {
     if (AdminMedicineValidation(form, medicinePhoto) === false) return;
 
-    const pathMedicine = await handleFileUpload(medicinePhoto as File);
+    const pathMedicine = await prepareFileBeforeUpload(
+      "medicine",
+      medicinePhoto as File
+    );
 
     if (pathMedicine?.length === 0 && pathMedicine === undefined) {
       toast.error("Something went wrong. Please try again", {

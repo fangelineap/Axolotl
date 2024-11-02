@@ -10,7 +10,7 @@ import { uuidv7 } from "uuidv7";
  * @param file
  * @returns
  */
-export async function uploadFileToStorage(
+async function uploadFileToStorage(
   storage: string,
   fileName: string,
   file: File
@@ -103,7 +103,7 @@ export async function removeUploadedFileFromStorage(
 async function processUploadLicense(file: {
   key: string;
   fileValue: File | undefined;
-  userValue: string;
+  userValue?: string;
   pathName: string;
   errorMsg: string;
 }): Promise<string | null> {
@@ -112,7 +112,7 @@ async function processUploadLicense(file: {
     (typeof file.userValue === "string" &&
       file.fileValue.name === file.userValue)
   ) {
-    return file.userValue;
+    return file.userValue!;
   }
 
   const fileName = await prepareFileBeforeUpload(
@@ -141,7 +141,7 @@ export async function uploadLicenses(
   files: Array<{
     key: string;
     fileValue: File | undefined;
-    userValue: string;
+    userValue?: string;
     pathName: string;
     errorMsg: string;
   }>

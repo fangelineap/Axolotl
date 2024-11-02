@@ -1,9 +1,5 @@
 "use server";
 
-import {
-  CaregiverPersonalInformation,
-  PatientPersonalInformation
-} from "@/app/(pages)/registration/personal-information/type";
 import createSupabaseServerClient from "@/lib/server";
 import { USER } from "@/types/AxolotlMainType";
 import { unstable_noStore } from "next/cache";
@@ -431,10 +427,10 @@ export async function getIncompleteUserPersonalInformation(
   }
 }
 
-export async function savePatientPersonalInformation(
-  form: PatientPersonalInformation
-) {}
+// export async function savePatientPersonalInformation(
+//   form: PatientPersonalInformation
+// ) {}
 
-export async function saveCaregiverPersonalInformation(
-  form: CaregiverPersonalInformation
-) {}
+// export async function saveCaregiverPersonalInformation(
+//   form: CaregiverPersonalInformation
+// ) {}

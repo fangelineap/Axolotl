@@ -1,105 +1,47 @@
 interface CheckboxBloodProps {
-  blood: "A" | "B" | "AB" | "O" | "",
-  setBlood: (blood: "A" | "B" | "AB" | "O" | "") => void
+  blood: "A" | "B" | "AB" | "O" | "";
+  setBlood: (blood: "A" | "B" | "AB" | "O" | "") => void;
 }
 
 const CheckboxBlood = ({ blood, setBlood }: CheckboxBloodProps) => {
-
   return (
-    <div className="flex items-center w-full lg:w-1/2">
-      <label
-        htmlFor="checkboxLabelA"
-        className="flex cursor-pointer select-none items-center text-body-sm font-medium text-dark dark:text-white pr-3 py-3"
-      >
-        <div className="relative">
-          <input
-            type="checkbox"
-            id="checkboxLabelA"
-            className="sr-only"
-            onClick={() => {
-              setBlood("A");
-            }}
-          />
-          <div
-            className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              blood === "A" && "!border-4"
-            }`}
-          >
-            <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
-          </div>
-        </div>
-        A
+    <div className="mb-3 flex w-full flex-col gap-2">
+      <label className="font-medium text-dark dark:text-white">
+        Blood Type <span className="ml-1 text-red">*</span>
       </label>
-      <label
-        htmlFor="checkboxLabelB"
-        className="flex cursor-pointer select-none items-center text-body-sm font-medium text-dark dark:text-white px-3 py-3"
-      >
-        <div className="relative">
-          <input
-            type="checkbox"
-            id="checkboxLabelB"
-            name="checkboxBlood"
-            className="sr-only"
-            onClick={() => {
-              setBlood("B");
-            }}
-          />
-          <div
-            className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              blood === "B" && "!border-4"
-            }`}
+      <div className="flex w-full items-center lg:w-1/2">
+        {(["A", "B", "AB", "O"] as const).map((type) => (
+          <label
+            key={type}
+            htmlFor={`radioBlood${type}`}
+            className="flex cursor-pointer select-none items-center py-3 pr-3 text-body-sm font-medium text-dark dark:text-white"
           >
-            <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
-          </div>
-        </div>
-        B
-      </label>
-      <label
-        htmlFor="checkboxLabelAB"
-        className="flex cursor-pointer select-none items-center text-body-sm font-medium text-dark dark:text-white px-3 py-3"
-      >
-        <div className="relative">
-          <input
-            type="checkbox"
-            id="checkboxLabelAB"
-            className="sr-only"
-            onClick={() => {
-              setBlood("AB");
-            }}
-          />
-          <div
-            className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              blood === "AB" && "!border-4"
-            }`}
-          >
-            <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
-          </div>
-        </div>
-        AB
-      </label>
-      <label
-        htmlFor="checkboxLabelO"
-        className="flex cursor-pointer select-none items-center text-body-sm font-medium text-dark dark:text-white px-3 py-3"
-      >
-        <div className="relative">
-          <input
-            type="checkbox"
-            id="checkboxLabelO"
-            className="sr-only"
-            onClick={() => {
-              setBlood("O");
-            }}
-          />
-          <div
-            className={`box mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-primary ${
-              blood === "O" && "!border-4"
-            }`}
-          >
-            <span className="h-2.5 w-2.5 rounded-full bg-white dark:bg-transparent"></span>
-          </div>
-        </div>
-        O
-      </label>
+            <div className="relative">
+              <input
+                type="radio"
+                name="blood_type"
+                id={`radioBlood${type}`}
+                value={type}
+                checked={blood === type}
+                onChange={() => setBlood(type)}
+                className="sr-only"
+              />
+              <div
+                className={`mr-2 flex h-5 w-5 items-center justify-center rounded-full border ${
+                  blood === type ? "border-primary" : "border-gray-1"
+                }`}
+              >
+                <span
+                  className={`h-2.5 w-2.5 rounded-full bg-transparent ${
+                    blood === type && "!bg-primary"
+                  }`}
+                />
+              </div>
+            </div>
+            {type}
+          </label>
+        ))}
+      </div>
     </div>
   );
 };

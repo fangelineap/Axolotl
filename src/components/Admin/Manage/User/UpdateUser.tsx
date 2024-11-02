@@ -195,16 +195,9 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     if (user.role === "Admin" && !AdminUpdateUserValidation(form, "Admin"))
       return;
 
-    const allLicenses = {
-      cv,
-      degree_certificate,
-      str,
-      sip
-    };
-
     if (
       ["Nurse", "Midwife"].includes(user.role) &&
-      !AdminUpdateUserValidation(form, "Caregiver", allLicenses)
+      !AdminUpdateUserValidation(form, "Caregiver", licenses)
     )
       return;
 
