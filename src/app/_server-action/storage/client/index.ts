@@ -198,6 +198,20 @@ export async function removeLicenses(
 }
 
 /**
+ * * Helper function to remove existing licenses if all update is successful
+ */
+export async function removeExistingLicenses(existingLicenses: Object) {
+  const licensesToBeRemoved = Object.entries(existingLicenses).map(
+    ([key, value]) => ({
+      storage: key,
+      fileValue: value
+    })
+  );
+
+  await removeLicenses(licensesToBeRemoved);
+}
+
+/**
  * * Function to get public storage URL in client component
  * @param storage
  * @param path

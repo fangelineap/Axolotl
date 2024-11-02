@@ -1,10 +1,18 @@
 "use server";
 
-import createSupabaseServerClient from "@/lib/server";
+import {
+  CaregiverPersonalInformation,
+  PatientPersonalInformation,
+  UserPersonalInformation
+} from "@/app/(pages)/registration/personal-information/type";
+import createSupabaseServerClient, { getUserFromSession } from "@/lib/server";
 import { USER } from "@/types/AxolotlMainType";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
 import { adminDeleteUser } from "../admin";
+import { getGlobalCaregiverDataByCaregiverOrUserId } from "../global";
+import { removeExistingLicenses } from "../storage/client";
 
 /**
  * * Validate required fields
@@ -346,6 +354,13 @@ async function checkUserRoleData(userId: string, userRole: string) {
           message: "Caregiver User data is complete"
         };
 
+      case "Admin":
+        return {
+          success: true,
+          is_complete: true,
+          message: "Admin User data is complete"
+        };
+
       default:
         return {
           success: false,
@@ -427,10 +442,364 @@ export async function getIncompleteUserPersonalInformation(
   }
 }
 
-// export async function savePatientPersonalInformation(
-//   form: PatientPersonalInformation
-// ) {}
+/**
+ * * Helper function to update user personal information in users table
+ * @param form
+ * @param userId
+ * @returns
+ */
+async function saveUserPersonalInformation(
+  form: UserPersonalInformation,
+  userId: string
+) {
+  unstable_noStore();
 
-// export async function saveCaregiverPersonalInformation(
-//   form: CaregiverPersonalInformation
-// ) {}
+  const supabase = await createSupabaseServerClient();
+
+  // Form Validation
+  const { address, gender, birthdate } = form;
+  const validationError = validateRequiredFields({
+    address,
+    gender,
+    birthdate
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
+  try {
+    const { error } = await supabase
+      .from("users")
+      .update({ ...form, updated_at: new Date() })
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      console.error("Error updating user data:", error);
+
+      return { success: false, message: "Failed to update user data" };
+    }
+
+    return { success: true, message: "User data updated successfully" };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}
+
+/**
+ * * Helper function to save patient personal information in patient table
+ * @param form
+ * @param userId
+ * @param action
+ * @returns
+ */
+async function savePatientPersonalInformation(
+  form: PatientPersonalInformation,
+  userId: string,
+  action: "update" | "create"
+) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  // Form Validation
+  const {
+    blood_type,
+    height,
+    weight,
+    is_smoking,
+    allergies,
+    current_medication,
+    med_freq_times,
+    med_freq_day,
+    illness_history
+  } = form;
+
+  const validationError = validateRequiredFields({
+    blood_type,
+    height,
+    weight,
+    is_smoking,
+    allergies,
+    current_medication,
+    med_freq_times,
+    med_freq_day,
+    illness_history
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
+  try {
+    switch (action) {
+      case "create": {
+        const { error } = await supabase.from("patient").insert({
+          ...form,
+          patient_id: userId
+        });
+
+        if (error) {
+          console.error("Error saving patient data:", error);
+
+          return { success: false, message: "Failed to save patient data" };
+        }
+
+        return { success: true, message: "Patient data saved successfully" };
+      }
+      case "update": {
+        const { error } = await supabase
+          .from("patient")
+          .update({
+            ...form,
+            updated_at: new Date()
+          })
+          .eq("patient_id", userId)
+          .single();
+
+        if (error) {
+          console.error("Error updating patient data:", error);
+
+          return { success: false, message: "Failed to update patient data" };
+        }
+
+        return { success: true, message: "Patient data updated successfully" };
+      }
+      default:
+        return { success: false, message: "Something went wrong" };
+    }
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}
+
+/**
+ * * Helper function to save caregiver personal information in caregiver table
+ * @param form
+ * @param userId
+ * @param action
+ * @returns
+ */
+async function saveCaregiverPersonalInformation(
+  form: CaregiverPersonalInformation,
+  userId: string,
+  action: "update" | "create"
+) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  // Form Validation
+  const {
+    profile_photo,
+    employment_type,
+    work_experiences,
+    workplace,
+    cv,
+    degree_certificate,
+    str,
+    sip
+  } = form;
+
+  const validationError = validateRequiredFields({
+    profile_photo,
+    employment_type,
+    work_experiences,
+    workplace,
+    cv,
+    degree_certificate,
+    str,
+    sip
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
+  try {
+    switch (action) {
+      case "create": {
+        const { error } = await supabase.from("caregiver").insert({
+          ...form,
+          caregiver_id: userId
+        });
+
+        if (error) {
+          console.error("Error saving caregiver data:", error);
+
+          return { success: false, message: "Failed to save caregiver data" };
+        }
+
+        return { success: true, message: "Caregiver data saved successfully" };
+      }
+      case "update": {
+        const { data: caregiverData, error: caregiverError } =
+          await getGlobalCaregiverDataByCaregiverOrUserId("caregiver", userId);
+
+        if (caregiverError || !caregiverData) {
+          console.error(
+            "Error fetching current caregiver data:",
+            caregiverError
+          );
+
+          return {
+            success: false,
+            message: "Failed to fetch current caregiver data"
+          };
+        }
+
+        const existingLicenses = {
+          cv: caregiverData.cv,
+          degree_certificate: caregiverData.degree_certificate,
+          str: caregiverData.str,
+          sip: caregiverData.sip
+        };
+
+        const { error } = await supabase
+          .from("caregiver")
+          .update({
+            ...form,
+            updated_at: new Date()
+          })
+          .eq("caregiver_id", userId)
+          .single();
+
+        if (error) {
+          console.error("Error updating caregiver data:", error);
+
+          return { success: false, message: "Failed to update caregiver data" };
+        }
+
+        await removeExistingLicenses(existingLicenses);
+
+        return {
+          success: true,
+          message: "Caregiver data updated successfully"
+        };
+      }
+      default:
+        return { success: false, message: "Something went wrong" };
+    }
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}
+
+/**
+ * * Save personal information
+ * @param form
+ * @returns
+ */
+export async function savePersonalInformation(
+  form:
+    | UserPersonalInformation
+    | PatientPersonalInformation
+    | CaregiverPersonalInformation
+) {
+  unstable_noStore();
+
+  try {
+    const { data: currentUserData, error: currentUserError } =
+      await getUserFromSession();
+
+    if (currentUserError || !currentUserData) {
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right"
+      });
+    }
+
+    if (currentUserData) {
+      const userId = currentUserData.id;
+      const userRole = currentUserData.role;
+
+      const {
+        is_complete: isPersonalDataCompleted,
+        success: fetchSuccess,
+        message: fetchMessage
+      } = await getIncompleteUserPersonalInformation(
+        currentUserData.id,
+        currentUserData.role
+      );
+
+      if (!fetchSuccess) {
+        return {
+          success: false,
+          message: "Failed to fetch user data"
+        };
+      }
+
+      console.log(form);
+
+      if (
+        fetchMessage === "User data is incomplete" &&
+        !isPersonalDataCompleted
+      ) {
+        return await saveUserPersonalInformation(
+          form as UserPersonalInformation,
+          userId
+        );
+      }
+
+      switch (userRole) {
+        case "Patient": {
+          if (!isPersonalDataCompleted) {
+            return await savePatientPersonalInformation(
+              form as PatientPersonalInformation,
+              userId,
+              "create"
+            );
+          }
+
+          return await savePatientPersonalInformation(
+            form as PatientPersonalInformation,
+            userId,
+            "update"
+          );
+        }
+
+        case "Caregiver":
+        case "Nurse":
+        case "Midwife": {
+          if (!isPersonalDataCompleted) {
+            return await saveCaregiverPersonalInformation(
+              form as CaregiverPersonalInformation,
+              userId,
+              "create"
+            );
+          }
+
+          return await saveCaregiverPersonalInformation(
+            form as CaregiverPersonalInformation,
+            userId,
+            "update"
+          );
+        }
+
+        default:
+          break;
+      }
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong"
+    };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}

@@ -11,6 +11,7 @@ import {
 } from "@/app/(pages)/admin/manage/user/table/data";
 import {
   getClientPublicStorageURL,
+  removeExistingLicenses,
   removeLicenses,
   uploadLicenses
 } from "@/app/_server-action/storage/client";
@@ -170,20 +171,6 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   const { cv, degree_certificate, str, sip } = licenses;
 
   /**
-   * * Helper function to remove existing licenses if all update is successful
-   */
-  const removeExistingLicenses = async () => {
-    const licensesToBeRemoved = Object.entries(existingLicenses).map(
-      ([key, value]) => ({
-        storage: key,
-        fileValue: value
-      })
-    );
-
-    await removeLicenses(licensesToBeRemoved);
-  };
-
-  /**
    * * Save Updated User
    * @param form
    * @returns
@@ -270,7 +257,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
         return;
       }
 
-      await removeExistingLicenses();
+      await removeExistingLicenses(existingLicenses);
 
       toast.success("Caregiver updated successfully", {
         position: "bottom-right"

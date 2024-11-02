@@ -8,6 +8,8 @@ import {
 import { adminDeleteUser } from "@/app/_server-action/admin";
 import {
   prepareFileBeforeUpload,
+  removeLicenses,
+  removeUploadedFileFromStorage,
   uploadLicenses
 } from "@/app/_server-action/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
@@ -25,6 +27,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AuthStepper from "../AuthStepper";
 import { PersonalInformationValidation } from "./Validation/PersonalInformationValidation";
+import { savePersonalInformation } from "@/app/_server-action/auth";
+import { toast } from "react-toastify";
 
 interface PersonalInformationComponentProps {
   paramsRole: string;
@@ -85,7 +89,7 @@ function PersonalInformationComponent({
    * @returns
    */
 
-  const addPersonalInfo = async (form: FormData) => {
+  const savePersonalInfo = async (form: FormData) => {
     // ! VALIDATION
     if (
       paramsRole === "Caregiver" &&
@@ -106,81 +110,154 @@ function PersonalInformationComponent({
       birthdate: new Date(form.get("birthdate")?.toString() || "")
     };
 
-    console.log({ userPersonalData });
+    const { success: userPersonalInformationSuccess } =
+      await savePersonalInformation(userPersonalData);
 
-    // ! CAREGIVER PERSONAL INFORMATION
-    if (paramsRole === "Caregiver") {
-      const profilePhotoPath = await prepareFileBeforeUpload(
-        "profile_photo",
-        profilePhoto as File
-      );
+    if (!userPersonalInformationSuccess) {
+      toast.error("Error saving user personal information. Please try again.", {
+        position: "bottom-right"
+      });
 
-      if (!profilePhotoPath) return;
-
-      const licenseFiles = [
-        {
-          key: "cv",
-          fileValue: licenses.cv as File,
-          pathName: "pathCV",
-          errorMsg: "CV"
-        },
-        {
-          key: "degree_certificate",
-          fileValue: licenses.degree_certificate as File,
-          pathName: "pathDegreeCertificate",
-          errorMsg: "Degree Certificate"
-        },
-        {
-          key: "str",
-          fileValue: licenses.str as File,
-          pathName: "pathSTR",
-          errorMsg: "STR"
-        },
-        {
-          key: "sip",
-          fileValue: licenses.sip as File,
-          pathName: "pathSIP",
-          errorMsg: "SIP"
-        }
-      ];
-
-      const paths = await uploadLicenses(licenseFiles);
-
-      if (!paths) return;
-
-      const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
-
-      const caregiverPersonalData: CaregiverPersonalInformation = {
-        profile_photo: profilePhotoPath,
-        employment_type: form.get("employment_type") as
-          | "Full-time"
-          | "Part-time",
-        work_experiences: form.get("work_experiences") as unknown as number,
-        workplace: form.get("workplace")?.toString() || "",
-        cv: pathCV!,
-        degree_certificate: pathDegreeCertificate!,
-        str: pathSTR!,
-        sip: pathSIP!
-      };
-
-      console.log({ caregiverPersonalData });
+      return;
     }
 
-    // ! PATIENT PERSONAL INFORMATION
-    if (paramsRole === "Patient") {
-      const patientPersonalData: PatientPersonalInformation = {
-        blood_type: form.get("blood_type") as "A" | "B" | "AB" | "O",
-        height: form.get("height") as unknown as number,
-        weight: form.get("weight") as unknown as number,
-        is_smoking: form.get("is_smoking") === "Yes" ? true : false,
-        allergies: form.get("allergies")?.toString() || "",
-        current_medication: form.get("current_medication")?.toString() || "",
-        med_freq_times: form.get("med_freq_times") as unknown as number,
-        med_freq_day: form.get("med_freq_day") as unknown as number,
-        illness_history: form.get("illness_history")?.toString() || ""
-      };
+    toast.info(
+      `User personal information saved successfully. Updating ${paramsRole} personal information...`,
+      {
+        position: "bottom-right"
+      }
+    );
 
-      console.log({ patientPersonalData });
+    if (userPersonalInformationSuccess) {
+      // ! CAREGIVER PERSONAL INFORMATION
+      if (paramsRole === "Caregiver") {
+        const profilePhotoPath = await prepareFileBeforeUpload(
+          "profile_photo",
+          profilePhoto as File
+        );
+
+        if (!profilePhotoPath) return;
+
+        const licenseFiles = [
+          {
+            key: "cv",
+            fileValue: licenses.cv as File,
+            pathName: "pathCV",
+            errorMsg: "CV"
+          },
+          {
+            key: "degree_certificate",
+            fileValue: licenses.degree_certificate as File,
+            pathName: "pathDegreeCertificate",
+            errorMsg: "Degree Certificate"
+          },
+          {
+            key: "str",
+            fileValue: licenses.str as File,
+            pathName: "pathSTR",
+            errorMsg: "STR"
+          },
+          {
+            key: "sip",
+            fileValue: licenses.sip as File,
+            pathName: "pathSIP",
+            errorMsg: "SIP"
+          }
+        ];
+
+        const paths = await uploadLicenses(licenseFiles);
+
+        if (!paths) return;
+
+        const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
+
+        const caregiverPersonalData: CaregiverPersonalInformation = {
+          profile_photo: profilePhotoPath,
+          employment_type: form.get("employment_type") as
+            | "Full-time"
+            | "Part-time",
+          work_experiences: form.get("work_experiences") as unknown as number,
+          workplace: form.get("workplace")?.toString() || "",
+          cv: pathCV!,
+          degree_certificate: pathDegreeCertificate!,
+          str: pathSTR!,
+          sip: pathSIP!
+        };
+
+        const { success } = await savePersonalInformation(
+          caregiverPersonalData
+        );
+
+        if (!success) {
+          await removeLicenses(
+            Object.values(paths)
+              .filter((path) => path !== undefined)
+              .map((path) => ({ storage: path!, fileValue: path }))
+          );
+
+          await removeUploadedFileFromStorage(
+            "profile_photo",
+            profilePhotoPath
+          );
+
+          toast.error(
+            "Error saving caregiver personal information. Please try again.",
+            {
+              position: "bottom-right"
+            }
+          );
+
+          return;
+        }
+
+        toast.success("Caregiver personal information saved successfully.", {
+          position: "bottom-right"
+        });
+
+        setTimeout(() => {
+          router.refresh();
+          router.push("/caregiver/review");
+          router.refresh();
+        }, 250);
+      }
+
+      // ! PATIENT PERSONAL INFORMATION
+      if (paramsRole === "Patient") {
+        const patientPersonalData: PatientPersonalInformation = {
+          blood_type: form.get("blood_type") as "A" | "B" | "AB" | "O",
+          height: form.get("height") as unknown as number,
+          weight: form.get("weight") as unknown as number,
+          is_smoking: form.get("is_smoking") === "Yes" ? true : false,
+          allergies: form.get("allergies")?.toString() || "",
+          current_medication: form.get("current_medication")?.toString() || "",
+          med_freq_times: form.get("med_freq_times") as unknown as number,
+          med_freq_day: form.get("med_freq_day") as unknown as number,
+          illness_history: form.get("illness_history")?.toString() || ""
+        };
+
+        const { success } = await savePersonalInformation(patientPersonalData);
+
+        if (!success) {
+          toast.error(
+            "Error saving patient personal information. Please try again.",
+            {
+              position: "bottom-right"
+            }
+          );
+
+          return;
+        }
+
+        toast.success("Patient personal information saved successfully.", {
+          position: "bottom-right"
+        });
+
+        setTimeout(() => {
+          router.refresh();
+          router.push("/patient");
+          router.refresh();
+        }, 250);
+      }
     }
   };
 
@@ -200,12 +277,12 @@ function PersonalInformationComponent({
 
           {/* Content */}
           <div className="rounded-b-xl border border-primary">
-            <form action={addPersonalInfo}>
+            <form action={savePersonalInfo}>
               <div className="p-6.5">
                 {paramsRole === "Patient" && (
                   // ! PATIENT'S FORM
                   <div className="flex flex-col justify-center gap-3">
-                    <div className="flex flex-col justify-center gap-x-10 gap-y-5 lg:flex-row">
+                    <div className="flex flex-col justify-center gap-x-10 lg:flex-row lg:gap-y-5">
                       {/* First Column */}
                       <div className="w-full">
                         <h1 className="mb-3 text-xl font-bold text-kalbe-light">
@@ -507,56 +584,6 @@ function PersonalInformationComponent({
         question={`Are you sure you want to cancel your registration? Your account will be deleted and you must re-register to Axolotl.`}
         action="cancel"
       />
-
-      {/* {paramsRole != null && finished && (
-        <>
-          <div
-            className={`pointer-events-auto fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 ${finished ? "opacity-100" : "opacity-0"} backdrop-blur-sm transition-opacity duration-300`}
-          >
-            <div
-              data-dialog="dialog-xs"
-              className="font-sans text-blue-gray-500 min-w-1/4 lg:max-w-1/4 relative m-4 w-3/4 rounded-lg bg-white p-3 text-base font-light leading-relaxed antialiased shadow-2xl md:max-w-[50%] lg:w-1/4"
-            >
-              <div className="flex flex-col items-center justify-center pt-[30px]">
-                <svg
-                  width="150"
-                  height="150"
-                  viewBox="0 0 221 221"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mb-3"
-                >
-                  <circle cx="110.5" cy="110.5" r="110.5" fill="#D4EDD6" />
-                  <path
-                    d="M88.9006 135.531L163.62 67.6037C165.384 66.0007 167.441 65.1992 169.792 65.1992C172.143 65.1992 174.2 66.0007 175.963 67.6037C177.727 69.2067 178.608 71.1116 178.608 73.3184C178.608 75.5252 177.727 77.4274 175.963 79.0251L95.0721 152.763C93.3088 154.366 91.2516 155.167 88.9006 155.167C86.5495 155.167 84.4923 154.366 82.729 152.763L44.8181 118.299C43.0548 116.696 42.2084 114.793 42.279 112.592C42.3495 110.39 43.2694 108.486 45.0385 106.877C46.8077 105.269 48.9031 104.467 51.3247 104.473C53.7463 104.478 55.8387 105.28 57.602 106.877L88.9006 135.531Z"
-                    fill="#1CBF90"
-                  />
-                </svg>
-                <div className="flex flex-col items-center justify-center">
-                  <label className="text-2xl font-bold">Success!</label>
-                  <label>Congratulations!</label>
-                  <label>Let&apos;s visit your homepage</label>
-                </div>
-              </div>
-              <div className="text-blue-gray-500 mb-6 mt-2 flex shrink-0 flex-wrap items-center justify-center p-4">
-                <button
-                  type="button"
-                  className="w-1/3 cursor-pointer rounded-sm bg-kalbe-light p-1 font-semibold text-white hover:bg-kalbe-medium"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setFinished(false);
-                    if (paramsRole === "Patient") {
-                      router.push("/patient");
-                    }
-                  }}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )} */}
     </>
   );
 }
