@@ -1,5 +1,5 @@
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import { getAdminAllOrderMedicineLogs } from "./actions";
 import OrderMedicineLogs from "./table/OrderMedicineLogsTable";
@@ -19,11 +19,11 @@ async function AdminOrderMedicine() {
 
   return (
     <div className="bg-gray">
-      <AdminLayout>
-        <AdminBreadcrumbs parentPage="Order" pageName="Medicine Logs" />
+      <CustomLayout>
+        <CustomBreadcrumbs parentPage="Order" pageName="Medicine Logs" />
         <h1 className="mb-5 text-heading-1 font-bold">Medicine Logs</h1>
         <OrderMedicineLogs initialData={data} />
-      </AdminLayout>
+      </CustomLayout>
     </div>
   );
 }

@@ -15,7 +15,7 @@ import {
   removeLicenses,
   removeUploadedFileFromStorage,
   uploadLicenses
-} from "@/app/_server-action/storage/client";
+} from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CheckboxBlood from "@/components/Axolotl/Checkboxes/CheckboxBlood";
 import CheckboxSmoker from "@/components/Axolotl/Checkboxes/CheckboxSmoker";

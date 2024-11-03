@@ -23,8 +23,14 @@ export async function validateSession(
     );
 
     // Clear session cookies
-    response.cookies.set("sb-access-token", "", { expires: new Date(0) });
-    response.cookies.set("sb-refresh-token", "", { expires: new Date(0) });
+    response.cookies.set("sb-aldbaqcbjyujaoncrhuc-auth-token", "", {
+      expires: new Date(0)
+    });
+    response.cookies.set(
+      "sb-aldbaqcbjyujaoncrhuc-auth-token-code-verifier",
+      "",
+      { expires: new Date(0) }
+    );
 
     return { isValid: false, response };
   }

@@ -1,7 +1,7 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import React from "react";
 
-export default function AdminLayout({
+export default function CustomLayout({
   children
 }: {
   children: React.ReactNode;

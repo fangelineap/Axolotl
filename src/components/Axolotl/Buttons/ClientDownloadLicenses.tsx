@@ -1,6 +1,6 @@
 "use client";
 
-import { getServerPrivateStorageURL } from "@/app/_server-action/storage/server";
+import { getServerPrivateStorageURL } from "@/app/_server-action/global/storage/server";
 import { Skeleton } from "@mui/material";
 import { IconDownload } from "@tabler/icons-react";
 import Link from "next/link";

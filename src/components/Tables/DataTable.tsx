@@ -22,7 +22,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import SelectDataTable from "../Axolotl/SelectDataTable";
-import CustomPagination from "../Pagination/Pagination";
+import CustomPagination from "../Axolotl/Pagination/Pagination";
 import { AdminApprovalTable } from "@/app/(pages)/admin/manage/approval/table/data";
 
 interface DataTableProps<

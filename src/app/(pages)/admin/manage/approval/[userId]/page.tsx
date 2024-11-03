@@ -1,6 +1,6 @@
 import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getSingleAdminApprovalById } from "../actions";
 import { AdminApprovalTable } from "../table/data";
 
@@ -50,25 +50,25 @@ async function AdminShowApproval({ params }: AdminShowApprovalProps) {
 
   if (!response) {
     return (
-      <AdminLayout>
+      <CustomLayout>
         <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
           <h1 className="mb-5 text-heading-1 font-bold">
             Something went wrong
           </h1>
         </div>
-      </AdminLayout>
+      </CustomLayout>
     );
   }
 
   return (
-    <AdminLayout>
-      <AdminBreadcrumbs
+    <CustomLayout>
+      <CustomBreadcrumbs
         parentPage="Manage"
         subPage="Approval"
         pageName="Profile"
       />
       <ViewApproval caregiver={response} />
-    </AdminLayout>
+    </CustomLayout>
   );
 }
 

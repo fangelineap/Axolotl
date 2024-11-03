@@ -1,6 +1,6 @@
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import ManageMedicineTable from "./table/ManageMedicineTable";
 
@@ -11,11 +11,11 @@ async function AdminManageMedicine() {
 
   return (
     <div className="bg-gray">
-      <AdminLayout>
-        <AdminBreadcrumbs parentPage="Manage" pageName="Medicine" />
+      <CustomLayout>
+        <CustomBreadcrumbs parentPage="Manage" pageName="Medicine" />
         <h1 className="mb-5 text-heading-1 font-bold">Medicine List</h1>
         <ManageMedicineTable initialData={data} />
-      </AdminLayout>
+      </CustomLayout>
     </div>
   );
 }

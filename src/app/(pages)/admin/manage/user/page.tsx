@@ -1,5 +1,5 @@
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 import { getAdminAllUsers } from "./actions";
 import ManageUserTable from "./table/ManageUserTable";
@@ -20,11 +20,11 @@ async function AdminManageUser() {
 
   return (
     <div className="bg-gray">
-      <AdminLayout>
-        <AdminBreadcrumbs parentPage="Manage" pageName="Medicine" />
+      <CustomLayout>
+        <CustomBreadcrumbs parentPage="Manage" pageName="Medicine" />
         <h1 className="mb-5 text-heading-1 font-bold">User List</h1>
         <ManageUserTable initialData={data} />
-      </AdminLayout>
+      </CustomLayout>
     </div>
   );
 }

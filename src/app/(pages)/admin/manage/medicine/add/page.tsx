@@ -1,20 +1,20 @@
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import AddMedicine from "@/components/Admin/Manage/Medicine/AddMedicine";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 
 export const metadata = getAdminMetadata("Add Medicine");
 
 function AdminAddMedicine() {
   return (
-    <AdminLayout>
-      <AdminBreadcrumbs
+    <CustomLayout>
+      <CustomBreadcrumbs
         parentPage="Manage"
         subPage="Medicine"
         pageName="Add Medicine"
       />
       <AddMedicine />
-    </AdminLayout>
+    </CustomLayout>
   );
 }
 

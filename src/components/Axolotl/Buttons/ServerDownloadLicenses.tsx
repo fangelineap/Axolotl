@@ -1,4 +1,4 @@
-import { getServerPrivateStorageURL } from "@/app/_server-action/storage/server";
+import { getServerPrivateStorageURL } from "@/app/_server-action/global/storage/server";
 import { IconDownload } from "@tabler/icons-react";
 import Link from "next/link";
 import AxolotlButton from "./AxolotlButton";

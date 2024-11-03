@@ -4,7 +4,7 @@ import ClickOutside from "@/components/ClickOutside";
 import { getUserDataFromSession } from "@/lib/server";
 import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { Skeleton } from "@mui/material";
-import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
+import { IconLogout2, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -151,21 +151,11 @@ const DropdownUser = () => {
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
             <li>
               <Link
-                href="/profile"
+                href={`/profile?user=${user?.user_id}&role=${["Nurse", "Midwife"].includes(user?.role ?? "") ? "Caregiver" : user?.role ?? ""}`}
                 className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
               >
                 <IconUser />
                 View profile
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                href="/settings"
-                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
-              >
-                <IconSettings />
-                Account Settings
               </Link>
             </li>
           </ul>

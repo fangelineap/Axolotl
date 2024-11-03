@@ -28,9 +28,9 @@ const Home: React.FC = () => {
         "Specialized Newborn Care",
         "Providing round-the-clock monitoring, feeding assistance, and specialized care for premature or ill newborns.",
         "Developmental Support",
-        "Offering early intervention therapies and developmental activities to promote healthy growth.",
+        "Offering early intervention therapies and developmental activities to promote healthy growth."
       ],
-      price: "500.000",
+      price: "500.000"
     },
     {
       title: "Elderly Care",
@@ -39,9 +39,9 @@ const Home: React.FC = () => {
         "Personalized Assistance",
         "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation.",
         "Mobility Assistance",
-        "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility.",
+        "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility."
       ],
-      price: "500.000",
+      price: "500.000"
     },
     {
       title: "After Care",
@@ -50,9 +50,9 @@ const Home: React.FC = () => {
         "Wound treatment",
         "Providing specialized care for wound cleaning, dressing changes, and monitoring for proper healing.",
         "Someone who has comorbidities",
-        "Offering personalized assistance and support for managing multiple health conditions, ensuring optimal wound healing and overall well-being.",
+        "Offering personalized assistance and support for managing multiple health conditions, ensuring optimal wound healing and overall well-being."
       ],
-      price: "500.000",
+      price: "500.000"
     },
     {
       title: "Booster",
@@ -61,35 +61,35 @@ const Home: React.FC = () => {
         "Immune Booster",
         "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation.",
         "Vitamin Booster",
-        "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility.",
+        "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility."
       ],
-      price: "500.000",
-    },
+      price: "500.000"
+    }
   ];
 
   const banners = [
     "/images/carousel/carousel-01.jpg",
     "/images/carousel/carousel-02.jpg",
-    "/images/carousel/carousel-03.jpg",
+    "/images/carousel/carousel-03.jpg"
   ];
 
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
-      items: 1,
+      items: 1
     },
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 1,
+      items: 1
     },
     tablet: {
       breakpoint: { max: 1024, min: 464 },
-      items: 1,
+      items: 1
     },
     mobile: {
       breakpoint: { max: 464, min: 0 },
-      items: 1,
-    },
+      items: 1
+    }
   };
 
   const CustomLeftArrow: React.FC<{

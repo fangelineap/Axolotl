@@ -14,7 +14,7 @@ import {
   removeExistingLicenses,
   removeLicenses,
   uploadLicenses
-} from "@/app/_server-action/storage/client";
+} from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";

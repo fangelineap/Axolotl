@@ -1,20 +1,20 @@
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import AddAdmin from "@/components/Admin/Manage/User/AddAdmin";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminMetadata } from "@/utils/Metadata/AdminMetadata";
 
 export const metadata = getAdminMetadata("Add User");
 
 function AdminAddAdmin() {
   return (
-    <AdminLayout>
-      <AdminBreadcrumbs
+    <CustomLayout>
+      <CustomBreadcrumbs
         parentPage="Manage"
         subPage="User"
         pageName="Add User"
       />
       <AddAdmin />
-    </AdminLayout>
+    </CustomLayout>
   );
 }
 
