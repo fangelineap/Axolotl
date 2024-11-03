@@ -4,9 +4,13 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "flatpickr/dist/flatpickr.min.css";
 import { IconMessage } from "@tabler/icons-react";
+import { services } from "@/utils/Services";
+import { useRouter } from "next/navigation";
 
 interface MedecinePreparationProps {
   orderStatus: string;
+  orderNotes?: string;
+  medicineOrderId?: string;
   caregiverInfo: {
     name: string;
     str: string;
@@ -50,6 +54,8 @@ interface MedecinePreparationProps {
 
 const OrderDetail: React.FC<MedecinePreparationProps> = ({
   orderStatus,
+  orderNotes,
+  medicineOrderId,
   caregiverInfo,
   patientInfo,
   medicalDetails,
@@ -59,6 +65,8 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
 }) => {
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+
+  const router = useRouter();
 
   useEffect(() => {
     const calculateTotalPrice = () => {
@@ -116,6 +124,46 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             </span>
           </div>
         </div>
+        {orderStatus === "Canceled" && (
+          <div className="mb-6 flex flex-col items-center justify-center rounded-[7px] border border-red bg-red-200 p-4">
+            <svg
+              width="70"
+              height="70"
+              viewBox="0 0 102 102"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="m-4"
+            >
+              <circle cx="51" cy="51" r="51" fill="#EE4D4D" />
+              <path
+                d="M25.8519 26.4982C26.8045 25.5552 28.0964 25.0254 29.4435 25.0254C30.7905 25.0254 32.0825 25.5552 33.0351 26.4982L50.9983 44.2852L68.9614 26.4982C69.9195 25.5819 71.2028 25.0749 72.5347 25.0863C73.8667 25.0978 75.1409 25.6268 76.0828 26.5595C77.0247 27.4921 77.5589 28.7538 77.5705 30.0727C77.5821 31.3916 77.07 32.6623 76.1446 33.611L58.1815 51.398L76.1446 69.1851C77.07 70.1338 77.5821 71.4045 77.5705 72.7234C77.5589 74.0423 77.0247 75.304 76.0828 76.2366C75.1409 77.1693 73.8667 77.6983 72.5347 77.7098C71.2028 77.7212 69.9195 77.2142 68.9614 76.2979L50.9983 58.5108L33.0351 76.2979C32.077 77.2142 30.7938 77.7212 29.4618 77.7098C28.1298 77.6983 26.8557 77.1693 25.9138 76.2366C24.9719 75.304 24.4376 74.0423 24.426 72.7234C24.4145 71.4045 24.9265 70.1338 25.8519 69.1851L43.815 51.398L25.8519 33.611C24.8995 32.6677 24.3645 31.3884 24.3645 30.0546C24.3645 28.7207 24.8995 27.4415 25.8519 26.4982Z"
+                fill="#FBE3E4"
+              />
+            </svg>
+
+            <div className="flex flex-col gap-2 text-center">
+              <h1 className={`mb-1 text-2xl font-bold text-red`}>
+                !! REFUND STATEMENT !!
+              </h1>
+              <div className="mb-3">
+                <p className="text-lg text-red">
+                  Your caregiver{" "}
+                  <span className="font-semibold">has rejected this order</span>{" "}
+                  due to the following reasons:
+                </p>
+                <p className="text-start text-red">
+                  <ul className="list-disc">
+                    <li>{orderNotes}</li>
+                  </ul>
+                </p>
+              </div>
+            </div>
+            <p className="my-5 w-[1/2] text-xl font-semibold text-red">
+              We have processed the refund to your virtual account. It should
+              reflect shortly.
+            </p>
+          </div>
+        )}
         <div className="mb-6">
           <h2 className="mb-2 text-xl font-bold">Caregiver Information</h2>
           <div className="my-5 flex">
@@ -339,22 +387,80 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
       </div>
 
       {/* Right Side */}
-      <div className="w-full max-w-md rounded-lg bg-white p-6">
-        <button
-          className={`${medicineDetail ? "border-primary bg-primary" : "disabled border-dark-secondary bg-dark-secondary"} pointer-events-none mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
-          onClick={() => alert("Order Finished!")}
-        >
-          Additional Medicine
-        </button>
-        <button
-          className="flex w-full items-center justify-center gap-2 rounded border border-primary py-2 text-lg font-bold text-primary hover:bg-kalbe-ultraLight hover:text-primary"
-          onClick={() => alert("Order Finished!")}
-        >
-          <IconMessage size={25} />
-          Chat With Caregiver
-        </button>
-        <ToastContainer />
-      </div>
+      <>
+        {orderStatus === "Canceled" ? (
+          <div className="w-[100%] border-stroke lg:w-[35%]">
+            <div className="rounded-md border-[1px] border-stroke bg-white px-5 py-2">
+              <div className="p-3">
+                <h1 className="text-center text-lg font-bold text-primary">
+                  Service Payment
+                </h1>
+              </div>
+              <div className="px-5 py-2">
+                <div className="mb-3 flex justify-between">
+                  <label className="font-medium text-dark-secondary dark:text-white">
+                    Service Fee
+                  </label>
+                  <label className="font-medium text-dark dark:text-white">
+                    Rp.{" "}
+                    {
+                      services.find(
+                        (service) => service.name === serviceDetails.serviceType
+                      )?.price
+                    }
+                  </label>
+                </div>
+                <div className="flex justify-between">
+                  <label className="font-medium text-dark-secondary dark:text-white">
+                    Days of Visit
+                  </label>
+                  <label className="font-medium text-dark dark:text-white">
+                    {serviceDetails.totalDays}x
+                  </label>
+                </div>
+                <div className="my-5 h-[0.5px] w-full bg-kalbe-light"></div>
+                <div className="mb-5 flex justify-between">
+                  <label className="text-lg text-dark dark:text-white">
+                    Total Charge
+                  </label>
+                  <label className="text-lg font-bold text-dark dark:text-white">
+                    Rp. {serviceDetails.totalCharge}
+                  </label>
+                </div>
+                <div className="mb-3">
+                  <h1 className="mb-2 text-lg font-bold">Payment Status</h1>
+                  <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
+                    <h1 className="text-center text-lg font-semibold text-primary">
+                      Verified
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full max-w-md rounded-lg bg-white p-6">
+            <button
+              className={`${medicineDetail ? "border-primary bg-primary" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary "} mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
+              onClick={() =>
+                router.push(
+                  `/patient/health-services/appointment/additional?medicineId=${medicineOrderId}`
+                )
+              }
+            >
+              Additional Medicine
+            </button>
+            <button
+              className="flex w-full items-center justify-center gap-2 rounded border border-primary py-2 text-lg font-bold text-primary hover:bg-kalbe-ultraLight hover:text-primary"
+              onClick={() => alert("Order Finished!")}
+            >
+              <IconMessage size={25} />
+              Chat With Caregiver
+            </button>
+            <ToastContainer />
+          </div>
+        )}
+      </>
     </div>
   );
 };

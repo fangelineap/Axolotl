@@ -223,6 +223,8 @@ export async function getOrderDetail(id: string) {
 
     const temp = {
       orderStatus: data.status,
+      orderNotes: data.notes,
+      medicineOrderId: data.medicineOrder.id,
       caregiverInfo: {
         name: cgData.first_name + " " + cgData.last_name,
         str: data.caregiver.str,
