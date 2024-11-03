@@ -1,9 +1,10 @@
 import { CAREGIVER, PATIENT, USER } from "@/types/AxolotlMainType";
 
 export type UserPersonalInformation = {
-  address: USER["address"];
-  gender: USER["gender"];
-  birthdate: USER["birthdate"];
+  address: USER["address"] | null;
+  gender: USER["gender"] | null;
+  birthdate: USER["birthdate"] | null;
+  role: USER["role"];
 };
 
 export type PatientPersonalInformation = {
@@ -11,10 +12,10 @@ export type PatientPersonalInformation = {
   height: PATIENT["height"];
   weight: PATIENT["weight"];
   is_smoking: PATIENT["is_smoking"];
-  allergies: PATIENT["allergies"];
-  current_medication: PATIENT["current_medication"];
-  med_freq_times: PATIENT["med_freq_times"];
-  med_freq_day: PATIENT["med_freq_day"];
+  allergies: PATIENT["allergies"] | null;
+  current_medication: PATIENT["current_medication"] | null;
+  med_freq_times: PATIENT["med_freq_times"] | null;
+  med_freq_day: PATIENT["med_freq_day"] | null;
   illness_history: PATIENT["illness_history"];
 };
 

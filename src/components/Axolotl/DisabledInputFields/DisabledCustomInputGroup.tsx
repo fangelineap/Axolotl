@@ -25,6 +25,7 @@ const DisabledCustomInputGroup = ({
   horizontal = false,
   placeholder,
   value,
+  secondValue,
   isRating = false,
   isUnit = false,
   isTextArea = false,
@@ -91,7 +92,7 @@ const DisabledCustomInputGroup = ({
             <input
               type={type}
               placeholder={placeholder}
-              value={value}
+              value={secondValue}
               disabled
               className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
             />

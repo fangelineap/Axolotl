@@ -1,9 +1,8 @@
-import { IconUpload } from "@tabler/icons-react";
+import { IconFileInvoice, IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-// TODO: IMPLEMENT THIS FILE INPUT IN REGISTER
 interface FileInputProps {
   onFileSelect: (file: File | null) => void;
   name: string;
@@ -123,7 +122,7 @@ function FileInput({
               e.stopPropagation();
             }}
           />
-          {selectedFile ? (
+          {selectedFile?.type.startsWith("image/") ? (
             <Image
               src={URL.createObjectURL(selectedFile)}
               alt="Uploaded File"
@@ -131,6 +130,11 @@ function FileInput({
               width={200}
               height={200}
             />
+          ) : selectedFile?.type.startsWith("application/") ? (
+            <div className="flex flex-col items-center justify-center gap-2">
+              <IconFileInvoice size={90} stroke={1} className="text-primary" />
+              <p>{selectedFile.name}</p>
+            </div>
           ) : existingFile ? (
             <Image
               src={existingFile}

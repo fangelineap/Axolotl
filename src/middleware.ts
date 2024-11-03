@@ -151,8 +151,9 @@ async function updateSession(request: NextRequest) {
 
     // If there is a invalid role query parameter with the current user role
     const urlRole = new URL(request.url).searchParams.get("role");
+    const urlUser = new URL(request.url).searchParams.get("user");
 
-    if (urlRole && urlRole !== userRole) {
+    if ((urlRole && urlRole !== userRole) || (urlUser && urlUser !== userId)) {
       return NextResponse.redirect(
         new URL(
           `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information=${userPersonalData.is_complete}`,

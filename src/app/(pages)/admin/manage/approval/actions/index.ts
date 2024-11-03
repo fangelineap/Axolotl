@@ -1,9 +1,9 @@
 "use server";
 
+import { getGlobalUserDataByUserId } from "@/app/_server-action/global";
 import createSupabaseServerClient from "@/lib/server";
 import { unstable_noStore } from "next/cache";
 import { AdminApprovalTable } from "../table/data";
-import { getGlobalUserDataByUserId } from "@/app/_server-action/global";
 
 /**
  * * Get all caregiver

@@ -11,8 +11,6 @@ import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
 import { adminDeleteUser } from "../admin";
-import { getGlobalCaregiverDataByCaregiverOrUserId } from "../global";
-import { removeExistingLicenses } from "../storage/client";
 
 /**
  * * Validate required fields
@@ -21,7 +19,7 @@ import { removeExistingLicenses } from "../storage/client";
  */
 function validateRequiredFields(fields: Record<string, any>) {
   for (const [key, value] of Object.entries(fields)) {
-    if (!value) {
+    if (value === null) {
       return {
         name: `Missing ${key}`,
         message: `${key} is required`
@@ -267,7 +265,10 @@ export async function getCaregiverVerificationStatus(caregiver_id: string) {
       .single();
 
     if (caregiverError) {
-      console.error("Error fetching data:", caregiverError.message);
+      console.error(
+        "Error fetching caregiver status data:",
+        caregiverError.message
+      );
 
       return null;
     }
@@ -302,6 +303,22 @@ async function checkUserRoleData(userId: string, userRole: string) {
   try {
     switch (userRole) {
       case "Patient":
+        const { data: userPatientCorrelationData } = await supabase
+          .from("patient")
+          .select("*, users(*)")
+          .eq("patient_id", userId)
+          .single();
+
+        if (!userPatientCorrelationData) {
+          console.error("User-Patient correlation data is missing");
+
+          return {
+            success: true,
+            is_complete: false,
+            message: "Patient Personal Information data not found"
+          };
+        }
+
         const { data: patientData } = await supabase
           .from("patient")
           .select("*")
@@ -329,12 +346,29 @@ async function checkUserRoleData(userId: string, userRole: string) {
 
       case "Nurse":
       case "Midwife":
+      case "Caregiver":
+        const { data: userCaregiverCorrelationData } = await supabase
+          .from("caregiver")
+          .select("*, users(*)")
+          .eq("caregiver_id", userId)
+          .single();
+
+        if (!userCaregiverCorrelationData) {
+          console.error("User-Caregiver correlation data is missing");
+
+          return {
+            success: true,
+            is_complete: false,
+            message: "Caregiver Personal Information data not found"
+          };
+        }
+
         const { data: caregiverData } = await supabase
           .from("caregiver")
           .select("*")
           .eq("caregiver_id", userId)
           .or(
-            "profile_photo.is.null,employment_type.is.null,workplace.is.null,work_experiences.is.null,cv.is.null,degree_certificate.is.null,str.is.null,sip.is.null,status.eq.Unverified"
+            "profile_photo.is.null,employment_type.is.null,workplace.is.null,work_experiences.is.null,cv.is.null,degree_certificate.is.null,str.is.null,sip.is.null"
           )
           .single();
 
@@ -443,26 +477,29 @@ export async function getIncompleteUserPersonalInformation(
 }
 
 /**
- * * Helper function to update user personal information in users table
+ * * Save user personal information in user table
  * @param form
  * @param userId
  * @returns
  */
-async function saveUserPersonalInformation(
+export async function saveUserPersonalInformation(
   form: UserPersonalInformation,
-  userId: string
+  revert?: boolean
 ) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
   // Form Validation
-  const { address, gender, birthdate } = form;
-  const validationError = validateRequiredFields({
-    address,
-    gender,
-    birthdate
-  });
+  const { address, gender, birthdate, role } = form;
+  const validationError = revert
+    ? null
+    : validateRequiredFields({
+        address,
+        gender,
+        birthdate,
+        role
+      });
 
   if (validationError) {
     console.error("Validation error:", validationError);
@@ -471,19 +508,40 @@ async function saveUserPersonalInformation(
   }
 
   try {
-    const { error } = await supabase
-      .from("users")
-      .update({ ...form, updated_at: new Date() })
-      .eq("id", userId)
-      .single();
+    const { data: currentUserData, error: currentUserError } =
+      await getUserFromSession();
 
-    if (error) {
-      console.error("Error updating user data:", error);
-
-      return { success: false, message: "Failed to update user data" };
+    if (currentUserError || !currentUserData) {
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right"
+      });
     }
 
-    return { success: true, message: "User data updated successfully" };
+    if (currentUserData) {
+      const userId = currentUserData.id;
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          ...form,
+          updated_at: new Date()
+        })
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error("Error updating user data:", error);
+
+        return { success: false, message: "Failed to update user data" };
+      }
+
+      return { success: true, message: "User data updated successfully" };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong"
+    };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -500,35 +558,20 @@ async function saveUserPersonalInformation(
  */
 async function savePatientPersonalInformation(
   form: PatientPersonalInformation,
-  userId: string,
-  action: "update" | "create"
+  userId: string
 ) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
-  // Form Validation
-  const {
-    blood_type,
-    height,
-    weight,
-    is_smoking,
-    allergies,
-    current_medication,
-    med_freq_times,
-    med_freq_day,
-    illness_history
-  } = form;
+  // Form Validation for Required Fields
+  const { blood_type, height, weight, is_smoking, illness_history } = form;
 
   const validationError = validateRequiredFields({
     blood_type,
     height,
     weight,
     is_smoking,
-    allergies,
-    current_medication,
-    med_freq_times,
-    med_freq_day,
     illness_history
   });
 
@@ -539,42 +582,18 @@ async function savePatientPersonalInformation(
   }
 
   try {
-    switch (action) {
-      case "create": {
-        const { error } = await supabase.from("patient").insert({
-          ...form,
-          patient_id: userId
-        });
+    const { error } = await supabase.from("patient").insert({
+      ...form,
+      patient_id: userId
+    });
 
-        if (error) {
-          console.error("Error saving patient data:", error);
+    if (error) {
+      console.error("Error saving patient data:", error);
 
-          return { success: false, message: "Failed to save patient data" };
-        }
-
-        return { success: true, message: "Patient data saved successfully" };
-      }
-      case "update": {
-        const { error } = await supabase
-          .from("patient")
-          .update({
-            ...form,
-            updated_at: new Date()
-          })
-          .eq("patient_id", userId)
-          .single();
-
-        if (error) {
-          console.error("Error updating patient data:", error);
-
-          return { success: false, message: "Failed to update patient data" };
-        }
-
-        return { success: true, message: "Patient data updated successfully" };
-      }
-      default:
-        return { success: false, message: "Something went wrong" };
+      return { success: false, message: "Failed to save patient data" };
     }
+
+    return { success: true, message: "Patient data saved successfully" };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -591,8 +610,7 @@ async function savePatientPersonalInformation(
  */
 async function saveCaregiverPersonalInformation(
   form: CaregiverPersonalInformation,
-  userId: string,
-  action: "update" | "create"
+  userId: string
 ) {
   unstable_noStore();
 
@@ -627,70 +645,24 @@ async function saveCaregiverPersonalInformation(
     return { success: false, message: validationError.message };
   }
 
+  console.log(form);
+
   try {
-    switch (action) {
-      case "create": {
-        const { error } = await supabase.from("caregiver").insert({
-          ...form,
-          caregiver_id: userId
-        });
+    const { error } = await supabase.from("caregiver").insert({
+      ...form,
+      status: "Unverified",
+      caregiver_id: userId
+    });
 
-        if (error) {
-          console.error("Error saving caregiver data:", error);
+    console.log(error);
 
-          return { success: false, message: "Failed to save caregiver data" };
-        }
+    if (error) {
+      console.error("Error saving caregiver data:", error);
 
-        return { success: true, message: "Caregiver data saved successfully" };
-      }
-      case "update": {
-        const { data: caregiverData, error: caregiverError } =
-          await getGlobalCaregiverDataByCaregiverOrUserId("caregiver", userId);
-
-        if (caregiverError || !caregiverData) {
-          console.error(
-            "Error fetching current caregiver data:",
-            caregiverError
-          );
-
-          return {
-            success: false,
-            message: "Failed to fetch current caregiver data"
-          };
-        }
-
-        const existingLicenses = {
-          cv: caregiverData.cv,
-          degree_certificate: caregiverData.degree_certificate,
-          str: caregiverData.str,
-          sip: caregiverData.sip
-        };
-
-        const { error } = await supabase
-          .from("caregiver")
-          .update({
-            ...form,
-            updated_at: new Date()
-          })
-          .eq("caregiver_id", userId)
-          .single();
-
-        if (error) {
-          console.error("Error updating caregiver data:", error);
-
-          return { success: false, message: "Failed to update caregiver data" };
-        }
-
-        await removeExistingLicenses(existingLicenses);
-
-        return {
-          success: true,
-          message: "Caregiver data updated successfully"
-        };
-      }
-      default:
-        return { success: false, message: "Something went wrong" };
+      return { success: false, message: "Failed to save caregiver data" };
     }
+
+    return { success: true, message: "Caregiver data saved successfully" };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -699,15 +671,12 @@ async function saveCaregiverPersonalInformation(
 }
 
 /**
- * * Save personal information
+ * * Save user personal information based on user role
  * @param form
  * @returns
  */
-export async function savePersonalInformation(
-  form:
-    | UserPersonalInformation
-    | PatientPersonalInformation
-    | CaregiverPersonalInformation
+export async function saveRolePersonalInformation(
+  form: PatientPersonalInformation | CaregiverPersonalInformation
 ) {
   unstable_noStore();
 
@@ -725,14 +694,11 @@ export async function savePersonalInformation(
       const userId = currentUserData.id;
       const userRole = currentUserData.role;
 
-      const {
-        is_complete: isPersonalDataCompleted,
-        success: fetchSuccess,
-        message: fetchMessage
-      } = await getIncompleteUserPersonalInformation(
-        currentUserData.id,
-        currentUserData.role
-      );
+      const { is_complete: isPersonalDataCompleted, success: fetchSuccess } =
+        await getIncompleteUserPersonalInformation(
+          currentUserData.id,
+          currentUserData.role
+        );
 
       if (!fetchSuccess) {
         return {
@@ -741,55 +707,27 @@ export async function savePersonalInformation(
         };
       }
 
-      console.log(form);
-
-      if (
-        fetchMessage === "User data is incomplete" &&
-        !isPersonalDataCompleted
-      ) {
-        return await saveUserPersonalInformation(
-          form as UserPersonalInformation,
-          userId
-        );
-      }
-
-      switch (userRole) {
-        case "Patient": {
-          if (!isPersonalDataCompleted) {
+      if (!isPersonalDataCompleted) {
+        switch (userRole) {
+          case "Patient": {
             return await savePatientPersonalInformation(
               form as PatientPersonalInformation,
-              userId,
-              "create"
+              userId
             );
           }
 
-          return await savePatientPersonalInformation(
-            form as PatientPersonalInformation,
-            userId,
-            "update"
-          );
-        }
-
-        case "Caregiver":
-        case "Nurse":
-        case "Midwife": {
-          if (!isPersonalDataCompleted) {
+          case "Caregiver":
+          case "Nurse":
+          case "Midwife": {
             return await saveCaregiverPersonalInformation(
               form as CaregiverPersonalInformation,
-              userId,
-              "create"
+              userId
             );
           }
 
-          return await saveCaregiverPersonalInformation(
-            form as CaregiverPersonalInformation,
-            userId,
-            "update"
-          );
+          default:
+            break;
         }
-
-        default:
-          break;
       }
     }
 

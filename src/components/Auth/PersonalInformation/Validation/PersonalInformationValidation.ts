@@ -18,6 +18,9 @@ export const PersonalInformationValidation = (
         !form.get("gender") &&
         !form.get("birthdate") &&
         !form.get("caregiver_role") &&
+        !form.get("employment_type") &&
+        !form.get("workplace") &&
+        !form.get("work_experiences") &&
         !profilePhoto &&
         !licenses
       ) {
@@ -28,16 +31,8 @@ export const PersonalInformationValidation = (
         return false;
       }
 
-      if (!form.get("address")) {
-        toast.warning("Please enter your address.", {
-          position: "bottom-right"
-        });
-
-        return false;
-      }
-
-      if (!form.get("gender")) {
-        toast.warning("Please enter your gender.", {
+      if (!profilePhoto) {
+        toast.warning("Please upload a profile photo.", {
           position: "bottom-right"
         });
 
@@ -52,6 +47,22 @@ export const PersonalInformationValidation = (
         return false;
       }
 
+      if (!form.get("gender")) {
+        toast.warning("Please enter your gender.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (!form.get("address")) {
+        toast.warning("Please enter your address.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
       if (!form.get("caregiver_role")) {
         toast.warning("Please enter your role.", {
           position: "bottom-right"
@@ -60,8 +71,24 @@ export const PersonalInformationValidation = (
         return false;
       }
 
-      if (!profilePhoto) {
-        toast.warning("Please upload a profile photo.", {
+      if (!form.get("employment_type")) {
+        toast.warning("Please enter your employment type.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (!form.get("workplace")) {
+        toast.warning("Please enter your workplace.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (!form.get("work_experiences")) {
+        toast.warning("Please enter your work experiences.", {
           position: "bottom-right"
         });
 
@@ -119,8 +146,8 @@ export const PersonalInformationValidation = (
         return false;
       }
 
-      if (!form.get("address")) {
-        toast.warning("Please enter your address.", {
+      if (!form.get("birthdate")) {
+        toast.warning("Please enter your birthdate.", {
           position: "bottom-right"
         });
 
@@ -135,8 +162,8 @@ export const PersonalInformationValidation = (
         return false;
       }
 
-      if (!form.get("birthdate")) {
-        toast.warning("Please enter your birthdate.", {
+      if (!form.get("address")) {
+        toast.warning("Please enter your address.", {
           position: "bottom-right"
         });
 

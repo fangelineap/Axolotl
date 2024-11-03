@@ -7,6 +7,10 @@ import {
 } from "@/app/(pages)/registration/personal-information/type";
 import { adminDeleteUser } from "@/app/_server-action/admin";
 import {
+  saveRolePersonalInformation,
+  saveUserPersonalInformation
+} from "@/app/_server-action/auth";
+import {
   prepareFileBeforeUpload,
   removeLicenses,
   removeUploadedFileFromStorage,
@@ -22,13 +26,11 @@ import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
 import { createSupabaseClient } from "@/lib/client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import AuthStepper from "../AuthStepper";
 import { PersonalInformationValidation } from "./Validation/PersonalInformationValidation";
-import { savePersonalInformation } from "@/app/_server-action/auth";
-import { toast } from "react-toastify";
 
 interface PersonalInformationComponentProps {
   paramsRole: string;
@@ -107,11 +109,14 @@ function PersonalInformationComponent({
     const userPersonalData: UserPersonalInformation = {
       address: form.get("address")?.toString() || "",
       gender: form.get("gender")?.toString() || "",
-      birthdate: new Date(form.get("birthdate")?.toString() || "")
+      birthdate: new Date(form.get("birthdate")?.toString() || ""),
+      role:
+        (form.get("caregiver_role")?.toString() as "Nurse" | "Midwife") ||
+        "Patient"
     };
 
     const { success: userPersonalInformationSuccess } =
-      await savePersonalInformation(userPersonalData);
+      await saveUserPersonalInformation(userPersonalData);
 
     if (!userPersonalInformationSuccess) {
       toast.error("Error saving user personal information. Please try again.", {
@@ -121,14 +126,14 @@ function PersonalInformationComponent({
       return;
     }
 
-    toast.info(
-      `User personal information saved successfully. Updating ${paramsRole} personal information...`,
-      {
-        position: "bottom-right"
-      }
-    );
-
     if (userPersonalInformationSuccess) {
+      toast.info(
+        `User personal information saved successfully. Updating ${paramsRole} personal information...`,
+        {
+          position: "bottom-right"
+        }
+      );
+
       // ! CAREGIVER PERSONAL INFORMATION
       if (paramsRole === "Caregiver") {
         const profilePhotoPath = await prepareFileBeforeUpload(
@@ -136,7 +141,13 @@ function PersonalInformationComponent({
           profilePhoto as File
         );
 
-        if (!profilePhotoPath) return;
+        if (!profilePhotoPath) {
+          toast.error("Error uploading profile photo. Please try again.", {
+            position: "bottom-right"
+          });
+
+          return;
+        }
 
         const licenseFiles = [
           {
@@ -167,7 +178,22 @@ function PersonalInformationComponent({
 
         const paths = await uploadLicenses(licenseFiles);
 
-        if (!paths) return;
+        if (!paths) {
+          toast.error("Error uploading licenses. Please try again.", {
+            position: "bottom-right"
+          });
+
+          return;
+        }
+
+        if (profilePhotoPath && paths) {
+          toast.info(
+            "Your profile photo and licenses has been uploaded successfully. Please wait...",
+            {
+              position: "bottom-right"
+            }
+          );
+        }
 
         const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
 
@@ -184,11 +210,20 @@ function PersonalInformationComponent({
           sip: pathSIP!
         };
 
-        const { success } = await savePersonalInformation(
+        const { success } = await saveRolePersonalInformation(
           caregiverPersonalData
         );
 
         if (!success) {
+          const revertRoles: UserPersonalInformation = {
+            address: null,
+            birthdate: null,
+            gender: null,
+            role: "Caregiver"
+          };
+
+          await saveUserPersonalInformation(revertRoles, true);
+
           await removeLicenses(
             Object.values(paths)
               .filter((path) => path !== undefined)
@@ -228,14 +263,20 @@ function PersonalInformationComponent({
           height: form.get("height") as unknown as number,
           weight: form.get("weight") as unknown as number,
           is_smoking: form.get("is_smoking") === "Yes" ? true : false,
-          allergies: form.get("allergies")?.toString() || "",
-          current_medication: form.get("current_medication")?.toString() || "",
-          med_freq_times: form.get("med_freq_times") as unknown as number,
-          med_freq_day: form.get("med_freq_day") as unknown as number,
+          allergies: form.get("allergies")?.toString() || null,
+          current_medication:
+            form.get("current_medication")?.toString() || null,
+          med_freq_times: form.get("med_freq_times")
+            ? (form.get("med_freq_times") as unknown as number)
+            : null,
+          med_freq_day: form.get("med_freq_day")
+            ? (form.get("med_freq_day") as unknown as number)
+            : null,
           illness_history: form.get("illness_history")?.toString() || ""
         };
 
-        const { success } = await savePersonalInformation(patientPersonalData);
+        const { success } =
+          await saveRolePersonalInformation(patientPersonalData);
 
         if (!success) {
           toast.error(
@@ -431,14 +472,14 @@ function PersonalInformationComponent({
                         </h1>
                         <div className="flex flex-col gap-5 lg:flex-row">
                           <SelectDropdown
-                            name="role"
+                            name="caregiver_role"
                             label="I'm a"
                             content={["Nurse", "Midwife"]}
                             required
                             placeholder="Select your role"
                           />
                           <SelectDropdown
-                            name="employmentType"
+                            name="employment_type"
                             label="Employment Type"
                             content={["Full-time", "Part-time"]}
                             required
@@ -454,7 +495,7 @@ function PersonalInformationComponent({
                             required
                           />
                           <CustomInputGroup
-                            name="workExperiences"
+                            name="work_experiences"
                             label="Work Experiences"
                             type="number"
                             placeholder="500"
@@ -559,17 +600,6 @@ function PersonalInformationComponent({
                     fontThickness="bold"
                   />
                 </div>
-                <p className="mt-3 text-center text-body-sm">
-                  Already have an account?{" "}
-                  <span>
-                    <Link
-                      href="signup"
-                      className="text-primary hover:underline"
-                    >
-                      Sign in instead
-                    </Link>
-                  </span>
-                </p>
               </div>
             </form>
           </div>
