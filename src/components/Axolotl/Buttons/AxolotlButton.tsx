@@ -82,7 +82,7 @@ const AxolotlButton = ({
       {startIcon}
 
       {isSubmit && pending ? (
-        <div className="flex items-center justify-center gap-2">
+        <div className="hover flex items-center justify-center gap-2">
           {label}
           {endIcon}
           <CircularProgress color="inherit" size={20} />

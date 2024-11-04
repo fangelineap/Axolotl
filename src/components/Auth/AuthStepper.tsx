@@ -47,8 +47,11 @@ function AuthStepper({
     { label: "Finish", number: 4 }
   ];
 
-  const dynamicStep =
-    caregiverVerificationStatus === "Verified" ? 5 : currentStep;
+  const caregiverDynamicSteps =
+    caregiverVerificationStatus === "Verified" ||
+    caregiverVerificationStatus === "Rejected";
+
+  const dynamicStep = caregiverDynamicSteps ? 5 : currentStep;
 
   return (
     <div className="mb-5 flex items-center justify-center">

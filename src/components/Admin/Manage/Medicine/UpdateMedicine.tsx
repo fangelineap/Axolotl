@@ -6,7 +6,7 @@ import {
   getClientPublicStorageURL,
   prepareFileBeforeUpload,
   removeUploadedFileFromStorage
-} from "@/app/_server-action/storage/client";
+} from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import CustomDatePicker from "@/components/Axolotl/InputFields/CustomDatePicker";
@@ -69,32 +69,6 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
   };
 
   /**
-   * * Handle File Upload
-   * @param medicinePhoto
-   * @returns
-   */
-  const handleFileUpload = async (medicinePhoto: File) => {
-    try {
-      const fileName = await prepareFileBeforeUpload("medicine", medicinePhoto);
-
-      if (!fileName) return undefined;
-
-      await removeUploadedFileFromStorage(
-        "medicine",
-        medicine.medicine_photo as string
-      );
-
-      return fileName;
-    } catch (error) {
-      toast.error("Error uploading file: " + error, {
-        position: "bottom-right"
-      });
-
-      return undefined;
-    }
-  };
-
-  /**
    * * Save Updated Medicine
    * @param form
    * @returns
@@ -106,7 +80,10 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
 
     if (medicinePhoto && typeof medicinePhoto !== "string") {
       // Only upload if medicinePhoto is a new file
-      pathMedicine = await handleFileUpload(medicinePhoto as File);
+      pathMedicine = await prepareFileBeforeUpload(
+        "medicine",
+        medicinePhoto as File
+      );
 
       if (!pathMedicine) {
         toast.error("Something went wrong. Please try again", {

@@ -52,7 +52,7 @@ export async function addAdminMedicine(form: AdminMedicineTable) {
       name,
       type,
       price,
-      exp_date,
+      exp_date: new Date(exp_date).toLocaleString(),
       medicine_photo
     });
 
@@ -135,7 +135,7 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
         name,
         type,
         price,
-        exp_date,
+        exp_date: new Date(exp_date).toLocaleString(),
         medicine_photo
       })
       .eq("uuid", uuid)

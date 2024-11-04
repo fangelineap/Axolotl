@@ -3,7 +3,7 @@ export const services = [
     name: "Neonatal Care",
     description:
       "Neonatal care is the care of newborn infants, especially those who were born prematurely or with a low birth weight. Neonatal care includes care of the newborn infant during the first 28 days of life.",
-    price: 500000,
+    price: 150000,
     types: [
       {
         name: "Satu",

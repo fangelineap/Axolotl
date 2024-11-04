@@ -9,7 +9,7 @@ export type USER = {
   created_at: Date;
   updated_at: Date;
   user_id: string;
-  role: "Midwife" | "Nurse" | "Patient" | "Admin";
+  role: "Midwife" | "Nurse" | "Patient" | "Caregiver" | "Admin";
 };
 
 export type CAREGIVER = {

@@ -35,7 +35,7 @@ const CustomDatePicker = ({
         instance: Instance
       ) => {
         const calendarContainer = instance.calendarContainer as HTMLElement;
-        if (calendarContainer) {
+        if (calendarContainer && horizontal) {
           calendarContainer.style.setProperty(
             "position",
             "absolute",
@@ -46,7 +46,7 @@ const CustomDatePicker = ({
         }
       }
     });
-  }, []);
+  }, [horizontal]);
 
   return (
     <div

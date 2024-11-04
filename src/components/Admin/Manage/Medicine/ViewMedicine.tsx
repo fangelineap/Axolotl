@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminMedicineTable } from "@/app/(pages)/admin/manage/medicine/table/data";
-import { getClientPublicStorageURL } from "@/app/_server-action/storage/client";
+import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";

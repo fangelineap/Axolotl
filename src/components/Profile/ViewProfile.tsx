@@ -14,12 +14,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-interface ViewUserProps {
+interface ViewProfileProps {
   user: AdminUserTable;
   totalOrder: number;
 }
 
-function ViewUser({ user, totalOrder }: ViewUserProps) {
+function ViewProfile({ user, totalOrder }: ViewProfileProps) {
   /**
    * * States & Initial Variables
    */
@@ -722,4 +722,4 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
   );
 }
 
-export default ViewUser;
+export default ViewProfile;

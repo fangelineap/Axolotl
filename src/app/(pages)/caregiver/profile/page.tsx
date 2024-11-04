@@ -16,26 +16,26 @@ const CaregiverProfile = () => {
     startDay: "Monday",
     endDay: "Friday",
     startTime: "18:30",
-    endTime: "21:00",
+    endTime: "21:00"
   };
 
   const [profileData, setProfileData] = useState(initialProfileData);
   const [isEditing, setIsEditing] = useState(false); // State to track if the profile is in edit mode
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setProfileData({
       ...profileData,
-      [name]: value,
+      [name]: value
     });
   };
 
   const handleDateChange = (date: Date | null) => {
     setProfileData({
       ...profileData,
-      birthdate: date?.toISOString().split("T")[0] ?? "",
+      birthdate: date?.toISOString().split("T")[0] ?? ""
     });
   };
 
@@ -145,7 +145,7 @@ const CaregiverProfile = () => {
                     "Thursday",
                     "Friday",
                     "Saturday",
-                    "Sunday",
+                    "Sunday"
                   ]}
                   value={profileData.startDay}
                   onChange={handleInputChange}
@@ -164,7 +164,7 @@ const CaregiverProfile = () => {
                     "Thursday",
                     "Friday",
                     "Saturday",
-                    "Sunday",
+                    "Sunday"
                   ]}
                   value={profileData.endDay}
                   onChange={handleInputChange}

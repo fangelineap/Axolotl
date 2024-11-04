@@ -4,7 +4,7 @@ import ClickOutside from "@/components/ClickOutside";
 import { getUserDataFromSession } from "@/lib/server";
 import { USER_DETAILS_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { Skeleton } from "@mui/material";
-import { IconLogout2, IconSettings, IconUser } from "@tabler/icons-react";
+import { IconLogout2, IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -103,7 +103,7 @@ const DropdownUser = () => {
       {/* <!-- Dropdown Star --> */}
       {dropdownOpen && (
         <div
-          className={`absolute right-0 mt-7.5 flex w-[280px] flex-col rounded-lg border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
+          className={`absolute right-0 mt-7.5 flex w-[280px] flex-col rounded-xl border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
         >
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
             <div className="relative block rounded-full border">
@@ -151,27 +151,17 @@ const DropdownUser = () => {
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
             <li>
               <Link
-                href="/profile"
-                className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
+                href={`/profile?user=${user?.user_id}&role=${["Nurse", "Midwife"].includes(user?.role ?? "") ? "Caregiver" : user?.role ?? ""}`}
+                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
               >
                 <IconUser />
                 View profile
               </Link>
             </li>
-
-            <li>
-              <Link
-                href="/settings"
-                className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
-              >
-                <IconSettings />
-                Account Settings
-              </Link>
-            </li>
           </ul>
-          <div className="p-2.5">
+          <div className="p-2">
             <button
-              className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
+              className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
               onClick={handleLogout}
             >
               <IconLogout2 />

@@ -13,13 +13,16 @@ const RegisterComponent = () => {
 
   return (
     <div className="mx-4 my-12 flex h-full w-auto justify-center md:mx-20 md:my-15">
-      {/* <!-- Account Registration Form --> */}
+      {/* Choose Your Role Form */}
       <div className="w-full lg:max-w-[50%]">
+        {/* Header */}
         <div className="rounded-t-xl border border-primary bg-primary py-3">
           <h1 className="text-center text-xl font-semibold text-white md:text-heading-5">
             Choose Your Role
           </h1>
         </div>
+
+        {/* Content */}
         <div className="rounded-b-xl border border-primary">
           <form action="#">
             <div className="flex flex-col gap-5 p-5">

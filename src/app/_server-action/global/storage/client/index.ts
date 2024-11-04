@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/client";
+import { createSupabaseClient } from "@/lib/client";
 import { CAREGIVER_LICENSES_TYPE } from "@/types/AxolotlMainType";
 import { toast } from "react-toastify";
 import { uuidv7 } from "uuidv7";
@@ -10,12 +10,12 @@ import { uuidv7 } from "uuidv7";
  * @param file
  * @returns
  */
-export async function uploadFileToStorage(
+async function uploadFileToStorage(
   storage: string,
   fileName: string,
   file: File
 ): Promise<string | undefined> {
-  const supabase = createClient();
+  const supabase = createSupabaseClient();
 
   const { data: userData } = await supabase.auth.getSession();
 
@@ -80,7 +80,7 @@ export async function removeUploadedFileFromStorage(
   path: string
 ): Promise<boolean | Error> {
   try {
-    const supabase = createClient();
+    const supabase = createSupabaseClient();
 
     const { error } = await supabase.storage.from(storage).remove([path]);
 
@@ -103,7 +103,7 @@ export async function removeUploadedFileFromStorage(
 async function processUploadLicense(file: {
   key: string;
   fileValue: File | undefined;
-  userValue: string;
+  userValue?: string;
   pathName: string;
   errorMsg: string;
 }): Promise<string | null> {
@@ -112,7 +112,7 @@ async function processUploadLicense(file: {
     (typeof file.userValue === "string" &&
       file.fileValue.name === file.userValue)
   ) {
-    return file.userValue;
+    return file.userValue!;
   }
 
   const fileName = await prepareFileBeforeUpload(
@@ -141,7 +141,7 @@ export async function uploadLicenses(
   files: Array<{
     key: string;
     fileValue: File | undefined;
-    userValue: string;
+    userValue?: string;
     pathName: string;
     errorMsg: string;
   }>
@@ -195,6 +195,20 @@ export async function removeLicenses(
 
     return { success: false };
   }
+}
+
+/**
+ * * Helper function to remove existing licenses if all update is successful
+ */
+export async function removeExistingLicenses(existingLicenses: Object) {
+  const licensesToBeRemoved = Object.entries(existingLicenses).map(
+    ([key, value]) => ({
+      storage: key,
+      fileValue: value
+    })
+  );
+
+  await removeLicenses(licensesToBeRemoved);
 }
 
 /**

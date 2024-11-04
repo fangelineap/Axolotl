@@ -1,16 +1,16 @@
 import Link from "next/link";
 
-interface AdminBreadcrumbsProps {
+interface CustomBreadcrumbsProps {
   parentPage?: string;
   subPage?: string;
   pageName: string;
 }
 
-const AdminBreadcrumbs = ({
+const CustomBreadcrumbs = ({
   parentPage,
   subPage,
   pageName
-}: AdminBreadcrumbsProps) => {
+}: CustomBreadcrumbsProps) => {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
       <nav>
@@ -29,4 +29,4 @@ const AdminBreadcrumbs = ({
   );
 };
 
-export default AdminBreadcrumbs;
+export default CustomBreadcrumbs;

@@ -138,24 +138,25 @@ async function updateSession(request: NextRequest) {
 
   console.log(userValidity);
 
+  // If there is a invalid role query parameter with the current user role
+  const urlRole = new URL(request.url).searchParams.get("role");
+  const urlUser = new URL(request.url).searchParams.get("user");
+
   // ! INCOMPLETE USER DATA
   if (userPersonalData.success && !userPersonalData.is_complete) {
     if (pathname !== "/registration/personal-information") {
       return NextResponse.redirect(
         new URL(
-          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information=${userPersonalData.is_complete}`,
           request.url
         )
       );
     }
 
-    // If there is a invalid role query parameter with the current user role
-    const urlRole = new URL(request.url).searchParams.get("role");
-
-    if (urlRole && urlRole !== userRole) {
+    if ((urlRole && urlRole !== userRole) || (urlUser && urlUser !== userId)) {
       return NextResponse.redirect(
         new URL(
-          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information-data=${userPersonalData.is_complete}`,
+          `/registration/personal-information?role=${userRole}&user=${userId}&signed-in=${userPersonalData.success}&personal-information=${userPersonalData.is_complete}`,
           request.url
         )
       );
@@ -164,12 +165,20 @@ async function updateSession(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (
-    userPersonalData.success &&
-    userPersonalData.is_complete &&
-    pathname.startsWith("/registration/personal-information")
-  ) {
-    return NextResponse.redirect(new URL(roleRedirect, request.url));
+  if (userPersonalData.success && userPersonalData.is_complete) {
+    if (pathname.startsWith("/registration/personal-information")) {
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+    }
+  }
+
+  if (pathname.startsWith("/profile")) {
+    if ((urlRole && urlRole !== userRole) || (urlUser && urlUser !== userId)) {
+      return NextResponse.redirect(
+        new URL(`/profile?user=${userId}&role=${userRole}`, request.url)
+      );
+    }
+
+    return NextResponse.next();
   }
 
   // ! ADMIN

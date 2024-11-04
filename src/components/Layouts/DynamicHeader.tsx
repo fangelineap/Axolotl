@@ -22,7 +22,45 @@ const DynamicHeader = ({
 
   const role = searchParams.get("role");
 
-  const layoutMap: { [key: string]: { Header: any; Sidebar: any } } = {
+  const getProfileHeader = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return AdminHeader;
+      case "Patient":
+        return PatientHeader;
+      case "Caregiver":
+        return CaregiverHeader;
+      default:
+        return AuthHeader;
+    }
+  };
+
+  const getProfileSidebar = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return AdminSidebar;
+      case "Patient":
+        return PatientSidebar;
+      case "Caregiver":
+        return CaregiverSidebar;
+      default:
+        return AuthSidebar;
+    }
+  };
+
+  const layoutMap: Record<
+    string,
+    {
+      Header: React.ComponentType<{
+        sidebarOpen: boolean;
+        setSidebarOpen: (open: boolean) => void;
+      }>;
+      Sidebar: React.ComponentType<{
+        sidebarOpen: boolean;
+        setSidebarOpen: (open: boolean) => void;
+      }>;
+    }
+  > = {
     "/admin": { Header: AdminHeader, Sidebar: AdminSidebar },
     "/patient": { Header: PatientHeader, Sidebar: PatientSidebar },
     "/caregiver": { Header: CaregiverHeader, Sidebar: CaregiverSidebar },
@@ -30,7 +68,11 @@ const DynamicHeader = ({
       Header: role === "Patient" ? PatientHeader : CaregiverHeader,
       Sidebar: role === "Patient" ? PatientSidebar : CaregiverSidebar
     },
-    "/auth": { Header: AuthHeader, Sidebar: AuthSidebar }
+    "/auth": { Header: AuthHeader, Sidebar: AuthSidebar },
+    "/profile": {
+      Header: getProfileHeader(role!),
+      Sidebar: getProfileSidebar(role!)
+    }
   };
 
   const matchedLayout = Object.keys(layoutMap).find((key) =>

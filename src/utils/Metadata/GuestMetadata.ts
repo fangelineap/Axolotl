@@ -16,10 +16,10 @@ export const getGuestMetadata = (page: string) => {
         title: "Create Axolotl Account",
         description: "Create Axolotl Account"
       };
-    case "account information":
+    case "personal information":
       return {
-        title: "Account Information",
-        description: "Account Information"
+        title: "Complete Your Personal Information",
+        description: "Complete Your Personal Information"
       };
     case "sign in":
       return {

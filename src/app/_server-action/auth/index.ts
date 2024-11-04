@@ -1,10 +1,34 @@
 "use server";
 
-import createSupabaseServerClient from "@/lib/server";
+import {
+  CaregiverPersonalInformation,
+  PatientPersonalInformation,
+  UserPersonalInformation
+} from "@/app/(pages)/registration/personal-information/type";
+import createSupabaseServerClient, { getUserFromSession } from "@/lib/server";
+import { USER } from "@/types/AxolotlMainType";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
 import { adminDeleteUser } from "../admin";
-import { USER } from "../../../types/AxolotlMainType";
+
+/**
+ * * Validate required fields
+ * @param fields
+ * @returns
+ */
+function validateRequiredFields(fields: Record<string, any>) {
+  for (const [key, value] of Object.entries(fields)) {
+    if (value === null) {
+      return {
+        name: `Missing ${key}`,
+        message: `${key} is required`
+      };
+    }
+  }
+
+  return null;
+}
 
 /**
  * * Sign in with email and password
@@ -31,10 +55,18 @@ export async function signInWithEmailAndPassword(
 > {
   const supabase = await createSupabaseServerClient();
 
+  const validationError = validateRequiredFields({ email, password });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password
+      email,
+      password
     });
 
     if (error) {
@@ -86,6 +118,21 @@ export async function registerWithEmailAndPassword(userData: {
 
   const { email, password, first_name, last_name, phone_number, role } =
     userData;
+
+  const validationError = validateRequiredFields({
+    email,
+    password,
+    first_name,
+    last_name,
+    phone_number,
+    role
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
 
   try {
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -201,6 +248,48 @@ export async function logout() {
 }
 
 /**
+ * * Get caregiver verification status
+ * @param caregiver_id
+ * @returns
+ */
+export async function getCaregiverVerificationStatus(caregiver_id: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data: caregiverData, error: caregiverError } = await supabase
+      .from("caregiver")
+      .select("*")
+      .eq("caregiver_id", caregiver_id)
+      .single();
+
+    if (caregiverError) {
+      console.error(
+        "Error fetching caregiver status data:",
+        caregiverError.message
+      );
+
+      return null;
+    }
+
+    const statusMap: Record<string, string> = {
+      Verified: "Verified",
+      Rejected: "Rejected",
+      Unverified: "Unverified"
+    };
+
+    const verificationStatus = statusMap[caregiverData?.status];
+
+    return verificationStatus as "Verified" | "Rejected" | "Unverified";
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return null;
+  }
+}
+
+/**
  * * Helper function to check User Personal Information Data based on their Roles
  * @param userId
  * @param userRole
@@ -214,6 +303,22 @@ async function checkUserRoleData(userId: string, userRole: string) {
   try {
     switch (userRole) {
       case "Patient":
+        const { data: userPatientCorrelationData } = await supabase
+          .from("patient")
+          .select("*, users(*)")
+          .eq("patient_id", userId)
+          .single();
+
+        if (!userPatientCorrelationData) {
+          console.error("User-Patient correlation data is missing");
+
+          return {
+            success: true,
+            is_complete: false,
+            message: "Patient Personal Information data not found"
+          };
+        }
+
         const { data: patientData } = await supabase
           .from("patient")
           .select("*")
@@ -241,12 +346,29 @@ async function checkUserRoleData(userId: string, userRole: string) {
 
       case "Nurse":
       case "Midwife":
+      case "Caregiver":
+        const { data: userCaregiverCorrelationData } = await supabase
+          .from("caregiver")
+          .select("*, users(*)")
+          .eq("caregiver_id", userId)
+          .single();
+
+        if (!userCaregiverCorrelationData) {
+          console.error("User-Caregiver correlation data is missing");
+
+          return {
+            success: true,
+            is_complete: false,
+            message: "Caregiver Personal Information data not found"
+          };
+        }
+
         const { data: caregiverData } = await supabase
           .from("caregiver")
           .select("*")
           .eq("caregiver_id", userId)
           .or(
-            "profile_photo.is.null,employment_type.is.null,workplace.is.null,work_experiences.is.null,cv.is.null,degree_certificate.is.null,str.is.null,sip.is.null,status.eq.Unverified"
+            "profile_photo.is.null,employment_type.is.null,workplace.is.null,work_experiences.is.null,cv.is.null,degree_certificate.is.null,str.is.null,sip.is.null"
           )
           .single();
 
@@ -264,6 +386,13 @@ async function checkUserRoleData(userId: string, userRole: string) {
           success: true,
           is_complete: true,
           message: "Caregiver User data is complete"
+        };
+
+      case "Admin":
+        return {
+          success: true,
+          is_complete: true,
+          message: "Admin User data is complete"
         };
 
       default:
@@ -348,40 +477,267 @@ export async function getIncompleteUserPersonalInformation(
 }
 
 /**
- * * Get caregiver verification status
- * @param caregiver_id
+ * * Save user personal information in user table
+ * @param form
+ * @param userId
  * @returns
  */
-export async function getCaregiverVerificationStatus(caregiver_id: string) {
+export async function saveUserPersonalInformation(
+  form: UserPersonalInformation,
+  revert?: boolean
+) {
   unstable_noStore();
 
   const supabase = await createSupabaseServerClient();
 
+  // Form Validation
+  const { address, gender, birthdate, role } = form;
+  const validationError = revert
+    ? null
+    : validateRequiredFields({
+        address,
+        gender,
+        birthdate,
+        role
+      });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
   try {
-    const { data: caregiverData, error: caregiverError } = await supabase
-      .from("caregiver")
-      .select("*")
-      .eq("caregiver_id", caregiver_id)
-      .single();
+    const { data: currentUserData, error: currentUserError } =
+      await getUserFromSession();
 
-    if (caregiverError) {
-      console.error("Error fetching data:", caregiverError.message);
-
-      return null;
+    if (currentUserError || !currentUserData) {
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right"
+      });
     }
 
-    const statusMap: Record<string, string> = {
-      Verified: "Verified",
-      Rejected: "Rejected",
-      Unverified: "Unverified"
+    if (currentUserData) {
+      const userId = currentUserData.id;
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          ...form,
+          updated_at: new Date()
+        })
+        .eq("id", userId)
+        .single();
+
+      if (error) {
+        console.error("Error updating user data:", error);
+
+        return { success: false, message: "Failed to update user data" };
+      }
+
+      return { success: true, message: "User data updated successfully" };
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong"
     };
-
-    const verificationStatus = statusMap[caregiverData?.status];
-
-    return verificationStatus as "Verified" | "Rejected" | "Unverified";
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
-    return null;
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}
+
+/**
+ * * Helper function to save patient personal information in patient table
+ * @param form
+ * @param userId
+ * @param action
+ * @returns
+ */
+async function savePatientPersonalInformation(
+  form: PatientPersonalInformation,
+  userId: string
+) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  // Form Validation for Required Fields
+  const { blood_type, height, weight, is_smoking, illness_history } = form;
+
+  const validationError = validateRequiredFields({
+    blood_type,
+    height,
+    weight,
+    is_smoking,
+    illness_history
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
+  try {
+    const { error } = await supabase.from("patient").insert({
+      ...form,
+      patient_id: userId
+    });
+
+    if (error) {
+      console.error("Error saving patient data:", error);
+
+      return { success: false, message: "Failed to save patient data" };
+    }
+
+    return { success: true, message: "Patient data saved successfully" };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}
+
+/**
+ * * Helper function to save caregiver personal information in caregiver table
+ * @param form
+ * @param userId
+ * @param action
+ * @returns
+ */
+async function saveCaregiverPersonalInformation(
+  form: CaregiverPersonalInformation,
+  userId: string
+) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  // Form Validation
+  const {
+    profile_photo,
+    employment_type,
+    work_experiences,
+    workplace,
+    cv,
+    degree_certificate,
+    str,
+    sip
+  } = form;
+
+  const validationError = validateRequiredFields({
+    profile_photo,
+    employment_type,
+    work_experiences,
+    workplace,
+    cv,
+    degree_certificate,
+    str,
+    sip
+  });
+
+  if (validationError) {
+    console.error("Validation error:", validationError);
+
+    return { success: false, message: validationError.message };
+  }
+
+  console.log(form);
+
+  try {
+    const { error } = await supabase.from("caregiver").insert({
+      ...form,
+      status: "Unverified",
+      caregiver_id: userId
+    });
+
+    console.log(error);
+
+    if (error) {
+      console.error("Error saving caregiver data:", error);
+
+      return { success: false, message: "Failed to save caregiver data" };
+    }
+
+    return { success: true, message: "Caregiver data saved successfully" };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
+  }
+}
+
+/**
+ * * Save user personal information based on user role
+ * @param form
+ * @returns
+ */
+export async function saveRolePersonalInformation(
+  form: PatientPersonalInformation | CaregiverPersonalInformation
+) {
+  unstable_noStore();
+
+  try {
+    const { data: currentUserData, error: currentUserError } =
+      await getUserFromSession();
+
+    if (currentUserError || !currentUserData) {
+      toast.error("Something went wrong. Please try again.", {
+        position: "bottom-right"
+      });
+    }
+
+    if (currentUserData) {
+      const userId = currentUserData.id;
+      const userRole = currentUserData.role;
+
+      const { is_complete: isPersonalDataCompleted, success: fetchSuccess } =
+        await getIncompleteUserPersonalInformation(
+          currentUserData.id,
+          currentUserData.role
+        );
+
+      if (!fetchSuccess) {
+        return {
+          success: false,
+          message: "Failed to fetch user data"
+        };
+      }
+
+      if (!isPersonalDataCompleted) {
+        switch (userRole) {
+          case "Patient": {
+            return await savePatientPersonalInformation(
+              form as PatientPersonalInformation,
+              userId
+            );
+          }
+
+          case "Caregiver":
+          case "Nurse":
+          case "Midwife": {
+            return await saveCaregiverPersonalInformation(
+              form as CaregiverPersonalInformation,
+              userId
+            );
+          }
+
+          default:
+            break;
+        }
+      }
+    }
+
+    return {
+      success: false,
+      message: "Something went wrong"
+    };
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { success: false, message: "Unexpected error occurred" };
   }
 }

@@ -55,6 +55,8 @@ const MedicinePreparation = () => {
         {data != null && (
           <OrderDetail
             orderStatus={data.orderStatus}
+            orderNotes={data.orderNotes}
+            medicineOrderId={data.medicineOrderId}
             caregiverInfo={data.caregiverInfo}
             patientInfo={data.patientInfo}
             medicalDetails={data.medicalDetails}

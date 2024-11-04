@@ -1,6 +1,6 @@
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import ViewMedicine from "@/components/Admin/Manage/Medicine/ViewMedicine";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminMedicineById } from "../actions";
 import { AdminMedicineTable } from "../table/data";
 
@@ -50,25 +50,25 @@ async function AdminShowMedicine({ params }: MedicinePageProps) {
 
   if (!medicine) {
     return (
-      <AdminLayout>
+      <CustomLayout>
         <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
           <h1 className="mb-5 text-heading-1 font-bold">
             Something went wrong
           </h1>
         </div>
-      </AdminLayout>
+      </CustomLayout>
     );
   }
 
   return (
-    <AdminLayout>
-      <AdminBreadcrumbs
+    <CustomLayout>
+      <CustomBreadcrumbs
         parentPage="Manage"
         subPage="Medicine"
         pageName="View"
       />
       <ViewMedicine medicine={medicine} />
-    </AdminLayout>
+    </CustomLayout>
   );
 }
 

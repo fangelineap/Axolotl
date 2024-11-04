@@ -4,8 +4,8 @@ import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { createSupabaseClient } from "@/lib/client";
 import { CAREGIVER } from "@/types/AxolotlMainType";
-import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -34,10 +34,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
 
   useEffect(() => {
     const getCaregiver = async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createSupabaseClient();
 
       try {
         const { data } = await supabase

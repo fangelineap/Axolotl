@@ -1,6 +1,6 @@
-import AdminLayout from "@/components/Admin/Manage/AdminLayout";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import ViewUser from "@/components/Admin/Manage/User/ViewUser";
-import AdminBreadcrumbs from "@/components/Breadcrumbs/AdminBreadcrumbs";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import { getAdminCaregiverTotalOrders, getAdminUserByUserID } from "../actions";
 import { AdminUserTable } from "../table/data";
 
@@ -66,25 +66,25 @@ async function AdminShowUser({ params }: AdminShowUserProps) {
 
   if (!data) {
     return (
-      <AdminLayout>
+      <CustomLayout>
         <div className="mx-20 flex h-[75vh] w-auto items-center justify-center">
           <h1 className="mb-5 text-heading-1 font-bold">
             Something went wrong
           </h1>
         </div>
-      </AdminLayout>
+      </CustomLayout>
     );
   }
 
   return (
-    <AdminLayout>
-      <AdminBreadcrumbs
+    <CustomLayout>
+      <CustomBreadcrumbs
         parentPage="Manage"
         subPage="Medicine"
         pageName="View"
       />
       <ViewUser user={data} totalOrder={totalOrder} />
-    </AdminLayout>
+    </CustomLayout>
   );
 }
 
