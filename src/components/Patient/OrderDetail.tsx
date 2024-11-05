@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "flatpickr/dist/flatpickr.min.css";
 import { IconMessage } from "@tabler/icons-react";
 import { services } from "@/utils/Services";
 import { useRouter } from "next/navigation";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
+import { updateRating } from "@/app/_server-action/patient";
 
 interface MedecinePreparationProps {
   orderStatus: string;
   orderNotes?: string;
   medicineOrderId?: string;
+  medicineIsPaid?: boolean;
   caregiverInfo: {
+    id: string;
     name: string;
     str: string;
     profile_photo_url: string;
@@ -39,6 +43,7 @@ interface MedecinePreparationProps {
     endTime: string;
     serviceFee: string;
     totalCharge: string;
+    rate: number;
   };
   medicineDetail?: {
     quantity: number;
@@ -56,6 +61,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
   orderStatus,
   orderNotes,
   medicineOrderId,
+  medicineIsPaid,
   caregiverInfo,
   patientInfo,
   medicalDetails,
@@ -65,6 +71,8 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
 }) => {
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [rating, setRating] = useState<number>(0);
+  const [rated, setRated] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -101,6 +109,21 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
 
     return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
+
+  const handleRateCaregiver = async () => {
+    const res = await updateRating(
+      serviceDetails.orderId,
+      caregiverInfo.id,
+      rating
+    );
+
+    console.log("res", res);
+    if (res === "Success") {
+      setRated(true);
+      toast.success("Rate submitted successfully !");
+      router.refresh();
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row lg:justify-between">
@@ -438,27 +461,77 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               </div>
             </div>
           </div>
-        ) : (
-          <div className="w-full max-w-md rounded-lg bg-white p-6">
-            <button
-              className={`${medicineDetail ? "border-primary bg-primary" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary "} mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
-              onClick={() =>
-                router.push(
-                  `/patient/health-services/appointment/additional?medicineId=${medicineOrderId}`
-                )
-              }
-            >
-              Additional Medicine
-            </button>
-            <button
-              className="flex w-full items-center justify-center gap-2 rounded border border-primary py-2 text-lg font-bold text-primary hover:bg-kalbe-ultraLight hover:text-primary"
-              onClick={() => alert("Order Finished!")}
-            >
-              <IconMessage size={25} />
-              Chat With Caregiver
-            </button>
-            <ToastContainer />
+        ) : orderStatus === "Ongoing" || serviceDetails.rate !== null ? (
+          <div className="w-[100%] border-stroke lg:w-[35%]">
+            <div className="w-full max-w-md rounded-lg bg-white p-6">
+              <button
+                className={`${medicineDetail && orderStatus !== "Completed" && !medicineIsPaid ? "border-primary bg-primary" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary "} mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
+                onClick={() =>
+                  router.push(
+                    `/patient/health-services/appointment/additional?medicineId=${medicineOrderId}&orderId=${serviceDetails.orderId}`
+                  )
+                }
+              >
+                Additional Medicine
+              </button>
+              <button
+                className="flex w-full items-center justify-center gap-2 rounded border border-primary py-2 text-lg font-bold text-primary hover:bg-kalbe-ultraLight hover:text-primary"
+                onClick={() => alert("Order Finished!")}
+              >
+                <IconMessage size={25} />
+                Chat With Caregiver
+              </button>
+              <ToastContainer />
+            </div>
           </div>
+        ) : (
+          orderStatus === "Completed" && (
+            <div className="flex h-full w-full justify-center rounded-md border border-stroke lg:w-[35%]">
+              <div className="w-full max-w-md rounded-lg bg-white p-6">
+                <div>
+                  <p className="mb-5 text-center text-2xl font-bold text-primary">
+                    Service Rating
+                  </p>
+                  <p className="mb-3 text-dark-secondary">
+                    How is your experience?
+                  </p>
+                </div>
+                <div className="mb-5.5 flex items-center">
+                  {[...Array(5)].map((_, index) => (
+                    <svg
+                      key={index}
+                      className={`ms-3 h-8 w-8 cursor-pointer ${index <= rating ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"}`}
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                      onClick={() => setRating(index)}
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  ))}
+                </div>
+                <div className="border-b-[0.5px] border-primary">
+                  <p className="my-3 text-center text-lg">
+                    {rating === 4
+                      ? "Satisfied"
+                      : rating >= 2
+                        ? "Good"
+                        : "Dissatisfied"}
+                  </p>
+                </div>
+                {!rated && (
+                  <AxolotlButton
+                    label="Rate"
+                    variant="primary"
+                    fontThickness="bold"
+                    customClasses="w-full mt-7"
+                    onClick={handleRateCaregiver}
+                  />
+                )}
+              </div>
+            </div>
+          )
         )}
       </>
     </div>

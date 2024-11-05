@@ -4,6 +4,7 @@ import Image from "next/image";
 import React from "react";
 import {
   MEDICINE,
+  MEDICINE_ORDER_DETAIL,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
 
@@ -15,13 +16,7 @@ interface MedicineProps {
   >;
   is_paid: boolean;
   payment: boolean;
-  medicineDetail: {
-    id: string;
-    quantity: number;
-    total_price: number;
-    created_at: Date;
-    updated_at: Date;
-    medicine_id: string;
+  medicineDetail: MEDICINE_ORDER_DETAIL & {
     medicine: MEDICINE;
   };
 }

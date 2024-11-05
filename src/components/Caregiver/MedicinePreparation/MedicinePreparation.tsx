@@ -7,7 +7,10 @@ import {
   updateOrderWithMedicineOrderId
 } from "@/app/_server-action/caregiver";
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
-import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import {
+  getClientPublicStorageURL,
+  prepareFileBeforeUpload
+} from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";

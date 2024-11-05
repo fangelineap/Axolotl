@@ -93,7 +93,6 @@ export type MEDICINE_ORDER = {
   paid_at: Date | null;
   updated_at: Date;
   created_at: Date;
-  medicine_order_detail_id: string;
 };
 
 export type MEDICINE_ORDER_DETAIL = {
