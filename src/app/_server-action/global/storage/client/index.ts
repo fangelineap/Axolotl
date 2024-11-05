@@ -17,24 +17,20 @@ async function uploadFileToStorage(
 ): Promise<string | undefined> {
   const supabase = createSupabaseClient();
 
-  const { data: userData } = await supabase.auth.getSession();
+  const { data, error } = await supabase.storage
+    .from(storage)
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false
+    });
 
-  if (userData.session?.user) {
-    const { data, error } = await supabase.storage
-      .from(storage)
-      .upload(fileName, file, {
-        cacheControl: "3600",
-        upsert: false
-      });
+  if (error) {
+    console.error("Error uploading file:", error.message);
 
-    if (error) {
-      console.error("Error uploading file:", error.message);
-
-      return undefined;
-    }
-
-    return data.path;
+    return undefined;
   }
+
+  return data.path;
 }
 
 /**
