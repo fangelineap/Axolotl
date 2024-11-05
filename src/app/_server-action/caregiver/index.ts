@@ -5,9 +5,14 @@ import createSupabaseServerClient, {
   getUserDataFromSession,
   getUserFromSession
 } from "@/lib/server";
-import { MEDICINE_ORDER_DETAIL } from "@/types/AxolotlMainType";
+import {
+  MEDICINE,
+  MEDICINE_ORDER,
+  MEDICINE_ORDER_DETAIL
+} from "@/types/AxolotlMainType";
+import { CAREGIVER_MEDICINE_ORDER } from "@/types/AxolotlMultipleTypes";
 
-import { unstable_noStore } from "next/cache";
+import { revalidatePath, unstable_noStore } from "next/cache";
 
 export async function fetchOrdersByCaregiver() {
   unstable_noStore();
@@ -331,6 +336,15 @@ export async function fetchOrderDetail(orderId: string) {
       }
     }
 
+    // Construct the full URL for proof_of_service
+    let proofOfServiceUrl = orderData.proof_of_service;
+    if (proofOfServiceUrl) {
+      const { data } = supabase.storage
+        .from("proof_of_service") // Make sure to use the correct storage bucket name
+        .getPublicUrl(proofOfServiceUrl);
+      proofOfServiceUrl = data.publicUrl; // Full public URL
+    }
+
     // Combine the order data, user data, and medicine details
     const combinedData = {
       ...orderData,
@@ -421,7 +435,8 @@ export async function medicinePreparation(orderId: string) {
     // Combine the order data and user data
     const combinedData = {
       ...orderData,
-      user
+      user,
+      rate: orderData.rate
       // No 'medicines' field since we don't need it here
     };
 
@@ -437,8 +452,7 @@ export async function medicinePreparation(orderId: string) {
 
 export async function finishOrder(
   orderId: string,
-  proofOfServiceFile: File | null,
-  medicine: { id: string; quantity: number; price: number }[]
+  proofOfServiceUrl: string | null
 ) {
   const supabase = await createSupabaseServerClient();
 
@@ -448,28 +462,11 @@ export async function finishOrder(
       throw new Error("Unable to retrieve user session");
     }
 
-    // Step 1: Upload the proof_of_service image to Supabase storage (if provided)
-    let proofOfServiceUrl = null;
-    if (proofOfServiceFile) {
-      const { data: imageData, error: imageError } = await supabase.storage
-        .from("proofs_of_service") // Replace with your actual storage bucket
-        .upload(
-          `order_${orderId}/${proofOfServiceFile.name}`,
-          proofOfServiceFile
-        );
-
-      if (imageError) {
-        throw new Error(
-          "Failed to upload proof of service image: " + imageError.message
-        );
-      }
-
-      proofOfServiceUrl = imageData?.path || null; // Save the file path for storing in the database
-    }
-    // Step 2: Update the `order` table with the proof_of_service URL
+    // Update the `order` table with the proof_of_service URL
     const { error: updateOrderError } = await supabase
       .from("order")
       .update({
+        status: "Completed",
         proof_of_service: proofOfServiceUrl
       })
       .eq("id", orderId);
@@ -481,73 +478,7 @@ export async function finishOrder(
       );
     }
 
-    // Step 3: Insert a new record into the `medicine_order` table
-    const totalQty = medicine.reduce((sum, med) => sum + med.quantity, 0); // Total quantity of medicines
-    const subTotal = medicine.reduce(
-      (sum, med) => sum + med.price * med.quantity,
-      0
-    ); // Subtotal of medicine prices
-    const deliveryFee = 10000; // Example delivery fee, you can change this
-    const totalPrice = subTotal + deliveryFee; // Total price
-
-    const { data: medicineOrderData, error: medicineOrderError } =
-      await supabase
-        .from("medicine_order")
-        .insert({
-          total_qty: totalQty,
-          sub_total_medicine: subTotal,
-          delivery_fee: deliveryFee,
-          total_price: totalPrice,
-          is_paid: false, // Set payment status as unpaid initially
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .select("id")
-        .single(); // Return the newly inserted record's ID
-
-    if (medicineOrderError) {
-      throw new Error(
-        "Failed to create medicine order: " + medicineOrderError.message
-      );
-    }
-
-    const medicineOrderId = medicineOrderData?.id;
-
-    // Step 4: Update the `order` table with the `medicine_order_id`
-    const { error: updateMedicineOrderIdError } = await supabase
-      .from("order")
-      .update({
-        medicine_order_id: medicineOrderId
-      })
-      .eq("id", orderId);
-
-    if (updateMedicineOrderIdError) {
-      throw new Error(
-        "Failed to update order with medicine order ID: " +
-          updateMedicineOrderIdError.message
-      );
-    }
-
-    // Step 5: Insert ordered medicines into the `medicine_order_detail` table
-    const medicineOrderDetails = medicine.map((med) => ({
-      quantity: med.quantity,
-      total_price: med.price * med.quantity,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      medicine_id: med.id, // Reference to the medicine table
-      medicine_order_id: medicineOrderId // Reference to the newly created medicine_order
-    }));
-
-    const { error: medicineOrderDetailsError } = await supabase
-      .from("medicine_order_detail")
-      .insert(medicineOrderDetails);
-
-    if (medicineOrderDetailsError) {
-      throw new Error(
-        "Failed to insert medicine order details: " +
-          medicineOrderDetailsError.message
-      );
-    }
+    revalidatePath(`/caregiver/order/${orderId}`);
 
     return { success: true, message: "Order finished successfully!" };
   } catch (error) {
@@ -556,5 +487,125 @@ export async function finishOrder(
       error instanceof Error ? error.message : "Unknown error"
     );
     throw new Error("Failed to finish order");
+  }
+}
+
+export async function insertMedicineOrder(
+  caregiverOrderDetails: CAREGIVER_MEDICINE_ORDER
+): Promise<MEDICINE_ORDER> {
+  const supabase = await createSupabaseServerClient();
+
+  // Extract the specific fields needed for medicineOrder insertion
+  const {
+    total_qty,
+    sub_total_medicine,
+    delivery_fee,
+    total_price,
+    is_paid,
+    paid_at
+  } = caregiverOrderDetails;
+
+  try {
+    const { data, error } = await supabase
+      .from("medicineOrder")
+      .insert({
+        total_qty,
+        sub_total_medicine,
+        delivery_fee,
+        total_price,
+        is_paid,
+        paid_at
+      })
+      .select("*")
+      .single(); // Returns the inserted record as a single object
+
+    if (error) {
+      throw new Error("Failed to insert medicine order: " + error.message);
+    }
+
+    return data as MEDICINE_ORDER; // Return the inserted record with MEDICINE_ORDER type
+  } catch (error) {
+    console.error("Error inserting medicine order:", error);
+    throw new Error("Error inserting medicine order");
+  }
+}
+
+export async function insertMedicineOrderDetail(
+  caregiverOrderDetails: MEDICINE_ORDER_DETAIL
+): Promise<MEDICINE_ORDER_DETAIL> {
+  const supabase = await createSupabaseServerClient();
+  const { quantity, total_price, medicine_id, medicine_order_id } =
+    caregiverOrderDetails;
+  try {
+    const { data, error } = await supabase
+      .from("medicineOrderDetail")
+      .insert({
+        quantity,
+        total_price,
+        medicine_id,
+        medicine_order_id
+      })
+      .select("*")
+      .single(); // Returns the inserted record as a single object
+
+    if (error) {
+      throw new Error("Failed to insert medicine order: " + error.message);
+    }
+
+    return data as MEDICINE_ORDER_DETAIL; // Return the inserted record with MEDICINE_ORDER type
+  } catch (error) {
+    console.error("Error inserting medicine order:", error);
+    throw new Error("Error inserting medicine order");
+  }
+}
+
+export async function updateOrderWithMedicineOrderId(
+  orderId: string,
+  data: MEDICINE_ORDER_DETAIL[]
+) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { error } = await supabase
+      .from("medicineOrderDetail")
+      .insert(data)
+      .select("*")
+      .single();
+
+    if (error) {
+      throw new Error("Failed to insert medicine order: " + error.message);
+    }
+
+    return data as MEDICINE_ORDER_DETAIL[];
+  } catch (error) {
+    console.error("Error inserting medicine order:", error);
+    throw new Error("Error inserting medicine order");
+  }
+}
+
+export async function insertNewMedicine(
+  medicineData: MEDICINE,
+  orderId: string
+) {
+  const supabase = await createSupabaseServerClient();
+  const { name, type, price, exp_date } = medicineData;
+  try {
+    const { data, error } = await supabase
+      .from("medicine")
+      .insert({ name, type, price, exp_date })
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("Error inserting new medicine:", error);
+      throw new Error("Failed to insert new medicine: " + error.message);
+    }
+
+    revalidatePath(`/caregiver/order/${orderId}/prepare/${orderId}`);
+
+    return data; // Return the inserted medicine record, including generated ID
+  } catch (error) {
+    console.error("Error inserting new medicine:", error);
+    throw error;
   }
 }

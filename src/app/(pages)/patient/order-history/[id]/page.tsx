@@ -57,6 +57,7 @@ const MedicinePreparation = () => {
             orderStatus={data.orderStatus}
             orderNotes={data.orderNotes}
             medicineOrderId={data.medicineOrderId}
+            medicineIsPaid={data.medicineIsPaid}
             caregiverInfo={data.caregiverInfo}
             patientInfo={data.patientInfo}
             medicalDetails={data.medicalDetails}

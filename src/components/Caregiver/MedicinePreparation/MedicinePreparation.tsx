@@ -1,23 +1,32 @@
 "use client";
+import {
+  finishOrder,
+  insertMedicineOrder,
+  insertMedicineOrderDetail,
+  insertNewMedicine,
+  updateOrderWithMedicineOrderId
+} from "@/app/_server-action/caregiver";
 import { getGlobalAllMedicine } from "@/app/_server-action/global";
-import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import {
+  getClientPublicStorageURL,
+  prepareFileBeforeUpload
+} from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
-import ExpiredDatePicker from "@/components/FormElements/DatePicker/ExpiredDatePicker";
-import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
-import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
-import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectGroupWithChange";
+import MedicineModal from "@/components/Axolotl/Modal/AxolotlAddMedicine";
 import { MEDICINE } from "@/types/AxolotlMainType";
 import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
 import "flatpickr/dist/flatpickr.min.css";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface MedecinePreparationProps {
+  orderId: string;
   orderStatus: string;
   patientInfo: {
     name: string;
@@ -48,6 +57,7 @@ interface MedecinePreparationProps {
     delivery: number;
     totalCharge: number;
   };
+  rate: number | null;
 }
 
 function renderFields(fieldName: string[], fieldValue: string[]) {
@@ -68,11 +78,13 @@ function renderFields(fieldName: string[], fieldValue: string[]) {
 }
 
 const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
+  orderId,
   orderStatus,
   patientInfo,
   medicalDetails,
   serviceDetails,
-  price
+  price,
+  rate
 }) => {
   const [uploadedImage, setUploadedImage] = useState<string | File | null>(
     null
@@ -85,7 +97,13 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   );
 
   const [selectedMedications, setSelectedMedications] = useState<
-    { quantity: number; name: string; price: number }[]
+    {
+      id: string;
+      quantity: number;
+      total_price: number;
+      name: string;
+      price: number;
+    }[]
   >([]);
   const [totalPrice, setTotalPrice] = useState<number>(price.total);
   const [totalCharge, setTotalCharge] = useState<number>(price.totalCharge);
@@ -126,6 +144,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const formattedTotalPrice = currencyFormatter.format(totalPrice);
   const formattedTotalCharge = currencyFormatter.format(totalCharge);
   const formattedDeliveryFee = currencyFormatter.format(deliveryFee);
+
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch medicine data from the database
@@ -178,9 +198,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           return [
             ...prev,
             {
+              id: "",
               quantity: 1,
               name: currentMedicine.name,
-              price: currentMedicine.price || 0
+              price: currentMedicine.price || 0,
+              total_price: currentMedicine.price
             }
           ];
         }
@@ -208,10 +230,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     setIsAddNewMedicineModalOpen(false);
   };
 
-  const handleSaveNewMedicine = () => {
+  const handleSaveNewMedicine = async () => {
     if (!newMedicine.name || !newMedicine.price || !newMedicine.expired) {
       toast.warning("Please fill out all fields.", {
-        position: "top-right"
+        position: "bottom-right"
       });
 
       return;
@@ -221,13 +243,41 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       newMedicine.price.toString().replace(/\./g, "")
     );
 
-    // Add the new medicine to the medicine list
+    // Insert the new medicine into the database
+    const addNewMedicine = await insertNewMedicine(
+      {
+        uuid: "",
+        name: newMedicine.name,
+        type: newMedicine.type,
+        price: isNaN(medicinePrice) ? 0 : medicinePrice,
+        exp_date: new Date(newMedicine.expired)
+      },
+      orderId
+    );
+
+    if (!addNewMedicine) {
+      toast.error("Failed to add new medicine.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    toast.success("Medicine added successfully.", {
+      position: "bottom-right"
+    });
+
+    // Add the newly created medicine with its ID to the selected medications
     setSelectedMedications((prev) => [
       ...prev,
       {
+        id: "", // Use the ID returned from the database
         quantity: newMedicine.quantity,
         name: newMedicine.name,
-        price: isNaN(medicinePrice) ? 0 : medicinePrice
+        price: isNaN(medicinePrice) ? 0 : medicinePrice,
+        total_price: isNaN(medicinePrice)
+          ? 0
+          : medicinePrice * newMedicine.quantity
       }
     ]);
 
@@ -292,8 +342,157 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     return null;
   };
 
+  /**
+   * * Handle File Upload
+   * @param medicinePhoto
+   * @returns
+   */
+  const handleFileUpload = async (uploadImage: File) => {
+    try {
+      const fileName = await prepareFileBeforeUpload(
+        "proof_of_service",
+        uploadImage
+      );
+
+      if (!fileName) return undefined;
+
+      return fileName;
+    } catch (error) {
+      toast.error("Error uploading file: " + error, {
+        position: "bottom-right"
+      });
+
+      return undefined;
+    }
+  };
+
   const handleFinishOrder = async () => {
-    console.log("Order finished");
+    if (rate === null) {
+      toast.warning("Wait until the patient submit your rating.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    if (!(uploadedImage instanceof File)) {
+      toast.warning(
+        "Please upload a proof of service image before finishing the order.",
+        {
+          position: "bottom-right"
+        }
+      );
+
+      return;
+    }
+
+    try {
+      let medicineOrderId;
+
+      // If there are selected medications, insert them into the database
+      if (selectedMedications.length > 0) {
+        // Calculate medicine order details
+        const totalQuantity = selectedMedications.reduce(
+          (sum, med) => sum + med.quantity,
+          0
+        );
+        const subTotalMedicine = selectedMedications.reduce(
+          (sum, med) => sum + med.price * med.quantity,
+          0
+        );
+        const totalPrice = subTotalMedicine + deliveryFee;
+
+        // Insert into the medicineOrder table
+        const newMedicineOrder = await insertMedicineOrder({
+          total_qty: totalQuantity,
+          sub_total_medicine: subTotalMedicine,
+          delivery_fee: deliveryFee,
+          total_price: totalPrice,
+          is_paid: false, // Set to true if payment has been completed
+          paid_at: null // Set the date if payment is made
+        });
+        console.log("Inserted Medicine Order:", newMedicineOrder);
+        console.log("ACHIVE NEW MEDICINE ORDER");
+
+        // Check if newMedicineOrder and its ID are valid
+        if (!newMedicineOrder || !newMedicineOrder.id) {
+          toast.error(
+            "Failed to insert medicine order. Response:",
+
+            { position: "bottom-right" }
+          );
+
+          return;
+        }
+
+        medicineOrderId = newMedicineOrder.id;
+
+        // Insert each medication into medicineOrderDetail
+        const insertMedicine = await Promise.all(
+          selectedMedications.map((med) =>
+            insertMedicineOrderDetail({
+              id: "",
+              quantity: med.quantity,
+              total_price: med.price * med.quantity,
+              medicine_id: med.id, // Assuming each med has a unique ID
+              medicine_order_id: medicineOrderId!,
+              created_at: new Date(),
+              updated_at: new Date()
+            })
+          )
+        );
+        console.log("ACHIVE INSERT NEW MEDICINE ORDER DETAIL");
+
+        // Update the order with the new medicine_order_id
+        const finalUpdate = await updateOrderWithMedicineOrderId(
+          orderId,
+          insertMedicine
+        );
+
+        if (finalUpdate.length === 0) {
+          toast.error("Failed to update order. Response:", {
+            position: "bottom-right"
+          });
+
+          return;
+        }
+
+        toast.success("Order updated successfully", {
+          position: "bottom-right"
+        });
+      }
+
+      // Use the handleFileUpload function to upload the image
+      const fileName = await handleFileUpload(uploadedImage);
+
+      if (!fileName) {
+        throw new Error("File upload failed.");
+      }
+
+      // Call finishOrder to update the database with the proof_of_service URL
+      const result = await finishOrder(orderId, fileName); // Pass orderId and URL to finishOrder function
+
+      if (result.success) {
+        toast.success(result.message, {
+          position: "bottom-right"
+        });
+        // Optionally reset or navigate away as needed
+        setUploadedImage(null); // Reset uploaded image after successful completion
+
+        setTimeout(() => {
+          router.refresh();
+          router.push(`/caregiver/order/${orderId}`);
+          router.refresh();
+        }, 250);
+      } else {
+        throw new Error(result.message || "Failed to finish the order.");
+      }
+    } catch (error) {
+      console.error("Error during proof of service upload:", error);
+      toast.error("Failed to finish order. Please try again.", {
+        position: "bottom-right"
+      });
+    }
   };
 
   // Disable background scroll when modal is open
@@ -321,7 +520,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <p className="font-bold text-gray-600">Current Status</p>
             <span
               className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
-                orderStatus === "Done"
+                orderStatus === "Completed"
                   ? "bg-green-500"
                   : orderStatus === "Ongoing"
                     ? "bg-yellow-500"
@@ -577,7 +776,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <FileInput
               onFileSelect={(file) => setUploadedImage(file)}
               name="service_proof"
-              label=""
+              label="Upload Proof of Service Photo"
               accept={["image/jpg", "image/jpeg", "image/png"]}
               isDropzone={true} // To use the dropzone style
             />
@@ -597,206 +796,28 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
       {/* Modal for Adding Medicine */}
       {isModalOpen && currentMedicine && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div
-            className="mx-auto w-full max-w-xs overflow-y-auto rounded-lg 
-            bg-white sm:h-auto sm:max-w-sm md:h-auto md:max-w-md lg:h-auto lg:max-w-md
-            xl:h-auto xl:max-w-xl"
-          >
-            <div className="rounded-t-lg bg-primary px-6 py-4">
-              <h2 className="text-center text-xl font-bold text-white">
-                Add Medicine
-              </h2>
-            </div>
-            <div className=" overflow-y-auto p-6  ">
-              {/* Medicine Photo Section */}
-              <div className="mb-6">
-                <h3 className="mb-2 font-bold text-primary">Medicine Photo</h3>
-                <div className="flex h-48 w-full items-center justify-center rounded-lg border border-primary p-4">
-                  {currentMedicine.medicine_photo ? (
-                    <div className="relative flex h-full w-full items-center justify-center">
-                      <Image
-                        src={medicinePhoto}
-                        alt={currentMedicine.medicine_photo}
-                        className="object-contain" // Make image contain within the container
-                        layout="fill" // Fills the container
-                      />
-                    </div>
-                  ) : (
-                    <p>No Image Available</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <h3 className="mb-2 font-bold text-primary">
-                  Medicine Description
-                </h3>
-                <div className="mb-4">
-                  <label className="mb-4 block text-sm font-medium">Name</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine.name}
-                    disabled
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="mb-4 block text-sm font-medium">Type</label>
-                  <input
-                    className="mt-1 block w-full rounded border p-2"
-                    value={currentMedicine.type}
-                    disabled
-                  />
-                </div>
-                <div className="mb-4 flex items-center">
-                  <div className="w-1/2">
-                    <label className="mb-4 block text-sm font-medium">
-                      Expired Date
-                    </label>
-                    <div className="mt-1 flex items-center">
-                      <input
-                        type="text"
-                        className="mt-1 block w-full rounded border p-2"
-                        value={new Date(
-                          currentMedicine.exp_date
-                        ).toDateString()}
-                        disabled
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-1 w-1/2 pl-4 ">
-                    <label className="mb-4 block text-sm font-medium">
-                      Price
-                    </label>
-                    <div className="relative mt-1 flex items-center">
-                      <span className="absolute left-3 text-gray-500">Rp.</span>
-
-                      <input
-                        type="text"
-                        className="block w-full rounded border p-2 pl-10"
-                        value={currentMedicine.price}
-                        disabled
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  className="rounded bg-gray-500 px-4 py-2 text-white"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="rounded bg-primary px-4 py-2 text-white"
-                  onClick={handleAddMedicine}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MedicineModal
+          mode="addExisting"
+          isOpen={true}
+          currentMedicine={currentMedicine}
+          medicinePhoto={currentMedicine.medicine_photo}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleAddMedicine}
+        />
       )}
 
       {/* Modal for Adding New Medicine */}
       {isAddNewMedicineModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-lg rounded-lg bg-white">
-            <div className="rounded-t-lg bg-primary px-6 py-4">
-              <h2 className="text-center text-lg font-bold text-white">
-                Add New Medicine
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="mb-4">
-                <div className="mb-2">
-                  <InputGroupWithChange
-                    customClasses="mb-4"
-                    label="Name"
-                    type="text"
-                    placeholder="Enter medicine name"
-                    required={true}
-                    name="medicineName"
-                    value={newMedicine.name}
-                    onChange={(e) =>
-                      setNewMedicine({ ...newMedicine, name: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="mb-2">
-                  <SelectGroupWithChange
-                    name="Brand"
-                    label="Type"
-                    content={["Branded", "Generic"]}
-                    customClasses="w-full"
-                    required
-                    onChange={(value) =>
-                      setNewMedicine({ ...newMedicine, type: value })
-                    }
-                  />
-                </div>
-                <div className="mb-4 flex items-center">
-                  <div className="w-1/2">
-                    <ExpiredDatePicker
-                      customClasses="mb-3"
-                      label="Expired Date"
-                      required={true}
-                      name="expiredDate"
-                      expired={newMedicine.expired ? newMedicine.expired : ""}
-                      onChange={(date) =>
-                        setNewMedicine({ ...newMedicine, expired: date })
-                      }
-                    />
-                  </div>
-                  <div className="mt-3 w-1/2 pl-4">
-                    <InputGroupWithCurrency
-                      customClasses="mb-6.5"
-                      label="Price"
-                      type="text"
-                      placeholder="Enter medicine price"
-                      required={true}
-                      name="medicinePrice"
-                      value={
-                        newMedicine.price
-                          ? newMedicine.price.toLocaleString("id-ID")
-                          : ""
-                      }
-                      onChange={(e) => {
-                        const price = parseInt(
-                          e.target.value.replace(/\./g, "")
-                        );
-                        setNewMedicine({
-                          ...newMedicine,
-                          price: isNaN(price) ? 0 : price
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  className="rounded bg-gray-500 px-4 py-2 text-white"
-                  onClick={() => {
-                    resetFormNewMedicine(); // Reset the form fields
-                    setIsAddNewMedicineModalOpen(false); // Close the modal
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="rounded bg-primary px-4 py-2 text-white"
-                  onClick={handleSaveNewMedicine}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MedicineModal
+          mode="addNew"
+          isOpen={true}
+          newMedicine={newMedicine}
+          setNewMedicine={(updates) =>
+            setNewMedicine((prev) => ({ ...prev, ...updates }))
+          }
+          onClose={resetFormNewMedicine}
+          onSave={handleSaveNewMedicine}
+        />
       )}
     </div>
   );

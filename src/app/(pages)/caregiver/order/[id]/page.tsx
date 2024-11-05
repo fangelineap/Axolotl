@@ -2,7 +2,6 @@ import { fetchOrderDetail } from "@/app/_server-action/caregiver";
 import OrderDetail from "@/components/Caregiver/OrderDetail/OrderDetail";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import type { CaregiverOrderDetails } from "../../type/data";
-import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import { redirect } from "next/navigation";
 
 async function getOrderData(orderId: string) {
@@ -49,9 +48,7 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
   const address = user?.address;
   const phone_number = user?.phone_number;
   const birthdate = user?.birthdate;
-  const profile_photo = await getGlobalUserProfilePhoto(
-    orderData.caregiver.profile_photo
-  );
+  const proof_of_service = orderData.proof_of_service;
 
   if (orderData.status === "Ongoing") {
     redirect(`/caregiver/order/${params.id}/prepare/${params.id}`);
@@ -121,7 +118,7 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
             price: detail.quantity * detail.price || 0
           }))}
           proofOfService={{
-            imageUrl: profile_photo || ""
+            imageUrl: proof_of_service || ""
           }}
           orderType={orderData.appointment?.id || "N/A"}
           patientName={`${first_name} ${last_name}`}

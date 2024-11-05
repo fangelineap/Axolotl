@@ -66,6 +66,7 @@ const MedicinePreparationPage = async ({
       </h1>
       <div>
         <MedicinePreparation
+          orderId={params.orderId}
           orderStatus={orderData.status}
           patientInfo={{
             name: `${first_name} ${last_name}`,
@@ -112,6 +113,7 @@ const MedicinePreparationPage = async ({
             delivery: orderData.medicineOrder?.delivery_fee || 0,
             totalCharge: orderData.total_payment || 0
           }}
+          rate={orderData.rate}
         />
       </div>
     </DefaultLayout>

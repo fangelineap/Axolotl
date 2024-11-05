@@ -90,10 +90,9 @@ export type MEDICINE_ORDER = {
   delivery_fee: number;
   total_price: number;
   is_paid: boolean;
-  paid_at: Date;
+  paid_at: Date | null;
   updated_at: Date;
   created_at: Date;
-  medicine_order_detail_id: string;
 };
 
 export type MEDICINE_ORDER_DETAIL = {
@@ -103,6 +102,7 @@ export type MEDICINE_ORDER_DETAIL = {
   created_at: Date;
   updated_at: Date;
   medicine_id: string;
+  medicine_order_id: string;
 };
 
 export type CAREGIVER_LICENSES_TYPE =

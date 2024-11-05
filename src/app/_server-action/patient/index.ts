@@ -224,8 +224,10 @@ export async function getOrderDetail(id: string) {
     const temp = {
       orderStatus: data.status,
       orderNotes: data.notes,
-      medicineOrderId: data.medicineOrder.id,
+      medicineOrderId: data.medicineOrder ? data.medicineOrder.id : null,
+      medicineIsPaid: data.medicineOrder ? data.medicineOrder.is_paid : null,
       caregiverInfo: {
+        id: cgData.id,
         name: cgData.first_name + " " + cgData.last_name,
         str: data.caregiver.str,
         profile_photo_url: profilePhoto
@@ -252,7 +254,8 @@ export async function getOrderDetail(id: string) {
         startTime: data.appointment.appointment_date,
         endTime: data.appointment.appointment_date,
         serviceFee: serviceFee ? serviceFee.price : 0,
-        totalCharge: data.appointment.total_payment
+        totalCharge: data.appointment.total_payment,
+        rate: data.rate
       },
       medicineDetail: meds,
       price: {
@@ -468,5 +471,73 @@ export async function handleAdditionalMedicinePayment(
     }
   } catch (error) {
     console.log("Error", error);
+  }
+}
+
+export async function updateRating(
+  orderId: string,
+  caregiverId: string,
+  rating: number
+) {
+  try {
+    const supabase = await createSupabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("order")
+      .update({
+        rate: rating + 1
+      })
+      .eq("id", orderId)
+      .select("rate");
+
+    if (data) {
+      try {
+        const { data } = await supabase
+          .from("caregiver")
+          .select("rate")
+          .eq("caregiver_id", caregiverId);
+        try {
+          if (data) {
+            const { data: updateData } = await supabase
+              .from("caregiver")
+              .update({ rate: (data[0].rate + rating + 1) / 2 })
+              .eq("caregiver_id", caregiverId)
+              .select("rate");
+
+            if (updateData) {
+              return "Success";
+            }
+          } else {
+            const { data: updateData } = await supabase
+              .from("caregiver")
+              .update({ rate: rating + 1 })
+              .eq("caregiver_id", caregiverId)
+              .select("rate");
+
+            if (updateData) {
+              return "Success";
+            }
+          }
+        } catch (error) {
+          console.log("error", error);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+export async function skipAdditionalMedicine(medicineOrderId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    await supabase.from("medicineOrder").delete().eq("id", medicineOrderId);
+
+    return "Success";
+  } catch (error) {
+    return "Error";
   }
 }

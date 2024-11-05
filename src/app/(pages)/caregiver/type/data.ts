@@ -31,6 +31,8 @@ export type CaregiverOrderDetails = ORDER & {
     appointment_date: Date;
     total_payment: number;
   };
+  rate: number;
+  proof_of_service: string;
   medicineOrder: MEDICINE_ORDER;
   medicines: {
     name: string;

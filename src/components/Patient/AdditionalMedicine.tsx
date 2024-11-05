@@ -5,7 +5,8 @@ import Medicine from "./Medicine";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import {
   fetchMedicineOrderById,
-  handleAdditionalMedicinePayment
+  handleAdditionalMedicinePayment,
+  skipAdditionalMedicine
 } from "@/app/_server-action/patient";
 import {
   MEDICINE,
@@ -32,14 +33,17 @@ interface MedicineProps {
     created_at: Date;
     updated_at: Date;
     medicine_id: string;
+    medicine_order_id: string;
     medicine: MEDICINE;
   }[];
 }
 
 const AdditionalMedicine = ({
+  orderId,
   medicineOrder,
   payment
 }: {
+  orderId: string;
   medicineOrder: string;
   payment: boolean;
 }) => {
@@ -90,13 +94,17 @@ const AdditionalMedicine = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleConfirmModal = () => {
-    console.log("hi");
+  const handleConfirmModal = async () => {
+    const res = await skipAdditionalMedicine(medicineOrder);
+
+    if (res === "Success") {
+      router.back();
+    }
   };
 
   const handleAdditionalMedicine = () => {
     handleAdditionalMedicinePayment(medicineOrder, selection);
-    router.back();
+    router.push(`/patient/order-history/${orderId}`);
   };
 
   return (
@@ -350,7 +358,7 @@ const AdditionalMedicine = ({
                 label="Continue to Payment"
                 onClick={() =>
                   router.push(
-                    `/patient/health-services/appointment/additional?medicineId=${medicineOrder}&payment=true`
+                    `/patient/health-services/appointment/additional?medicineId=${medicineOrder}&orderId=${orderId}&payment=true`
                   )
                 }
                 variant={`${selection.length === 0 ? "secondary" : "primary"}`}
