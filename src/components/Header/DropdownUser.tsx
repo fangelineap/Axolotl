@@ -151,7 +151,7 @@ const DropdownUser = () => {
           <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
             <li>
               <Link
-                href={`/profile?user=${user?.user_id}&role=${["Nurse", "Midwife"].includes(user?.role ?? "") ? "Caregiver" : user?.role ?? ""}`}
+                href={`/profile?user=${user?.user_id}&role=${user?.role}`}
                 className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
               >
                 <IconUser />

@@ -21,6 +21,7 @@ const DynamicHeader = ({
   const searchParams = useSearchParams();
 
   const role = searchParams.get("role");
+  const updatedRole = ["Nurse", "Midwife"].includes(role!) ? "Caregiver" : role;
 
   const getProfileHeader = (role: string) => {
     switch (role) {
@@ -70,8 +71,8 @@ const DynamicHeader = ({
     },
     "/auth": { Header: AuthHeader, Sidebar: AuthSidebar },
     "/profile": {
-      Header: getProfileHeader(role!),
-      Sidebar: getProfileSidebar(role!)
+      Header: getProfileHeader(updatedRole!),
+      Sidebar: getProfileSidebar(updatedRole!)
     }
   };
 
