@@ -1,10 +1,13 @@
-import React from "react";
-import Image from "next/image";
-import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
-import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectGroupWithChange";
+"use client";
+
 import ExpiredDatePicker from "@/components/FormElements/DatePicker/ExpiredDatePicker";
 import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
+import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
+import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectGroupWithChange";
 import { MEDICINE } from "@/types/AxolotlMainType";
+import { Skeleton } from "@mui/material";
+import Image from "next/image";
+import React, { useState } from "react";
 
 interface NewMedicine {
   name: string;
@@ -26,7 +29,7 @@ interface MedicineModalProps {
     expired: string | null;
   };
   setNewMedicine?: (medicine: Partial<NewMedicine>) => void;
-  medicinePhoto?: string | null;
+  medicinePhoto?: string;
   onClose: () => void;
   onSave: () => void;
 }
@@ -41,7 +44,11 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
   onClose,
   onSave
 }) => {
+  const [loading, setLoading] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleImageLoad = () => setLoading(true);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -58,13 +65,18 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
               <div className="mb-6">
                 <h3 className="mb-2 font-bold text-primary">Medicine Photo</h3>
                 <div className="flex h-48 w-full items-center justify-center rounded-lg border border-primary p-4">
-                  {medicinePhoto ? (
+                  {currentMedicine.medicine_photo && medicinePhoto ? (
                     <div className="relative flex h-full w-full items-center justify-center">
+                      {!loading && (
+                        <Skeleton animation="wave" width="80%" height={200} />
+                      )}
                       <Image
                         src={medicinePhoto}
                         alt="Medicine"
                         className="object-contain"
                         layout="fill"
+                        priority
+                        onLoad={handleImageLoad}
                       />
                     </div>
                   ) : (

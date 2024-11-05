@@ -112,11 +112,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentMedicine, setCurrentMedicine] = useState<MEDICINE | null>(null);
 
-  const medicinePhoto = getClientPublicStorageURL(
-    "medicine",
-    currentMedicine?.medicine_photo as string
-  );
-
   const [isAddNewMedicineModalOpen, setIsAddNewMedicineModalOpen] =
     useState<boolean>(false);
 
@@ -146,6 +141,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   const formattedDeliveryFee = currencyFormatter.format(deliveryFee);
 
   const router = useRouter();
+
+  const medicinePhoto = getClientPublicStorageURL(
+    "medicine",
+    currentMedicine?.medicine_photo as string
+  );
 
   useEffect(() => {
     // Fetch medicine data from the database
@@ -798,9 +798,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       {isModalOpen && currentMedicine && (
         <MedicineModal
           mode="addExisting"
-          isOpen={true}
+          isOpen={isModalOpen ? true : false}
           currentMedicine={currentMedicine}
-          medicinePhoto={currentMedicine.medicine_photo}
+          medicinePhoto={medicinePhoto}
           onClose={() => setIsModalOpen(false)}
           onSave={handleAddMedicine}
         />
