@@ -1,10 +1,8 @@
-import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import { getGlobalProfile } from "@/app/_server-action/global/profile";
 import UpdateUser from "@/components/Admin/Manage/User/UpdateUser";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
-import {
-  getAdminCaregiverTotalOrders,
-  getAdminUserByUserID
-} from "../../actions";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import { getAdminCaregiverTotalOrders } from "../../actions";
 import { AdminUserTable } from "../../table/data";
 
 interface AdminEditUserProps {
@@ -17,7 +15,7 @@ interface AdminEditUserProps {
  * @returns
  */
 async function fetchData({ params }: AdminEditUserProps) {
-  const response = await getAdminUserByUserID(params.userId);
+  const response = await getGlobalProfile(params.userId);
 
   return response as AdminUserTable;
 }

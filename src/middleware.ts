@@ -171,11 +171,24 @@ async function updateSession(request: NextRequest) {
     }
   }
 
-  if (pathname.startsWith("/profile")) {
-    if ((urlRole && urlRole !== userRole) || (urlUser && urlUser !== userId)) {
-      return NextResponse.redirect(
-        new URL(`/profile?user=${userId}&role=${userRole}`, request.url)
-      );
+  if (pathname.startsWith("/profile") || pathname.startsWith("/profile/edit")) {
+    if (!urlRole || !urlUser)
+      return NextResponse.redirect(new URL(roleRedirect, request.url));
+
+    if (urlRole && urlRole !== userRole) {
+      const redirectPath = pathname.startsWith("/profile/edit")
+        ? `/profile/edit?user=${userId}&role=${userRole}`
+        : `/profile?user=${userId}&role=${userRole}`;
+
+      return NextResponse.redirect(new URL(redirectPath, request.url));
+    }
+
+    if (urlUser && urlUser !== userId) {
+      const redirectPath = pathname.startsWith("/profile/edit")
+        ? `/profile/edit?user=${userId}&role=${userRole}`
+        : `/profile?user=${userId}&role=${userRole}`;
+
+      return NextResponse.redirect(new URL(redirectPath, request.url));
     }
 
     return NextResponse.next();

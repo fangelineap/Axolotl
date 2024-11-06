@@ -1,7 +1,8 @@
-import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import { getGlobalProfile } from "@/app/_server-action/global/profile";
 import ViewUser from "@/components/Admin/Manage/User/ViewUser";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
-import { getAdminCaregiverTotalOrders, getAdminUserByUserID } from "../actions";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import { getAdminCaregiverTotalOrders } from "../actions";
 import { AdminUserTable } from "../table/data";
 
 interface AdminShowUserProps {
@@ -14,7 +15,9 @@ interface AdminShowUserProps {
  * @returns
  */
 async function fetchData({ params }: AdminShowUserProps) {
-  const response = await getAdminUserByUserID(params.userId);
+  const response = await getGlobalProfile(params.userId);
+
+  console.log(response);
 
   return response as AdminUserTable;
 }

@@ -1,16 +1,16 @@
 import { getGlobalProfile } from "@/app/_server-action/global/profile";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
-import ViewProfileComponent from "@/components/Profile/ViewProfileComponent";
+
+import EditProfileComponent from "@/components/Profile/EditProfileComponent";
 import { getUserFromSession } from "@/lib/server";
 import { getGlobalMetadata } from "@/utils/Metadata/GlobalMetadata";
 import { redirect } from "next/navigation";
-import { getAdminCaregiverTotalOrders } from "../admin/manage/user/actions";
-import { AdminUserTable } from "../admin/manage/user/table/data";
+import { AdminUserTable } from "../../admin/manage/user/table/data";
 
-export const metadata = getGlobalMetadata("Profile");
+export const metadata = getGlobalMetadata("EditProfile");
 
-interface ProfileProps {
+interface EditProfileProps {
   searchParams: {
     user: string;
     role: string;
@@ -28,25 +28,10 @@ async function fetchData(userId: string) {
   return response as AdminUserTable;
 }
 
-/**
- * * Get Caregiver Total Order
- * @param user
- * @returns
- */
-async function getCaregiverTotalOrders(userId: string, role: string) {
-  if (["Nurse", "Midwife"].includes(role)) {
-    const totalOrder = await getAdminCaregiverTotalOrders(userId);
-
-    return totalOrder.data ?? 0;
-  }
-
-  return 0;
-}
-
-async function Profile({ searchParams }: ProfileProps) {
+async function EditProfile({ searchParams }: EditProfileProps) {
   const { user: userId, role: userRole } = searchParams;
 
-  // Profile Page Protection
+  // Edit Profile Page Protection
   if (!userId || !userRole) {
     const { data } = await getUserFromSession();
 
@@ -56,16 +41,15 @@ async function Profile({ searchParams }: ProfileProps) {
   }
 
   const user = await fetchData(userId);
-  const totalOrder = await getCaregiverTotalOrders(userId, userRole);
 
   if (!user) return redirect("/not-found");
 
   return (
     <CustomLayout>
-      <CustomBreadcrumbs pageName="Profile" />
-      <ViewProfileComponent user={user} totalOrder={totalOrder} />
+      <CustomBreadcrumbs subPage="Profile" pageName="Edit" />
+      <EditProfileComponent user={user} />
     </CustomLayout>
   );
 }
 
-export default Profile;
+export default EditProfile;

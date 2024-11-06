@@ -11,6 +11,7 @@ interface CustomInputGroupProps {
   required: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
+  secondValue?: string;
 
   // Additional Props
   secondName?: string;
@@ -30,6 +31,7 @@ const CustomInputGroup = ({
   required,
   onChange,
   value,
+  secondValue,
   secondName,
   isTextArea = false,
   isUnit = false,
@@ -89,7 +91,7 @@ const CustomInputGroup = ({
               name={secondName}
               type={type}
               placeholder={placeholder}
-              value={value}
+              value={secondValue}
               className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
             />
             <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">

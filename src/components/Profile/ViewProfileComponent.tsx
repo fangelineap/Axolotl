@@ -7,25 +7,22 @@ import ClientDownloadLicenses from "@/components/Axolotl/Buttons/ClientDownloadL
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
-import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
 
-interface ViewProfileProps {
+interface ViewProfileComponentProps {
   user: AdminUserTable;
   totalOrder: number;
 }
 
-function ViewProfile({ user, totalOrder }: ViewProfileProps) {
+function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
   /**
    * * States & Initial Variables
    */
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [editConfirmationModal, setEditConfirmationModal] = useState(false);
   const user_full_name = user.first_name + " " + user.last_name;
 
   const caregiverProfilePhoto = getClientPublicStorageURL(
@@ -52,11 +49,6 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
     year: "numeric"
   });
 
-  const timeFormatter = new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-
   /**
    * * Helper function to format dates
    * @param date
@@ -74,20 +66,24 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
     : "-";
 
   const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
-  const formattedStartDate = user.caregiver?.schedule_start_date
-    ? formatDate(user.caregiver?.schedule_start_date, dateFormatter)
+
+  /**
+   * * Working Preferences Variables
+   */
+  const startDayPreferences = user.caregiver?.schedule_start_day
+    ? user.caregiver?.schedule_start_day
     : "-";
 
-  const formattedEndDate = user.caregiver?.schedule_end_date
-    ? formatDate(user.caregiver?.schedule_end_date, dateFormatter)
+  const endDayPreferences = user.caregiver?.schedule_end_day
+    ? user.caregiver?.schedule_end_day
     : "-";
 
-  const formattedStartTime = user.caregiver?.schedule_start_date
-    ? formatDate(user.caregiver?.schedule_start_date, timeFormatter)
+  const startTimePreferences = user.caregiver?.schedule_start_time
+    ? user.caregiver?.schedule_start_time
     : "-";
 
-  const formattedEndTime = user.caregiver?.schedule_end_date
-    ? formatDate(user.caregiver?.schedule_end_date, timeFormatter)
+  const endTimePreferences = user.caregiver?.schedule_end_time
+    ? user.caregiver?.schedule_end_time
     : "-";
 
   /**
@@ -96,77 +92,15 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
   const handleImageLoad = () => setImageLoaded(true);
 
   /**
-   * * Edit Confirmation Modal for Caregiver
-   */
-  const openEditConfirmationModal = () => setEditConfirmationModal(true);
-  const closeEditConfirmationModal = () => setEditConfirmationModal(false);
-
-  /**
-   * * Edit Profile Variant
-   */
-  const isCaregiverUnverifiedOrRejected =
-    ["Nurse", "Midwife"].includes(user.role) &&
-    ["Unverified", "Rejected"].includes(user.caregiver?.status || "");
-
-  const editProfileVariant =
-    isCaregiverUnverifiedOrRejected || user.role === "Patient"
-      ? "secondary"
-      : "primary";
-
-  /**
    * * Handle Edit Profile
    */
-  const handleEditProfileButton = () => {
-    switch (user.role) {
-      case "Nurse":
-      case "Midwife":
-        const caregiverStatus = user.caregiver?.status;
-
-        if (caregiverStatus === "Unverified") {
-          toast.error(
-            "Bruh, verify this user first. This ain't LinkedIn endorsements. 🔍",
-            { position: "bottom-right" }
-          );
-
-          return;
-        }
-
-        if (caregiverStatus === "Rejected") {
-          toast.error(
-            "Nah fam, this user already been shown the door. No second chances. 🚪👋",
-            { position: "bottom-right" }
-          );
-
-          return;
-        }
-
-        if (!editConfirmationModal) {
-          openEditConfirmationModal();
-
-          return;
-        }
-
-        break;
-
-      case "Patient":
-        toast.error(
-          "Lmao, nah. You're not editing patient profile. Go edit your life decisions instead. 😂✋",
-          { position: "bottom-right" }
-        );
-
-        return;
-
-      default:
-        break;
-    }
-
-    router.push(`/admin/manage/user/edit/${user.user_id}`);
-  };
+  const handleEditProfileButton = () =>
+    router.push(`/profile/edit?user=${user.user_id}&role=${user.role}`);
 
   return (
     <>
       {/* Title */}
-      <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
+      <h1 className="mb-5 text-heading-1 font-bold">Your Profile</h1>
 
       {/* Container */}
       <div className={`flex w-full flex-col justify-between gap-5`}>
@@ -233,33 +167,15 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                         )}
                       </div>
                       <div className="flex">
-                        {user.caregiver?.status === "Unverified" ? (
-                          <div className="rounded-md border border-blue bg-blue-light p-2">
-                            <p className="font-bold text-blue">
-                              Awaiting for verification
-                            </p>
-                          </div>
-                        ) : user.caregiver?.status === "Verified" ? (
-                          <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
-                            <p className="font-bold text-primary">
-                              Verified on:{" "}
-                              <span className="font-medium">
-                                {" "}
-                                {formattedReviewDate}
-                              </span>
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="rounded-md border border-red bg-red-light p-2">
-                            <p className="font-bold text-red">
-                              Rejected on:{" "}
-                              <span className="font-medium">
-                                {" "}
-                                {formattedReviewDate}
-                              </span>
-                            </p>
-                          </div>
-                        )}
+                        <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
+                          <p className="font-bold text-primary">
+                            Verified on:{" "}
+                            <span className="font-medium">
+                              {" "}
+                              {formattedReviewDate}
+                            </span>
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -274,7 +190,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
 
                 <AxolotlButton
                   label="Edit Profile"
-                  variant={editProfileVariant}
+                  variant="primary"
                   fontThickness="bold"
                   customWidth
                   customClasses="text-lg w-fit"
@@ -290,7 +206,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                 {/* User Personal Data */}
                 <div className="flex w-full flex-col">
                   <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                    User Personal Data
+                    About You
                   </h1>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
                     <DisabledCustomInputGroup
@@ -386,18 +302,18 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                 {["Nurse", "Midwife"].includes(user.role) && (
                   <div className="flex w-full flex-col">
                     <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                      User Working Preferences
+                      Your Working Preferences
                     </h1>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Start Day"
-                        value={formattedStartDate}
+                        value={startDayPreferences}
                         horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="End Day"
-                        value={formattedEndDate}
+                        value={endDayPreferences}
                         horizontal={false}
                         type="text"
                       />
@@ -405,13 +321,13 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Start Time"
-                        value={formattedStartTime}
+                        value={startTimePreferences}
                         horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="End Time"
-                        value={formattedEndTime}
+                        value={endTimePreferences}
                         horizontal={false}
                         type="text"
                       />
@@ -430,7 +346,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                     {/* CAREGIVER - Rating */}
                     <div className="flex w-full flex-col">
                       <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Rating
+                        Your Rating
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
                         <DisabledCustomInputGroup
@@ -456,7 +372,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                     {/* CAREGIVER Working Experiences */}
                     <div className="flex w-full flex-col">
                       <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Working Experiences
+                        Your Working Experiences
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
                         <DisabledCustomInputGroup
@@ -485,7 +401,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                     {/* CAREGIVER Licenses */}
                     <div className="flex w-full flex-col">
                       <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Licenses
+                        Your Licenses
                       </h1>
                       <div className="grid grid-cols-2 gap-5">
                         <ClientDownloadLicenses
@@ -517,7 +433,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                 {user.role === "Patient" && (
                   <div className="flex w-full flex-col">
                     <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                      User Past Medical History
+                      Your Past Medical History
                     </h1>
 
                     <DisabledCustomInputGroup
@@ -621,7 +537,7 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
                   {/* Header */}
                   <div className="mb-3 flex w-full flex-col gap-3">
                     <h1 className="text-heading-6 font-bold text-primary">
-                      Admin Personal Data
+                      About You
                     </h1>
                     <CustomDivider horizontal />
                   </div>
@@ -705,21 +621,12 @@ function ViewProfile({ user, totalOrder }: ViewProfileProps) {
             variant="secondary"
             fontThickness="bold"
             customClasses="text-lg"
-            onClick={() => router.replace("/admin/manage/user")}
+            onClick={() => router.replace(`/${user.role.toLowerCase()}`)}
           />
         </div>
       </div>
-
-      <AxolotlModal
-        isOpen={editConfirmationModal}
-        onClose={closeEditConfirmationModal}
-        onConfirm={handleEditProfileButton}
-        title="Edit Caregiver Profile"
-        question="Are you sure you want to edit this caregiver? This action is only used to update their licenses. Please prepare the necessary documents first"
-        action="confirm"
-      />
     </>
   );
 }
 
-export default ViewProfile;
+export default ViewProfileComponent;

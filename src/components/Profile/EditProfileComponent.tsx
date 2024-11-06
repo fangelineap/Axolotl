@@ -3,35 +3,56 @@
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
 import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
-import ClientDownloadLicenses from "@/components/Axolotl/Buttons/ClientDownloadLicenses";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
-import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
-import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import CheckboxSmoker from "../Axolotl/Checkboxes/CheckboxSmoker";
+import CustomInputGroup from "../Axolotl/InputFields/CustomInputGroup";
+import CustomTimePicker from "../Axolotl/InputFields/CustomTimePicker";
+import PhoneNumberBox from "../Axolotl/InputFields/PhoneNumberBox";
+import SelectDropdown from "../Axolotl/SelectDropdown";
 
-interface ViewUserProps {
+interface EditProfileComponentProps {
   user: AdminUserTable;
-  totalOrder: number;
 }
 
-function ViewUser({ user, totalOrder }: ViewUserProps) {
+function EditProfileComponent({ user }: EditProfileComponentProps) {
   /**
    * * States & Initial Variables
    */
   const router = useRouter();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [editConfirmationModal, setEditConfirmationModal] = useState(false);
   const user_full_name = user.first_name + " " + user.last_name;
 
   const caregiverProfilePhoto = getClientPublicStorageURL(
     "profile_photo",
     user.caregiver?.profile_photo
   );
+
+  const [formData, setFormData] = useState({
+    email: user.email,
+    phone_number: user.phone_number,
+    address: user.address,
+
+    // Patient Specific
+    weight: user.patient?.weight,
+    height: user.patient?.height,
+    is_smoking: user.patient?.is_smoking,
+    allergies: user.patient?.allergies,
+    current_medication: user.patient?.current_medication,
+    med_freq_times: user.patient?.med_freq_times,
+    med_freq_day: user.patient?.med_freq_day,
+    illness_history: user.patient?.illness_history,
+
+    // Caregiver Specific
+    start_day: user.caregiver?.schedule_start_day,
+    end_day: user.caregiver?.schedule_end_day,
+    start_time: user.caregiver?.schedule_start_time,
+    end_time: user.caregiver?.schedule_end_time
+  });
 
   /**
    * * Date Formatters
@@ -71,101 +92,33 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
   const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
 
   /**
-   * * Working Preferences Variables
-   */
-  const startDayPreferences = user.caregiver?.schedule_start_day
-    ? user.caregiver?.schedule_start_day
-    : "-";
-
-  const endDayPreferences = user.caregiver?.schedule_end_day
-    ? user.caregiver?.schedule_end_day
-    : "-";
-
-  const startTimePreferences = user.caregiver?.schedule_start_time
-    ? user.caregiver?.schedule_start_time
-    : "-";
-
-  const endTimePreferences = user.caregiver?.schedule_end_time
-    ? user.caregiver?.schedule_end_time
-    : "-";
-
-  /**
    * * Handle Image Load
    */
   const handleImageLoad = () => setImageLoaded(true);
 
   /**
-   * * Edit Confirmation Modal for Caregiver
-   */
-  const openEditConfirmationModal = () => setEditConfirmationModal(true);
-  const closeEditConfirmationModal = () => setEditConfirmationModal(false);
-
-  /**
-   * * Edit Profile Variant
-   */
-  const isCaregiverUnverifiedOrRejected =
-    ["Nurse", "Midwife"].includes(user.role) &&
-    ["Unverified", "Rejected"].includes(user.caregiver?.status || "");
-
-  const editProfileVariant =
-    isCaregiverUnverifiedOrRejected || user.role === "Patient"
-      ? "secondary"
-      : "primary";
-
-  /**
    * * Handle Edit Profile
    */
-  const handleEditProfileButton = () => {
-    switch (user.role) {
-      case "Nurse":
-      case "Midwife":
-        const caregiverStatus = user.caregiver?.status;
+  const handleEditProfileComponentButton = () =>
+    router.push(`/profile/edit?user=${user.user_id}&role=${user.role}`);
 
-        if (caregiverStatus === "Unverified") {
-          toast.error(
-            "Bruh, verify this user first. This ain't LinkedIn endorsements. 🔍",
-            { position: "bottom-right" }
-          );
+  /**
+   * * Handle Input Change
+   * @param e
+   */
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
-          return;
-        }
-
-        if (caregiverStatus === "Rejected") {
-          toast.error(
-            "Nah fam, this user already been shown the door. No second chances. 🚪👋",
-            { position: "bottom-right" }
-          );
-
-          return;
-        }
-
-        if (!editConfirmationModal) {
-          openEditConfirmationModal();
-
-          return;
-        }
-
-        break;
-
-      case "Patient":
-        toast.error(
-          "Lmao, nah. You're not editing patient profile. Go edit your life decisions instead. 😂✋",
-          { position: "bottom-right" }
-        );
-
-        return;
-
-      default:
-        break;
-    }
-
-    router.push(`/admin/manage/user/edit/${user.user_id}`);
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
 
   return (
     <>
       {/* Title */}
-      <h1 className="mb-5 text-heading-1 font-bold">User Profile</h1>
+      <h1 className="mb-5 text-heading-1 font-bold">Editing Your Profile...</h1>
 
       {/* Container */}
       <div className={`flex w-full flex-col justify-between gap-5`}>
@@ -232,33 +185,15 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                         )}
                       </div>
                       <div className="flex">
-                        {user.caregiver?.status === "Unverified" ? (
-                          <div className="rounded-md border border-blue bg-blue-light p-2">
-                            <p className="font-bold text-blue">
-                              Awaiting for verification
-                            </p>
-                          </div>
-                        ) : user.caregiver?.status === "Verified" ? (
-                          <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
-                            <p className="font-bold text-primary">
-                              Verified on:{" "}
-                              <span className="font-medium">
-                                {" "}
-                                {formattedReviewDate}
-                              </span>
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="rounded-md border border-red bg-red-light p-2">
-                            <p className="font-bold text-red">
-                              Rejected on:{" "}
-                              <span className="font-medium">
-                                {" "}
-                                {formattedReviewDate}
-                              </span>
-                            </p>
-                          </div>
-                        )}
+                        <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
+                          <p className="font-bold text-primary">
+                            Verified on:{" "}
+                            <span className="font-medium">
+                              {" "}
+                              {formattedReviewDate}
+                            </span>
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -273,11 +208,11 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
 
                 <AxolotlButton
                   label="Edit Profile"
-                  variant={editProfileVariant}
+                  variant="primary"
                   fontThickness="bold"
                   customWidth
                   customClasses="text-lg w-fit"
-                  onClick={handleEditProfileButton}
+                  onClick={handleEditProfileComponentButton}
                 />
               </div>
             </div>
@@ -289,54 +224,69 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                 {/* User Personal Data */}
                 <div className="flex w-full flex-col">
                   <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                    User Personal Data
+                    About You
                   </h1>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
                     <DisabledCustomInputGroup
                       label="First Name"
                       value={user.first_name}
-                      horizontal={false}
                       type="text"
                     />
                     <DisabledCustomInputGroup
                       label="Last Name"
                       value={user.last_name}
-                      horizontal={false}
                       type="text"
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledCustomInputGroup
+                    <CustomInputGroup
                       label="Email"
-                      value={user.email}
-                      horizontal={false}
-                      type="text"
+                      type="email"
+                      name="email"
+                      placeholder="Enter Admin Email"
+                      value={formData.email}
+                      required
+                      onChange={handleInputChange}
                     />
-                    <DisabledPhoneNumberBox
+                    <PhoneNumberBox
                       placeholder="081XXXXXXXX"
-                      value={Number(user.phone_number)}
+                      name="phone_number"
+                      required
+                      value={
+                        typeof formData.phone_number === "string"
+                          ? formData.phone_number
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        setFormData({
+                          ...formData,
+                          phone_number: inputValue
+                        });
+                      }}
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
                     <DisabledCustomInputGroup
                       label="Birthdate"
                       value={formattedBirthDate}
-                      horizontal={false}
                       type="text"
                     />
                     <DisabledCustomInputGroup
                       label="Gender"
                       value={user.gender ? user.gender : "-"}
-                      horizontal={false}
                       type="text"
                     />
                   </div>
                   <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledCustomInputGroup
+                    <CustomInputGroup
                       label="Address"
-                      value={user.address ? user.address : "-"}
-                      horizontal={false}
                       type="text"
+                      name="address"
+                      placeholder="Enter Admin Address"
+                      value={formData.address}
+                      required
+                      onChange={handleInputChange}
                     />
                     {user.role === "Patient" && (
                       <DisabledCustomInputGroup
@@ -346,78 +296,40 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                             ? user.patient.blood_type
                             : "-"
                         }
-                        horizontal={false}
                         type="text"
                       />
                     )}
                   </div>
                   {user.role === "Patient" && (
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledCustomInputGroup
-                        label="Height and Weight"
-                        horizontal={false}
-                        type="text"
+                      <CustomInputGroup
+                        label="Height & Weight"
+                        name="height"
+                        secondName="weight"
                         isMultipleUnit
                         unit="cm"
-                        value={
-                          user.patient.height
-                            ? String(user.patient.height)
-                            : "-"
-                        }
                         secondUnit="kg"
-                        secondValue={
-                          user.patient.weight
-                            ? String(user.patient.weight)
-                            : "-"
-                        }
+                        value={String(formData.height)}
+                        secondValue={String(formData.weight)}
+                        required
+                        type="number"
+                        placeholder="50"
+                      />
+                      <CheckboxSmoker
+                        isSmoking={formData.is_smoking ? "Yes" : "No"}
+                        setIsSmoking={setFormData.bind(null, {
+                          ...formData,
+                          is_smoking: !formData.is_smoking
+                        })}
                       />
                       <DisabledCustomInputGroup
                         label="Smoker Status"
                         value={user.patient.is_smoking ? "Yes" : "No"}
-                        horizontal={false}
                         type="text"
                       />
                     </div>
                   )}
                 </div>
-
-                {/* CAREGIVER - Working Preferences */}
-                {["Nurse", "Midwife"].includes(user.role) &&
-                  user.caregiver?.status !== "Rejected" && (
-                    <div className="flex w-full flex-col">
-                      <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Working Preferences
-                      </h1>
-                      <div className="flex w-full flex-col md:flex-row md:gap-5">
-                        <DisabledCustomInputGroup
-                          label="Start Day"
-                          value={startDayPreferences}
-                          horizontal={false}
-                          type="text"
-                        />
-                        <DisabledCustomInputGroup
-                          label="End Day"
-                          value={endDayPreferences}
-                          horizontal={false}
-                          type="text"
-                        />
-                      </div>
-                      <div className="flex w-full flex-col md:flex-row md:gap-5">
-                        <DisabledCustomInputGroup
-                          label="Start Time"
-                          value={startTimePreferences}
-                          horizontal={false}
-                          type="text"
-                        />
-                        <DisabledCustomInputGroup
-                          label="End Time"
-                          value={endTimePreferences}
-                          horizontal={false}
-                          type="text"
-                        />
-                      </div>
-                    </div>
-                  )}
               </div>
 
               <CustomDivider />
@@ -427,29 +339,58 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                 {/* CAREGIVER */}
                 {["Nurse", "Midwife"].includes(user.role) && (
                   <>
-                    {/* CAREGIVER - Rating */}
-                    {user.caregiver?.status !== "Rejected" && (
+                    {/* CAREGIVER - Working Preferences */}
+                    {["Nurse", "Midwife"].includes(user.role) && (
                       <div className="flex w-full flex-col">
                         <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                          User Rating
+                          Your Working Preferences
                         </h1>
                         <div className="flex w-full flex-col md:flex-row md:gap-5">
-                          <DisabledCustomInputGroup
-                            label="Total Order"
-                            horizontal={false}
-                            type="text"
-                            value={String(totalOrder)}
+                          <SelectDropdown
+                            label="Start Day"
+                            name="start_day"
+                            value={formData.start_day as string}
+                            required
+                            placeholder="Select Start Day"
+                            content={[
+                              "Monday",
+                              "Tuesday",
+                              "Wednesday",
+                              "Thursday",
+                              "Friday",
+                              "Saturday",
+                              "Sunday"
+                            ]}
                           />
-                          <DisabledCustomInputGroup
-                            label="Rating"
-                            type="text"
-                            horizontal={false}
-                            isRating
-                            value={
-                              user.caregiver.rate
-                                ? String(user.caregiver.rate)
-                                : "-"
-                            }
+                          <SelectDropdown
+                            label="End Day"
+                            name="end_day"
+                            value={formData.end_day as string}
+                            required
+                            placeholder="Select Start Day"
+                            content={[
+                              "Monday",
+                              "Tuesday",
+                              "Wednesday",
+                              "Thursday",
+                              "Friday",
+                              "Saturday",
+                              "Sunday"
+                            ]}
+                          />
+                        </div>
+                        <div className="flex w-full flex-col md:flex-row md:gap-5">
+                          <CustomTimePicker
+                            placeholder="00:00"
+                            label="Start Time"
+                            required
+                            name="start_time"
+                          />
+                          <CustomTimePicker
+                            placeholder="00:00"
+                            label="End Time"
+                            name="end_time"
+                            required
                           />
                         </div>
                       </div>
@@ -458,19 +399,17 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                     {/* CAREGIVER Working Experiences */}
                     <div className="flex w-full flex-col">
                       <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Working Experiences
+                        Your Working Experiences
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
                         <DisabledCustomInputGroup
                           label="Employment Type"
                           value={user.caregiver.employment_type}
-                          horizontal={false}
                           type="text"
                         />
                         <DisabledCustomInputGroup
                           label="Work Experiences"
                           value={user.caregiver.work_experiences.toString()}
-                          horizontal={false}
                           type="text"
                           isUnit={true}
                           unit="year"
@@ -479,38 +418,8 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                       <DisabledCustomInputGroup
                         label="Workplace"
                         value={user.caregiver.workplace}
-                        horizontal={false}
                         type="text"
                       />
-                    </div>
-
-                    {/* CAREGIVER Licenses */}
-                    <div className="flex w-full flex-col">
-                      <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Licenses
-                      </h1>
-                      <div className="grid grid-cols-2 gap-5">
-                        <ClientDownloadLicenses
-                          licenseTitle="Curriculum Vitae"
-                          fileLink={user.caregiver.cv ?? ""}
-                          licenseType="CV"
-                        />
-                        <ClientDownloadLicenses
-                          licenseTitle="Degree Certificate"
-                          fileLink={user.caregiver.degree_certificate ?? ""}
-                          licenseType="Degree Certificate"
-                        />
-                        <ClientDownloadLicenses
-                          licenseTitle="Surat Tanda Registrasi"
-                          fileLink={user.caregiver.str ?? ""}
-                          licenseType="STR"
-                        />
-                        <ClientDownloadLicenses
-                          licenseTitle="Surat Izin Praktik"
-                          fileLink={user.caregiver.sip ?? ""}
-                          licenseType="SIP"
-                        />
-                      </div>
                     </div>
                   </>
                 )}
@@ -519,31 +428,40 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                 {user.role === "Patient" && (
                   <div className="flex w-full flex-col">
                     <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                      User Past Medical History
+                      Your Past Medical History
                     </h1>
-
-                    <DisabledCustomInputGroup
-                      label="Allergies"
-                      value={
-                        user.patient.allergies ? user.patient.allergies : "-"
-                      }
-                      horizontal={false}
+                    <CustomInputGroup
+                      name="allergies"
+                      label="Allergies (if any)"
                       type="text"
+                      placeholder="Enter your allergies"
+                      required={false}
+                      value={formData.allergies}
+                      onChange={handleInputChange}
                     />
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledCustomInputGroup
-                        label="Current Medication"
-                        value={
-                          user.patient.current_medication
-                            ? user.patient.current_medication
-                            : "-"
-                        }
-                        horizontal={false}
+                      <CustomInputGroup
+                        name="current_medication"
+                        label="Current Medication (if any)"
                         type="text"
+                        placeholder="Enter your current medication"
+                        required={false}
+                        value={formData.current_medication}
+                        onChange={handleInputChange}
                       />
+                      {/* <CustomInputGroup
+                        label="Medication Frequency (if any)"
+                        name="med_freq_times"
+                        secondName="med_freq_day"
+                        isMultipleUnit
+                        unit="qty"
+                        secondUnit="/day"
+                        required={false}
+                        type="number"
+                        placeholder="50"
+                      /> */}
                       <DisabledCustomInputGroup
                         label="Medication Frequency"
-                        horizontal={false}
                         type="text"
                         isMultipleUnit
                         unit="qty"
@@ -560,12 +478,15 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                         }
                       />
                     </div>
-                    <DisabledCustomInputGroup
-                      label="Illness History"
-                      horizontal={false}
-                      type="text"
+                    <CustomInputGroup
                       isTextArea
-                      value={user.patient.illness_history}
+                      name="illness_history"
+                      label="Illness History"
+                      type="text"
+                      required
+                      placeholder="e.g. In 1995, I had chickenpox, and in 2002, I suffered a fractured left arm from a fall. I underwent an appendectomy in 2010. I was diagnosed with hypertension in 2018 and have been on Lisinopril 10mg daily since then"
+                      value={formData.illness_history}
+                      onChange={handleInputChange}
                     />
                   </div>
                 )}
@@ -612,7 +533,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                     fontThickness="bold"
                     customWidth
                     customClasses="text-lg w-fit"
-                    onClick={handleEditProfileButton}
+                    onClick={handleEditProfileComponentButton}
                   />
                 </div>
               </div>
@@ -623,7 +544,7 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                   {/* Header */}
                   <div className="mb-3 flex w-full flex-col gap-3">
                     <h1 className="text-heading-6 font-bold text-primary">
-                      Admin Personal Data
+                      About You
                     </h1>
                     <CustomDivider horizontal />
                   </div>
@@ -634,47 +555,62 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
                       <DisabledCustomInputGroup
                         label="First Name"
                         value={user.first_name}
-                        horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="Last Name"
                         value={user.last_name}
-                        horizontal={false}
                         type="text"
                       />
                     </div>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledCustomInputGroup
+                      <CustomInputGroup
                         label="Email"
-                        value={user.email}
-                        horizontal={false}
-                        type="text"
+                        type="email"
+                        name="email"
+                        placeholder="Enter Admin Email"
+                        value={formData.email}
+                        required
+                        onChange={handleInputChange}
                       />
-                      <DisabledPhoneNumberBox
+                      <PhoneNumberBox
                         placeholder="081XXXXXXXX"
-                        value={Number(user.phone_number)}
+                        name="phone_number"
+                        required
+                        value={
+                          typeof formData.phone_number === "string"
+                            ? formData.phone_number
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const inputValue = e.target.value;
+                          setFormData({
+                            ...formData,
+                            phone_number: inputValue
+                          });
+                        }}
                       />
                     </div>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Birthdate"
                         value={formattedBirthDate}
-                        horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="Gender"
                         value={user.gender ? user.gender : "-"}
-                        horizontal={false}
                         type="text"
                       />
                     </div>
-                    <DisabledCustomInputGroup
+                    <CustomInputGroup
                       label="Address"
-                      value={user.address ? user.address : "-"}
-                      horizontal={false}
                       type="text"
+                      name="address"
+                      placeholder="Enter Admin Address"
+                      value={formData.address}
+                      required
+                      onChange={handleInputChange}
                     />
                   </div>
                 </div>
@@ -707,21 +643,14 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
             variant="secondary"
             fontThickness="bold"
             customClasses="text-lg"
-            onClick={() => router.replace("/admin/manage/user")}
+            onClick={() =>
+              router.replace(`/profile?user=${user.user_id}&role=${user.role}`)
+            }
           />
         </div>
       </div>
-
-      <AxolotlModal
-        isOpen={editConfirmationModal}
-        onClose={closeEditConfirmationModal}
-        onConfirm={handleEditProfileButton}
-        title="Edit Caregiver Profile"
-        question="Are you sure you want to edit this caregiver? This action is only used to update their licenses. Please prepare the necessary documents first"
-        action="confirm"
-      />
     </>
   );
 }
 
-export default ViewUser;
+export default EditProfileComponent;

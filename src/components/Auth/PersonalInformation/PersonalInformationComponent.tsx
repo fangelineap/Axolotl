@@ -366,12 +366,10 @@ function PersonalInformationComponent({
                             type="number"
                             placeholder="50"
                           />
-                          <div className="mb-3 flex w-full flex-col gap-2">
-                            <CheckboxSmoker
-                              isSmoking={isSmoking}
-                              setIsSmoking={setIsSmoking}
-                            />
-                          </div>
+                          <CheckboxSmoker
+                            isSmoking={isSmoking}
+                            setIsSmoking={setIsSmoking}
+                          />
                         </div>
                       </div>
                       {/* Divider */}
@@ -384,7 +382,7 @@ function PersonalInformationComponent({
                         <div className="flex flex-col gap-3">
                           <CustomInputGroup
                             name="allergies"
-                            label="Allergies"
+                            label="Allergies (if any)"
                             type="text"
                             placeholder="Enter your allergies"
                             required={false}
@@ -392,13 +390,13 @@ function PersonalInformationComponent({
                           <div className="flex flex-col gap-5 lg:flex-row">
                             <CustomInputGroup
                               name="current_medication"
-                              label="Medication"
+                              label="Current Medication (if any)"
                               type="text"
                               placeholder="e.g. Divask"
                               required={false}
                             />
                             <CustomInputGroup
-                              label="Medication Frequency"
+                              label="Medication Frequency (if any)"
                               name="med_freq_times"
                               secondName="med_freq_day"
                               isMultipleUnit

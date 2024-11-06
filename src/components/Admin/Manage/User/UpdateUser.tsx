@@ -57,7 +57,6 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   );
 
   const [formData, setFormData] = useState({
-    user_id: user.user_id,
     email: user.email,
     phone_number: user.phone_number,
     address: user.address,
@@ -99,11 +98,6 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     year: "numeric"
   });
 
-  const timeFormatter = new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-
   /**
    * * Helper function to format dates
    * @param date
@@ -121,20 +115,24 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     : "-";
 
   const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
-  const formattedStartDate = user.caregiver?.schedule_start_date
-    ? formatDate(user.caregiver?.schedule_start_date, dateFormatter)
+
+  /**
+   * * Working Preferences Variables
+   */
+  const startDayPreferences = user.caregiver?.schedule_start_day
+    ? user.caregiver?.schedule_start_day
     : "-";
 
-  const formattedEndDate = user.caregiver?.schedule_end_date
-    ? formatDate(user.caregiver?.schedule_end_date, dateFormatter)
+  const endDayPreferences = user.caregiver?.schedule_end_day
+    ? user.caregiver?.schedule_end_day
     : "-";
 
-  const formattedStartTime = user.caregiver?.schedule_start_date
-    ? formatDate(user.caregiver?.schedule_start_date, timeFormatter)
+  const startTimePreferences = user.caregiver?.schedule_start_time
+    ? user.caregiver?.schedule_start_time
     : "-";
 
-  const formattedEndTime = user.caregiver?.schedule_end_date
-    ? formatDate(user.caregiver?.schedule_end_date, timeFormatter)
+  const endTimePreferences = user.caregiver?.schedule_end_time
+    ? user.caregiver?.schedule_end_time
     : "-";
 
   /**
@@ -544,13 +542,13 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Start Day"
-                        value={formattedStartDate}
+                        value={startDayPreferences}
                         horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="End Day"
-                        value={formattedEndDate}
+                        value={endDayPreferences}
                         horizontal={false}
                         type="text"
                       />
@@ -558,13 +556,13 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Start Time"
-                        value={formattedStartTime}
+                        value={startTimePreferences}
                         horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="End Time"
-                        value={formattedEndTime}
+                        value={endTimePreferences}
                         horizontal={false}
                         type="text"
                       />

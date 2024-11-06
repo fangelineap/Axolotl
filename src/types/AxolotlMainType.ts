@@ -29,8 +29,17 @@ export type CAREGIVER = {
   caregiver_id: string;
   notes?: string;
   rate?: number;
-  schedule_start_date?: Date;
-  schedule_end_date?: Date;
+  schedule_start_day?:
+    | "Monday"
+    | "Tuesday"
+    | "Wednesday"
+    | "Thursday"
+    | "Friday"
+    | "Saturday"
+    | "Sunday";
+  schedule_end_day?: CAREGIVER["schedule_start_day"];
+  schedule_start_time?: string;
+  schedule_end_time?: string;
 };
 
 export type PATIENT = {

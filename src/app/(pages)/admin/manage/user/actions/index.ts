@@ -170,48 +170,6 @@ export async function getAdminAllUsers() {
 }
 
 /**
- * * Get single user and mapped them according to their roles
- * @param user_id
- * @returns
- */
-export async function getAdminUserByUserID(user_id: string) {
-  unstable_noStore();
-
-  const supabase = await createSupabaseServerClient();
-
-  try {
-    const { data: userData, error: userDataError } = await supabase
-      .from("users")
-      .select("*, patient(*), caregiver(*)")
-      .eq("user_id", user_id)
-      .single();
-
-    if (userDataError) {
-      console.error("Error fetching data:", userDataError.message);
-
-      return null;
-    }
-
-    const authSchema = await adminGetUserAuthSchema(user_id);
-
-    /* Combine user data with auth schema */
-    const allData: AdminUserTable = {
-      ...userData,
-      email: authSchema?.email,
-      patient: userData?.patient.length === 0 ? null : userData?.patient[0],
-      caregiver:
-        userData?.caregiver.length === 0 ? null : userData?.caregiver[0]
-    };
-
-    return allData;
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return { data: null, error };
-  }
-}
-
-/**
  * * Get Caregiver Total Order
  * @param user_id
  * @returns

@@ -2,8 +2,13 @@ export const getGlobalMetadata = (page: string) => {
   switch (page) {
     case "Profile":
       return {
-        title: `Axolotl Profile Page`,
-        description: `Axolotl Profile Page`
+        title: `Your Profile Page`,
+        description: `Your Profile Page`
+      };
+    case "EditProfile":
+      return {
+        title: `Editing Profile Page`,
+        description: `Editing Profile Page`
       };
     case "Chat":
       return {};

@@ -5,7 +5,7 @@ interface DisabledCustomInputGroupProps {
   // Basic Props
   label: string;
   type: string;
-  horizontal: boolean;
+  horizontal?: boolean;
   placeholder?: string;
   value?: string;
   secondValue?: string;
