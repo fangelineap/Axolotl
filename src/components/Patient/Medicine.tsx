@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   MEDICINE,
   MEDICINE_ORDER_DETAIL,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
+import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
 
 interface MedicineProps {
   selectAll: boolean;
@@ -28,6 +29,20 @@ const Medicine = ({
   is_paid,
   payment
 }: MedicineProps) => {
+  const [medicinePhoto, setMedicinePhoto] = useState<string | null>(null);
+
+  useEffect(() => {
+    const medicinePhoto = getClientPublicStorageURL(
+      "medicine",
+      medicineDetail.medicine.medicine_photo as string
+    );
+
+    if (medicinePhoto) {
+      setMedicinePhoto(medicinePhoto);
+    }
+    //eslint-disable-next-line
+  }, []);
+
   return (
     <div className="flex justify-between">
       <div className="flex items-start gap-5">
@@ -45,7 +60,7 @@ const Medicine = ({
           />
         )}
         <Image
-          src="/images/user/caregiver.png"
+          src={medicinePhoto || "/images/user/caregiver.png"}
           width={50}
           height={50}
           className="h-[100px] w-[100px] rounded-md object-cover"
@@ -54,7 +69,7 @@ const Medicine = ({
         <div>
           <h1 className="mb-2 text-lg">
             {medicineDetail.medicine.name}
-            <span className="text-base text-stroke">/strip</span>
+            <span className="text-base text-stroke-dark"> /strip</span>
           </h1>
           <h1>{medicineDetail.medicine.type}</h1>
         </div>

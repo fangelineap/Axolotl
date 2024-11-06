@@ -4,9 +4,12 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderDetail from "@/components/Patient/OrderDetail";
 import { getOrderDetail } from "@/app/_server-action/patient";
 import { useParams } from "next/navigation";
+import { Skeleton } from "@mui/material";
 
 const MedicinePreparation = () => {
   const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   const params = useParams();
   const id = params.id as string;
 
@@ -17,6 +20,7 @@ const MedicinePreparation = () => {
       if (data) {
         console.log("data", data);
         setData(data);
+        setLoading(false);
       }
     };
 
@@ -52,19 +56,29 @@ const MedicinePreparation = () => {
       <div className="">
         <h1 className="mb-4 text-2xl font-bold">Order Details</h1>
         {/* Use the NewComponent and pass sample data as props */}
-        {data != null && (
-          <OrderDetail
-            orderStatus={data.orderStatus}
-            orderNotes={data.orderNotes}
-            medicineOrderId={data.medicineOrderId}
-            medicineIsPaid={data.medicineIsPaid}
-            caregiverInfo={data.caregiverInfo}
-            patientInfo={data.patientInfo}
-            medicalDetails={data.medicalDetails}
-            medicineDetail={data.medicineDetail}
-            serviceDetails={data.serviceDetails}
-            price={data.price}
+        {loading ? (
+          <Skeleton
+            variant="rectangular"
+            width="100%"
+            animation="wave"
+            height={300}
+            className="rounded-lg"
           />
+        ) : (
+          data != null && (
+            <OrderDetail
+              orderStatus={data.orderStatus}
+              orderNotes={data.orderNotes}
+              medicineOrderId={data.medicineOrderId}
+              medicineIsPaid={data.medicineIsPaid}
+              caregiverInfo={data.caregiverInfo}
+              patientInfo={data.patientInfo}
+              medicalDetails={data.medicalDetails}
+              medicineDetail={data.medicineDetail}
+              serviceDetails={data.serviceDetails}
+              price={data.price}
+            />
+          )
         )}
       </div>
     </DefaultLayout>

@@ -14,6 +14,7 @@ import {
 } from "@/types/AxolotlMainType";
 import AxolotlModal from "../Axolotl/Modal/AxolotlModal";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@mui/material";
 
 interface MedicineProps {
   id: string;
@@ -55,6 +56,7 @@ const AdditionalMedicine = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [seconds, setSeconds] = useState<number>(3600);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
 
@@ -86,6 +88,7 @@ const AdditionalMedicine = ({
       const data = await fetchMedicineOrderById(medicineOrder);
       console.log("data order", data);
       setMedicine(data);
+      setLoading(false);
 
       console.log("medicine data", data.medicineOrderDetail);
     };
@@ -142,37 +145,47 @@ const AdditionalMedicine = ({
 
           {/* Products */}
           <div className="flex flex-col gap-5 rounded-md border border-stroke px-5 py-7">
-            {!payment && medicine.medicineOrderDetail
-              ? medicine.medicineOrderDetail.map((meds, index) => (
-                  <>
-                    <Medicine
-                      selectAll={selectAll}
-                      selection={selection}
-                      setSelection={setSelection}
-                      medicineDetail={meds}
-                      is_paid={medicine.is_paid}
-                      payment={payment}
-                    />
-                    {index !== medicine.medicineOrderDetail.length - 1 && (
-                      <div className="h-[1px] w-[100%] bg-stroke"></div>
-                    )}
-                  </>
-                ))
-              : selection.map((meds, index) => (
-                  <>
-                    <Medicine
-                      selectAll={selectAll}
-                      selection={selection}
-                      setSelection={setSelection}
-                      medicineDetail={meds}
-                      is_paid={medicine.is_paid}
-                      payment={payment}
-                    />
-                    {index !== selection.length - 1 && (
-                      <div className="h-[1px] w-[100%] bg-stroke"></div>
-                    )}
-                  </>
-                ))}
+            {loading ? (
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                animation="wave"
+                height={300}
+                className="rounded-lg"
+              />
+            ) : !payment && medicine.medicineOrderDetail ? (
+              medicine.medicineOrderDetail.map((meds, index) => (
+                <>
+                  <Medicine
+                    selectAll={selectAll}
+                    selection={selection}
+                    setSelection={setSelection}
+                    medicineDetail={meds}
+                    is_paid={medicine.is_paid}
+                    payment={payment}
+                  />
+                  {index !== medicine.medicineOrderDetail.length - 1 && (
+                    <div className="h-[1px] w-[100%] bg-stroke"></div>
+                  )}
+                </>
+              ))
+            ) : (
+              selection.map((meds, index) => (
+                <>
+                  <Medicine
+                    selectAll={selectAll}
+                    selection={selection}
+                    setSelection={setSelection}
+                    medicineDetail={meds}
+                    is_paid={medicine.is_paid}
+                    payment={payment}
+                  />
+                  {index !== selection.length - 1 && (
+                    <div className="h-[1px] w-[100%] bg-stroke"></div>
+                  )}
+                </>
+              ))
+            )}
           </div>
         </div>
 

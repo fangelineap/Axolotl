@@ -3,6 +3,7 @@
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createSupabaseClient } from "@/lib/client";
+import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -57,6 +58,7 @@ const Page = ({ searchParams }: any) => {
         ? Math.ceil(filtered.length / 5)
         : Math.ceil(caregiver.length / 5)
   });
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getUser = async () => {
@@ -85,6 +87,7 @@ const Page = ({ searchParams }: any) => {
           ...prev,
           pageSize: Math.ceil(data.length / 5)
         }));
+        setLoading(false);
       }
     };
 
@@ -126,10 +129,9 @@ const Page = ({ searchParams }: any) => {
     }
 
     setFiltered(filteredCG);
+    setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rating, location]);
-
-  console.log("caregiver", caregiver);
 
   return (
     <DefaultLayout>
@@ -445,7 +447,15 @@ const Page = ({ searchParams }: any) => {
           <div className="lg:w-[65%]">
             <h1 className="p-3 text-lg font-semibold">Choose Your Caregiver</h1>
             <div className="px-3">
-              {rating.length > 0 || location ? (
+              {loading ? (
+                <Skeleton
+                  variant="rectangular"
+                  width="100%"
+                  animation="wave"
+                  height={300}
+                  className="rounded-lg"
+                />
+              ) : rating.length > 0 || location ? (
                 filtered.length > 0 ? (
                   filtered?.map((cg, index) => (
                     <div

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import type { PatientOrderDetails } from "../type/data";
 import { fetchOrdersByPatient } from "@/app/_server-action/patient";
+import { Skeleton } from "@mui/material";
 
 // Define the status color map
 const statusColorClassMap: Record<string, string> = {
@@ -51,7 +52,7 @@ const OrderHistory = () => {
     { accessorKey: "id", header: "Order ID" },
     { accessorKey: "appointment.service_type", header: "Order Type" },
     {
-      accessorKey: "patient.users.first_name",
+      accessorKey: "caregiver.users.first_name",
       header: "Caregiver Name",
       cell: ({ row }) => `${row.original.caregiver?.users?.first_name || "N/A"}`
     },
@@ -86,14 +87,6 @@ const OrderHistory = () => {
     router.push(`/order-detail/${orderData.id}?${query}`);
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Show loading while fetching data
-  }
-
-  if (orderData.length === 0) {
-    return <div>No orders found.</div>; // Handle no data case
-  }
-
   return (
     <DefaultLayout>
       <div>
@@ -106,12 +99,24 @@ const OrderHistory = () => {
         <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
 
         <div className="rounded-lg bg-white p-6 shadow">
-          <DataTable
-            data={orderData} // Pass the data array
-            columns={columns} // Pass the columns configuration
-            basePath="/patient/order-history"
-            showAction={handleShowAction} // Define the action handler
-          />
+          {loading ? (
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              animation="wave"
+              height={300}
+              className="rounded-lg"
+            />
+          ) : orderData.length === 0 ? (
+            <div>No orders found.</div>
+          ) : (
+            <DataTable
+              data={orderData} // Pass the data array
+              columns={columns} // Pass the columns configuration
+              basePath="/patient/order-history"
+              showAction={handleShowAction} // Define the action handler
+            />
+          )}
         </div>
       </div>
     </DefaultLayout>
