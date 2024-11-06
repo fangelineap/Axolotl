@@ -1,4 +1,7 @@
-import { IconClock } from "@tabler/icons-react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+import dayjs from "dayjs";
 
 interface CustomTimePickerProps {
   placeholder: string;
@@ -27,16 +30,9 @@ const CustomTimePicker = ({
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
       <div className={`relative w-full ${horizontal ? "md:w-3/4" : ""}`}>
-        <input
-          name={name}
-          className={`form-datepicker w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary`}
-          placeholder={placeholder}
-          required={required}
-        />
-        <IconClock
-          className="pointer-events-none absolute left-auto right-5 top-1/2 z-99 -translate-y-1/2"
-          style={{ color: "#9CA3AF" }}
-        />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MobileTimePicker defaultValue={dayjs("2022-04-17T15:30")} />
+        </LocalizationProvider>
       </div>
     </div>
   );

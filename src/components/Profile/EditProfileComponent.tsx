@@ -97,12 +97,6 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
   const handleImageLoad = () => setImageLoaded(true);
 
   /**
-   * * Handle Edit Profile
-   */
-  const handleEditProfileComponentButton = () =>
-    router.push(`/profile/edit?user=${user.user_id}&role=${user.role}`);
-
-  /**
    * * Handle Input Change
    * @param e
    */
@@ -205,15 +199,6 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                     </div>
                   )}
                 </div>
-
-                <AxolotlButton
-                  label="Edit Profile"
-                  variant="primary"
-                  fontThickness="bold"
-                  customWidth
-                  customClasses="text-lg w-fit"
-                  onClick={handleEditProfileComponentButton}
-                />
               </div>
             </div>
 
@@ -527,14 +512,6 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                   <div className="flex items-center justify-center rounded-md border border-red bg-red-light p-2">
                     <p className="font-bold text-red">{user.role}</p>
                   </div>
-                  <AxolotlButton
-                    label="Edit Profile"
-                    variant="primary"
-                    fontThickness="bold"
-                    customWidth
-                    customClasses="text-lg w-fit"
-                    onClick={handleEditProfileComponentButton}
-                  />
                 </div>
               </div>
 
