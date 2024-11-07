@@ -1,6 +1,7 @@
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
+import CustomTimeInput from "./CustomTimeInput";
 import dayjs from "dayjs";
 
 interface CustomTimePickerProps {
@@ -31,7 +32,20 @@ const CustomTimePicker = ({
       </label>
       <div className={`relative w-full ${horizontal ? "md:w-3/4" : ""}`}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <MobileTimePicker defaultValue={dayjs("2022-04-17T15:30")} />
+          <MobileTimePicker
+            ampm={false}
+            name={name}
+            defaultValue={dayjs(new Date())}
+            slots={{
+              textField: CustomTimeInput
+            }}
+            slotProps={{
+              textField: {
+                placeholder
+              }
+            }}
+            orientation="landscape"
+          />
         </LocalizationProvider>
       </div>
     </div>

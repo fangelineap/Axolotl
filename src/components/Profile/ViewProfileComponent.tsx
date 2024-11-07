@@ -68,21 +68,21 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
   const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
 
   /**
-   * * Working Preferences Variables
+   * * Working Schedule Variables
    */
-  const startDayPreferences = user.caregiver?.schedule_start_day
+  const startDaySchedule = user.caregiver?.schedule_start_day
     ? user.caregiver?.schedule_start_day
     : "-";
 
-  const endDayPreferences = user.caregiver?.schedule_end_day
+  const endDaySchedule = user.caregiver?.schedule_end_day
     ? user.caregiver?.schedule_end_day
     : "-";
 
-  const startTimePreferences = user.caregiver?.schedule_start_time
+  const startTimeSchedule = user.caregiver?.schedule_start_time
     ? user.caregiver?.schedule_start_time
     : "-";
 
-  const endTimePreferences = user.caregiver?.schedule_end_time
+  const endTimeSchedule = user.caregiver?.schedule_end_time
     ? user.caregiver?.schedule_end_time
     : "-";
 
@@ -298,22 +298,22 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
                   )}
                 </div>
 
-                {/* CAREGIVER - Working Preferences */}
+                {/* CAREGIVER - Working Schedule */}
                 {["Nurse", "Midwife"].includes(user.role) && (
                   <div className="flex w-full flex-col">
                     <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                      Your Working Preferences
+                      Your Working Schedule
                     </h1>
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Start Day"
-                        value={startDayPreferences}
+                        value={startDaySchedule}
                         horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="End Day"
-                        value={endDayPreferences}
+                        value={endDaySchedule}
                         horizontal={false}
                         type="text"
                       />
@@ -321,13 +321,13 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
                     <div className="flex w-full flex-col md:flex-row md:gap-5">
                       <DisabledCustomInputGroup
                         label="Start Time"
-                        value={startTimePreferences}
+                        value={startTimeSchedule}
                         horizontal={false}
                         type="text"
                       />
                       <DisabledCustomInputGroup
                         label="End Time"
-                        value={endTimePreferences}
+                        value={endTimeSchedule}
                         horizontal={false}
                         type="text"
                       />
@@ -621,7 +621,11 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
             variant="secondary"
             fontThickness="bold"
             customClasses="text-lg"
-            onClick={() => router.replace(`/${user.role.toLowerCase()}`)}
+            onClick={() =>
+              router.replace(
+                `/${["Nurse", "Midwife"].includes(user.role) ? "caregiver" : user.role.toLowerCase()}`
+              )
+            }
           />
         </div>
       </div>

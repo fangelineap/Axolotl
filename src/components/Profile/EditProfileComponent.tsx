@@ -324,11 +324,11 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                 {/* CAREGIVER */}
                 {["Nurse", "Midwife"].includes(user.role) && (
                   <>
-                    {/* CAREGIVER - Working Preferences */}
+                    {/* CAREGIVER - Working Schedule */}
                     {["Nurse", "Midwife"].includes(user.role) && (
                       <div className="flex w-full flex-col">
                         <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                          Your Working Preferences
+                          Your Working Schedule
                         </h1>
                         <div className="flex w-full flex-col md:flex-row md:gap-5">
                           <SelectDropdown

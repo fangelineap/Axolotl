@@ -128,10 +128,10 @@ const CaregiverProfile = () => {
           {/* Vertical Separator Line */}
           <div className="hidden w-[1px] bg-primary md:block"></div>
 
-          {/* Working Preferences Section */}
+          {/* Working Schedule Section */}
           <div className="flex-1">
             <h2 className="mb-4 text-xl font-bold text-kalbe-light">
-              Working Preferences
+              Working Schedule
             </h2>
             <div className="mb-3 flex flex-row gap-5">
               <div className="flex-1">
