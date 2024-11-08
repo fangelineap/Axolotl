@@ -126,179 +126,173 @@ function PersonalInformationComponent({
       return;
     }
 
-    if (userPersonalInformationSuccess) {
-      toast.info(
-        `User personal information saved successfully. Updating ${paramsRole} personal information...`,
-        {
-          position: "bottom-right"
-        }
+    toast.info(
+      `User personal information saved successfully. Updating ${paramsRole} personal information...`,
+      {
+        position: "bottom-right"
+      }
+    );
+
+    // ! CAREGIVER PERSONAL INFORMATION
+    if (paramsRole === "Caregiver") {
+      const profilePhotoPath = await prepareFileBeforeUpload(
+        "profile_photo",
+        profilePhoto as File
       );
 
-      // ! CAREGIVER PERSONAL INFORMATION
-      if (paramsRole === "Caregiver") {
-        const profilePhotoPath = await prepareFileBeforeUpload(
-          "profile_photo",
-          profilePhoto as File
-        );
+      if (!profilePhotoPath) {
+        toast.error("Error uploading profile photo. Please try again.", {
+          position: "bottom-right"
+        });
 
-        if (!profilePhotoPath) {
-          toast.error("Error uploading profile photo. Please try again.", {
-            position: "bottom-right"
-          });
+        return;
+      }
 
-          return;
+      const licenseFiles = [
+        {
+          key: "cv",
+          fileValue: licenses.cv as File,
+          pathName: "pathCV",
+          errorMsg: "CV"
+        },
+        {
+          key: "degree_certificate",
+          fileValue: licenses.degree_certificate as File,
+          pathName: "pathDegreeCertificate",
+          errorMsg: "Degree Certificate"
+        },
+        {
+          key: "str",
+          fileValue: licenses.str as File,
+          pathName: "pathSTR",
+          errorMsg: "STR"
+        },
+        {
+          key: "sip",
+          fileValue: licenses.sip as File,
+          pathName: "pathSIP",
+          errorMsg: "SIP"
         }
+      ];
 
-        const licenseFiles = [
+      const paths = await uploadLicenses(licenseFiles);
+
+      if (!paths) {
+        toast.error("Error uploading licenses. Please try again.", {
+          position: "bottom-right"
+        });
+
+        return;
+      }
+
+      if (profilePhotoPath && paths) {
+        toast.info(
+          "Your profile photo and licenses has been uploaded successfully. Please wait...",
           {
-            key: "cv",
-            fileValue: licenses.cv as File,
-            pathName: "pathCV",
-            errorMsg: "CV"
-          },
-          {
-            key: "degree_certificate",
-            fileValue: licenses.degree_certificate as File,
-            pathName: "pathDegreeCertificate",
-            errorMsg: "Degree Certificate"
-          },
-          {
-            key: "str",
-            fileValue: licenses.str as File,
-            pathName: "pathSTR",
-            errorMsg: "STR"
-          },
-          {
-            key: "sip",
-            fileValue: licenses.sip as File,
-            pathName: "pathSIP",
-            errorMsg: "SIP"
+            position: "bottom-right"
           }
-        ];
+        );
+      }
 
-        const paths = await uploadLicenses(licenseFiles);
+      const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
 
-        if (!paths) {
-          toast.error("Error uploading licenses. Please try again.", {
-            position: "bottom-right"
-          });
+      const caregiverPersonalData: CaregiverPersonalInformation = {
+        profile_photo: profilePhotoPath,
+        employment_type: form.get("employment_type") as
+          | "Full-time"
+          | "Part-time",
+        work_experiences: form.get("work_experiences") as unknown as number,
+        workplace: form.get("workplace")?.toString() || "",
+        cv: pathCV!,
+        degree_certificate: pathDegreeCertificate!,
+        str: pathSTR!,
+        sip: pathSIP!
+      };
 
-          return;
-        }
+      const { success } = await saveRolePersonalInformation(
+        caregiverPersonalData
+      );
 
-        if (profilePhotoPath && paths) {
-          toast.info(
-            "Your profile photo and licenses has been uploaded successfully. Please wait...",
-            {
-              position: "bottom-right"
-            }
-          );
-        }
-
-        const { pathCV, pathDegreeCertificate, pathSTR, pathSIP } = paths;
-
-        const caregiverPersonalData: CaregiverPersonalInformation = {
-          profile_photo: profilePhotoPath,
-          employment_type: form.get("employment_type") as
-            | "Full-time"
-            | "Part-time",
-          work_experiences: form.get("work_experiences") as unknown as number,
-          workplace: form.get("workplace")?.toString() || "",
-          cv: pathCV!,
-          degree_certificate: pathDegreeCertificate!,
-          str: pathSTR!,
-          sip: pathSIP!
+      if (!success) {
+        const revertRoles: UserPersonalInformation = {
+          address: null,
+          birthdate: null,
+          gender: null,
+          role: "Caregiver"
         };
 
-        const { success } = await saveRolePersonalInformation(
-          caregiverPersonalData
+        await saveUserPersonalInformation(revertRoles, true);
+
+        await removeLicenses(
+          Object.values(paths)
+            .filter((path) => path !== undefined)
+            .map((path) => ({ storage: path!, fileValue: path }))
         );
 
-        if (!success) {
-          const revertRoles: UserPersonalInformation = {
-            address: null,
-            birthdate: null,
-            gender: null,
-            role: "Caregiver"
-          };
+        await removeUploadedFileFromStorage("profile_photo", profilePhotoPath);
 
-          await saveUserPersonalInformation(revertRoles, true);
+        toast.error(
+          "Error saving caregiver personal information. Please try again.",
+          {
+            position: "bottom-right"
+          }
+        );
 
-          await removeLicenses(
-            Object.values(paths)
-              .filter((path) => path !== undefined)
-              .map((path) => ({ storage: path!, fileValue: path }))
-          );
-
-          await removeUploadedFileFromStorage(
-            "profile_photo",
-            profilePhotoPath
-          );
-
-          toast.error(
-            "Error saving caregiver personal information. Please try again.",
-            {
-              position: "bottom-right"
-            }
-          );
-
-          return;
-        }
-
-        toast.success("Caregiver personal information saved successfully.", {
-          position: "bottom-right"
-        });
-
-        setTimeout(() => {
-          router.refresh();
-          router.push("/caregiver/review");
-          router.refresh();
-        }, 250);
+        return;
       }
 
-      // ! PATIENT PERSONAL INFORMATION
-      if (paramsRole === "Patient") {
-        const patientPersonalData: PatientPersonalInformation = {
-          blood_type: form.get("blood_type") as "A" | "B" | "AB" | "O",
-          height: form.get("height") as unknown as number,
-          weight: form.get("weight") as unknown as number,
-          is_smoking: form.get("is_smoking") === "Yes" ? true : false,
-          allergies: form.get("allergies")?.toString() || null,
-          current_medication:
-            form.get("current_medication")?.toString() || null,
-          med_freq_times: form.get("med_freq_times")
-            ? (form.get("med_freq_times") as unknown as number)
-            : null,
-          med_freq_day: form.get("med_freq_day")
-            ? (form.get("med_freq_day") as unknown as number)
-            : null,
-          illness_history: form.get("illness_history")?.toString() || ""
-        };
+      toast.success("Caregiver personal information saved successfully.", {
+        position: "bottom-right"
+      });
 
-        const { success } =
-          await saveRolePersonalInformation(patientPersonalData);
+      setTimeout(() => {
+        router.refresh();
+        router.push("/caregiver/review");
+        router.refresh();
+      }, 250);
+    }
 
-        if (!success) {
-          toast.error(
-            "Error saving patient personal information. Please try again.",
-            {
-              position: "bottom-right"
-            }
-          );
+    // ! PATIENT PERSONAL INFORMATION
+    if (paramsRole === "Patient") {
+      const patientPersonalData: PatientPersonalInformation = {
+        blood_type: form.get("blood_type") as "A" | "B" | "AB" | "O",
+        height: form.get("height") as unknown as number,
+        weight: form.get("weight") as unknown as number,
+        is_smoking: form.get("is_smoking") === "Yes" ? true : false,
+        allergies: form.get("allergies")?.toString() || null,
+        current_medication: form.get("current_medication")?.toString() || null,
+        med_freq_times: form.get("med_freq_times")
+          ? (form.get("med_freq_times") as unknown as number)
+          : null,
+        med_freq_day: form.get("med_freq_day")
+          ? (form.get("med_freq_day") as unknown as number)
+          : null,
+        illness_history: form.get("illness_history")?.toString() || ""
+      };
 
-          return;
-        }
+      const { success } =
+        await saveRolePersonalInformation(patientPersonalData);
 
-        toast.success("Patient personal information saved successfully.", {
-          position: "bottom-right"
-        });
+      if (!success) {
+        toast.error(
+          "Error saving patient personal information. Please try again.",
+          {
+            position: "bottom-right"
+          }
+        );
 
-        setTimeout(() => {
-          router.refresh();
-          router.push("/patient");
-          router.refresh();
-        }, 250);
+        return;
       }
+
+      toast.success("Patient personal information saved successfully.", {
+        position: "bottom-right"
+      });
+
+      setTimeout(() => {
+        router.refresh();
+        router.push("/patient");
+        router.refresh();
+      }, 250);
     }
   };
 

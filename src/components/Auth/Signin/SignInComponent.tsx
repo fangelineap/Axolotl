@@ -3,8 +3,8 @@
 import { signInWithEmailAndPassword } from "@/app/_server-action/auth";
 import { getGlobalUserRole } from "@/app/_server-action/global";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
-import InputGroup from "@/components/FormElements/InputGroup";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -94,7 +94,7 @@ function SignInComponent() {
               </div>
 
               <div className="flex w-full flex-col gap-3">
-                <InputGroup
+                <CustomInputGroup
                   name="email"
                   label="Email"
                   type="email"

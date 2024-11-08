@@ -5,35 +5,25 @@ import { IconCookieManFilled } from "@tabler/icons-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Axolotl is Hungry..."
 };
 
-function clearCookie(cookieName: string) {
+async function clearCookie(cookieName: string) {
   document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
 function Error() {
   const router = useRouter();
 
-  const handleClearCookies = () => {
-    clearCookie("sb-aldbaqcbjyujaoncrhuc-auth-token");
-
-    toast.success(
-      "Axolotl's got your cookies! Try again, before it changes its mind!",
-      {
-        position: "bottom-right"
-      }
-    );
+  const handleClearCookies = async () => {
+    await clearCookie("sb-aldbaqcbjyujaoncrhuc-auth-token");
 
     setTimeout(() => {
       router.refresh();
-    }, 3000);
+    }, 250);
   };
-
-  // TODO: UPDATE RESPONSIVENESS FOR THIS AND NOT FOUND PAGE
 
   return (
     <div className="mx-20 flex min-h-screen flex-col items-center justify-center gap-5 text-center">
@@ -49,6 +39,11 @@ function Error() {
           stuck with a digital cookie monster situation. Let&apos;s not make it
           weird— <span className="underline">just click the button below</span>{" "}
           to let Axolotl eat your cookies.
+        </p>
+        <p className="text-sm">
+          <span className="font-bold">Note:</span> This will log you out of your
+          account. If this page doesn&apos;t refresh automatically, please
+          refresh the page manually.
         </p>
         <AxolotlButton
           label="Give Axolotl a cookie"

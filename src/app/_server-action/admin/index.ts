@@ -2,7 +2,7 @@
 
 import { AdminOrderMedicineLogsTable } from "@/app/(pages)/admin/order/medicine/table/data";
 import { AdminOrderServiceLogsTable } from "@/app/(pages)/admin/order/service/table/data";
-import { getAdminAuthClient } from "@/lib/admin";
+import { createSupabaseAdminClient } from "@/lib/admin";
 import createSupabaseServerClient from "@/lib/server";
 import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
 import { unstable_noStore } from "next/cache";
@@ -13,7 +13,7 @@ import { unstable_noStore } from "next/cache";
  * @param password
  */
 export async function adminCreateUser(email: string, password: string) {
-  const supabaseAdmin = await getAdminAuthClient();
+  const supabaseAdmin = await createSupabaseAdminClient();
 
   try {
     const { data, error } = await supabaseAdmin.createUser({
@@ -44,7 +44,7 @@ export async function adminCreateUser(email: string, password: string) {
 export async function adminGetUserAuthSchema(user_id: string) {
   unstable_noStore();
 
-  const supabaseAdmin = await getAdminAuthClient();
+  const supabaseAdmin = await createSupabaseAdminClient();
 
   try {
     const { data: response, error } = await supabaseAdmin.getUserById(user_id);
@@ -73,7 +73,7 @@ export async function adminGetUserAuthSchema(user_id: string) {
 export async function adminDeleteUser(user_id: string) {
   unstable_noStore();
 
-  const supabaseAdmin = await getAdminAuthClient();
+  const supabaseAdmin = await createSupabaseAdminClient();
 
   try {
     const { error } = await supabaseAdmin.deleteUser(user_id);
@@ -88,6 +88,77 @@ export async function adminDeleteUser(user_id: string) {
     console.error("Error in adminDeleteUser:", error);
 
     return null;
+  }
+}
+
+/**
+ * * Update user email
+ * @param email
+ * @param existingEmail
+ * @param user_id
+ * @returns
+ */
+export async function adminUpdateUserEmail(
+  email: string,
+  existingEmail: string,
+  user_id: string
+) {
+  unstable_noStore();
+
+  const supabaseAdmin = await createSupabaseAdminClient();
+
+  if (email === existingEmail) return true;
+
+  try {
+    const { error } = await supabaseAdmin.updateUserById(user_id, {
+      email,
+      email_confirm: true
+    });
+
+    if (error) {
+      console.error("Error updating user email:", error.message);
+
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return false;
+  }
+}
+
+/**
+ * * Update user password
+ * @param user_id
+ * @param password
+ * @returns
+ */
+export async function adminUpdateUserPassword(
+  user_id: string,
+  password: string
+) {
+  unstable_noStore();
+
+  const supabaseAdmin = await createSupabaseAdminClient();
+
+  try {
+    const { error } = await supabaseAdmin.updateUserById(user_id, {
+      password
+    });
+
+    if (error) {
+      console.error("Error updating user email:", error.message);
+
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return false;
   }
 }
 

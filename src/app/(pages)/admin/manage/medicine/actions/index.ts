@@ -1,26 +1,9 @@
 "use server";
 
 import createSupabaseServerClient from "@/lib/server";
+import { ServerFormValidation } from "@/utils/Validation/form/ServerFormValidation";
 import { revalidatePath, unstable_noStore } from "next/cache";
 import { AdminMedicineTable } from "../table/data";
-
-/**
- * * Validate required fields
- * @param fields
- * @returns
- */
-function validateRequiredFields(fields: Record<string, any>) {
-  for (const [key, value] of Object.entries(fields)) {
-    if (!value) {
-      return {
-        name: `Missing ${key}`,
-        message: `${key} is required`
-      };
-    }
-  }
-
-  return null;
-}
 
 /**
  * * Create new medicine
@@ -34,7 +17,7 @@ export async function addAdminMedicine(form: AdminMedicineTable) {
 
   const { name, type, price, exp_date, medicine_photo } = form;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     name,
     type,
     price,
@@ -113,7 +96,7 @@ export async function updateAdminMedicineById(form: AdminMedicineTable) {
 
   const { uuid, name, type, price, exp_date, medicine_photo } = form;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     uuid,
     name,
     type,

@@ -2,6 +2,11 @@
 
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
 import createSupabaseServerClient from "@/lib/server";
+import {
+  BASIC_PROFILE_DETAILS,
+  CAREGIVER_PROFILE_DETAILS,
+  PATIENT_PROFILE_DETAILS
+} from "@/types/AxolotlMultipleTypes";
 import { unstable_noStore } from "next/cache";
 import { adminGetUserAuthSchema } from "../../admin";
 
@@ -45,4 +50,38 @@ export async function getGlobalProfile(user_id: string) {
 
     return { data: null, error };
   }
+}
+
+export async function updateBasicProfileDetails(form: BASIC_PROFILE_DETAILS) {
+  unstable_noStore();
+
+  // const supabase = await createSupabaseServerClient();
+
+  console.log(form);
+
+  return { success: true, message: "Basic Profile updated successfully" };
+}
+
+export async function updatePatientProfileDetails(
+  form: PATIENT_PROFILE_DETAILS
+) {
+  unstable_noStore();
+
+  // const supabase = await createSupabaseServerClient();
+
+  console.log(form);
+
+  return { success: true, message: "Patient Profile updated successfully" };
+}
+
+export async function updateCaregiverProfileDetails(
+  form: CAREGIVER_PROFILE_DETAILS
+) {
+  unstable_noStore();
+
+  // const supabase = await createSupabaseServerClient();
+
+  console.log(form);
+
+  return { success: true, message: "Caregiver Profile updated successfully" };
 }

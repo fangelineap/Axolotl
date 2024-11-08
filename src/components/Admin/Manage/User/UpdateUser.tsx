@@ -401,7 +401,7 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                   )}
                   {/* Patient Role */}
                   {user.role === "Patient" && (
-                    <div className="bg-primary-ultraLight flex items-center justify-center rounded-md border border-primary p-2">
+                    <div className="flex items-center justify-center rounded-md border border-primary bg-kalbe-ultraLight p-2">
                       <p className="font-bold text-primary">{user.role}</p>
                     </div>
                   )}

@@ -3,40 +3,23 @@
 import {
   adminCreateUser,
   adminDeleteUser,
-  adminGetUserAuthSchema
+  adminGetUserAuthSchema,
+  adminUpdateUserEmail
 } from "@/app/_server-action/admin";
 import {
   getGlobalCaregiverDataByCaregiverOrUserId,
   getGlobalUserDataByUserId
 } from "@/app/_server-action/global";
-import { getAdminAuthClient } from "@/lib/admin";
 import createSupabaseServerClient from "@/lib/server";
-import { CREATE_NEW_ADMIN_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
-import { unstable_noStore } from "next/cache";
 import { CAREGIVER } from "@/types/AxolotlMainType";
+import { CREATE_NEW_ADMIN_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
+import { ServerFormValidation } from "@/utils/Validation/form/ServerFormValidation";
+import { unstable_noStore } from "next/cache";
 import {
   AdminUpdateAdminDetails,
   AdminUpdateCaregiverDetails,
   AdminUserTable
 } from "../table/data";
-
-/**
- * * Validate required fields
- * @param fields
- * @returns
- */
-function validateRequiredFields(fields: Record<string, any>) {
-  for (const [key, value] of Object.entries(fields)) {
-    if (!value) {
-      return {
-        name: `Missing ${key}`,
-        message: `${key} is required`
-      };
-    }
-  }
-
-  return null;
-}
 
 /**
  * * Create an admin
@@ -59,7 +42,7 @@ export async function createAdminNewAdmin(form: CREATE_NEW_ADMIN_AUTH_SCHEMA) {
     birthdate
   } = form;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     email,
     password,
     first_name,
@@ -224,43 +207,6 @@ export async function getAdminCaregiverTotalOrders(user_id: string) {
 }
 
 /**
- * * Helper Function to update user email
- * @param email
- * @param existingEmail
- * @returns
- */
-async function updateAdminUserEmail(
-  email: string,
-  existingEmail: string,
-  user_id: string
-) {
-  unstable_noStore();
-
-  const supabaseAdmin = await getAdminAuthClient();
-
-  if (email === existingEmail) return true;
-
-  try {
-    const { error } = await supabaseAdmin.updateUserById(user_id, {
-      email,
-      email_confirm: true
-    });
-
-    if (error) {
-      console.error("Error updating user email:", error.message);
-
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-
-    return false;
-  }
-}
-
-/**
  * * Update admin data
  * @param userData
  * @param user_id
@@ -275,7 +221,7 @@ export async function updateAdminUserData(
 
   // Form Validation
   const { user_id, email, phone_number, address } = form;
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     user_id,
     email,
     phone_number,
@@ -293,7 +239,7 @@ export async function updateAdminUserData(
     const authSchema = await adminGetUserAuthSchema(user_id);
     if (!authSchema) return { success: false };
 
-    const isEmailUpdated = await updateAdminUserEmail(
+    const isEmailUpdated = await adminUpdateUserEmail(
       email,
       authSchema.email,
       user_id
@@ -352,7 +298,7 @@ export async function updateAdminCaregiverData(
     sip
   } = form;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     user_id,
     employment_type,
     work_experiences,

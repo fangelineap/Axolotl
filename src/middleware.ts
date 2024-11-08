@@ -6,7 +6,7 @@ import {
   getCaregiverVerificationStatus,
   getIncompleteUserPersonalInformation
 } from "./app/_server-action/auth";
-import { validateSession } from "./utils/auth/ValidateSession";
+import { validateSession } from "./utils/Validation/auth/ValidateSession";
 
 /**
  * * Check if the pathname matches any guest page pattern
@@ -15,12 +15,9 @@ import { validateSession } from "./utils/auth/ValidateSession";
  */
 function isGuestPage(pathname: string): boolean {
   const guestPages = ["/", "/guest/about", "/guest/careers"];
-  const authPaths = ["/auth/signin", "/auth/register"];
+  const authPaths = "/auth/register";
 
-  if (
-    guestPages.includes(pathname) ||
-    authPaths.some((auth) => pathname.startsWith(auth))
-  ) {
+  if (guestPages.includes(pathname) || pathname.startsWith(authPaths)) {
     return true;
   }
 
@@ -90,6 +87,8 @@ async function updateSession(request: NextRequest) {
   if (!isValid || !user) {
     console.error("Session is invalid:", { isValid, user, response });
 
+    if (pathname.startsWith("/auth/signin")) return NextResponse.next();
+
     return response;
   }
 
@@ -109,10 +108,6 @@ async function updateSession(request: NextRequest) {
 
   const userRole = userData.role;
   const roleRedirect = getRoleRedirect(userRole);
-
-  if (isValid && pathname.startsWith("/auth")) {
-    return NextResponse.redirect(new URL(roleRedirect, request.url));
-  }
 
   const userPersonalData = await getIncompleteUserPersonalInformation(
     userData.id,

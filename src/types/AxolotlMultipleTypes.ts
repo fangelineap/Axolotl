@@ -47,3 +47,30 @@ export type CAREGIVER_MEDICINE_ORDER = {
   is_paid: MEDICINE_ORDER["is_paid"];
   paid_at: MEDICINE_ORDER["paid_at"];
 };
+
+export type BASIC_PROFILE_DETAILS = {
+  user_id: USER["user_id"];
+  email: string;
+  phone_number: USER["phone_number"];
+  address: USER["address"];
+};
+
+export type PATIENT_PROFILE_DETAILS = {
+  user_id: USER["user_id"];
+  weight: PATIENT["weight"];
+  height: PATIENT["height"];
+  is_smoking: PATIENT["is_smoking"];
+  allergies: PATIENT["allergies"] | null;
+  current_medication: PATIENT["current_medication"] | null;
+  med_freq_times: PATIENT["med_freq_times"] | null;
+  med_freq_day: PATIENT["med_freq_day"] | null;
+  illness_history: PATIENT["illness_history"];
+};
+
+export type CAREGIVER_PROFILE_DETAILS = {
+  user_id: USER["user_id"];
+  start_day: CAREGIVER["schedule_start_day"];
+  end_day: CAREGIVER["schedule_end_day"];
+  start_time: CAREGIVER["schedule_start_time"];
+  end_time: CAREGIVER["schedule_end_time"];
+};

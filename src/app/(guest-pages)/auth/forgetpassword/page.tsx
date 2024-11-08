@@ -1,5 +1,5 @@
 import { forgetPassword } from "@/app/_server-action/auth";
-import InputGroup from "@/components/FormElements/InputGroup";
+import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getGuestMetadata } from "@/utils/Metadata/GuestMetadata";
 import { Metadata } from "next";
@@ -40,12 +40,11 @@ const ForgetPassword = ({ searchParams }: any) => {
                 </div>
 
                 <div className="flex w-full flex-col gap-3">
-                  <InputGroup
+                  <CustomInputGroup
                     name="email"
                     label="Email"
                     type="email"
                     placeholder="Enter your email address"
-                    customClasses="mb-4.5"
                     required
                   />
 

@@ -7,28 +7,11 @@ import {
 } from "@/app/(pages)/registration/personal-information/type";
 import createSupabaseServerClient, { getUserFromSession } from "@/lib/server";
 import { USER } from "@/types/AxolotlMainType";
+import { ServerFormValidation } from "@/utils/Validation/form/ServerFormValidation";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
 import { adminDeleteUser } from "../admin";
-
-/**
- * * Validate required fields
- * @param fields
- * @returns
- */
-function validateRequiredFields(fields: Record<string, any>) {
-  for (const [key, value] of Object.entries(fields)) {
-    if (value === null) {
-      return {
-        name: `Missing ${key}`,
-        message: `${key} is required`
-      };
-    }
-  }
-
-  return null;
-}
 
 /**
  * * Sign in with email and password
@@ -55,7 +38,7 @@ export async function signInWithEmailAndPassword(
 > {
   const supabase = await createSupabaseServerClient();
 
-  const validationError = validateRequiredFields({ email, password });
+  const validationError = ServerFormValidation({ email, password });
 
   if (validationError) {
     console.error("Validation error:", validationError);
@@ -119,7 +102,7 @@ export async function registerWithEmailAndPassword(userData: {
   const { email, password, first_name, last_name, phone_number, role } =
     userData;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     email,
     password,
     first_name,
@@ -494,7 +477,7 @@ export async function saveUserPersonalInformation(
   const { address, gender, birthdate, role } = form;
   const validationError = revert
     ? null
-    : validateRequiredFields({
+    : ServerFormValidation({
         address,
         gender,
         birthdate,
@@ -567,7 +550,7 @@ async function savePatientPersonalInformation(
   // Form Validation for Required Fields
   const { blood_type, height, weight, is_smoking, illness_history } = form;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     blood_type,
     height,
     weight,
@@ -628,7 +611,7 @@ async function saveCaregiverPersonalInformation(
     sip
   } = form;
 
-  const validationError = validateRequiredFields({
+  const validationError = ServerFormValidation({
     profile_photo,
     employment_type,
     work_experiences,

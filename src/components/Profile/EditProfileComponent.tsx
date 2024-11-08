@@ -14,6 +14,18 @@ import CustomInputGroup from "../Axolotl/InputFields/CustomInputGroup";
 import CustomTimePicker from "../Axolotl/InputFields/CustomTimePicker";
 import PhoneNumberBox from "../Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "../Axolotl/SelectDropdown";
+import { UpdateProfileValidation } from "./Validation/UpdateProfileValidation";
+import {
+  BASIC_PROFILE_DETAILS,
+  CAREGIVER_PROFILE_DETAILS,
+  PATIENT_PROFILE_DETAILS
+} from "@/types/AxolotlMultipleTypes";
+import {
+  updateBasicProfileDetails,
+  updateCaregiverProfileDetails,
+  updatePatientProfileDetails
+} from "@/app/_server-action/global/profile";
+import { toast } from "react-toastify";
 
 interface EditProfileComponentProps {
   user: AdminUserTable;
@@ -109,8 +121,127 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
     });
   };
 
+  /**
+   * * Save Profile
+   * @param form
+   * @returns
+   */
+  const saveProfile = async (form: FormData) => {
+    // ! VALIDATION
+    if (!UpdateProfileValidation(form, "Basic")) return;
+
+    // ! TODO: DON'T FORGET TO UNCOMMENT THIS ONCE THE SERVER ACTIONS ARE READY
+    // if (user.role === "Patient" && !UpdateProfileValidation(form, "Patient"))
+    //   return;
+
+    // if (
+    //   ["Nurse", "Midwife"].includes(user.role) &&
+    //   !UpdateProfileValidation(form, "Caregiver")
+    // )
+    //   return;
+
+    // ! UPDATE BASIC PROFILE
+    const basicProfileDetails: BASIC_PROFILE_DETAILS = {
+      user_id: user.user_id,
+      email: form.get("email")?.toString() || "",
+      phone_number: form.get("phone_number")?.toString() || "",
+      address: form.get("address")?.toString() || ""
+    };
+
+    const { success: isBasicProfileUpdated } =
+      await updateBasicProfileDetails(basicProfileDetails);
+
+    if (!isBasicProfileUpdated) {
+      toast.error("Error saving basic profile. Please try again.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    toast.info("Basic profile updated successfully.", {
+      position: "bottom-right"
+    });
+
+    // ! UPDATE PATIENT
+    if (user.role === "Patient") {
+      const patientProfileDetails: PATIENT_PROFILE_DETAILS = {
+        user_id: user.user_id,
+        height: form.get("height") as unknown as number,
+        weight: form.get("weight") as unknown as number,
+        is_smoking: form.get("is_smoking") === "Yes" ? true : false,
+        allergies: form.get("allergies")?.toString() || null,
+        current_medication: form.get("current_medication")?.toString() || null,
+        med_freq_times: form.get("med_freq_times")
+          ? (form.get("med_freq_times") as unknown as number)
+          : null,
+        med_freq_day: form.get("med_freq_day")
+          ? (form.get("med_freq_day") as unknown as number)
+          : null,
+        illness_history: form.get("illness_history")?.toString() || ""
+      };
+
+      const { success } = await updatePatientProfileDetails(
+        patientProfileDetails
+      );
+
+      if (!success) {
+        toast.error("Error saving patient profile. Please try again.", {
+          position: "bottom-right"
+        });
+
+        return;
+      }
+
+      toast.success("Patient profile updated successfully.", {
+        position: "bottom-right"
+      });
+    }
+
+    // ! UPDATE CAREGIVER
+    if (["Nurse", "Midwife"].includes(user.role)) {
+      const caregiverProfileDetails: CAREGIVER_PROFILE_DETAILS = {
+        user_id: user.user_id,
+        start_day: form.get("start_day")?.toString() as
+          | "Monday"
+          | "Tuesday"
+          | "Wednesday"
+          | "Thursday"
+          | "Friday"
+          | "Saturday"
+          | "Sunday",
+        end_day: form.get("end_day")?.toString() as
+          | "Monday"
+          | "Tuesday"
+          | "Wednesday"
+          | "Thursday"
+          | "Friday"
+          | "Saturday"
+          | "Sunday",
+        start_time: form.get("start_time")?.toString() || "",
+        end_time: form.get("end_time")?.toString() || ""
+      };
+
+      const { success } = await updateCaregiverProfileDetails(
+        caregiverProfileDetails
+      );
+
+      if (!success) {
+        toast.error("Error saving caregiver profile. Please try again.", {
+          position: "bottom-right"
+        });
+
+        return;
+      }
+
+      toast.success("Caregiver profile updated successfully.", {
+        position: "bottom-right"
+      });
+    }
+  };
+
   return (
-    <>
+    <form action={saveProfile}>
       {/* Title */}
       <h1 className="mb-5 text-heading-1 font-bold">Editing Your Profile...</h1>
 
@@ -194,7 +325,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
 
                   {/* Patient Role */}
                   {user.role === "Patient" && (
-                    <div className="bg-primary-ultraLight flex items-center justify-center rounded-md border border-primary p-2">
+                    <div className="flex items-center justify-center rounded-md border border-primary bg-kalbe-ultraLight p-2">
                       <p className="font-bold text-primary">{user.role}</p>
                     </div>
                   )}
@@ -306,11 +437,6 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                           ...formData,
                           is_smoking: !formData.is_smoking
                         })}
-                      />
-                      <DisabledCustomInputGroup
-                        label="Smoker Status"
-                        value={user.patient.is_smoking ? "Yes" : "No"}
-                        type="text"
                       />
                     </div>
                   )}
@@ -616,17 +742,25 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
       <div className="mt-5 flex w-full items-center justify-end">
         <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
           <AxolotlButton
-            label="Go back"
-            variant="secondary"
+            type="button"
+            label="Cancel"
+            variant="dangerOutlined"
             fontThickness="bold"
             customClasses="text-lg"
             onClick={() =>
               router.replace(`/profile?user=${user.user_id}&role=${user.role}`)
             }
           />
+          <AxolotlButton
+            isSubmit
+            label="Save Changes"
+            variant="primary"
+            fontThickness="bold"
+            customClasses="text-lg"
+          />
         </div>
       </div>
-    </>
+    </form>
   );
 }
 
