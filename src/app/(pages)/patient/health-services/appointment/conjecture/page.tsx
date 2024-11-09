@@ -1,6 +1,7 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import Conjecture from "@/components/Patient/Conjecture";
 
-const Conjecture = ({ searchParams }: any) => {
+const page = ({ searchParams }: any) => {
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center justify-center">
@@ -35,4 +36,4 @@ const Conjecture = ({ searchParams }: any) => {
   );
 };
 
-export default Conjecture;
+export default page;

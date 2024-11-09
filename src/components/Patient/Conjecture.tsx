@@ -1,10 +1,15 @@
+"use client";
+
 import { getOrder } from "@/app/_server-action/patient";
 import { IconAlertCircleFilled } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Conjecture = ({ conjecture }: { conjecture: string }) => {
   const [order, setOrder] = useState<any>({});
   const [symptoms, setSymptoms] = useState<string[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
@@ -75,7 +80,10 @@ const Conjecture = ({ conjecture }: { conjecture: string }) => {
           </ul>
         </div>
         <div className="mt-5 flex justify-end">
-          <button className="h-11 w-1/3 rounded-[7px] bg-primary p-[8px] text-lg font-semibold text-white hover:bg-opacity-90">
+          <button
+            onClick={() => router.push("/order-history")}
+            className="h-11 w-1/3 rounded-[7px] bg-primary p-[8px] text-lg font-semibold text-white hover:bg-opacity-90"
+          >
             Continue
           </button>
         </div>

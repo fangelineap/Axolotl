@@ -3,44 +3,15 @@
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createSupabaseClient } from "@/lib/client";
+import { CAREGIVER, USER } from "@/types/AxolotlMainType";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-type Caregiver = {
-  id: string;
-  profile_photo: string;
+type Caregiver = USER & {
   profile_photo_url?: string;
-  employment_type: string;
-  workplace: string;
-  work_experiences: number;
-  cv: string;
-  str: string;
-  sip: string;
-  degree_certificate: string;
-  status: string;
-  reviewed_at: Date;
-  created_at: Date;
-  updated_at: Date;
-  notes: string[];
-  rate: number;
-  caregiver_id: string;
-};
-
-type User = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  address: string;
-  gender: string;
-  birthdate: Date;
-  created_at: Date;
-  updated_at: Date;
-  user_id: string;
-  role: string;
-  caregiver: Caregiver[];
+  caregiver: CAREGIVER[];
 };
 
 const Page = ({ searchParams }: any) => {
@@ -48,15 +19,17 @@ const Page = ({ searchParams }: any) => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
-  const [caregiver, setCaregiver] = useState<User[]>([]);
-  const [filtered, setFiltered] = useState<User[]>([]);
+  const [caregiver, setCaregiver] = useState<Caregiver[]>([]);
+  const [filtered, setFiltered] = useState<Caregiver[]>([]);
   const [rating, setRating] = useState<number[]>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 1,
     pageSize:
       filtered.length > 0
         ? Math.ceil(filtered.length / 5)
-        : Math.ceil(caregiver.length / 5)
+        : !location && rating.length === 0
+          ? Math.ceil(caregiver.length / 5)
+          : Math.ceil(filtered.length / 5)
   });
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -67,15 +40,18 @@ const Page = ({ searchParams }: any) => {
       const { data } = await supabase
         .from("users")
         .select("*, caregiver(*)")
-        .eq("role", searchParams.caregiver);
+        .eq("role", searchParams.caregiver)
+        .eq("caregiver.status", "Verified");
+
       if (data) {
+        const verifiedCg = data.filter((user) => user.caregiver.length > 0);
         const updatedData = await Promise.all(
-          data.map(async (user: User) => {
-            if (user.caregiver && user.caregiver[0]?.profile_photo) {
+          verifiedCg.map(async (user: Caregiver) => {
+            if (user.caregiver && user.caregiver[0].profile_photo) {
               const url = await getGlobalUserProfilePhoto(
                 user.caregiver[0].profile_photo
               );
-              user.caregiver[0].profile_photo_url = url!;
+              user.profile_photo_url = url!;
             }
 
             return user;
@@ -97,11 +73,12 @@ const Page = ({ searchParams }: any) => {
   }, [, searchParams.caregiver]);
 
   useEffect(() => {
-    let filteredCG: User[] = [];
+    let filteredCG: Caregiver[] = [];
     if (rating.length > 0) {
       rating.forEach((rate) => {
         caregiver.forEach((cg) => {
           if (
+            cg.caregiver[0].rate &&
             cg.caregiver[0].rate >= rate &&
             cg.caregiver[0].rate <= rate + 1
           ) {
@@ -465,7 +442,7 @@ const Page = ({ searchParams }: any) => {
                       <div className="flex h-[100%] w-[100%] items-center gap-5 lg:mr-10 lg:gap-10">
                         <div className="min-w-[100px]">
                           <Image
-                            src={cg.caregiver[0]?.profile_photo_url!}
+                            src={cg.profile_photo_url!}
                             height={100}
                             width={100}
                             className="h-[100px] w-[100px] rounded-full object-cover"
@@ -486,7 +463,7 @@ const Page = ({ searchParams }: any) => {
                                 alt="Building Logo"
                               />
                               <h1 className="text-sm text-dark-secondary">
-                                {cg.caregiver[0]?.workplace}
+                                {cg.caregiver[0].workplace}
                               </h1>
                             </div>
                             <div className="flex gap-4">
@@ -498,7 +475,7 @@ const Page = ({ searchParams }: any) => {
                                   alt="Briefcase Logo"
                                 />
                                 <h1 className="text-sm text-dark-secondary">
-                                  {cg.caregiver[0]?.work_experiences + " years"}
+                                  {cg.caregiver[0].work_experiences + " years"}
                                 </h1>
                               </div>
                               <div className="flex items-center gap-2">
@@ -509,7 +486,7 @@ const Page = ({ searchParams }: any) => {
                                   alt="Star Logo"
                                 />
                                 <h1 className="text-sm text-dark-secondary">
-                                  {cg.caregiver[0]?.rate}
+                                  {cg.caregiver[0].rate}
                                 </h1>
                               </div>
                             </div>
@@ -543,7 +520,7 @@ const Page = ({ searchParams }: any) => {
                     <div className="flex h-[100%] w-[100%] items-center gap-5 lg:mr-10 lg:gap-10">
                       <div className="min-w-[100px]">
                         <Image
-                          src={cg.caregiver[0]?.profile_photo_url!}
+                          src={cg.profile_photo_url!}
                           height={100}
                           width={100}
                           className="h-[100px] w-[100px] rounded-full object-cover"
@@ -564,7 +541,7 @@ const Page = ({ searchParams }: any) => {
                               alt="Building Logo"
                             />
                             <h1 className="text-sm text-dark-secondary">
-                              {cg.caregiver[0]?.workplace}
+                              {cg.caregiver[0].workplace}
                             </h1>
                           </div>
                           <div className="flex gap-4">
@@ -576,7 +553,7 @@ const Page = ({ searchParams }: any) => {
                                 alt="Briefcase Logo"
                               />
                               <h1 className="text-sm text-dark-secondary">
-                                {cg.caregiver[0]?.work_experiences + " years"}
+                                {cg.caregiver[0].work_experiences + " years"}
                               </h1>
                             </div>
                             <div className="flex items-center gap-2">
@@ -587,7 +564,7 @@ const Page = ({ searchParams }: any) => {
                                 alt="Star Logo"
                               />
                               <h1 className="text-sm text-dark-secondary">
-                                {cg.caregiver[0]?.rate}
+                                {cg.caregiver[0].rate}
                               </h1>
                             </div>
                           </div>
@@ -613,8 +590,10 @@ const Page = ({ searchParams }: any) => {
             </div>
             <div className="flex justify-between p-3">
               <p>
-                Showing {(pagination.pageIndex - 1) * 5 + 1} to{" "}
-                {filtered.length > 0
+                Showing{" "}
+                {filtered.length > 0 ? (pagination.pageIndex - 1) * 5 + 1 : 0}{" "}
+                to{" "}
+                {filtered.length > 0 || location || rating.length > 0
                   ? `
     ${
       filtered.length > 5 ? (pagination.pageIndex - 1) * 5 + 5 : filtered.length
@@ -717,14 +696,6 @@ const Page = ({ searchParams }: any) => {
                       </li>
                     ))
                   )}
-                  {/* <li>
-                    <a
-                      href="#"
-                      className="flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                    >
-                      1
-                    </a>
-                  </li> */}
                   <li>
                     <a
                       onClick={() => {

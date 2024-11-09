@@ -117,7 +117,7 @@ const PlacingOrder = ({ searchParams }: any) => {
 
     if (res !== "Please try again") {
       router.push(
-        "/patient/health-services/appointment/conjecture?conjecture=" + res
+        "/patient/health-services/appointment/conjecture?appointment=" + res
       );
     }
   };

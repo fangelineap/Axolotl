@@ -5,30 +5,20 @@ import Select from "@/components/Axolotl/Select";
 import DatePickerOne from "@/components/FormElements/DatePicker/DatePickerOne";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { createSupabaseClient } from "@/lib/client";
-import { CAREGIVER } from "@/types/AxolotlMainType";
+import { CAREGIVER, USER } from "@/types/AxolotlMainType";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-type User = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  address: string;
-  gender: string;
-  birthdate: Date;
-  created_at: Date;
-  updated_at: Date;
-  user_id: string;
-  role: string;
+type Caregiver = USER & {
+  profile_photo_url?: string;
   caregiver: CAREGIVER[];
 };
 
 const OrderCaregiver = ({ searchParams }: any) => {
   const [time, setTime] = useState<string>("");
   const [service, setService] = useState<string>("");
-  const [caregiver, setCaregiver] = useState<User>();
+  const [caregiver, setCaregiver] = useState<Caregiver>();
 
   const router = useRouter();
 
@@ -46,7 +36,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
           const url = await getGlobalUserProfilePhoto(
             data[0].caregiver[0]?.profile_photo
           );
-          data[0].caregiver[0].profile_photo_url = url!;
+          data[0].profile_photo_url = url!;
 
           setCaregiver(data[0]);
         }
@@ -80,7 +70,7 @@ const OrderCaregiver = ({ searchParams }: any) => {
               <div className="flex items-start gap-10">
                 <div className="min-w-[100px]">
                   <Image
-                    src={caregiver?.caregiver[0].profile_photo!}
+                    src={caregiver?.profile_photo_url!}
                     height={100}
                     width={100}
                     className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight"
