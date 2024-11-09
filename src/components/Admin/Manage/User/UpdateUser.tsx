@@ -107,6 +107,12 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
     formatter.format(new Date(date));
 
+  const timeFormatter = (time: string) => {
+    const [hours, minutes] = time.split(":");
+
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+  };
+
   /**
    * * Formatted Dates
    */
@@ -128,11 +134,11 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     : "-";
 
   const startTimeSchedule = user.caregiver?.schedule_start_time
-    ? user.caregiver?.schedule_start_time
+    ? timeFormatter(user.caregiver?.schedule_start_time)
     : "-";
 
   const endTimeSchedule = user.caregiver?.schedule_end_time
-    ? user.caregiver?.schedule_end_time
+    ? timeFormatter(user.caregiver?.schedule_end_time)
     : "-";
 
   /**
@@ -591,7 +597,11 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
                         type="text"
                         horizontal={false}
                         isRating
-                        value={String(user.caregiver.rate) || "-"}
+                        value={
+                          user.caregiver.rate
+                            ? String(user.caregiver.rate)
+                            : "-"
+                        }
                       />
                     </div>
                   </div>

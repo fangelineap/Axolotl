@@ -49,14 +49,12 @@ export type CAREGIVER_MEDICINE_ORDER = {
 };
 
 export type BASIC_PROFILE_DETAILS = {
-  user_id: USER["user_id"];
   email: string;
   phone_number: USER["phone_number"];
   address: USER["address"];
 };
 
 export type PATIENT_PROFILE_DETAILS = {
-  user_id: USER["user_id"];
   weight: PATIENT["weight"];
   height: PATIENT["height"];
   is_smoking: PATIENT["is_smoking"];
@@ -68,9 +66,10 @@ export type PATIENT_PROFILE_DETAILS = {
 };
 
 export type CAREGIVER_PROFILE_DETAILS = {
-  user_id: USER["user_id"];
   start_day: CAREGIVER["schedule_start_day"];
   end_day: CAREGIVER["schedule_end_day"];
   start_time: CAREGIVER["schedule_start_time"];
   end_time: CAREGIVER["schedule_end_time"];
 };
+
+export type CAREGIVER_SCHEDULE_DATA = CAREGIVER_PROFILE_DETAILS;

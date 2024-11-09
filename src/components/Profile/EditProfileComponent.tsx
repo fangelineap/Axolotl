@@ -1,31 +1,30 @@
 "use client";
 
 import { AdminUserTable } from "@/app/(pages)/admin/manage/user/table/data";
+import {
+  updateBasicProfileDetails,
+  updateRoleProfileDetails
+} from "@/app/_server-action/global/profile";
 import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import {
+  BASIC_PROFILE_DETAILS,
+  CAREGIVER_PROFILE_DETAILS,
+  PATIENT_PROFILE_DETAILS
+} from "@/types/AxolotlMultipleTypes";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import CheckboxSmoker from "../Axolotl/Checkboxes/CheckboxSmoker";
 import CustomInputGroup from "../Axolotl/InputFields/CustomInputGroup";
 import CustomTimePicker from "../Axolotl/InputFields/CustomTimePicker";
 import PhoneNumberBox from "../Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "../Axolotl/SelectDropdown";
 import { UpdateProfileValidation } from "./Validation/UpdateProfileValidation";
-import {
-  BASIC_PROFILE_DETAILS,
-  CAREGIVER_PROFILE_DETAILS,
-  PATIENT_PROFILE_DETAILS
-} from "@/types/AxolotlMultipleTypes";
-import {
-  updateBasicProfileDetails,
-  updateCaregiverProfileDetails,
-  updatePatientProfileDetails
-} from "@/app/_server-action/global/profile";
-import { toast } from "react-toastify";
 
 interface EditProfileComponentProps {
   user: AdminUserTable;
@@ -86,7 +85,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
   });
 
   /**
-   * * Helper function to format dates
+   * * Helper function to format dates and times
    * @param date
    * @param formatter
    * @returns
@@ -130,19 +129,17 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
     // ! VALIDATION
     if (!UpdateProfileValidation(form, "Basic")) return;
 
-    // ! TODO: DON'T FORGET TO UNCOMMENT THIS ONCE THE SERVER ACTIONS ARE READY
-    // if (user.role === "Patient" && !UpdateProfileValidation(form, "Patient"))
-    //   return;
+    if (user.role === "Patient" && !UpdateProfileValidation(form, "Patient"))
+      return;
 
-    // if (
-    //   ["Nurse", "Midwife"].includes(user.role) &&
-    //   !UpdateProfileValidation(form, "Caregiver")
-    // )
-    //   return;
+    if (
+      ["Nurse", "Midwife"].includes(user.role) &&
+      !UpdateProfileValidation(form, "Caregiver")
+    )
+      return;
 
     // ! UPDATE BASIC PROFILE
     const basicProfileDetails: BASIC_PROFILE_DETAILS = {
-      user_id: user.user_id,
       email: form.get("email")?.toString() || "",
       phone_number: form.get("phone_number")?.toString() || "",
       address: form.get("address")?.toString() || ""
@@ -159,6 +156,20 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
       return;
     }
 
+    if (user.role === "Admin") {
+      toast.success("Admin profile updated successfully.", {
+        position: "bottom-right"
+      });
+
+      setTimeout(() => {
+        router.refresh();
+        router.replace(`/profile?user=${user.user_id}&role=${user.role}`);
+        router.refresh();
+      }, 250);
+
+      return;
+    }
+
     toast.info("Basic profile updated successfully.", {
       position: "bottom-right"
     });
@@ -166,7 +177,6 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
     // ! UPDATE PATIENT
     if (user.role === "Patient") {
       const patientProfileDetails: PATIENT_PROFILE_DETAILS = {
-        user_id: user.user_id,
         height: form.get("height") as unknown as number,
         weight: form.get("weight") as unknown as number,
         is_smoking: form.get("is_smoking") === "Yes" ? true : false,
@@ -181,9 +191,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
         illness_history: form.get("illness_history")?.toString() || ""
       };
 
-      const { success } = await updatePatientProfileDetails(
-        patientProfileDetails
-      );
+      const { success } = await updateRoleProfileDetails(patientProfileDetails);
 
       if (!success) {
         toast.error("Error saving patient profile. Please try again.", {
@@ -196,12 +204,17 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
       toast.success("Patient profile updated successfully.", {
         position: "bottom-right"
       });
+
+      setTimeout(() => {
+        router.refresh();
+        router.replace(`/profile?user=${user.user_id}&role=${user.role}`);
+        router.refresh();
+      }, 250);
     }
 
     // ! UPDATE CAREGIVER
     if (["Nurse", "Midwife"].includes(user.role)) {
       const caregiverProfileDetails: CAREGIVER_PROFILE_DETAILS = {
-        user_id: user.user_id,
         start_day: form.get("start_day")?.toString() as
           | "Monday"
           | "Tuesday"
@@ -222,7 +235,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
         end_time: form.get("end_time")?.toString() || ""
       };
 
-      const { success } = await updateCaregiverProfileDetails(
+      const { success } = await updateRoleProfileDetails(
         caregiverProfileDetails
       );
 
@@ -237,6 +250,12 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
       toast.success("Caregiver profile updated successfully.", {
         position: "bottom-right"
       });
+
+      setTimeout(() => {
+        router.refresh();
+        router.replace(`/profile?user=${user.user_id}&role=${user.role}`);
+        router.refresh();
+      }, 250);
     }
   };
 
@@ -425,11 +444,12 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                         isMultipleUnit
                         unit="cm"
                         secondUnit="kg"
-                        value={String(formData.height)}
-                        secondValue={String(formData.weight)}
+                        value={formData.height}
+                        secondValue={formData.weight}
                         required
                         type="number"
                         placeholder="50"
+                        onChange={handleInputChange}
                       />
                       <CheckboxSmoker
                         isSmoking={formData.is_smoking ? "Yes" : "No"}
@@ -478,7 +498,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                             name="end_day"
                             value={formData.end_day as string}
                             required
-                            placeholder="Select Start Day"
+                            placeholder="Select End Day"
                             content={[
                               "Monday",
                               "Tuesday",
@@ -494,14 +514,16 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                           <CustomTimePicker
                             placeholder="00:00"
                             label="Start Time"
-                            required
                             name="start_time"
+                            required
+                            value={formData.start_time}
                           />
                           <CustomTimePicker
                             placeholder="00:00"
                             label="End Time"
                             name="end_time"
                             required
+                            value={formData.end_time}
                           />
                         </div>
                       </div>
@@ -560,33 +582,19 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                         value={formData.current_medication}
                         onChange={handleInputChange}
                       />
-                      {/* <CustomInputGroup
+                      <CustomInputGroup
                         label="Medication Frequency (if any)"
                         name="med_freq_times"
                         secondName="med_freq_day"
                         isMultipleUnit
                         unit="qty"
                         secondUnit="/day"
+                        value={formData.med_freq_times}
+                        secondValue={formData.med_freq_day}
                         required={false}
                         type="number"
                         placeholder="50"
-                      /> */}
-                      <DisabledCustomInputGroup
-                        label="Medication Frequency"
-                        type="text"
-                        isMultipleUnit
-                        unit="qty"
-                        value={
-                          user.patient.med_freq_times
-                            ? String(user.patient.med_freq_times)
-                            : "-"
-                        }
-                        secondUnit="/day"
-                        secondValue={
-                          user.patient.med_freq_day
-                            ? String(user.patient.med_freq_day)
-                            : "-"
-                        }
+                        onChange={handleInputChange}
                       />
                     </div>
                     <CustomInputGroup

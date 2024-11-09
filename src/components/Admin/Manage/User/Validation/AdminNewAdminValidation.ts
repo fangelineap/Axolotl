@@ -58,6 +58,19 @@ export const AdminNewAdminValidation = (form: FormData) => {
     return false;
   }
 
+  const birthdate = form.get("birthdate");
+
+  if (birthdate && new Date(birthdate.toString()) > new Date()) {
+    toast.warning(
+      "Did you come from the future? Please enter a valid birthdate.",
+      {
+        position: "bottom-right"
+      }
+    );
+
+    return false;
+  }
+
   if (!form.get("gender")) {
     toast.warning("Please enter a gender.", {
       position: "bottom-right"

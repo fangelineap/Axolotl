@@ -7,6 +7,7 @@ import { getGlobalMetadata } from "@/utils/Metadata/GlobalMetadata";
 import { redirect } from "next/navigation";
 import { getAdminCaregiverTotalOrders } from "../admin/manage/user/actions";
 import { AdminUserTable } from "../admin/manage/user/table/data";
+import CaregiverScheduleComponent from "@/components/Profile/CaregiverScheduleComponent";
 
 export const metadata = getGlobalMetadata("Profile");
 
@@ -14,6 +15,7 @@ interface ProfileProps {
   searchParams: {
     user: string;
     role: string;
+    hasSchedule?: string;
   };
 }
 
@@ -44,7 +46,7 @@ async function getCaregiverTotalOrders(userId: string, role: string) {
 }
 
 async function Profile({ searchParams }: ProfileProps) {
-  const { user: userId, role: userRole } = searchParams;
+  const { user: userId, role: userRole, hasSchedule } = searchParams;
 
   // Profile Page Protection
   if (!userId || !userRole) {
@@ -60,10 +62,41 @@ async function Profile({ searchParams }: ProfileProps) {
 
   if (!user) return redirect("/not-found");
 
+  if (!["Nurse", "Midwife"].includes(user.role)) {
+    return (
+      <CustomLayout>
+        <CustomBreadcrumbs pageName="Profile" />
+        <ViewProfileComponent user={user} totalOrder={totalOrder} />
+      </CustomLayout>
+    );
+  }
+
+  const caregiverScheduleEmpty = !(
+    user.caregiver.schedule_end_day &&
+    user.caregiver.schedule_start_day &&
+    user.caregiver.schedule_start_time &&
+    user.caregiver.schedule_end_time
+  );
+
+  if (
+    caregiverScheduleEmpty &&
+    (hasSchedule === null || !hasSchedule || hasSchedule === "true")
+  ) {
+    return redirect(
+      `/profile?user=${userId}&role=${userRole}&hasSchedule=false`
+    );
+  }
+
   return (
     <CustomLayout>
       <CustomBreadcrumbs pageName="Profile" />
       <ViewProfileComponent user={user} totalOrder={totalOrder} />
+
+      {caregiverScheduleEmpty && (
+        <CaregiverScheduleComponent
+          searchParams={{ ...searchParams, schedule: false }}
+        />
+      )}
     </CustomLayout>
   );
 }

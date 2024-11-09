@@ -10,8 +10,8 @@ interface CustomInputGroupProps {
   placeholder: string;
   required: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value?: string;
-  secondValue?: string;
+  value?: string | number;
+  secondValue?: string | number;
 
   // Additional Props
   secondName?: string;
@@ -80,6 +80,7 @@ const CustomInputGroup = ({
               type={type}
               placeholder={placeholder}
               value={value}
+              onChange={onChange}
               className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
             />
             <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
@@ -92,6 +93,7 @@ const CustomInputGroup = ({
               type={type}
               placeholder={placeholder}
               value={secondValue}
+              onChange={onChange}
               className={`${horizontal ? "md:w-3/4" : null} w-full rounded-l-[5px] border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
             />
             <label className="rounded-r-md border border-l-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
@@ -116,6 +118,9 @@ const CustomInputGroup = ({
           typeof={type}
           placeholder={placeholder}
           value={value}
+          onChange={
+            onChange as unknown as React.ChangeEventHandler<HTMLTextAreaElement>
+          }
           className={`${horizontal ? "md:w-3/4" : null} min-h-30 w-full overflow-auto rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
         />
       </div>

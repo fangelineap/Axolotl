@@ -10,6 +10,7 @@ interface CustomTimePickerProps {
   required?: boolean;
   name: string;
   horizontal?: boolean;
+  value?: string;
 }
 
 const CustomTimePicker = ({
@@ -17,7 +18,8 @@ const CustomTimePicker = ({
   label,
   required,
   name,
-  horizontal = false
+  horizontal = false,
+  value
 }: CustomTimePickerProps) => {
   return (
     <div
@@ -36,6 +38,7 @@ const CustomTimePicker = ({
             ampm={false}
             name={name}
             defaultValue={dayjs(new Date())}
+            value={dayjs(value, "HH:mm")}
             slots={{
               textField: CustomTimeInput
             }}

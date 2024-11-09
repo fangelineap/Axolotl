@@ -10,7 +10,6 @@ import { USER } from "@/types/AxolotlMainType";
 import { ServerFormValidation } from "@/utils/Validation/form/ServerFormValidation";
 import { unstable_noStore } from "next/cache";
 import { redirect } from "next/navigation";
-import { toast } from "react-toastify";
 import { adminDeleteUser } from "../admin";
 
 /**
@@ -273,6 +272,41 @@ export async function getCaregiverVerificationStatus(caregiver_id: string) {
 }
 
 /**
+ * * Get caregiver schedule status
+ * @param caregiver_id
+ * @returns
+ */
+export async function getCaregiverScheduleStatus(caregiver_id: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("caregiver")
+      .select("*")
+      .not("schedule_start_day", "is", null)
+      .not("schedule_end_day", "is", null)
+      .not("schedule_start_time", "is", null)
+      .not("schedule_end_time", "is", null)
+      .eq("caregiver_id", caregiver_id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching caregiver data:", error.message);
+
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return null;
+  }
+}
+
+/**
  * * Helper function to check User Personal Information Data based on their Roles
  * @param userId
  * @param userRole
@@ -495,36 +529,29 @@ export async function saveUserPersonalInformation(
       await getUserFromSession();
 
     if (currentUserError || !currentUserData) {
-      toast.error("Something went wrong. Please try again.", {
-        position: "bottom-right"
-      });
+      console.error("Error fetching current user data:", currentUserError);
+
+      return { success: false, message: "Failed to fetch current user data" };
     }
 
-    if (currentUserData) {
-      const userId = currentUserData.id;
+    const userId = currentUserData.id;
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          ...form,
-          updated_at: new Date()
-        })
-        .eq("id", userId)
-        .single();
+    const { error } = await supabase
+      .from("users")
+      .update({
+        ...form,
+        updated_at: new Date()
+      })
+      .eq("id", userId)
+      .single();
 
-      if (error) {
-        console.error("Error updating user data:", error);
+    if (error) {
+      console.error("Error updating user data:", error);
 
-        return { success: false, message: "Failed to update user data" };
-      }
-
-      return { success: true, message: "User data updated successfully" };
+      return { success: false, message: "Failed to update user data" };
     }
 
-    return {
-      success: false,
-      message: "Something went wrong"
-    };
+    return { success: true, message: "User data updated successfully" };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 
@@ -668,56 +695,51 @@ export async function saveRolePersonalInformation(
       await getUserFromSession();
 
     if (currentUserError || !currentUserData) {
-      toast.error("Something went wrong. Please try again.", {
-        position: "bottom-right"
-      });
+      console.error("Error fetching current user data:", currentUserError);
+
+      return { success: false, message: "Failed to fetch current user data" };
     }
 
-    if (currentUserData) {
-      const userId = currentUserData.id;
-      const userRole = currentUserData.role;
+    const userId = currentUserData.id;
+    const userRole = currentUserData.role;
 
-      const { is_complete: isPersonalDataCompleted, success: fetchSuccess } =
-        await getIncompleteUserPersonalInformation(
-          currentUserData.id,
-          currentUserData.role
-        );
+    const { is_complete: isPersonalDataCompleted, success: fetchSuccess } =
+      await getIncompleteUserPersonalInformation(
+        currentUserData.id,
+        currentUserData.role
+      );
 
-      if (!fetchSuccess) {
-        return {
-          success: false,
-          message: "Failed to fetch user data"
-        };
-      }
+    if (!fetchSuccess) {
+      return {
+        success: false,
+        message: "Failed to fetch user data"
+      };
+    }
 
-      if (!isPersonalDataCompleted) {
-        switch (userRole) {
-          case "Patient": {
-            return await savePatientPersonalInformation(
-              form as PatientPersonalInformation,
-              userId
-            );
-          }
-
-          case "Caregiver":
-          case "Nurse":
-          case "Midwife": {
-            return await saveCaregiverPersonalInformation(
-              form as CaregiverPersonalInformation,
-              userId
-            );
-          }
-
-          default:
-            break;
+    if (!isPersonalDataCompleted) {
+      switch (userRole) {
+        case "Patient": {
+          return await savePatientPersonalInformation(
+            form as PatientPersonalInformation,
+            userId
+          );
         }
+
+        case "Caregiver":
+        case "Nurse":
+        case "Midwife": {
+          return await saveCaregiverPersonalInformation(
+            form as CaregiverPersonalInformation,
+            userId
+          );
+        }
+
+        default:
+          return { success: false, message: "Invalid user role" };
       }
     }
 
-    return {
-      success: false,
-      message: "Something went wrong"
-    };
+    return { success: true, message: "User data already completed" };
   } catch (error) {
     console.error("An unexpected error occurred:", error);
 

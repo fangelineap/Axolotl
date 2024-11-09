@@ -61,6 +61,12 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
   const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
     formatter.format(new Date(date));
 
+  const timeFormatter = (time: string) => {
+    const [hours, minutes] = time.split(":");
+
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+  };
+
   /**
    * * Formatted Dates
    */
@@ -82,11 +88,11 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
     : "-";
 
   const startTimeSchedule = user.caregiver?.schedule_start_time
-    ? user.caregiver?.schedule_start_time
+    ? timeFormatter(user.caregiver?.schedule_start_time)
     : "-";
 
   const endTimeSchedule = user.caregiver?.schedule_end_time
-    ? user.caregiver?.schedule_end_time
+    ? timeFormatter(user.caregiver?.schedule_end_time)
     : "-";
 
   /**

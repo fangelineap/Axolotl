@@ -154,6 +154,19 @@ export const PersonalInformationValidation = (
         return false;
       }
 
+      const birthdate = form.get("birthdate");
+
+      if (birthdate && new Date(birthdate.toString()) > new Date()) {
+        toast.warning(
+          "Did you come from the future? Please enter a valid birthdate.",
+          {
+            position: "bottom-right"
+          }
+        );
+
+        return false;
+      }
+
       if (!form.get("gender")) {
         toast.warning("Please enter your gender.", {
           position: "bottom-right"
@@ -186,8 +199,36 @@ export const PersonalInformationValidation = (
         return false;
       }
 
+      const height = Number(form.get("height"));
+
+      if (isNaN(height) || height < 10) {
+        toast.warning("What are you? A dwarf? Enter a valid height.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (isNaN(height) || height > 300) {
+        toast.warning("Please enter a valid height.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
       if (!form.get("weight")) {
         toast.warning("Please enter your weight.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      const weight = Number(form.get("weight"));
+
+      if (isNaN(weight) || weight < 0 || weight > 200) {
+        toast.warning("Please enter a valid weight.", {
           position: "bottom-right"
         });
 

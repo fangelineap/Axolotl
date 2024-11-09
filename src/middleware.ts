@@ -3,6 +3,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  getCaregiverScheduleStatus,
   getCaregiverVerificationStatus,
   getIncompleteUserPersonalInformation
 } from "./app/_server-action/auth";
@@ -228,7 +229,25 @@ async function updateSession(request: NextRequest) {
       return NextResponse.next();
     }
 
-    if (isValid && caregiverStatus === "Verified") return NextResponse.next();
+    const caregiverScheduleStatus = await getCaregiverScheduleStatus(
+      userData.id
+    );
+
+    if (isValid && caregiverStatus === "Verified" && !caregiverScheduleStatus) {
+      if (pathname !== `/profile`) {
+        return NextResponse.redirect(
+          new URL(
+            `/profile?user=${userId}&role=${userRole}&hasSchedule=false`,
+            request.url
+          )
+        );
+      }
+
+      return NextResponse.next();
+    }
+
+    if (isValid && caregiverStatus === "Verified" && caregiverScheduleStatus)
+      return NextResponse.next();
   }
 
   return supabaseResponse;
