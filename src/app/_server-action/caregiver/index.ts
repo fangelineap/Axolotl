@@ -561,22 +561,22 @@ export async function insertMedicineOrderDetail(
 
 export async function updateOrderWithMedicineOrderId(
   orderId: string,
-  data: MEDICINE_ORDER_DETAIL[]
+  medicineOrderId: string
 ) {
   const supabase = await createSupabaseServerClient();
 
   try {
-    const { error } = await supabase
-      .from("medicineOrderDetail")
-      .insert(data)
+    const { data, error } = await supabase
+      .from("order")
+      .update({ medicine_order_id: medicineOrderId })
+      .eq("id", orderId)
       .select("*")
       .single();
-
     if (error) {
       throw new Error("Failed to insert medicine order: " + error.message);
     }
 
-    return data as MEDICINE_ORDER_DETAIL[];
+    return data;
   } catch (error) {
     console.error("Error inserting medicine order:", error);
     throw new Error("Error inserting medicine order");

@@ -1,4 +1,5 @@
 "use client";
+import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -55,6 +56,11 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
   proofOfService
 }) => {
   const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
+
+  const proof_of_service_photo = getClientPublicStorageURL(
+    "proof_of_service",
+    proofOfService.imageUrl
+  );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)"); // Tailwind's 'md' size is 768px
@@ -264,7 +270,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                     Total Charge
                   </td>
                   <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
-                    {price.totalCharge}
+                    {price.total + price.delivery}
                   </td>
                 </tr>
               </tbody>
@@ -282,7 +288,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
           <p className="text-md mb-4 text-left font-bold">Proof of Service</p>
           <div className="mt-4 rounded-lg border p-4">
             <Image
-              src={proofOfService.imageUrl}
+              src={proof_of_service_photo}
               alt="Proof of Service"
               className="mx-auto h-auto max-w-full rounded-lg"
               height={500}
