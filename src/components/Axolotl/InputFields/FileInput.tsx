@@ -1,6 +1,6 @@
 import { IconFileInvoice, IconUpload } from "@tabler/icons-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 interface FileInputProps {
@@ -26,10 +26,6 @@ function FileInput({
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const acceptString = accept.join(", ");
-
-  useEffect(() => {
-    console.log("FileInput component rendered");
-  }, []);
 
   const fileType: { [key: string]: string } = {
     "image/jpeg": "JPEG",

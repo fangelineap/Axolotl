@@ -255,3 +255,101 @@ export async function adminGetAllOrderLogs(
       throw new Error("Invalid log type");
   }
 }
+
+/**
+ * * Get order service log details based on the order ID
+ * @param orderId
+ * @returns
+ */
+async function adminServiceLogsByOrderId(orderId: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("order")
+      .select("*, appointment(*), patient(*, users(*)), caregiver(*, users(*))")
+      .is("medicine_order_id", null)
+      .not("appointment_order_id", "is", null)
+      .not("patient_id", "is", null)
+      .not("caregiver_id", "is", null)
+      .eq("id", orderId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching Order Service Logs:", error);
+
+      return { data: null, error };
+    }
+
+    return data as AdminOrderServiceLogsTable;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { data: null, error };
+  }
+}
+
+/**
+ * * Get order medicine log details based on the order ID
+ * @param orderId
+ * @returns
+ */
+async function adminMedicineLogsByOrderId(orderId: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("order")
+      .select(
+        "*, appointment(*), medicineOrder(*, medicineOrderDetail(*, medicine(*))), patient(*, users(*)), caregiver(*, users(*))"
+      )
+      .not("medicine_order_id", "is", null)
+      .not("appointment_order_id", "is", null)
+      .not("patient_id", "is", null)
+      .not("caregiver_id", "is", null)
+      .eq("id", orderId)
+      .single();
+
+    if (error) {
+      console.error("Error fetching Order Service Logs:", error);
+
+      return { data: null, error };
+    }
+
+    return data as AdminOrderMedicineLogsTable;
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return { data: null, error };
+  }
+}
+
+/**
+ * * Get order log details based on the order ID and log type
+ * @param logType
+ * @param orderId
+ * @returns
+ */
+export async function adminGetOrderLogsByOrderId(
+  logType: "service" | "medicine",
+  orderId: string
+): Promise<AdminOrderServiceLogsTable | AdminOrderMedicineLogsTable> {
+  switch (logType) {
+    case "service": {
+      const serviceLogs = await adminServiceLogsByOrderId(orderId);
+
+      return serviceLogs as AdminOrderServiceLogsTable;
+    }
+    case "medicine": {
+      const medicineLogs = await adminMedicineLogsByOrderId(orderId);
+
+      return medicineLogs as AdminOrderMedicineLogsTable;
+    }
+    default:
+      throw new Error("Invalid log type");
+  }
+}

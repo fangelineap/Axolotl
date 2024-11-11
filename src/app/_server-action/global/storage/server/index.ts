@@ -56,8 +56,6 @@ export async function getServerPrivateStorageURL(
       return null;
     }
 
-    console.log({ storage, path, data });
-
     return data.signedUrl;
   } catch (error) {
     console.error("An unexpected error occurred:", error);

@@ -17,8 +17,6 @@ interface AdminShowUserProps {
 async function fetchData({ params }: AdminShowUserProps) {
   const response = await getGlobalProfile(params.userId);
 
-  console.log(response);
-
   return response as AdminUserTable;
 }
 

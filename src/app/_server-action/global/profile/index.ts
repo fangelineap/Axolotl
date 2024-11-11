@@ -32,7 +32,7 @@ export async function getGlobalProfile(user_id: string) {
     if (userDataError) {
       console.error("Error fetching data:", userDataError.message);
 
-      return null;
+      return { data: null, error: userDataError };
     }
 
     const authSchema = await adminGetUserAuthSchema(user_id);

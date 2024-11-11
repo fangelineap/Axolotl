@@ -655,16 +655,12 @@ async function saveCaregiverPersonalInformation(
     return { success: false, message: validationError.message };
   }
 
-  console.log(form);
-
   try {
     const { error } = await supabase.from("caregiver").insert({
       ...form,
       status: "Unverified",
       caregiver_id: userId
     });
-
-    console.log(error);
 
     if (error) {
       console.error("Error saving caregiver data:", error);
