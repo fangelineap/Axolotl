@@ -5,6 +5,7 @@ interface AccordionProps {
   symptoms: string[];
   selectedAll: string[];
   setSelectedAll: (selectedAll: any) => void;
+  customClass?: string;
 }
 
 const Accordion = ({
@@ -12,6 +13,7 @@ const Accordion = ({
   symptoms,
   selectedAll,
   setSelectedAll,
+  customClass
 }: AccordionProps) => {
   const [open, setOpen] = useState(false);
 
@@ -64,22 +66,25 @@ const Accordion = ({
                   htmlFor={`checkbox-${symptom}`}
                   className="flex cursor-pointer select-none items-center text-body-sm font-medium"
                 >
-                  <div className="relative">
+                  <div className={`relative`}>
                     <input
                       type="checkbox"
                       id={`checkbox-${symptom}`}
-                      className="sr-only"
-                      onChange={() => {
-                        const index = selectedAll.indexOf(symptom);
-                        if (index <= -1) {
-                          setSelectedAll((prev: string[]) => [
-                            ...prev,
-                            symptom,
-                          ]);
-                        } else {
-                          setSelectedAll((prev: string[]) =>
-                            prev.filter((item) => item !== symptom),
-                          );
+                      className={`${customClass} sr-only`}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        if (customClass === "") {
+                          const index = selectedAll.indexOf(symptom);
+                          if (index <= -1) {
+                            setSelectedAll((prev: string[]) => [
+                              ...prev,
+                              symptom
+                            ]);
+                          } else {
+                            setSelectedAll((prev: string[]) =>
+                              prev.filter((item) => item !== symptom)
+                            );
+                          }
                         }
                       }}
                     />

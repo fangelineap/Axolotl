@@ -205,7 +205,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                   name="appointmentService"
                   placeholder="Select service"
                   required
-                  customClass={"w-full mb-3"}
+                  customClass={`w-full mb-3 ${isActive ? "disabled pointer-events-none" : ""}`}
                   options={[
                     "Neonatal Care",
                     "Elderly Care",
@@ -217,14 +217,12 @@ const PlacingOrder = ({ searchParams }: any) => {
                   isOptionSelected={false}
                   changeTextColor={() => {}}
                 />
-                {/* <div className="flex justify-between gap-3"> */}
                 <h1 className="text-body-sm font-medium text-dark dark:text-white">
                   Service Description:
                 </h1>
                 <p className="w-[75%] text-body-sm">
                   Service desc for after care
                 </p>
-                {/* </div> */}
               </div>
             </>
 
@@ -242,7 +240,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                     type="text"
                     name="causes"
                     placeholder="Causes"
-                    className="w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                    className={`${isActive ? "disabled pointer-events-none" : ""} w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                   />
                 </div>
                 {allTypes.length > 0 && (
@@ -255,6 +253,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                     name="main-concerns"
                     setSelectedOption={setConcern}
                     selectedOption={concern}
+                    customClass={`${isActive ? "disabled pointer-events-none" : ""}`}
                   />
                 )}
                 <div className="mb-3 flex items-center justify-between gap-5">
@@ -265,7 +264,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                     type="text"
                     name="currentMedication"
                     placeholder="Enter your current medication (separated by ',')"
-                    className="w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                    className={`${isActive ? "disabled pointer-events-none" : ""} w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                   />
                 </div>
                 <div>
@@ -277,7 +276,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                     name="medicalDescription"
                     rows={4}
                     placeholder="lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
-                    className="w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                    className={`${isActive ? "disabled pointer-events-none" : ""} w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                   ></textarea>
                 </div>
               </div>
@@ -302,6 +301,7 @@ const PlacingOrder = ({ searchParams }: any) => {
                           prev.filter((item) => item !== selected)
                         );
                       }}
+                      className={`${isActive ? "disabled pointer-events-none" : ""}`}
                     >
                       <IconCircleXFilled size={33} />
                     </button>
@@ -320,12 +320,14 @@ const PlacingOrder = ({ searchParams }: any) => {
                   symptoms={["itching", "skin rash"]}
                   selectedAll={selectedAll}
                   setSelectedAll={setSelectedAll}
+                  customClass={isActive ? "disabled pointer-events-none" : ""}
                 />
                 <Accordion
                   type="Skin Symptoms"
                   symptoms={["dischromic patches"]}
                   selectedAll={selectedAll}
                   setSelectedAll={setSelectedAll}
+                  customClass={isActive ? "disabled pointer-events-none" : ""}
                 />
               </div>
             </div>
