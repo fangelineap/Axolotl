@@ -198,7 +198,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           return [
             ...prev,
             {
-              id: "",
+              id: currentMedicine.uuid,
               quantity: 1,
               name: currentMedicine.name,
               price: currentMedicine.price || 0,
@@ -263,15 +263,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       return;
     }
 
-    toast.success("Medicine added successfully.", {
-      position: "bottom-right"
-    });
-
     // Add the newly created medicine with its ID to the selected medications
     setSelectedMedications((prev) => [
       ...prev,
       {
-        id: "", // Use the ID returned from the database
+        id: addNewMedicine.uuid, // Use the ID returned from the database
         quantity: newMedicine.quantity,
         name: newMedicine.name,
         price: isNaN(medicinePrice) ? 0 : medicinePrice,
@@ -428,7 +424,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         medicineOrderId = newMedicineOrder.id;
 
         // Insert each medication into medicineOrderDetail
-        const insertMedicine = await Promise.all(
+        await Promise.all(
           selectedMedications.map((med) =>
             insertMedicineOrderDetail({
               id: "",
@@ -446,7 +442,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         // Update the order with the new medicine_order_id
         const finalUpdate = await updateOrderWithMedicineOrderId(
           orderId,
-          insertMedicine
+          medicineOrderId
         );
 
         if (finalUpdate.length === 0) {
