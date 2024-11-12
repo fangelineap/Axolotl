@@ -73,9 +73,20 @@ export type MEDICINE_ORDER_DETAIL_WITH_MEDICINE = MEDICINE_ORDER_DETAIL & {
 
 export type APPOINTMENT = {
   service_type: string;
-  appointment_time: string;
-  appointment_date: string;
+  total_payment: number;
+  causes: string;
   main_concern: string;
+  current_medication: string;
+  medical_description: string;
+  day_of_visit: number;
+  diagnosis: string;
+  is_paid: boolean;
+  created_at: Date;
+  updated_at: Date;
+  paid_at: Date;
+  appointment_time: string;
+  appointment_date: Date;
+  symptoms: string[];
 };
 
 export type ORDER = {
@@ -90,6 +101,8 @@ export type ORDER = {
   patient_id: string;
   caregiver_id: string;
   notes?: string;
+  proof_of_service?: string;
+  rate?: number;
 };
 
 export type MEDICINE_ORDER = {

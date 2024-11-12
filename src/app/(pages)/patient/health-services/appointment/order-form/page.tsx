@@ -12,7 +12,7 @@ import SelectHorizontal from "@/components/Axolotl/SelectHorizontal";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { getUserFromSession } from "@/lib/server";
 import { CAREGIVER } from "@/types/AxolotlMainType";
-import { services } from "@/utils/Services";
+import { AxolotlServices } from "@/utils/Services";
 import {
   IconCircleMinus,
   IconCirclePlus,
@@ -71,7 +71,7 @@ const PlacingOrder = ({ searchParams }: any) => {
 
   useEffect(() => {
     const getServiceTypes = () => {
-      services.map((service) => {
+      AxolotlServices.map((service) => {
         if (service.name === serviceType) {
           setService(service);
           setAllTypes([]);

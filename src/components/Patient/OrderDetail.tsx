@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { updateRating } from "@/app/_server-action/patient";
+import { AxolotlServices } from "@/utils/Services";
+import { IconMessage } from "@tabler/icons-react";
+import "flatpickr/dist/flatpickr.min.css";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "flatpickr/dist/flatpickr.min.css";
-import { IconMessage } from "@tabler/icons-react";
-import { services } from "@/utils/Services";
-import { useRouter } from "next/navigation";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
-import { updateRating } from "@/app/_server-action/patient";
 
 interface MedecinePreparationProps {
   orderStatus: string;
@@ -427,7 +427,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   <label className="font-medium text-dark dark:text-white">
                     Rp.{" "}
                     {
-                      services.find(
+                      AxolotlServices.find(
                         (service) => service.name === serviceDetails.serviceType
                       )?.price
                     }

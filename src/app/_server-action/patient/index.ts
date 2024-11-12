@@ -9,7 +9,7 @@ import {
   MEDICINE_ORDER_DETAIL,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
-import { services } from "@/utils/Services";
+import { AxolotlServices } from "@/utils/Services";
 import { unstable_noStore } from "next/cache";
 import { getGlobalUserProfilePhoto } from "../global";
 
@@ -213,7 +213,7 @@ export async function getOrderDetail(id: string) {
       .eq("id", data.caregiver.caregiver_id)
       .single();
 
-    const serviceFee = services.find(
+    const serviceFee = AxolotlServices.find(
       (service) => service.name === data.appointment.service_type
     );
 

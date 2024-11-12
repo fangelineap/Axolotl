@@ -1,4 +1,4 @@
-export const services = [
+export const AxolotlServices = [
   {
     name: "Neonatal Care",
     description:
