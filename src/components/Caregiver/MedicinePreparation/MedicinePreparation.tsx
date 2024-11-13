@@ -384,79 +384,81 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
     try {
       let medicineOrderId;
+      const hasAdditionalMedicine = selectedMedications.length > 0;
 
-      // If there are selected medications, insert them into the database
-      if (selectedMedications.length > 0) {
-        // Calculate medicine order details
-        const totalQuantity = selectedMedications.reduce(
-          (sum, med) => sum + med.quantity,
-          0
-        );
-        const subTotalMedicine = selectedMedications.reduce(
-          (sum, med) => sum + med.price * med.quantity,
-          0
-        );
-        const totalPrice = subTotalMedicine + deliveryFee;
+      if (hasAdditionalMedicine)
+        if (selectedMedications.length > 0) {
+          // If there are selected medications, insert them into the database
+          // Calculate medicine order details
+          const totalQuantity = selectedMedications.reduce(
+            (sum, med) => sum + med.quantity,
+            0
+          );
+          const subTotalMedicine = selectedMedications.reduce(
+            (sum, med) => sum + med.price * med.quantity,
+            0
+          );
+          const totalPrice = subTotalMedicine + deliveryFee;
 
-        // Insert into the medicineOrder table
-        const newMedicineOrder = await insertMedicineOrder({
-          total_qty: totalQuantity,
-          sub_total_medicine: subTotalMedicine,
-          delivery_fee: deliveryFee,
-          total_price: totalPrice,
-          is_paid: false, // Set to true if payment has been completed
-          paid_at: null // Set the date if payment is made
-        });
-        console.log("Inserted Medicine Order:", newMedicineOrder);
-        console.log("ACHIVE NEW MEDICINE ORDER");
+          // Insert into the medicineOrder table
+          const newMedicineOrder = await insertMedicineOrder({
+            total_qty: totalQuantity,
+            sub_total_medicine: subTotalMedicine,
+            delivery_fee: deliveryFee,
+            total_price: totalPrice,
+            is_paid: false, // Set to true if payment has been completed
+            paid_at: null // Set the date if payment is made
+          });
+          console.log("Inserted Medicine Order:", newMedicineOrder);
+          console.log("ACHIVE NEW MEDICINE ORDER");
 
-        // Check if newMedicineOrder and its ID are valid
-        if (!newMedicineOrder || !newMedicineOrder.id) {
-          toast.error(
-            "Failed to insert medicine order. Response:",
+          // Check if newMedicineOrder and its ID are valid
+          if (!newMedicineOrder || !newMedicineOrder.id) {
+            toast.error(
+              "Failed to insert medicine order. Response:",
 
-            { position: "bottom-right" }
+              { position: "bottom-right" }
+            );
+
+            return;
+          }
+
+          medicineOrderId = newMedicineOrder.id;
+
+          // Insert each medication into medicineOrderDetail
+          await Promise.all(
+            selectedMedications.map((med) =>
+              insertMedicineOrderDetail({
+                id: "",
+                quantity: med.quantity,
+                total_price: med.price * med.quantity,
+                medicine_id: med.id, // Assuming each med has a unique ID
+                medicine_order_id: medicineOrderId!,
+                created_at: new Date(),
+                updated_at: new Date()
+              })
+            )
+          );
+          console.log("ACHIVE INSERT NEW MEDICINE ORDER DETAIL");
+
+          // Update the order with the new medicine_order_id
+          const finalUpdate = await updateOrderWithMedicineOrderId(
+            orderId,
+            medicineOrderId
           );
 
-          return;
-        }
+          if (finalUpdate.length === 0) {
+            toast.error("Failed to update order. Response:", {
+              position: "bottom-right"
+            });
 
-        medicineOrderId = newMedicineOrder.id;
+            return;
+          }
 
-        // Insert each medication into medicineOrderDetail
-        await Promise.all(
-          selectedMedications.map((med) =>
-            insertMedicineOrderDetail({
-              id: "",
-              quantity: med.quantity,
-              total_price: med.price * med.quantity,
-              medicine_id: med.id, // Assuming each med has a unique ID
-              medicine_order_id: medicineOrderId!,
-              created_at: new Date(),
-              updated_at: new Date()
-            })
-          )
-        );
-        console.log("ACHIVE INSERT NEW MEDICINE ORDER DETAIL");
-
-        // Update the order with the new medicine_order_id
-        const finalUpdate = await updateOrderWithMedicineOrderId(
-          orderId,
-          medicineOrderId
-        );
-
-        if (finalUpdate.length === 0) {
-          toast.error("Failed to update order. Response:", {
+          toast.success("Order updated successfully", {
             position: "bottom-right"
           });
-
-          return;
         }
-
-        toast.success("Order updated successfully", {
-          position: "bottom-right"
-        });
-      }
 
       // Use the handleFileUpload function to upload the image
       const fileName = await handleFileUpload(uploadedImage);
@@ -466,7 +468,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       }
 
       // Call finishOrder to update the database with the proof_of_service URL
-      const result = await finishOrder(orderId, fileName); // Pass orderId and URL to finishOrder function
+      const result = await finishOrder(
+        orderId,
+        fileName,
+        hasAdditionalMedicine
+      ); // Pass orderId and URL to finishOrder function
 
       if (result.success) {
         toast.success(result.message, {
