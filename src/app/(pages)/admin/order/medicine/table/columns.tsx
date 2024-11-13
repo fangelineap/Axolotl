@@ -58,30 +58,15 @@ const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
 };
 
 export const columns = [
-  columnHelper.accessor("id", {
-    cell: (info) => {
-      const order_id = info.getValue()?.toString();
-
-      return (
-        <div className="flex items-center justify-center text-center">
-          <p>{order_id}</p>
-        </div>
-      );
-    },
-    id: "Order ID",
-    header: "Order ID",
-    enableSorting: true,
-    enableColumnFilter: true
-  }),
-  columnHelper.accessor("created_at", {
+  columnHelper.accessor("appointment.appointment_date", {
     cell: (info) => {
       const created_at = info.getValue();
       const formattedDate = dateFormatter.format(new Date(created_at));
 
       return formattedDate;
     },
-    id: "Created Date",
-    header: "Created Date",
+    id: "Appointment Date",
+    header: "Appointment Date",
     enableSorting: true,
     enableColumnFilter: true
   }),
@@ -96,6 +81,13 @@ export const columns = [
     cell: (info) => info.getValue(),
     id: "Patient Name",
     header: "Patient Name",
+    enableSorting: true,
+    enableColumnFilter: true
+  }),
+  columnHelper.accessor((row) => `${row.appointment.service_type}`, {
+    cell: (info) => info.getValue(),
+    id: "Service Type",
+    header: "Service Type",
     enableSorting: true,
     enableColumnFilter: true
   }),

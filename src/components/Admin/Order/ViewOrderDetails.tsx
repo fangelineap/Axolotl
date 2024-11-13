@@ -189,6 +189,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
     serviceLogData.appointment.total_payment
   );
 
+  let medicineTotalQty = 0;
   let medicineSubTotalPrice = 0;
   let medicineDeliveryFee = 0;
   let medicineTotalPrice = 0;
@@ -202,6 +203,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
   let medicinePaidAt = new Date();
 
   if (orderType === "medicine" && medicineLogData.medicineOrder) {
+    medicineTotalQty = medicineLogData.medicineOrder.total_qty;
     medicineSubTotalPrice = medicineLogData.medicineOrder.sub_total_medicine;
     medicineDeliveryFee = medicineLogData.medicineOrder.delivery_fee;
     medicineTotalPrice = medicineLogData.medicineOrder.total_price;
@@ -327,7 +329,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                   serviceLogData.appointment.current_medication
                 ]
               )}
-              <div className="flex items-center">
+              <div className="flex">
                 <div className="flex w-75 flex-col gap-2">
                   <p className="font-medium">Symptoms</p>
                 </div>
@@ -342,6 +344,18 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                   <p className="font-medium">Medical Description</p>
                 </div>
                 <p>{serviceLogData.appointment.medical_description}</p>
+              </div>
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className=" w-full rounded-t-md border border-primary bg-green-light py-2 text-white">
+                  <p className="font-bold">Conjecture</p>
+                </div>
+                <div className="w-full rounded-b-md border border-primary py-2 font-bold text-primary">
+                  <p>
+                    {(serviceLogData.appointment.diagnosis ??
+                      "Something Wrong Here...") ||
+                      "Please ask the patient for more information"}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -376,9 +390,75 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
             {/* Additional Medications */}
             {orderType === "medicine" && medicineLogData.medicineOrder && (
               <div className="flex w-full flex-col gap-2">
-                <h1 className="text-heading-6 font-medium">Order Item(s)</h1>
+                <h1 className="text-heading-6 font-medium">
+                  Order {medicineTotalQty}{" "}
+                  {medicineTotalQty > 1 ? "Items" : "Item"}
+                </h1>
                 <div className="overflow-hidden rounded-md border border-primary">
-                  Table Here
+                  <table className="w-full">
+                    <thead>
+                      <tr className=" bg-green-light text-white">
+                        <th className="p-2 text-left">Quantity</th>
+                        <th className="p-2 text-left">Name</th>
+                        <th className="p-2 text-right">Price/Item</th>
+                        <th className="p-2 text-right">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {medicineLogData.medicineOrder.medicineOrderDetail.map(
+                        (med, index) => (
+                          <tr key={index}>
+                            <td className="border-primary p-2 text-left">
+                              {med.quantity}
+                            </td>
+                            <td className="border-primary p-2">
+                              {med.medicine.name}
+                            </td>
+                            <td className="border-primary p-2 text-right">
+                              {formatPrice(med.medicine.price)}
+                            </td>
+                            <td className="border-primary p-2 text-right">
+                              {formatPrice(med.total_price)}
+                            </td>
+                          </tr>
+                        )
+                      )}
+
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="border-t border-primary p-2 text-left font-bold"
+                        >
+                          Total Price
+                        </td>
+                        <td className="border-t border-primary p-2 text-right">
+                          {formattedMedicineSubTotalPrice}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="border-primary p-2 text-left font-bold"
+                        >
+                          Delivery Fee
+                        </td>
+                        <td className="border-primary p-2 text-right">
+                          {formattedMedicineDeliveryFee}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="rounded-bl-lg border-primary p-2 text-left font-bold"
+                        >
+                          Total Charge
+                        </td>
+                        <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
+                          {formattedMedicineTotalPrice}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}

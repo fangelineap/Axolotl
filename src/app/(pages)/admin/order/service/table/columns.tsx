@@ -26,6 +26,16 @@ const statusDisplay: Record<
   Completed: { bgColor: "bg-kalbe-ultraLight", textColor: "text-primary" }
 };
 
+/**
+ * * Date Formatters
+ */
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric"
+});
+
 const columnHelper = createColumnHelper<AdminOrderServiceLogsTable>();
 
 /**
@@ -48,18 +58,15 @@ const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
 };
 
 export const columns = [
-  columnHelper.accessor("id", {
+  columnHelper.accessor("appointment.appointment_date", {
     cell: (info) => {
-      const order_id = info.getValue()?.toString();
+      const created_at = info.getValue();
+      const formattedDate = dateFormatter.format(new Date(created_at));
 
-      return (
-        <div className="flex items-center justify-center text-center">
-          <p>{order_id}</p>
-        </div>
-      );
+      return formattedDate;
     },
-    id: "Order ID",
-    header: "Order ID",
+    id: "Appointment Date",
+    header: "Appointment Date",
     enableSorting: true,
     enableColumnFilter: true
   }),

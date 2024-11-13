@@ -12,7 +12,7 @@ import {
 export type AdminOrderMedicineLogsTable = ORDER & {
   appointment: APPOINTMENT;
   medicineOrder: MEDICINE_ORDER & {
-    medicineOrderDetail: MEDICINE_ORDER_DETAIL & { medicine: MEDICINE }[];
+    medicineOrderDetail: (MEDICINE_ORDER_DETAIL & { medicine: MEDICINE })[];
   };
   patient: PATIENT & { users: USER };
   caregiver: CAREGIVER & { users: USER };
