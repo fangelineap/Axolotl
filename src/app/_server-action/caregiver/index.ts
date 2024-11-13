@@ -160,7 +160,9 @@ export async function fetchOngoingOrders() {
       .select(
         `*, patient(*, users (first_name, last_name, address, phone_number, birthdate)), appointment(*), caregiver(*), medicineOrder(*, medicineOrderDetail(*))`
       )
-      .eq("caregiver_id", caregiver_id);
+      .eq("caregiver_id", caregiver_id)
+      .is("medicine_order_id", null)
+      .eq("status", "Ongoing");
 
     if (error) {
       console.error("Error fetching orders:", error.message);
