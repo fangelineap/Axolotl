@@ -59,7 +59,7 @@ const Page = ({ searchParams }: any) => {
             />
           </div>
         </div>
-        <CaregiverSelection role={searchParams.caregiver} />;
+        <CaregiverSelection role={searchParams.caregiver} />
       </div>
     </DefaultLayout>
   );
