@@ -50,7 +50,7 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
   const birthdate = user?.birthdate;
   const proof_of_service = orderData.proof_of_service;
 
-  if (orderData.status === "Ongoing") {
+  if (orderData.status === "Ongoing" && !orderData.medicine_order_id) {
     redirect(`/caregiver/order/${params.id}/prepare/${params.id}`);
   }
 

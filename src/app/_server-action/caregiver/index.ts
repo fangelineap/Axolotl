@@ -160,7 +160,9 @@ export async function fetchOngoingOrders() {
       .select(
         `*, patient(*, users (first_name, last_name, address, phone_number, birthdate)), appointment(*), caregiver(*), medicineOrder(*, medicineOrderDetail(*))`
       )
-      .eq("caregiver_id", caregiver_id);
+      .eq("caregiver_id", caregiver_id)
+      .is("medicine_order_id", null)
+      .eq("status", "Ongoing");
 
     if (error) {
       console.error("Error fetching orders:", error.message);
@@ -452,7 +454,8 @@ export async function medicinePreparation(orderId: string) {
 
 export async function finishOrder(
   orderId: string,
-  proofOfServiceUrl: string | null
+  proofOfServiceUrl: string | null,
+  hasAdditionalMedicine: boolean
 ) {
   const supabase = await createSupabaseServerClient();
 
@@ -462,11 +465,14 @@ export async function finishOrder(
       throw new Error("Unable to retrieve user session");
     }
 
+    // Determine the status based on hasAdditionalMedicine
+    const newStatus = hasAdditionalMedicine ? "Ongoing" : "Completed";
+
     // Update the `order` table with the proof_of_service URL
     const { error: updateOrderError } = await supabase
       .from("order")
       .update({
-        status: "Completed",
+        status: newStatus,
         proof_of_service: proofOfServiceUrl
       })
       .eq("id", orderId);

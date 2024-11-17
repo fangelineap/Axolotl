@@ -98,6 +98,11 @@ export async function createAppointment({
       })
       .select("id");
 
+    if (error) {
+      console.log("Error whie creating appointment", error);
+      throw new Error("Error while creating appointment");
+    }
+
     const user = await getUserDataFromSession();
     const { data: cgUserData, error: cgUserError } = await supabase
       .from("users")
@@ -107,6 +112,11 @@ export async function createAppointment({
       .from("caregiver")
       .select("*")
       .eq("caregiver_id", cgUserData![0].id);
+
+    if (cgUserError) {
+      console.log("Error while fetching caregiver user data", cgUserError);
+      throw new Error("Error while fetching caregiver user data");
+    }
 
     if (!user || !("patient" in user) || !user.patient?.id) {
       throw new Error("No caregiver ID found for the logged-in user");
@@ -129,10 +139,13 @@ export async function createAppointment({
     if (!error) {
       return data[0].id;
     }
-  } catch (error) {
-    console.log("error", error);
+
+    console.log("Error while creating appointment", orderError);
 
     return "Error";
+  } catch (error) {
+    console.log("Error while creating order", error);
+    throw new Error("Error while creating order");
   }
 }
 
@@ -229,8 +242,8 @@ export async function getOrderDetail(id: string) {
       caregiverInfo: {
         id: cgData.id,
         name: cgData.first_name + " " + cgData.last_name,
-        str: data.caregiver.str,
-        profile_photo_url: profilePhoto
+        profile_photo_url: profilePhoto,
+        reviewed_at: data.caregiver.reviewed_at
       },
       patientInfo: {
         name: userData.first_name + " " + userData.last_name,
@@ -356,8 +369,6 @@ export async function fetchOrdersByPatient() {
     // Filter out any null values that might have occurred due to errors in medicine detail fetching
     const validOrders = ordersWithDetails.filter((order) => order !== null);
 
-    console.log(validOrders);
-
     // Access and print the array of medicineOrderDetailData
     validOrders.forEach((order) => {
       if (
@@ -414,7 +425,8 @@ export async function fetchMedicineOrderById(id: string) {
 
 export async function handleAdditionalMedicinePayment(
   medicineOrderId: string,
-  medicine: MEDICINE_ORDER_DETAIL_WITH_MEDICINE[]
+  medicine: MEDICINE_ORDER_DETAIL_WITH_MEDICINE[],
+  orderId: string
 ) {
   const supabase = await createSupabaseServerClient();
 
@@ -460,14 +472,30 @@ export async function handleAdditionalMedicinePayment(
         ),
         total_price:
           medicine.reduce((acc, curr) => acc + curr.total_price, 0) + 10000,
-        is_paid: true,
+        is_paid: "Verified",
         paid_at: new Date(),
         updated_at: new Date()
       })
-      .eq("id", medicineOrderId);
+      .eq("id", medicineOrderId)
+      .select("*");
+
+    console.log("order id", orderId);
 
     if (data) {
-      return "Success";
+      try {
+        const { data: orderData, error: orderError } = await supabase
+          .from("order")
+          .update({ status: "Completed" })
+          .eq("id", orderId)
+          .select("*");
+
+        if (orderData) {
+          return "Success";
+        }
+      } catch (error) {
+        console.log("Error", error);
+        throw new Error("Error while updating order status");
+      }
     }
   } catch (error) {
     console.log("Error", error);
@@ -530,11 +558,22 @@ export async function updateRating(
   }
 }
 
-export async function skipAdditionalMedicine(medicineOrderId: string) {
+export async function skipAdditionalMedicine(
+  orderId: string,
+  medicineOrderId: string
+) {
   const supabase = await createSupabaseServerClient();
 
   try {
-    await supabase.from("medicineOrder").delete().eq("id", medicineOrderId);
+    await supabase
+      .from("medicineOrder")
+      .update({ is_paid: "Skipped" })
+      .eq("id", medicineOrderId);
+
+    await supabase
+      .from("order")
+      .update({ status: "Completed" })
+      .eq("id", orderId);
 
     return "Success";
   } catch (error) {
