@@ -4,7 +4,7 @@ import React from "react";
 const CGAdminFooter = () => {
   return (
     <footer className="mt-auto w-full border-t border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark">
-      <div className="flex flex-col items-center justify-between p-5 md:ml-10 md:flex-row md:px-2 lg:ml-10 2xl:px-10">
+      <div className="flex flex-col items-center justify-between  md:ml-10 md:flex-row md:px-2 lg:ml-10 2xl:px-10">
         <div className="flex flex-col items-center p-2 md:flex-row md:items-start md:justify-start">
           <Image
             width={250}
