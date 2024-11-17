@@ -5,50 +5,50 @@ import { Chat } from "@/types/chat";
 const chatData: Chat[] = [
   {
     active: true,
-    avatar: "/images/user/user-01.png",
+    avatar: "/images/user/Default Caregiver Photo.png",
     name: "Devid Heilo",
     text: "Hello, how are you?",
     time: "12 min",
     textCount: 3,
-    dot: 3,
+    dot: 3
   },
   {
     active: true,
-    avatar: "/images/user/user-02.png",
+    avatar: "/images/user/Default Caregiver Photo.png",
     name: "Henry Fisher",
     text: "I am waiting for you",
     time: "5:54 PM",
     textCount: 0,
-    dot: 1,
+    dot: 1
   },
   {
     active: null,
-    avatar: "/images/user/user-04.png",
+    avatar: "/images/user/Default Caregiver Photo.png",
     name: "Wilium Smith",
     text: "Where are you now?",
     time: "10:12 PM",
     textCount: 0,
-    dot: 3,
+    dot: 3
   },
   {
     active: true,
     seen: true,
-    avatar: "/images/user/user-05.png",
+    avatar: "/images/user/Default Patient Photo.png",
     name: "Henry Deco",
     text: "Thank you so much!",
     time: "Sun",
     textCount: 2,
-    dot: 6,
+    dot: 6
   },
   {
     active: false,
-    avatar: "/images/user/user-06.png",
+    avatar: "/images/user/Default Patient Photo.png",
     name: "Jubin Jack",
     text: "Hello, how are you?",
     time: "Oct 23",
     textCount: 0,
-    dot: 3,
-  },
+    dot: 3
+  }
 ];
 
 const ChatCard = () => {
@@ -73,7 +73,7 @@ const ChatCard = () => {
                 alt="User"
                 style={{
                   width: "auto",
-                  height: "auto",
+                  height: "auto"
                 }}
               />
               <span

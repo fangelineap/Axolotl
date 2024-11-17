@@ -10,7 +10,7 @@ interface MedicinePageProps {
 
 /**
  * * Fetch Data for Admin Edit Medicine Page
- * @param param0
+ * @param params
  * @returns
  */
 async function fetchData({ params }: MedicinePageProps) {
@@ -23,7 +23,7 @@ async function fetchData({ params }: MedicinePageProps) {
 
 /**
  * * Generate Metadata for Admin Edit Medicine Page
- * @param param0
+ * @param params
  * @returns
  */
 export async function generateMetadata({ params }: MedicinePageProps) {
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: MedicinePageProps) {
 
 /**
  * * Render Admin Edit Medicine Page
- * @param param0
+ * @param params
  * @returns
  */
 async function AdminUpdateMedicine({ params }: MedicinePageProps) {

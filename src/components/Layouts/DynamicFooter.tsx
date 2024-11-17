@@ -8,21 +8,22 @@ import PatientFooter from "../Footer/Patient";
 const DynamicFooter = () => {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/caregiver"))
-    return <CGAdminFooter />;
+  const footerMap: Record<string, JSX.Element | null> = {
+    "/patient/health-services/appointment": null,
+    "/chat": null,
+    "/auth": null,
+    "/admin": <CGAdminFooter />,
+    "/caregiver": <CGAdminFooter />,
+    "/patient": <PatientFooter />,
+    "/guest": <GuestFooter />,
+    "/": <GuestFooter />
+  };
 
-  if (pathname.includes("/patient/health-services/appointment")) return null;
+  for (const [path, component] of Object.entries(footerMap)) {
+    if (pathname.startsWith(`${path}`)) return component;
+  }
 
-  if (
-    pathname.startsWith("/patient") ||
-    !pathname.includes("/patient/health-services/appointment")
-  )
-    return <PatientFooter />;
-
-  if (pathname.startsWith("/auth")) return null;
-
-  if (pathname.startsWith("/") || pathname.startsWith("/guest"))
-    return <GuestFooter />;
+  return <GuestFooter />;
 };
 
 export default DynamicFooter;

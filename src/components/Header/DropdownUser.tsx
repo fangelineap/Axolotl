@@ -100,76 +100,76 @@ const DropdownUser = () => {
         </div>
       </Link>
 
-      {/* <!-- Dropdown Star --> */}
-      {dropdownOpen && (
-        <div
-          className={`absolute right-0 mt-7.5 flex w-[280px] flex-col rounded-xl border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
-        >
-          <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
-            <div className="relative block rounded-full border">
-              <div className="h-12 w-12 overflow-hidden">
-                {loading && (
-                  <Skeleton
-                    animation="wave"
-                    variant="circular"
-                    width={48}
-                    height={48}
-                  />
-                )}
-                {user?.imageUrl && (
-                  <Image
-                    width={200}
-                    height={200}
-                    src={user?.imageUrl}
-                    alt="User"
-                    priority
-                    className="h-full w-full rounded-full object-cover"
-                    onLoad={handleImageLoad}
-                  />
-                )}
-              </div>
-              <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green dark:border-gray-dark" />
-            </div>
-
-            <div className="flex w-full flex-col overflow-hidden">
-              {loading ? (
-                <Skeleton animation="wave" variant="text" width={100} />
-              ) : (
-                <p className="block font-medium text-dark dark:text-white">
-                  {user?.first_name} {user?.last_name}
-                </p>
+      {/* <!-- Dropdown Start --> */}
+      <div
+        className={`absolute right-0 mt-7.5 flex w-[280px] flex-col rounded-xl border-[0.5px] border-stroke bg-white shadow-default transition-all duration-300 ease-in-out dark:border-dark-3 dark:bg-gray-dark ${
+          dropdownOpen ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+      >
+        <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
+          <div className="relative block rounded-full border">
+            <div className="h-12 w-12 overflow-hidden">
+              {loading && (
+                <Skeleton
+                  animation="wave"
+                  variant="circular"
+                  width={48}
+                  height={48}
+                />
               )}
-              {loading ? (
-                <Skeleton animation="wave" variant="text" width={200} />
-              ) : (
-                <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
-                  {user?.email}
-                </p>
+              {user?.imageUrl && (
+                <Image
+                  width={200}
+                  height={200}
+                  src={user?.imageUrl}
+                  alt="User"
+                  priority
+                  className="h-full w-full rounded-full object-cover"
+                  onLoad={handleImageLoad}
+                />
               )}
             </div>
+            <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green dark:border-gray-dark" />
           </div>
-          <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
-            <li>
-              <Link
-                href={`/profile?user=${user?.user_id}&role=${user?.role}`}
-                className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
-              >
-                <IconUser />
-                View profile
-              </Link>
-            </li>
-          </ul>
-          <div className="p-2">
-            <button
-              className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
-              onClick={handleLogout}
-            >
-              <IconLogout2 />
-              Logout
-            </button>
+
+          <div className="flex w-full flex-col overflow-hidden">
+            {loading ? (
+              <Skeleton animation="wave" variant="text" width={100} />
+            ) : (
+              <p className="block font-medium text-dark dark:text-white">
+                {user?.first_name} {user?.last_name}
+              </p>
+            )}
+            {loading ? (
+              <Skeleton animation="wave" variant="text" width={200} />
+            ) : (
+              <p className="block max-w-xs truncate font-medium text-dark-5 dark:text-dark-6">
+                {user?.email}
+              </p>
+            )}
           </div>
         </div>
-      )}
+        <ul className="flex flex-col gap-1 border-y-[0.5px] border-stroke p-2.5 dark:border-dark-3">
+          <li>
+            <Link
+              href={`/profile?user=${user?.user_id}&role=${user?.role}`}
+              className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
+            >
+              <IconUser />
+              View profile
+            </Link>
+          </li>
+        </ul>
+        <div className="p-2">
+          <button
+            className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm text-black duration-150 ease-in-out hover:bg-gray"
+            onClick={handleLogout}
+          >
+            <IconLogout2 />
+            Logout
+          </button>
+        </div>
+      </div>
       {/* <!-- Dropdown End --> */}
     </ClickOutside>
   );

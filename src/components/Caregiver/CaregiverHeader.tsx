@@ -1,4 +1,5 @@
 import DropdownUser from "@/components/Header/DropdownUser";
+import { IconMessage } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,7 +19,7 @@ const CaregiverHeader: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-999 flex w-full border-b border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark">
-      <div className="flex flex-grow items-center justify-between px-2 py-2 md:px-2 2xl:px-10">
+      <div className="flex flex-grow items-center justify-between px-2 py-2 md:px-5 2xl:px-10">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
           {/* <!-- Hamburger Toggle BTN --> */}
           <button
@@ -111,7 +112,14 @@ const CaregiverHeader: React.FC<HeaderProps> = ({
           </div>
         </div>
         <div className="ml-auto">
-          <DropdownUser />
+          <div className="flex items-center justify-center gap-5">
+            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-gray transition duration-150 ease-in-out hover:bg-gray-1">
+              <Link href="/chat">
+                <IconMessage size={28} />
+              </Link>
+            </div>
+            <DropdownUser />
+          </div>
         </div>
       </div>
     </header>

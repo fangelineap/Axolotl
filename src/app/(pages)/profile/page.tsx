@@ -49,7 +49,7 @@ async function Profile({ searchParams }: ProfileProps) {
   const { user: userId, role: userRole, hasSchedule } = searchParams;
 
   // Profile Page Protection
-  if (!userId || !userRole) {
+  if (!userId && !userRole) {
     const { data } = await getUserFromSession();
 
     if (!data) redirect("/auth/signin");

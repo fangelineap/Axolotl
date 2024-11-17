@@ -73,6 +73,10 @@ const DynamicHeader = ({
     "/profile": {
       Header: getProfileHeader(updatedRole!),
       Sidebar: getProfileSidebar(updatedRole!)
+    },
+    "/chat": {
+      Header: getProfileHeader(updatedRole!),
+      Sidebar: getProfileSidebar(updatedRole!)
     }
   };
 
