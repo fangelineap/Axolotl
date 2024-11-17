@@ -236,7 +236,7 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
                       type="text"
                     />
                     <DisabledPhoneNumberBox
-                      placeholder="081XXXXXXXX"
+                      placeholder="81XXXXXXXX"
                       value={Number(user.phone_number)}
                     />
                   </div>
