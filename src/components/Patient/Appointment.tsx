@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
 import Select from "../Axolotl/Select";
 import { Skeleton } from "@mui/material";
+import { AxolotlServices } from "@/utils/Services";
 
 type Caregiver = USER & {
   profile_photo_url?: string;
@@ -252,12 +253,13 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                     placeholder="Select service"
                     required
                     customClass={"w-full mb-3"}
-                    options={[
-                      "Neonatal Care",
-                      "Elderly Care",
-                      "After Care",
-                      "Booster"
-                    ]}
+                    options={
+                      caregiver.role === "Nurse"
+                        ? AxolotlServices.map((service) => service.name)
+                        : AxolotlServices.map((service) => service.name).filter(
+                            (service) => service !== "Booster"
+                          )
+                    }
                     selectedOption={service}
                     setSelectedOption={setService}
                     isOptionSelected={false}

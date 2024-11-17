@@ -86,6 +86,7 @@ const OrderForm = ({
     const getServiceTypes = () => {
       AxolotlServices.map((service) => {
         if (service.name === serviceType) {
+          console.log("service", service);
           setService(service);
           setAllTypes([]);
           service.types.map((type) => {
@@ -484,7 +485,7 @@ const OrderForm = ({
                 <h1 className="text-lg font-extrabold">
                   {serviceType !== "Booster"
                     ? `Rp ${service ? service.price * days : "0"}`
-                    : `Rp ${service.price}`}
+                    : `Rp ${service ? service.price : "0"}`}
                 </h1>
               </div>
               <div className="flex w-full justify-center px-5">
