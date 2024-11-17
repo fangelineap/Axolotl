@@ -3,7 +3,7 @@ import Image from "next/image";
 const PatientFooter = () => {
   return (
     <footer className="mt-auto w-full border-t border-stroke bg-white">
-      <div className="mx-4 flex h-auto w-auto flex-col items-center justify-between py-10 md:mx-20 md:flex-row md:px-2">
+      <div className="mx-4 flex h-45 w-auto flex-col items-center justify-between py-10 md:mx-20 md:flex-row md:px-2">
         <div className="flex flex-col items-center md:flex-row md:items-start md:justify-start">
           <div className="flex flex-col items-center md:items-start">
             <div className="p-2 dark:hidden">
