@@ -20,7 +20,7 @@ export type CREATE_NEW_ADMIN_AUTH_SCHEMA = USER & {
   password: string;
 };
 
-export type USER_CAREGIVER = USER & { caregiver: CAREGIVER };
+export type USER_CAREGIVER = USER & { caregiver: CAREGIVER[] };
 
 export type CAREGIVER_SCHEDULE_ORDER = ORDER & {
   patient: PATIENT & {

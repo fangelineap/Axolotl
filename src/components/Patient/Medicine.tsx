@@ -15,7 +15,7 @@ interface MedicineProps {
   setSelection: React.Dispatch<
     React.SetStateAction<MEDICINE_ORDER_DETAIL_WITH_MEDICINE[]>
   >;
-  is_paid: boolean;
+  is_paid: "Verified" | "Unverified" | "Skipped";
   payment: boolean;
   medicineDetail: MEDICINE_ORDER_DETAIL & {
     medicine: MEDICINE;
@@ -46,7 +46,7 @@ const Medicine = ({
   return (
     <div className="flex justify-between">
       <div className="flex items-start gap-5">
-        {!is_paid && !payment && (
+        {is_paid === "Unverified" && !payment && (
           <input
             type="checkbox"
             checked={selection.includes(medicineDetail)}

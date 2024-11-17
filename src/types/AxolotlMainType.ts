@@ -111,7 +111,7 @@ export type MEDICINE_ORDER = {
   sub_total_medicine: number;
   delivery_fee: number;
   total_price: number;
-  is_paid: boolean;
+  is_paid: "Verified" | "Unverified" | "Skipped";
   paid_at: Date | null;
   updated_at: Date;
   created_at: Date;

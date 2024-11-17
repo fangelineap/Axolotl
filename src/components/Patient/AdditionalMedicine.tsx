@@ -22,7 +22,7 @@ interface MedicineProps {
   sub_total_medicine: number;
   delivery_fee: number;
   total_price: number;
-  is_paid: boolean;
+  is_paid: "Verified" | "Unverified" | "Skipped";
   paid_at: Date;
   updated_at: Date;
   created_at: Date;
@@ -86,11 +86,8 @@ const AdditionalMedicine = ({
   useEffect(() => {
     const getData = async () => {
       const data = await fetchMedicineOrderById(medicineOrder);
-      console.log("data order", data);
       setMedicine(data);
       setLoading(false);
-
-      console.log("medicine data", data.medicineOrderDetail);
     };
 
     getData();
@@ -98,15 +95,16 @@ const AdditionalMedicine = ({
   }, []);
 
   const handleConfirmModal = async () => {
-    const res = await skipAdditionalMedicine(medicineOrder);
+    const res = await skipAdditionalMedicine(orderId, medicineOrder);
 
     if (res === "Success") {
-      router.back();
+      router.push(`/patient/order-history`);
     }
   };
 
   const handleAdditionalMedicine = () => {
-    handleAdditionalMedicinePayment(medicineOrder, selection);
+    console.log("order id", orderId);
+    handleAdditionalMedicinePayment(medicineOrder, selection, orderId);
     router.push(`/patient/order-history/${orderId}`);
   };
 
@@ -119,7 +117,7 @@ const AdditionalMedicine = ({
 
       <div className="flex flex-col gap-5 lg:flex-row">
         <div className="w-[100%] lg:mr-7 lg:w-[65%]">
-          {!medicine.is_paid && !payment && (
+          {medicine.is_paid === "Unverified" && !payment && (
             <div className="mb-5.5 flex items-center justify-between rounded-md border border-stroke px-5 py-3">
               <div className="flex">
                 <input
@@ -235,7 +233,7 @@ const AdditionalMedicine = ({
             </>
           )}
 
-          {medicine.is_paid ? (
+          {medicine.is_paid === "Verified" ? (
             <div>
               <h1 className="mb-2 text-lg font-semibold">Payment Status</h1>
               <div className="mb-3.5 rounded-[7px] border border-primary bg-kalbe-proLight p-1.5 text-center text-primary">
@@ -380,7 +378,10 @@ const AdditionalMedicine = ({
               />
               <AxolotlButton
                 label="Skip This Step"
-                onClick={() => setIsOpen(true)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsOpen(true);
+                }}
                 variant="primaryOutlined"
                 fontThickness="bold"
               />

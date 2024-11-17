@@ -13,12 +13,12 @@ interface MedecinePreparationProps {
   orderStatus: string;
   orderNotes?: string;
   medicineOrderId?: string;
-  medicineIsPaid?: boolean;
+  medicineIsPaid?: "Verified" | "Unverified" | "Skipped";
   caregiverInfo: {
     id: string;
     name: string;
-    str: string;
     profile_photo_url: string;
+    reviewed_at: string;
   };
   patientInfo: {
     name: string;
@@ -117,7 +117,6 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
       rating
     );
 
-    console.log("res", res);
     if (res === "Success") {
       setRated(true);
       toast.success("Rate submitted successfully !");
@@ -137,10 +136,10 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             <span
               className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
                 orderStatus === "Completed"
-                  ? "bg-green-500"
+                  ? "bg-primary"
                   : orderStatus === "Ongoing"
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
+                    ? "bg-yellow"
+                    : "bg-red"
               }`}
             >
               {orderStatus}
@@ -206,11 +205,17 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               <div className=" mt-2 flex flex-row ">
                 <div className=" flex flex-col gap-y-1">
                   <strong>Caregiver Name</strong>
-                  <strong>STR Number</strong>
+                  <strong>Reviewed At</strong>
                 </div>
                 <div className="ml-19 flex flex-col gap-y-1">
                   <div>{caregiverInfo.name}</div>
-                  <div>{caregiverInfo.str}</div>
+                  <div>
+                    {
+                      new Date(caregiverInfo.reviewed_at)
+                        .toISOString()
+                        .split("T")[0]
+                    }
+                  </div>
                 </div>
               </div>
             ) : (
@@ -219,7 +224,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   <strong>Caregiver Name:</strong> {caregiverInfo.name}
                 </div>
                 <div>
-                  <strong>STR Number:</strong> {caregiverInfo.str}
+                  <strong>Reviewed At:</strong>{" "}
+                  {
+                    new Date(caregiverInfo.reviewed_at)
+                      .toISOString()
+                      .split("T")[0]
+                  }
                 </div>
               </div>
             )}
@@ -304,7 +314,9 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-15">Order Date</strong>
-              <div className="ml-8">{serviceDetails.orderDate}</div>
+              <div className="ml-8">
+                {new Date(serviceDetails.orderDate).toISOString().split("T")[0]}
+              </div>
             </div>
             <div className="my-2 w-full border-b border-gray-400"></div>{" "}
             {/* Full-width horizontal line */}
@@ -336,82 +348,84 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
         </div>
 
         {/* Additional Medications */}
-        {medicineDetail && medicineDetail.length > 0 && (
-          <div>
-            <h2 className="mb-4 text-xl font-bold">Additional Medications</h2>
-            <div className="overflow-hidden rounded-md border border-primary">
-              <table className="w-full table-auto text-sm">
-                <thead>
-                  <tr className=" bg-green-light text-white">
-                    <th className="p-2 text-left">Quantity</th>
-                    <th className="p-2 text-left">Name</th>
-                    <th className="p-2 text-right">Price/Item</th>
-                    <th className="p-2 text-right">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {medicineDetail.map((med, index) => (
-                    <tr key={index}>
-                      <td className="border-primary p-2 text-left">
-                        {med.quantity}
+        {medicineDetail &&
+          medicineDetail.length > 0 &&
+          medicineIsPaid === "Verified" && (
+            <div>
+              <h2 className="mb-4 text-xl font-bold">Additional Medications</h2>
+              <div className="overflow-hidden rounded-md border border-primary">
+                <table className="w-full table-auto text-sm">
+                  <thead>
+                    <tr className=" bg-green-light text-white">
+                      <th className="p-2 text-left">Quantity</th>
+                      <th className="p-2 text-left">Name</th>
+                      <th className="p-2 text-right">Price/Item</th>
+                      <th className="p-2 text-right">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {medicineDetail.map((med, index) => (
+                      <tr key={index}>
+                        <td className="border-primary p-2 text-left">
+                          {med.quantity}
+                        </td>
+                        <td className="border-primary p-2">{med.name}</td>
+                        <td className="border-primary p-2 text-right">
+                          Rp. {med.price}
+                        </td>
+                        <td className="border-primary p-2 text-right">
+                          Rp. {parseInt(med.price) * med.quantity}
+                        </td>
+                      </tr>
+                    ))}
+
+                    {/* Summary Rows */}
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="border-t border-primary p-2 text-left font-bold"
+                      >
+                        Total Price
                       </td>
-                      <td className="border-primary p-2">{med.name}</td>
-                      <td className="border-primary p-2 text-right">
-                        Rp. {med.price}
-                      </td>
-                      <td className="border-primary p-2 text-right">
-                        Rp. {parseInt(med.price) * med.quantity}
+                      <td className="border-t border-primary p-2 text-right">
+                        Rp. {totalPrice.toLocaleString("id-ID")}
                       </td>
                     </tr>
-                  ))}
-
-                  {/* Summary Rows */}
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="border-t border-primary p-2 text-left font-bold"
-                    >
-                      Total Price
-                    </td>
-                    <td className="border-t border-primary p-2 text-right">
-                      Rp. {totalPrice.toLocaleString("id-ID")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="border-primary p-2 text-left font-bold"
-                    >
-                      Delivery Fee
-                    </td>
-                    <td className="border-primary p-2 text-right">
-                      Rp. {parseInt(price.delivery).toLocaleString("id-ID")}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="rounded-bl-lg border-primary p-2 text-left font-bold"
-                    >
-                      Total Charge
-                    </td>
-                    <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
-                      Rp.{" "}
-                      {(parseInt(price.delivery) + totalPrice).toLocaleString(
-                        "id-ID"
-                      )}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="border-primary p-2 text-left font-bold"
+                      >
+                        Delivery Fee
+                      </td>
+                      <td className="border-primary p-2 text-right">
+                        Rp. {parseInt(price.delivery).toLocaleString("id-ID")}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="rounded-bl-lg border-primary p-2 text-left font-bold"
+                      >
+                        Total Charge
+                      </td>
+                      <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
+                        Rp.{" "}
+                        {(parseInt(price.delivery) + totalPrice).toLocaleString(
+                          "id-ID"
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* Right Side */}
       <>
-        {orderStatus === "Canceled" ? (
+        {orderStatus === "Canceled" || orderStatus === "Completed" ? (
           <div className="w-[100%] border-stroke lg:w-[35%]">
             <div className="rounded-md border-[1px] border-stroke bg-white px-5 py-2">
               <div className="p-3">
@@ -461,11 +475,11 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               </div>
             </div>
           </div>
-        ) : orderStatus === "Ongoing" || serviceDetails.rate !== null ? (
+        ) : orderStatus === "Ongoing" && serviceDetails.rate ? (
           <div className="w-[100%] border-stroke lg:w-[35%]">
             <div className="w-full max-w-md rounded-lg bg-white p-6">
               <button
-                className={`${medicineDetail && orderStatus !== "Completed" && !medicineIsPaid ? "border-primary bg-primary" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary "} mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
+                className={`${medicineIsPaid !== "Verified" && medicineOrderId ? "border-primary bg-primary" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary "} mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
                 onClick={() =>
                   router.push(
                     `/patient/health-services/appointment/additional?medicineId=${medicineOrderId}&orderId=${serviceDetails.orderId}`
@@ -485,7 +499,9 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             </div>
           </div>
         ) : (
-          orderStatus === "Completed" && (
+          orderStatus === "Ongoing" &&
+          !medicineOrderId &&
+          !serviceDetails.rate && (
             <div className="flex h-full w-full justify-center rounded-md border border-stroke lg:w-[35%]">
               <div className="w-full max-w-md rounded-lg bg-white p-6">
                 <div>
@@ -500,7 +516,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   {[...Array(5)].map((_, index) => (
                     <svg
                       key={index}
-                      className={`ms-3 h-8 w-8 cursor-pointer ${index <= rating ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"}`}
+                      className={`ms-3 h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"}`}
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -513,14 +529,20 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 </div>
                 <div className="border-b-[0.5px] border-primary">
                   <p className="my-3 text-center text-lg">
-                    {rating === 4
-                      ? "Satisfied"
-                      : rating >= 2
-                        ? "Good"
-                        : "Dissatisfied"}
+                    {serviceDetails.rate
+                      ? serviceDetails.rate === 5
+                        ? "Satisfied"
+                        : serviceDetails.rate >= 3
+                          ? "Good"
+                          : "Dissatisfied"
+                      : rating === 4
+                        ? "Satisfied"
+                        : rating >= 2
+                          ? "Good"
+                          : "Dissatisfied"}
                   </p>
                 </div>
-                {!rated && (
+                {!rated && serviceDetails.rate === null && (
                   <AxolotlButton
                     label="Rate"
                     variant="primary"

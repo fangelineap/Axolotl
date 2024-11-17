@@ -81,7 +81,7 @@ const Conjecture = ({ conjecture }: { conjecture: string }) => {
         </div>
         <div className="mt-5 flex justify-end">
           <button
-            onClick={() => router.push("/order-history")}
+            onClick={() => router.push("/patient/order-history")}
             className="h-11 w-1/3 rounded-[7px] bg-primary p-[8px] text-lg font-semibold text-white hover:bg-opacity-90"
           >
             Continue

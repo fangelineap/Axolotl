@@ -406,7 +406,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             sub_total_medicine: subTotalMedicine,
             delivery_fee: deliveryFee,
             total_price: totalPrice,
-            is_paid: false, // Set to true if payment has been completed
+            is_paid: "Unverified", // Set to true if payment has been completed
             paid_at: null // Set the date if payment is made
           });
           console.log("Inserted Medicine Order:", newMedicineOrder);

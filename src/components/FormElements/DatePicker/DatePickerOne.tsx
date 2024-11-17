@@ -9,6 +9,8 @@ interface CustomProps {
   value?: string;
   onChange?: (date: Date | null) => void;
   disabled?: boolean;
+  startDay?: string;
+  endDay?: string;
 }
 
 const DatePickerOne = ({
@@ -16,6 +18,8 @@ const DatePickerOne = ({
   label,
   required,
   name,
+  startDay,
+  endDay
 }: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
@@ -28,8 +32,33 @@ const DatePickerOne = ({
         '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
       nextArrow:
         '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
+      enable: [
+        function (date) {
+          // Get day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+          const day = date.getDay();
+
+          const days = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ];
+
+          if (startDay && endDay) {
+            const startIndex = days.indexOf(startDay);
+            const endIndex = days.indexOf(endDay);
+
+            return day >= startIndex && day <= endIndex;
+          }
+
+          return day >= 0 && day <= 0;
+        }
+      ]
     });
-  }, []);
+  }, [startDay, endDay]);
 
   return (
     <div className={customClasses}>

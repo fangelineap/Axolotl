@@ -30,7 +30,7 @@ const page = ({ searchParams }: any) => {
         </div>
 
         {/* Content */}
-        <Conjecture conjecture={searchParams.conjecture} />
+        <Conjecture conjecture={searchParams.appointment} />
       </div>
     </DefaultLayout>
   );
