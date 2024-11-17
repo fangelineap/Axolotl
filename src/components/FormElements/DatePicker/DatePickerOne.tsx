@@ -51,6 +51,10 @@ const DatePickerOne = ({
             const startIndex = days.indexOf(startDay);
             const endIndex = days.indexOf(endDay);
 
+            if (endIndex < startIndex) {
+              return day >= startIndex || day <= endIndex;
+            }
+
             return day >= startIndex && day <= endIndex;
           }
 
