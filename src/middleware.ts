@@ -16,9 +16,16 @@ import { validateSession } from "./utils/Validation/auth/ValidateSession";
  */
 function isGuestPage(pathname: string): boolean {
   const guestPages = ["/", "/guest/about", "/guest/careers"];
-  const authPaths = "/auth/register";
+  const authPaths = [
+    "/auth/register",
+    "/auth/forgetpassword",
+    "/auth/resetpassword"
+  ];
 
-  if (guestPages.includes(pathname) || pathname.startsWith(authPaths)) {
+  if (
+    guestPages.includes(pathname) ||
+    authPaths.some((authPath) => pathname.includes(authPath))
+  ) {
     return true;
   }
 
