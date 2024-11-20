@@ -468,13 +468,21 @@ export async function finishOrder(
     // Determine the status based on hasAdditionalMedicine
     const newStatus = hasAdditionalMedicine ? "Ongoing" : "Completed";
 
+    // Prepare the update data
+    const updateData: any = {
+      status: newStatus,
+      proof_of_service: proofOfServiceUrl
+    };
+
+    // If no additional medicine, add completed_at
+    if (!hasAdditionalMedicine) {
+      updateData.completed_at = new Date(); // Set to the current date/time
+    }
+
     // Update the `order` table with the proof_of_service URL
     const { error: updateOrderError } = await supabase
       .from("order")
-      .update({
-        status: newStatus,
-        proof_of_service: proofOfServiceUrl
-      })
+      .update(updateData)
       .eq("id", orderId);
 
     if (updateOrderError) {
@@ -540,7 +548,7 @@ export async function insertMedicineOrderDetail(
   caregiverOrderDetails: MEDICINE_ORDER_DETAIL
 ): Promise<MEDICINE_ORDER_DETAIL> {
   const supabase = await createSupabaseServerClient();
-  const { quantity, total_price, medicine_id, medicine_order_id } =
+  const { quantity, total_price, medicine_id, medicine_order_id, updated_at } =
     caregiverOrderDetails;
   try {
     const { data, error } = await supabase
@@ -549,7 +557,8 @@ export async function insertMedicineOrderDetail(
         quantity,
         total_price,
         medicine_id,
-        medicine_order_id
+        medicine_order_id,
+        updated_at
       })
       .select("*")
       .single(); // Returns the inserted record as a single object
