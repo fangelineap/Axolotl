@@ -25,7 +25,7 @@ async function fetcher() {
   }
 
   if (user.role === "Admin") {
-    imageUrl = "/images/user/Default Admin Photo.png";
+    imageUrl = "/images/user/Default Admin Photo.jpeg";
   }
 
   if (user.role === "Caregiver") {

@@ -1,18 +1,32 @@
 "use client";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { fetchOrdersByPatient } from "@/app/_server-action/patient";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import { DataTable } from "@/components/Tables/DataTable";
+import { Skeleton } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import type { PatientOrderDetails } from "../type/data";
-import { fetchOrdersByPatient } from "@/app/_server-action/patient";
-import { Skeleton } from "@mui/material";
 
-// Define the status color map
-const statusColorClassMap: Record<string, string> = {
-  Ongoing: "bg-yellow-light text-yellow-dark",
-  Canceled: "bg-red-light text-red",
-  Done: "bg-green-light-3 text-green"
+/**
+ * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
+ * @param rowA
+ * @param rowB
+ * @param columnId
+ * @returns
+ */
+const customStatusSort = (rowA: any, rowB: any, columnId: string) => {
+  const order: { [key: string]: number } = {
+    Ongoing: 0,
+    Completed: 1,
+    Canceled: 2
+  };
+  const statusA = rowA.getValue(columnId);
+  const statusB = rowB.getValue(columnId);
+
+  return order[statusA] - order[statusB];
 };
 
 const OrderHistory = () => {
@@ -20,28 +34,13 @@ const OrderHistory = () => {
   const [orderData, setOrderData] = useState<PatientOrderDetails[]>([]); // Set to an array of orders
   const [loading, setLoading] = useState(true); // State to handle loading
 
-  // Fetch order data when the component is mounted
-  useEffect(() => {
-    const getOrderData = async () => {
-      setLoading(true);
-
-      try {
-        const orders = await fetchOrdersByPatient(); // Fetch data from the database
-
-        console.log("orders", orders);
-        if (!orders) {
-          throw new Error("Failed to fetch orders");
-        }
-        setOrderData(orders); // Set the fetched data into state
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch order data:", error);
-        setLoading(false); // Stop loading on error
-      }
-    };
-
-    getOrderData(); // Call the function when the component mounts
-  }, []);
+  useSWR("orderData", fetchOrdersByPatient, {
+    revalidateOnFocus: true,
+    onSuccess: (data) => {
+      setOrderData(data);
+      setLoading(false);
+    }
+  });
 
   orderData.forEach((order) => {
     console.log("cg name", order.caregiver?.users?.first_name); // Access the first name for each order
@@ -49,9 +48,29 @@ const OrderHistory = () => {
 
   // Define the columns for the table
   const columns: ColumnDef<PatientOrderDetails>[] = [
-    { accessorKey: "id", header: "Order ID" },
-    { accessorKey: "appointment.service_type", header: "Order Type" },
     {
+      id: "Appointment Date",
+      accessorKey: "appointment.appointment_date",
+      header: "Appointment Date",
+      cell: (info) => {
+        const created_at = info.getValue();
+        const formattedDate = new Intl.DateTimeFormat("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }).format(new Date(created_at as string | number));
+
+        return formattedDate;
+      }
+    },
+    {
+      id: "Order Type",
+      accessorKey: "appointment.service_type",
+      header: "Order Type"
+    },
+    {
+      id: "Caregiver Name",
       accessorKey: "caregiver.users.first_name",
       header: "Caregiver Name",
       cell: ({ row }) => `${row.original.caregiver?.users?.first_name || "N/A"}`
@@ -59,20 +78,34 @@ const OrderHistory = () => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }) => {
-        const isCompleted = row.original.status;
-        const status = isCompleted;
-        const colorClass =
-          statusColorClassMap[status] || "bg-gray-500 text-white";
+      cell: (info) => {
+        const statusColor: Record<
+          "Canceled" | "Ongoing" | "Completed",
+          { bgColor: string; textColor: string }
+        > = {
+          Canceled: { bgColor: "bg-red-light", textColor: "text-red" },
+          Ongoing: { bgColor: "bg-yellow-light", textColor: "text-yellow" },
+          Completed: {
+            bgColor: "bg-kalbe-ultraLight",
+            textColor: "text-primary"
+          }
+        };
+        const status = info.getValue() as "Canceled" | "Ongoing" | "Completed";
+        const { bgColor, textColor } = statusColor[status];
 
         return (
-          <span
-            className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
-          >
-            {status}
-          </span>
+          <div className={`flex items-center justify-center`}>
+            <div className={`rounded-3xl px-3 py-1 ${bgColor}`}>
+              <p className={`font-bold ${textColor}`}>{status}</p>
+            </div>
+          </div>
         );
-      }
+      },
+      id: "Status",
+      enableSorting: true,
+      enableColumnFilter: true,
+      sortingFn: customStatusSort,
+      filterFn: "equals"
     }
   ];
 
@@ -88,16 +121,10 @@ const OrderHistory = () => {
   };
 
   return (
-    <DefaultLayout>
-      <div>
-        <div className="mb-4 text-sm text-gray-500">
-          <span>Dashboard / </span>
-          <span>Order / </span>
-          <span>Service Order</span>
-        </div>
-
-        <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
-
+    <div className="bg-gray">
+      <CustomLayout>
+        <CustomBreadcrumbs parentPage="Order" pageName="Order History" />
+        <h1 className="mb-6 text-5xl font-bold">Order History</h1>
         <div className="rounded-lg bg-white p-6 shadow">
           {loading ? (
             <Skeleton
@@ -118,8 +145,8 @@ const OrderHistory = () => {
             />
           )}
         </div>
-      </div>
-    </DefaultLayout>
+      </CustomLayout>
+    </div>
   );
 };
 

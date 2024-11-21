@@ -32,6 +32,8 @@ export async function validateSession(
       { expires: new Date(0) }
     );
 
+    response.headers.set("Refresh", "0;url=" + request.url);
+
     return { isValid: false, response };
   }
 

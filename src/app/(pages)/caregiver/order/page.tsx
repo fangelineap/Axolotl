@@ -1,12 +1,14 @@
 "use client";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { fetchOrdersByCaregiver } from "@/app/_server-action/caregiver";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import { DataTable } from "@/components/Tables/DataTable";
+import { Skeleton } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { fetchOrdersByCaregiver } from "@/app/_server-action/caregiver";
+import { useState } from "react";
+import useSWR from "swr";
 import type { CaregiverOrderDetails } from "../type/data";
-import { Skeleton } from "@mui/material";
 
 /**
  * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
@@ -32,27 +34,13 @@ const OrderPage = () => {
   const [orderData, setOrderData] = useState<CaregiverOrderDetails[]>([]); // Set to an array of orders
   const [loading, setLoading] = useState(true); // State to handle loading
 
-  // Fetch order data when the component is mounted
-  useEffect(() => {
-    const getOrderData = async () => {
-      setLoading(true);
-
-      try {
-        const orders = await fetchOrdersByCaregiver(); // Fetch data from the database
-
-        if (!orders) {
-          throw new Error("Failed to fetch orders");
-        }
-        setOrderData(orders); // Set the fetched data into state
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch order data:", error);
-        setLoading(false); // Stop loading on error
-      }
-    };
-
-    getOrderData(); // Call the function when the component mounts
-  }, []);
+  useSWR("orderData", fetchOrdersByCaregiver, {
+    revalidateOnFocus: true,
+    onSuccess: (data) => {
+      setOrderData(data);
+      setLoading(false);
+    }
+  });
 
   orderData.forEach((order) => {
     console.log(order.patient?.users?.first_name); // Access the first name for each order
@@ -60,9 +48,29 @@ const OrderPage = () => {
 
   // Define the columns for the table
   const columns: ColumnDef<CaregiverOrderDetails>[] = [
-    { accessorKey: "id", header: "Order ID" },
-    { accessorKey: "appointment.service_type", header: "Order Type" },
     {
+      id: "Appointment Date",
+      accessorKey: "appointment.appointment_date",
+      header: "Appointment Date",
+      cell: (info) => {
+        const created_at = info.getValue();
+        const formattedDate = new Intl.DateTimeFormat("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric"
+        }).format(new Date(created_at as string | number));
+
+        return formattedDate;
+      }
+    },
+    {
+      id: "Order Type",
+      accessorKey: "appointment.service_type",
+      header: "Order Type"
+    },
+    {
+      id: "Patient Name",
       accessorKey: "patient.users.first_name",
       header: "Patient Name",
       cell: ({ row }) => `${row.original.patient?.users?.first_name || "N/A"}`
@@ -70,22 +78,26 @@ const OrderPage = () => {
     {
       accessorKey: "status",
       header: "Status",
-      cell: ({ row }) => {
-        const statusColor: Record<string, string> = {
-          Ongoing: "bg-yellow-light text-yellow-dark",
-          Canceled: "bg-red-light text-red",
-          Completed: "bg-kalbe-ultraLight text-primary"
+      cell: (info) => {
+        const statusColor: Record<
+          "Canceled" | "Ongoing" | "Completed",
+          { bgColor: string; textColor: string }
+        > = {
+          Canceled: { bgColor: "bg-red-light", textColor: "text-red" },
+          Ongoing: { bgColor: "bg-yellow-light", textColor: "text-yellow" },
+          Completed: {
+            bgColor: "bg-kalbe-ultraLight",
+            textColor: "text-primary"
+          }
         };
-        const status = row.original.status;
-        const colorClass = statusColor[status] || "bg-gray-500 text-white";
+        const status = info.getValue() as "Canceled" | "Ongoing" | "Completed";
+        const { bgColor, textColor } = statusColor[status];
 
         return (
-          <div className="flex items-center justify-center">
-            <span
-              className={`rounded-full px-2 py-1 text-xs font-bold ${colorClass}`}
-            >
-              {status}
-            </span>
+          <div className={`flex items-center justify-center`}>
+            <div className={`rounded-3xl px-3 py-1 ${bgColor}`}>
+              <p className={`font-bold ${textColor}`}>{status}</p>
+            </div>
           </div>
         );
       },
@@ -109,33 +121,28 @@ const OrderPage = () => {
   };
 
   return (
-    <DefaultLayout>
-      <div className="mb-4 text-sm text-gray-500">
-        <span>Dashboard / </span>
-        <span>Order / </span>
-        <span>Service Order</span>
-      </div>
-
-      <h1 className="mb-6 text-5xl font-bold text-gray-800">Service Order</h1>
-      {loading ? (
-        // **Render Skeletons when loading is true**
-        <div className="mt-8 flex flex-col items-center justify-center gap-3">
-          {/* Skeleton for the table */}
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            animation="wave"
-            height={300}
-            className="rounded-lg"
-          />
-        </div>
-      ) : (
-        // **Render actual content when loading is false**
-        <div>
-          {orderData.length === 0 ? (
-            <div>No orders found.</div>
-          ) : (
-            <div className="rounded-lg bg-white p-6 shadow">
+    <div className="bg-gray">
+      <CustomLayout>
+        <CustomBreadcrumbs subPage="Order Logs" pageName="Service Order Logs" />
+        <h1 className="mb-6 text-5xl font-bold">Service Order</h1>
+        {loading ? (
+          // **Render Skeletons when loading is true**
+          <div className="mt-8 flex flex-col items-center justify-center gap-3">
+            {/* Skeleton for the table */}
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              animation="wave"
+              height={300}
+              className="rounded-lg"
+            />
+          </div>
+        ) : (
+          // **Render actual content when loading is false**
+          <div>
+            {orderData.length === 0 ? (
+              <div>No orders found.</div>
+            ) : (
               <DataTable
                 data={orderData}
                 columns={columns}
@@ -143,11 +150,11 @@ const OrderPage = () => {
                 showAction={handleShowAction}
                 initialSorting={[{ id: "Status", desc: false }]}
               />
-            </div>
-          )}
-        </div>
-      )}
-    </DefaultLayout>
+            )}
+          </div>
+        )}
+      </CustomLayout>
+    </div>
   );
 };
 

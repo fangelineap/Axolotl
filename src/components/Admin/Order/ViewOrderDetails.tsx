@@ -4,7 +4,7 @@ import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import { getServerPublicStorageURL } from "@/app/_server-action/global/storage/server";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import { AxolotlServices } from "@/utils/Services";
-import { IconStarFilled } from "@tabler/icons-react";
+import { IconStarFilled, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 
 interface ViewOrderDetailsProps {
@@ -111,13 +111,21 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
     Completed: { bgColor: "bg-primary" }
   };
 
-  const statusDisplay: Record<"true" | "false", StatusDisplayProps> = {
-    false: {
+  const statusDisplay: Record<
+    "Verified" | "Unverified" | "Skipped",
+    StatusDisplayProps
+  > = {
+    Skipped: {
+      borderColor: "border-red",
+      bgColor: "bg-red-light",
+      textColor: "text-red"
+    },
+    Unverified: {
       borderColor: "border-yellow",
       bgColor: "bg-yellow-light",
       textColor: "text-yellow"
     },
-    true: {
+    Verified: {
       borderColor: "border-primary",
       bgColor: "bg-kalbe-ultraLight",
       textColor: "text-primary"
@@ -126,9 +134,6 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
 
   const orderStatusDisplayConfig =
     orderStatusDisplay[orderStatus as "Canceled" | "Ongoing" | "Completed"];
-
-  const appointmentPaymentStatus =
-    statusDisplay[serviceLogData.appointment.is_paid ? "true" : "false"];
 
   /**
    * * Formatters
@@ -172,7 +177,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
   );
 
   const formattedOrderCompletedAt = formatDate(
-    serviceLogData.complete_at,
+    serviceLogData.completed_at,
     dateFormatter
   );
 
@@ -209,7 +214,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
     medicineTotalPrice = medicineLogData.medicineOrder.total_price;
 
     medicinePaymentStatus =
-      statusDisplay[medicineLogData.medicineOrder.is_paid ? "true" : "false"];
+      statusDisplay[medicineLogData.medicineOrder.is_paid];
 
     medicinePaidAt = medicineLogData.medicineOrder.paid_at || new Date();
   }
@@ -240,6 +245,38 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                   {orderStatus}
                 </p>
               </div>
+              {/* Canceled */}
+              {orderStatus === "Canceled" && (
+                <div className="flex w-full flex-col items-center justify-center gap-2 rounded-md border border-red bg-red-light p-5 text-center text-red">
+                  <IconX
+                    size={60}
+                    className="rounded-full bg-red p-2 text-red-light"
+                  />
+                  <h1 className="text-heading-5 font-bold">
+                    This order has been canceled
+                  </h1>
+                  <h1 className="text-lg font-medium">
+                    The system has processed the refund to the patient&apos;s
+                    virtual account. <br />
+                    If it doesn&apos;t show up soon, blame it on the bank&apos;s
+                    hamster-powered servers.
+                  </h1>
+                  <div className="w-full text-left">
+                    <p>
+                      This Caregiver{" "}
+                      <span className="font-medium">
+                        has rejected this order
+                      </span>{" "}
+                      due to the following reasons:
+                    </p>
+                    <ol className="list-disc pl-5">
+                      <li>{serviceLogData.notes}</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
+
+              {/* Completed */}
               {orderStatus === "Completed" && (
                 <>
                   <div className="flex items-center">
@@ -482,6 +519,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                       alt="Proof of Service"
                       width={200}
                       height={200}
+                      priority
                       className="w-full rounded-md border-[1.5px] border-gray-1 p-2"
                     />
                   </div>
@@ -519,18 +557,12 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                   <p className="text-dark-secondary">Payment Method</p>
                   <p>Virtual Account</p>
                 </div>
-                {serviceLogData.appointment.is_paid && (
-                  <div className="flex justify-between">
-                    <p className="text-dark-secondary">Paid At</p>
-                    <p>{formattedAppointmentPaidAt}</p>
-                  </div>
-                )}
-                <h1
-                  className={`rounded-md font-bold ${appointmentPaymentStatus.textColor} px-3 py-2 ${appointmentPaymentStatus.bgColor} border ${appointmentPaymentStatus.borderColor} text-center`}
-                >
-                  {serviceLogData.appointment.is_paid
-                    ? "Verified"
-                    : "Awaiting Payment"}
+                <div className="flex justify-between">
+                  <p className="text-dark-secondary">Paid At</p>
+                  <p>{formattedAppointmentPaidAt}</p>
+                </div>
+                <h1 className="rounded-md border  border-primary bg-kalbe-ultraLight px-3 py-2 text-center font-bold text-primary">
+                  Verified
                 </h1>
               </div>
             </div>
@@ -569,7 +601,7 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                     <p className="text-dark-secondary">Payment Method</p>
                     <p>Virtual Account</p>
                   </div>
-                  {medicineLogData.medicineOrder.is_paid && (
+                  {medicineLogData.medicineOrder.is_paid === "Verified" && (
                     <div className="flex justify-between">
                       <p className="text-dark-secondary">Paid At</p>
                       <p>{formattedMedicinePaidAt}</p>
@@ -578,9 +610,9 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                   <h1
                     className={`rounded-md font-bold ${medicinePaymentStatus.textColor} px-3 py-2 ${medicinePaymentStatus.bgColor} border ${medicinePaymentStatus.borderColor} text-center`}
                   >
-                    {medicineLogData.medicineOrder.is_paid
-                      ? "Verified"
-                      : "Awaiting Payment"}
+                    {medicineLogData.medicineOrder.is_paid === "Unverified"
+                      ? "Awaiting for Payment"
+                      : medicineLogData.medicineOrder.is_paid}
                   </h1>
                 </div>
               </div>

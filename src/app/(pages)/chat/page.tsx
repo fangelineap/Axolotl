@@ -1,6 +1,6 @@
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
-import ChatCard from "@/components/Chat/ChatCard";
+import ChatCard from "@/components/Chat/ChatComponent";
 import { getUserFromSession } from "@/lib/server";
 import { getGlobalMetadata } from "@/utils/Metadata/GlobalMetadata";
 import { redirect } from "next/navigation";

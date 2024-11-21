@@ -63,6 +63,20 @@ export const PersonalInformationValidation = (
         return false;
       }
 
+      if (
+        !form.get("address")?.toString().includes("Malang") ||
+        !form.get("address")?.toString().includes("Gianyar")
+      ) {
+        toast.warning(
+          "Sorry, we only accept Caregivers from Malang, East Java and Gianyar, Bali.",
+          {
+            position: "bottom-right"
+          }
+        );
+
+        return false;
+      }
+
       if (!form.get("caregiver_role")) {
         toast.warning("Please enter your role.", {
           position: "bottom-right"
@@ -179,6 +193,34 @@ export const PersonalInformationValidation = (
         toast.warning("Please enter your address.", {
           position: "bottom-right"
         });
+
+        return false;
+      }
+
+      if ((form.get("address")?.toString() ?? "").length < 10) {
+        toast.warning(
+          "Please enter your full address, including its city and province.",
+          {
+            position: "bottom-right"
+          }
+        );
+
+        return false;
+      }
+
+      if (
+        !form.get("address")?.toString().includes("Malang") ||
+        !form.get("address")?.toString().includes("Gianyar") ||
+        !form.get("address")?.toString().includes("East Java") ||
+        !form.get("address")?.toString().includes("Jawa Timur") ||
+        !form.get("address")?.toString().includes("Bali")
+      ) {
+        toast.warning(
+          "Sorry, we only accept Patients from Malang, East Java and Gianyar, Bali.",
+          {
+            position: "bottom-right"
+          }
+        );
 
         return false;
       }

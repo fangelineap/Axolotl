@@ -631,7 +631,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                   className={`h-40 w-40 overflow-hidden rounded-full border ${imageLoaded ? "" : "hidden"}`}
                 >
                   <Image
-                    src="/images/user/Default Admin Photo.png"
+                    src="/images/user/Default Admin Photo.jpeg"
                     alt="Default Admin Profile Photo"
                     width={200}
                     height={200}

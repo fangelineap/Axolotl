@@ -152,14 +152,14 @@ export function DataTable<
 
   return (
     <div className="rounded-lg border border-gray-1 bg-white p-5">
-      <div className="flex flex-col justify-between border-b border-gray-1 pb-4 lg:flex-row">
+      <div className="flex flex-col justify-between border-b border-gray-1 pb-4 transition lg:flex-row">
         <div className="mb-4 flex w-full lg:mb-0 lg:w-80">
           <input
             type="text"
             placeholder="Search here..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="flex-1 rounded-l-md border-y border-l border-y-gray-1 p-2 text-sm outline-none focus:border-primary focus:outline-none"
+            className="flex-1 rounded-l-md border-y border-l border-y-gray-1 p-2 text-sm outline-none transition focus:border-primary focus:outline-none"
           />
           <button className="flex items-center justify-center rounded-r-md bg-primary p-2">
             <IconSearch className="text-white" />
@@ -302,7 +302,7 @@ export function DataTable<
                               onChange={(e) =>
                                 header.column.setFilterValue(e.target.value)
                               }
-                              className="mt-2 w-full rounded border border-gray-1 p-2 text-sm font-normal focus:border-primary focus:outline-none"
+                              className="mt-2 w-full rounded border border-gray-1 p-2 text-sm font-normal transition focus:border-primary focus:outline-none"
                             />
                           ))}
                       </div>

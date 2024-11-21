@@ -3,10 +3,13 @@ import {
   CAREGIVER,
   MEDICINE_ORDER,
   MEDICINE_ORDER_DETAIL,
+  MESSAGES,
   ORDER,
   PATIENT,
   USER
 } from "./AxolotlMainType";
+
+export type USER_CHAT = USER & { messages: MESSAGES[] };
 
 export type USER_AUTH_SCHEMA = USER & { email: string };
 

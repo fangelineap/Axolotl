@@ -80,7 +80,6 @@ export type APPOINTMENT = {
   medical_description: string;
   day_of_visit: number;
   diagnosis: string;
-  is_paid: boolean;
   created_at: Date;
   updated_at: Date;
   paid_at: Date;
@@ -93,7 +92,7 @@ export type ORDER = {
   id: string;
   status: string;
   total_payment: number;
-  complete_at: Date;
+  completed_at: Date;
   created_at: Date;
   update_at: Date;
   appointment_order_id: string;
@@ -135,4 +134,13 @@ export type CAREGIVER_LICENSES_TYPE =
 
 export type ORDER_APPOINTMENT = ORDER & {
   appointment: APPOINTMENT;
+};
+
+export type MESSAGES = {
+  id: string;
+  text: string;
+  sender: USER["user_id"];
+  recipient: USER["user_id"];
+  is_read: boolean;
+  created_at: Date;
 };

@@ -62,12 +62,17 @@ const CustomDatePicker = ({
       <div className={`relative w-full ${horizontal ? "md:w-3/4" : ""}`}>
         <input
           name={name}
-          className={`form-datepicker w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+          className={`form-datepicker w-full truncate rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 pr-10 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
           placeholder={placeholder}
           data-class="flatpickr-right"
           required={required}
+          style={{
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            overflow: "hidden"
+          }}
         />
-        <div className="pointer-events-none absolute inset-0 left-auto right-5 flex items-center">
+        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
           <svg
             width="20"
             height="20"

@@ -3,7 +3,7 @@
 import React from "react";
 
 interface CustomInputGroupProps {
-  label: string;
+  label?: string;
   type: string;
   name: string;
   horizontal?: boolean;
@@ -14,12 +14,14 @@ interface CustomInputGroupProps {
   secondValue?: string | number;
 
   // Additional Props
+  forChat?: boolean;
   secondName?: string;
   isTextArea?: boolean;
   isUnit?: boolean;
   unit?: string;
   isMultipleUnit?: boolean;
   secondUnit?: string;
+  onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const CustomInputGroup = ({
@@ -32,21 +34,39 @@ const CustomInputGroup = ({
   onChange,
   value,
   secondValue,
+  forChat = false,
   secondName,
   isTextArea = false,
   isUnit = false,
   unit,
   isMultipleUnit = false,
-  secondUnit
+  secondUnit,
+  onKeyPress
 }: CustomInputGroupProps) => {
+  if (forChat) {
+    return (
+      <input
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className={`${horizontal ? "md:w-3/4" : null} w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition 
+        focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+      />
+    );
+  }
+
   if (isUnit) {
     return (
       <div
         className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
-        <label className="font-medium text-dark dark:text-white">
-          {label} {required && <span className="ml-1 text-red">*</span>}
-        </label>
+        {label && (
+          <label className="font-medium text-dark dark:text-white">
+            {label} {required && <span className="ml-1 text-red">*</span>}
+          </label>
+        )}
         <div className="flex w-full items-center">
           <input
             name={name}
@@ -70,9 +90,11 @@ const CustomInputGroup = ({
       <div
         className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
-        <label className="font-medium text-dark dark:text-white">
-          {label} {required && <span className="ml-1 text-red">*</span>}
-        </label>
+        {label && (
+          <label className="font-medium text-dark dark:text-white">
+            {label} {required && <span className="ml-1 text-red">*</span>}
+          </label>
+        )}
         <div className="flex w-full items-center gap-2">
           <div className="flex w-full items-center">
             <input
@@ -110,9 +132,11 @@ const CustomInputGroup = ({
       <div
         className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
       >
-        <label className="font-medium text-dark dark:text-white">
-          {label} {required && <span className="ml-1 text-red">*</span>}
-        </label>
+        {label && (
+          <label className="font-medium text-dark dark:text-white">
+            {label} {required && <span className="ml-1 text-red">*</span>}
+          </label>
+        )}
         <textarea
           name={name}
           typeof={type}
@@ -131,15 +155,18 @@ const CustomInputGroup = ({
     <div
       className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
     >
-      <label className="font-medium text-dark dark:text-white">
-        {label} {required && <span className="ml-1 text-red">*</span>}
-      </label>
+      {label && (
+        <label className="font-medium text-dark dark:text-white">
+          {label} {required && <span className="ml-1 text-red">*</span>}
+        </label>
+      )}
       <input
         name={name}
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyPress}
         className={`${horizontal ? "md:w-3/4" : null} w-full rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition 
         focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
       />

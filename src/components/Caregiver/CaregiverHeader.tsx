@@ -104,7 +104,7 @@ const CaregiverHeader: React.FC<HeaderProps> = ({
                         : ""
                     }`}
                   >
-                    Order
+                    Order Logs
                   </div>
                 </Link>
               </li>
@@ -113,9 +113,9 @@ const CaregiverHeader: React.FC<HeaderProps> = ({
         </div>
         <div className="ml-auto">
           <div className="flex items-center justify-center gap-5">
-            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-gray transition duration-150 ease-in-out hover:bg-gray-1">
+            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition duration-150 ease-in-out hover:bg-gray">
               <Link href="/chat">
-                <IconMessage size={28} />
+                <IconMessage size={28} stroke={1} />
               </Link>
             </div>
             <DropdownUser />

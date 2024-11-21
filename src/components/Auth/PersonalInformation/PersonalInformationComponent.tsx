@@ -580,6 +580,7 @@ function PersonalInformationComponent({
                 {/* Third div for finish button */}
                 <div className="mt-5 flex items-center justify-center gap-3 lg:mx-80">
                   <AxolotlButton
+                    type="button"
                     label="Cancel Registration"
                     onClick={handleOpenModal}
                     variant="secondary"

@@ -121,7 +121,7 @@ function AddAdmin() {
             <div className="flex h-[40%] w-full flex-row items-center justify-center gap-10 rounded-lg border border-primary py-4 md:flex-col md:gap-2">
               <div className="max-h-25 max-w-25 overflow-hidden rounded-full border">
                 <Image
-                  src="/images/user/Default Admin Photo.png"
+                  src="/images/user/Default Admin Photo.jpeg"
                   alt="Default Admin Profile Photo"
                   width={200}
                   height={200}
