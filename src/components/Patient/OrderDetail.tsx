@@ -427,7 +427,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
       <>
         {orderStatus === "Canceled" || orderStatus === "Completed" ? (
           <div className="w-[100%] border-stroke lg:w-[35%]">
-            <div className="rounded-md border-[1px] border-stroke bg-white px-5 py-2">
+            <div className="mb-5.5 rounded-md border-[1px] border-stroke bg-white px-5 py-2">
               <div className="p-3">
                 <h1 className="text-center text-lg font-bold text-primary">
                   Service Payment
@@ -474,6 +474,72 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 </div>
               </div>
             </div>
+
+            {medicineOrderId && medicineDetail && medicineDetail.length > 0 && (
+              <div className="rounded-md border-[1px] border-stroke bg-white px-5 py-2">
+                <div className="p-3">
+                  <h1 className="text-center text-lg font-bold text-primary">
+                    Additional Medicine Payment
+                  </h1>
+                </div>
+                <div className="px-5 py-2">
+                  <div className="mb-3 flex justify-between">
+                    <label className="font-medium text-dark-secondary dark:text-white">
+                      Total Quantity
+                    </label>
+                    <label className="font-medium text-dark dark:text-white">
+                      {medicineDetail.reduce(
+                        (acc, med) => acc + med.quantity,
+                        0
+                      )}{" "}
+                      pcs
+                    </label>
+                  </div>
+                  <div className="mb-3 flex justify-between">
+                    <label className="font-medium text-dark-secondary dark:text-white">
+                      Medicine Price
+                    </label>
+                    <label className="font-medium text-dark dark:text-white">
+                      Rp.{" "}
+                      {medicineDetail.reduce(
+                        (acc, med) => acc + med.quantity * parseInt(med.price),
+                        0
+                      )}
+                    </label>
+                  </div>
+
+                  <div className="mb-3 flex justify-between">
+                    <label className="font-medium text-dark-secondary dark:text-white">
+                      Delivery Fee
+                    </label>
+                    <label className="font-medium text-dark dark:text-white">
+                      Rp. 10000
+                    </label>
+                  </div>
+                  <div className="my-5 h-[0.5px] w-full bg-kalbe-light"></div>
+                  <div className="mb-5 flex justify-between">
+                    <label className="text-lg text-dark dark:text-white">
+                      Total Charge
+                    </label>
+                    <label className="text-lg font-bold text-dark dark:text-white">
+                      Rp.{" "}
+                      {medicineDetail.reduce(
+                        (acc, med) => acc + med.quantity * parseInt(med.price),
+                        0
+                      ) + 10000}
+                    </label>
+                  </div>
+                  <div className="mb-3">
+                    <h1 className="mb-2 text-lg font-bold">Payment Status</h1>
+                    <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
+                      <h1 className="text-center text-lg font-semibold text-primary">
+                        Verified
+                      </h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : orderStatus === "Ongoing" && serviceDetails.rate ? (
           <div className="w-[100%] border-stroke lg:w-[35%]">

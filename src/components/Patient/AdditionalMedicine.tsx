@@ -14,7 +14,7 @@ import {
 } from "@/types/AxolotlMainType";
 import AxolotlModal from "../Axolotl/Modal/AxolotlModal";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@mui/material";
+import { Checkbox, Skeleton } from "@mui/material";
 
 interface MedicineProps {
   id: string;
@@ -119,10 +119,9 @@ const AdditionalMedicine = ({
         <div className="w-[100%] lg:mr-7 lg:w-[65%]">
           {medicine.is_paid === "Unverified" && !payment && (
             <div className="mb-5.5 flex items-center justify-between rounded-md border border-stroke px-5 py-3">
-              <div className="flex">
-                <input
-                  className="mr-2"
-                  type="checkbox"
+              <div className="flex items-center">
+                <Checkbox
+                  sx={{ color: "kalbe-light", ml: 0 }}
                   checked={
                     selection.length > 0
                       ? selection.length === medicine.medicineOrderDetail.length
