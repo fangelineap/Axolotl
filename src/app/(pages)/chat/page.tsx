@@ -46,7 +46,7 @@ async function Chat({ searchParams }: ChatProps) {
     <div className="bg-gray">
       <CustomLayout>
         <CustomBreadcrumbs pageName="Chat" />
-        <ChatCard />
+        <ChatCard senderId={userId} role={userRole} />
       </CustomLayout>
     </div>
   );

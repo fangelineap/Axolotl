@@ -1,114 +1,126 @@
 "use client";
 
+import { getChatOrder } from "@/app/_server-action/global/chat";
+import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import { createSupabaseClient } from "@/lib/client";
 import { MESSAGES } from "@/types/AxolotlMainType";
-import { IconCheck, IconChecks, IconSend } from "@tabler/icons-react";
+import { CHAT_ORDER } from "@/types/AxolotlMultipleTypes";
+import { IconCheck, IconChecks } from "@tabler/icons-react";
 import Image from "next/image";
-import { useState, useEffect, useMemo, useRef } from "react";
-import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
-import CustomInputGroup from "../Axolotl/InputFields/CustomInputGroup";
+import { useEffect, useMemo, useRef, useState } from "react";
+import useSWR from "swr";
+import ChatInput from "./ChatInput";
 
-const chatData: MESSAGES[] = [
-  {
-    id: "1",
-    text: "Hello, how are you?",
-    sender: "1",
-    recipient: "2",
-    is_read: false,
-    created_at: new Date("2024-11-20T10:00:00Z")
-  },
-  {
-    id: "2",
-    text: "I am waiting for you",
-    sender: "2",
-    recipient: "1",
-    is_read: false,
-    created_at: new Date("2024-11-20T19:00:00Z")
-  },
-  {
-    id: "7",
-    text: "Great, see you soon!",
-    sender: "1",
-    recipient: "2",
-    is_read: true,
-    created_at: new Date("2024-11-21T08:15:00Z")
-  },
-  {
-    id: "8",
-    text: "I'm here, where are you?",
-    sender: "2",
-    recipient: "1",
-    is_read: false,
-    created_at: new Date("2024-11-21T08:20:00Z")
-  },
-  {
-    id: "9",
-    text: "Did you finish the report?",
-    sender: "3",
-    recipient: "1",
-    is_read: false,
-    created_at: new Date("2024-11-21T09:00:00Z")
-  },
-  {
-    id: "10",
-    text: "Yes, I sent it to your email.",
-    sender: "2",
-    recipient: "3",
-    is_read: true,
-    created_at: new Date("2024-11-21T09:05:00Z")
-  },
-  {
-    id: "11",
-    text: "Thank you!",
-    sender: "3",
-    recipient: "2",
-    is_read: true,
-    created_at: new Date("2024-11-21T09:10:00Z")
-  },
-  {
-    id: "12",
-    text: "Are we still on for the meeting?",
-    sender: "4",
-    recipient: "1",
-    is_read: false,
-    created_at: new Date("2024-11-21T09:15:00Z")
-  },
-  {
-    id: "13",
-    text: "Yes, see you at 10.",
-    sender: "1",
-    recipient: "4",
-    is_read: false,
-    created_at: new Date("2024-11-21T09:20:00Z")
-  },
-  {
-    id: "14",
-    text: "Don't forget to bring the documents.",
-    sender: "4",
-    recipient: "1",
-    is_read: false,
-    created_at: new Date("2024-11-21T09:25:00Z")
-  },
-  {
-    id: "15",
-    text: "Got it, thanks!",
-    sender: "1",
-    recipient: "4",
-    is_read: false,
-    created_at: new Date("2024-11-21T09:30:00Z")
-  }
-];
+interface ChatComponentProps {
+  senderId: string;
+  role: string;
+}
 
-const ChatCard = () => {
+// TODO: UPDATE ITS RESPONSIVENESS
+const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
   /**
    * * States & Initial Variables
    */
+  const [chatData, setChatData] = useState<MESSAGES[]>([]);
+  const [orderData, setOrderData] = useState<CHAT_ORDER[]>([]);
   const [activeChat, setActiveChat] = useState<string | null>(null);
-  const currentUserId = "1";
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const currentUserId = senderId;
 
   /**
-   * * Refs
+   * * Realtime Chat Data Fetching
    */
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useSWR("chatData", () => {
+    let subscription: any;
+
+    const supabase = createSupabaseClient();
+
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("*")
+        .or(`sender.eq.${currentUserId},recipient.eq.${currentUserId}`);
+
+      if (error) return;
+
+      setChatData(data || []);
+
+      subscription = supabase
+        .channel("public:messages")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "messages" },
+          (payload) => {
+            const newMessage = payload.new as MESSAGES;
+            // Check if the new message is relevant to the current user
+            if (
+              newMessage.sender === currentUserId ||
+              newMessage.recipient === currentUserId
+            ) {
+              setChatData((prevMessages) => {
+                if (payload.eventType === "INSERT") {
+                  return [...prevMessages, newMessage];
+                } else if (payload.eventType === "UPDATE") {
+                  return prevMessages.map((msg) =>
+                    msg.id === newMessage.id ? newMessage : msg
+                  );
+                } else {
+                  return prevMessages;
+                }
+              });
+            }
+          }
+        )
+        .subscribe();
+    };
+
+    fetchMessages();
+
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription);
+      }
+    };
+  });
+
+  /**
+   * * Realtime Order Data Fetching
+   */
+  useSWR("orderData", () => {
+    let subscription: any;
+
+    const supabase = createSupabaseClient();
+
+    const fetchMessages = async () => {
+      const chatOrderData = await getChatOrder();
+
+      if (!chatOrderData) {
+        return;
+      }
+
+      setOrderData(Array.isArray(chatOrderData) ? chatOrderData : []);
+
+      subscription = supabase
+        .channel("public:order")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "order" },
+          (payload) => {
+            const newOrder = payload.new as CHAT_ORDER;
+            setOrderData((prevOrders) => [...prevOrders, newOrder]);
+          }
+        )
+        .subscribe();
+    };
+
+    fetchMessages();
+
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription);
+      }
+    };
+  });
 
   /**
    * * Formatters
@@ -127,41 +139,118 @@ const ChatCard = () => {
     year: "numeric"
   });
 
-  const formatTime = (date: Date) => hourFormatter.format(date);
-  const formatDate = (date: Date) => dateFormatter.format(date);
+  const formatTime = (date: Date | string) => {
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      if (isNaN(dateObj.getTime())) {
+        return "Invalid time";
+      }
+
+      return hourFormatter.format(dateObj);
+    } catch {
+      return "Invalid time";
+    }
+  };
+
+  const formatDate = (date: Date | string) => {
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      if (isNaN(dateObj.getTime())) {
+        return "Invalid date";
+      }
+
+      return dateFormatter.format(dateObj);
+    } catch {
+      return "Invalid date";
+    }
+  };
 
   /**
    * * Get Latest Messages for Chat List
    */
   const latestChats = useMemo(() => {
-    const filteredChatData = chatData.filter(
-      (chat) =>
-        chat.sender === currentUserId || chat.recipient === currentUserId
-    );
+    const contactsMap: Record<
+      string,
+      {
+        otherUserUuid: string;
+        otherUserId: string;
+        otherUserName: string;
+        otherUserPhoto: string;
+        lastMessage: MESSAGES | null;
+        unreadCount: number;
+      }
+    > = {};
 
-    const conversations = filteredChatData.reduce(
-      (acc, chat) => {
-        const otherUserId =
-          chat.sender === currentUserId ? chat.recipient : chat.sender;
+    orderData.forEach((order) => {
+      let otherUserUuid = "";
+      let otherUserId = "";
+      let otherUserName = "";
+      let otherUserPhoto = "";
 
+      if (["Nurse", "Midwife"].includes(role)) {
+        otherUserUuid = order.patient.users.user_id;
+        otherUserId = order.patient_id;
+        otherUserName = order.patient.user_full_name;
+        otherUserPhoto = "/images/user/Default Patient Photo.png";
+      } else {
+        otherUserUuid = order.caregiver.users.user_id;
+        otherUserId = order.caregiver_id;
+        otherUserName = order.caregiver.user_full_name;
+        otherUserPhoto = getClientPublicStorageURL(
+          "profile_photo",
+          order.caregiver.profile_photo
+        );
+      }
+
+      contactsMap[otherUserUuid] = {
+        otherUserUuid,
+        otherUserId,
+        otherUserName,
+        otherUserPhoto,
+        lastMessage: null,
+        unreadCount: 0
+      };
+    });
+
+    chatData.forEach((chat) => {
+      const otherUserId =
+        chat.sender === currentUserId ? chat.recipient : chat.sender;
+
+      if (contactsMap[otherUserId]) {
         if (
-          !acc[otherUserId] ||
-          new Date(chat.created_at).getTime() >
-            new Date(acc[otherUserId].created_at).getTime()
+          !contactsMap[otherUserId].lastMessage ||
+          new Date(chat.created_at) >
+            new Date(contactsMap[otherUserId].lastMessage!.created_at)
         ) {
-          acc[otherUserId] = chat;
+          contactsMap[otherUserId].lastMessage = chat;
         }
 
-        return acc;
-      },
-      {} as Record<string, MESSAGES>
-    );
+        if (
+          chat.recipient === currentUserId &&
+          chat.sender === otherUserId &&
+          !chat.is_read
+        ) {
+          contactsMap[otherUserId].unreadCount += 1;
+        }
+      }
+    });
 
-    return Object.values(conversations).sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-  }, [currentUserId]);
+    const contactsArray = Object.values(contactsMap);
+
+    // Sort contacts by lastMessage time
+    contactsArray.sort((a, b) => {
+      const timeA = a.lastMessage
+        ? new Date(a.lastMessage.created_at).getTime()
+        : 0;
+      const timeB = b.lastMessage
+        ? new Date(b.lastMessage.created_at).getTime()
+        : 0;
+
+      return timeB - timeA;
+    });
+
+    return contactsArray;
+  }, [orderData, chatData, currentUserId, role]);
 
   /**
    * * Messages to display in Chat Panel
@@ -179,7 +268,7 @@ const ChatCard = () => {
         (a, b) =>
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
-  }, [activeChat, currentUserId]);
+  }, [activeChat, currentUserId, chatData]);
 
   /**
    * * Auto-scroll to bottom when messages change
@@ -190,6 +279,55 @@ const ChatCard = () => {
     }
   }, [messagesToDisplay]);
 
+  /**
+   * * Mark messages as read when chat is active or window is focused
+   */
+  useEffect(() => {
+    if (!activeChat) return;
+
+    const supabase = createSupabaseClient();
+
+    const markMessagesAsRead = async () => {
+      const { error } = await supabase
+        .from("messages")
+        .update({ is_read: true })
+        .eq("sender", activeChat)
+        .eq("recipient", currentUserId)
+        .eq("is_read", false);
+
+      if (error) {
+        console.error("Error updating messages:", error.message);
+      } else {
+        // Update local chatData to reflect the changes
+        setChatData((prevChatData) =>
+          prevChatData.map((message) => {
+            if (
+              message.sender === activeChat &&
+              message.recipient === currentUserId &&
+              !message.is_read
+            ) {
+              return { ...message, is_read: true };
+            }
+
+            return message;
+          })
+        );
+      }
+    };
+
+    markMessagesAsRead();
+
+    const handleWindowFocus = () => {
+      markMessagesAsRead();
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [activeChat, currentUserId]);
+
   return (
     <div className="flex max-h-125 min-h-125 w-full rounded-xl bg-white">
       {/* Chat List */}
@@ -197,52 +335,74 @@ const ChatCard = () => {
         <h1 className="mb-5 text-heading-5 font-bold">Chats</h1>
         <div className="flex flex-col gap-1">
           {latestChats.map((chat) => {
-            const otherUserId =
-              chat.sender === currentUserId ? chat.recipient : chat.sender;
+            const {
+              otherUserUuid,
+              otherUserName,
+              otherUserPhoto,
+              lastMessage,
+              unreadCount
+            } = chat;
 
             return (
               <div
-                key={otherUserId}
+                key={otherUserUuid}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg p-3 transition ${
-                  activeChat === otherUserId
+                  activeChat === otherUserUuid
                     ? "bg-kalbe-ultraLight hover:bg-kalbe-proLight"
                     : "hover:bg-kalbe-ultraLight"
                 }`}
-                onClick={() => setActiveChat(otherUserId)}
+                onClick={() => setActiveChat(otherUserUuid)}
               >
                 <div className="relative h-12 w-12">
                   <Image
                     width={200}
                     height={200}
-                    src="/images/user/Default Caregiver Photo.png"
+                    src={otherUserPhoto}
                     alt="User"
                     className="rounded-full object-cover"
                   />
                 </div>
-                <div className="w-[90%]">
-                  <div className="flex items-center justify-between">
-                    <h1 className="font-medium">User {otherUserId || ""}</h1>
-                    <p className="text-sm text-dark-secondary">
-                      {new Date(chat.created_at).toDateString() ===
-                      new Date().toDateString()
-                        ? formatTime(chat.created_at)
-                        : formatDate(chat.created_at)}
-                    </p>
-                  </div>
-                  <p className="truncate text-sm text-dark-secondary">
-                    {chat.sender === currentUserId ? (
-                      <div className="flex w-full items-center justify-start gap-2">
-                        {chat.is_read ? (
-                          <IconChecks stroke={1} size={20} />
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex w-full justify-between">
+                    <div className="flex flex-col items-start">
+                      <h1 className="font-medium">{otherUserName}</h1>
+                      <p className="truncate text-sm text-dark-secondary">
+                        {lastMessage ? (
+                          lastMessage.sender === currentUserId ? (
+                            <div className="flex w-full items-center justify-start gap-2">
+                              {lastMessage.is_read ? (
+                                <IconChecks stroke={1} size={20} />
+                              ) : (
+                                <IconCheck stroke={1} size={20} />
+                              )}
+                              <span>{lastMessage.text}</span>
+                            </div>
+                          ) : (
+                            lastMessage.text
+                          )
                         ) : (
-                          <IconCheck stroke={1} size={20} />
+                          ""
                         )}
-                        <span>{chat.text}</span>
-                      </div>
-                    ) : (
-                      chat.text
-                    )}
-                  </p>
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <p className="text-sm text-dark-secondary">
+                        {lastMessage
+                          ? new Date(lastMessage.created_at).toDateString() ===
+                            new Date().toDateString()
+                            ? formatTime(lastMessage.created_at)
+                            : formatDate(lastMessage.created_at)
+                          : ""}
+                      </p>
+                      {unreadCount > 0 && (
+                        <div className="flex-shrink-0">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+                            {unreadCount}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             );
@@ -259,13 +419,21 @@ const ChatCard = () => {
               <Image
                 width={200}
                 height={200}
-                src="/images/user/Default Caregiver Photo.png"
+                src={
+                  latestChats.find((chat) => chat.otherUserUuid === activeChat)
+                    ?.otherUserPhoto || "/images/user/Default Patient Photo.png"
+                }
                 alt="User"
                 className="rounded-full object-cover"
               />
             </div>
             <div>
-              <h5 className="text-lg font-medium">User {activeChat}</h5>
+              <h5 className="text-lg font-medium">
+                {
+                  latestChats.find((chat) => chat.otherUserUuid === activeChat)
+                    ?.otherUserName
+                }
+              </h5>
             </div>
           </div>
         )}
@@ -341,27 +509,11 @@ const ChatCard = () => {
 
         {/* Input Field */}
         {activeChat && (
-          <div className="flex items-center justify-between gap-3 border-t p-5 pb-4">
-            <CustomInputGroup
-              placeholder="Type your message..."
-              type="text"
-              name="message"
-              forChat
-              required={false}
-            />
-            <AxolotlButton
-              type="submit"
-              label=""
-              variant="primary"
-              customWidth
-              customClasses="w-fit"
-              endIcon={<IconSend size={20} />}
-            />
-          </div>
+          <ChatInput senderId={currentUserId} recipientId={activeChat} />
         )}
       </div>
     </div>
   );
 };
 
-export default ChatCard;
+export default ChatComponent;
