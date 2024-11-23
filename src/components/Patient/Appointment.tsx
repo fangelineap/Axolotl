@@ -10,6 +10,7 @@ import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
 import Select from "../Axolotl/Select";
 import { Skeleton } from "@mui/material";
 import { AxolotlServices } from "@/utils/Services";
+import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
 
 type Caregiver = USER & {
   profile_photo_url?: string;
@@ -18,8 +19,10 @@ type Caregiver = USER & {
 
 const Appointment = ({ caregiverId }: { caregiverId: string }) => {
   const [time, setTime] = useState<string>("");
+  const [date, setDate] = useState<string>("");
   const [service, setService] = useState<string>("");
   const [caregiver, setCaregiver] = useState<Caregiver>();
+  const [appointments, setAppointments] = useState<any>([]);
 
   const router = useRouter();
 
@@ -53,6 +56,23 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const getAppointments = async () => {
+      try {
+        if (caregiver) {
+          const data = await getAppointmentsByCaregiverId(
+            caregiver.caregiver[0].id
+          );
+          setAppointments(data);
+        }
+      } catch (error) {
+        console.log("Error while fetching appointments by caregiver id", error);
+      }
+    };
+
+    getAppointments();
+  }, [caregiver]);
+
   const availableHours = useMemo(() => {
     if (
       caregiver?.caregiver[0].schedule_start_time &&
@@ -68,14 +88,30 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
       const startMinutes =
         caregiver?.caregiver[0].schedule_start_time.split(":")[1];
 
-      const hours = [];
+      const hours: any = [];
       for (let i = startHour; i < endHour; i++) {
         hours.push(`${i}:${startMinutes}`);
       }
 
+      if (appointments.length > 0 && date !== "") {
+        appointments.forEach((appointment: any) => {
+          const isDateEqual = appointment.appointment.appointment_date == date;
+
+          if (isDateEqual) {
+            const index = hours.indexOf(
+              appointment.appointment.appointment_time
+            );
+
+            if (index !== -1) {
+              hours.splice(index, 1);
+            }
+          }
+        });
+      }
+
       return hours;
     }
-  }, [caregiver]);
+  }, [appointments, caregiver, date]);
 
   const toOrderForm = (formData: FormData) => {
     router.push(
@@ -220,6 +256,17 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
               </div>
             </div>
             <div className="p-3 lg:w-[30%]">
+              {availableHours && availableHours.length === 0 && (
+                <div className="mb-5.5 rounded-md border-[1px] border-red-500 bg-red-200 py-2">
+                  <div className="p-3">
+                    <h1 className="text-center text-lg font-bold text-red-500">
+                      Oops, this caregiver is not available on the date you
+                      picked, please pick another date
+                    </h1>
+                  </div>
+                </div>
+              )}
+
               <div className="rounded-md border-[1px] border-stroke bg-white py-2">
                 <div className="p-3">
                   <h1 className="text-center text-lg font-bold text-primary">
@@ -231,6 +278,7 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                     customClasses="w-full mb-3"
                     label="Pick a date"
                     name="appointmentDate"
+                    setDate={setDate}
                     startDay={caregiver?.caregiver[0].schedule_start_day}
                     endDay={caregiver?.caregiver[0].schedule_end_day}
                     required

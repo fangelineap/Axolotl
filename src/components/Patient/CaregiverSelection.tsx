@@ -432,7 +432,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                                 alt="Star Logo"
                               />
                               <h1 className="text-sm text-dark-secondary">
-                                {cg.caregiver[0].rate?.toFixed(1) || 0}
+                                {cg.caregiver[0].rate?.toFixed(1) || "-"}
                               </h1>
                             </div>
                           </div>
@@ -513,7 +513,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                               alt="Star Logo"
                             />
                             <h1 className="text-sm text-dark-secondary">
-                              {cg.caregiver[0].rate?.toFixed(1) || 0}
+                              {cg.caregiver[0].rate?.toFixed(1) || "-"}
                             </h1>
                           </div>
                         </div>

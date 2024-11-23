@@ -7,7 +7,7 @@ interface CustomProps {
   required?: boolean;
   name: string;
   value?: string;
-  onChange?: (date: Date | null) => void;
+  setDate?: (date: string) => void;
   disabled?: boolean;
   startDay?: string;
   endDay?: string;
@@ -19,7 +19,8 @@ const DatePickerOne = ({
   required,
   name,
   startDay,
-  endDay
+  endDay,
+  setDate
 }: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
@@ -60,9 +61,22 @@ const DatePickerOne = ({
 
           return day >= 0 && day <= 0;
         }
-      ]
+      ],
+      onChange: function (selectedDates) {
+        if (selectedDates.length > 0) {
+          const date = new Date(selectedDates[0].getTime());
+
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-indexed
+          const year = date.getFullYear();
+
+          const formattedDate = `${year}-${month}-${day}`; // YYYY-mm-dd
+
+          if (setDate) setDate(formattedDate);
+        }
+      }
     });
-  }, [startDay, endDay]);
+  }, [startDay, endDay, setDate]);
 
   return (
     <div className={customClasses}>

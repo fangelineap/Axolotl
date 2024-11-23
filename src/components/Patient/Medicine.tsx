@@ -8,6 +8,7 @@ import {
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
 import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import { Checkbox } from "@mui/material";
 
 interface MedicineProps {
   selectAll: boolean;
@@ -47,17 +48,19 @@ const Medicine = ({
     <div className="flex justify-between">
       <div className="flex items-start gap-5">
         {is_paid === "Unverified" && !payment && (
-          <input
-            type="checkbox"
-            checked={selection.includes(medicineDetail)}
-            onClick={() =>
-              setSelection(
-                selection.includes(medicineDetail)
-                  ? selection.filter((item) => item.id !== medicineDetail.id)
-                  : [...selection, medicineDetail]
-              )
-            }
-          />
+          <>
+            <Checkbox
+              sx={{ color: "kalbe-light", ml: 0 }}
+              checked={selection.includes(medicineDetail)}
+              onClick={() =>
+                setSelection(
+                  selection.includes(medicineDetail)
+                    ? selection.filter((item) => item.id !== medicineDetail.id)
+                    : [...selection, medicineDetail]
+                )
+              }
+            />
+          </>
         )}
         <Image
           src={medicinePhoto || "/images/user/caregiver.png"}

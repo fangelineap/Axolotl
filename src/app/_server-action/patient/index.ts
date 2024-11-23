@@ -273,7 +273,7 @@ export async function getOrderDetail(id: string) {
       medicineDetail: meds,
       price: {
         total: "80000",
-        delivery: "30000",
+        delivery: "10000",
         totalCharge: "50000"
       }
     };
@@ -479,13 +479,15 @@ export async function handleAdditionalMedicinePayment(
       .eq("id", medicineOrderId)
       .select("*");
 
-    console.log("order id", orderId);
-
     if (data) {
       try {
         const { data: orderData, error: orderError } = await supabase
           .from("order")
-          .update({ status: "Completed" })
+          .update({
+            status: "Completed",
+            update_at: new Date(),
+            completed_at: new Date()
+          })
           .eq("id", orderId)
           .select("*");
 
@@ -577,6 +579,25 @@ export async function skipAdditionalMedicine(
 
     return "Success";
   } catch (error) {
-    return "Error";
+    throw new Error("Error while fetching appointments by caregiver id");
+  }
+}
+
+export async function getAppointmentsByCaregiverId(caregiverId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  console.log("caregiver id", caregiverId);
+  try {
+    const { data, error } = await supabase
+      .from("order")
+      .select("appointment(appointment_time, appointment_date)")
+      .eq("caregiver_id", caregiverId)
+      .eq("status", "Ongoing");
+
+    if (data) {
+      return data;
+    }
+  } catch (error) {
+    throw new Error("Error while fetching appointments by caregiver id");
   }
 }
