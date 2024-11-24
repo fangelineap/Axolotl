@@ -71,7 +71,7 @@ export async function getChatOrder() {
       .from("order")
       .select("*, patient(*, users(*)), caregiver(*, users(*))")
       .eq("status", "Ongoing")
-      .not("proof_of_service", "is", null);
+      .is("proof_of_service", null);
 
     if (currentUser.role === "Patient") {
       supabaseQuery = supabaseQuery.eq("patient_id", currentUser.patient.id);
@@ -95,13 +95,13 @@ export async function getChatOrder() {
         ...order,
         patient: {
           ...order.patient,
-          users: order.patient.users,
+          users: { ...order.patient.users },
           user_full_name:
             order.patient.users.first_name + " " + order.patient.users.last_name
         },
         caregiver: {
           ...order.caregiver,
-          users: order.caregiver.users,
+          users: { ...order.caregiver.users },
           user_full_name:
             order.caregiver.users.first_name +
             " " +

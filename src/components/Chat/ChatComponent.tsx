@@ -105,10 +105,29 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
         .channel("public:order")
         .on(
           "postgres_changes",
-          { event: "INSERT", schema: "public", table: "order" },
-          (payload) => {
+          { event: "*", schema: "public", table: "order" },
+          async (payload) => {
             const newOrder = payload.new as CHAT_ORDER;
-            setOrderData((prevOrders) => [...prevOrders, newOrder]);
+
+            const { data: fullOrderData, error } = await supabase
+              .from("order")
+              .select("*, patient(*, users(*)), caregiver(*, users(*))")
+              .eq("id", newOrder.id)
+              .single();
+
+            if (error) return;
+
+            setOrderData((prevOrderData) => {
+              if (payload.eventType === "INSERT") {
+                return [...prevOrderData, fullOrderData];
+              } else if (payload.eventType === "UPDATE") {
+                return prevOrderData.map((order) =>
+                  order.id === newOrder.id ? fullOrderData : order
+                );
+              } else {
+                return prevOrderData;
+              }
+            });
           }
         )
         .subscribe();
