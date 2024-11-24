@@ -16,7 +16,12 @@ import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import MedicineModal from "@/components/Axolotl/Modal/AxolotlAddMedicine";
 import { MEDICINE } from "@/types/AxolotlMainType";
-import { IconCircleMinus, IconCirclePlus, IconX } from "@tabler/icons-react";
+import {
+  IconCircleMinus,
+  IconCirclePlus,
+  IconMessage,
+  IconX
+} from "@tabler/icons-react";
 import "flatpickr/dist/flatpickr.min.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -29,6 +34,7 @@ interface MedecinePreparationProps {
   orderId: string;
   orderStatus: string;
   patientInfo: {
+    id: string;
     name: string;
     address: string;
     phoneNumber: string;
@@ -497,6 +503,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     }
   };
 
+  const handleChatWithPatient = () => {
+    console.log("Chat with Patient");
+    router.push(`/chat`);
+  };
+
   // Disable background scroll when modal is open
   useEffect(() => {
     if (isModalOpen || isAddNewMedicineModalOpen) {
@@ -792,6 +803,15 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           customClasses="mt-4"
           fontThickness="bold"
           onClick={handleFinishOrder}
+        />
+
+        <AxolotlButton
+          label="Chat with patient"
+          variant="primaryOutlined"
+          isSubmit={false}
+          customClasses="mt-4"
+          startIcon={<IconMessage size={25} />}
+          onClick={handleChatWithPatient}
         />
         <ToastContainer />
       </div>

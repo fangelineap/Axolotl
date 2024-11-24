@@ -47,6 +47,7 @@ const MedicinePreparationPage = async ({
 
   // Extract user and patient data from orderData
   const user = orderData.patient?.users;
+  const patientId = orderData.patient?.id;
   const first_name = user?.first_name;
   const last_name = user?.last_name;
   const address = user?.address;
@@ -69,6 +70,7 @@ const MedicinePreparationPage = async ({
           orderId={params.orderId}
           orderStatus={orderData.status}
           patientInfo={{
+            id: patientId,
             name: `${first_name} ${last_name}`,
             address: address,
             phoneNumber: phone_number,

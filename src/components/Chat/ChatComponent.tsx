@@ -132,11 +132,11 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
     timeZone: "Asia/Jakarta"
   });
 
-  const dateFormatter = new Intl.DateTimeFormat("en", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric"
+  const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "Asia/Jakarta"
   });
 
   const formatTime = (date: Date | string) => {
@@ -329,7 +329,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
   }, [activeChat, currentUserId]);
 
   return (
-    <div className="flex max-h-125 min-h-125 w-full rounded-xl bg-white">
+    <div className="flex max-h-150 min-h-150 w-full flex-col rounded-xl bg-white md:flex-row">
       {/* Chat List */}
       <div className="w-1/3 border-r p-5">
         <h1 className="mb-5 text-heading-5 font-bold">Chats</h1>
@@ -353,7 +353,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
                 }`}
                 onClick={() => setActiveChat(otherUserUuid)}
               >
-                <div className="relative h-12 w-12">
+                <div className="relative h-12 w-12 flex-shrink-0">
                   <Image
                     width={200}
                     height={200}
@@ -366,7 +366,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
                   <div className="flex w-full justify-between">
                     <div className="flex flex-col items-start">
                       <h1 className="font-medium">{otherUserName}</h1>
-                      <p className="truncate text-sm text-dark-secondary">
+                      <p className="truncate text-sm text-dark-secondary sm:max-w-20 lg:max-w-70">
                         {lastMessage ? (
                           lastMessage.sender === currentUserId ? (
                             <div className="flex w-full items-center justify-start gap-2">
@@ -375,10 +375,14 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
                               ) : (
                                 <IconCheck stroke={1} size={20} />
                               )}
-                              <span>{lastMessage.text}</span>
+                              <span className="block truncate text-ellipsis whitespace-nowrap text-dark-secondary md:text-sm">
+                                {lastMessage.text}
+                              </span>
                             </div>
                           ) : (
-                            lastMessage.text
+                            <span className="block truncate text-ellipsis whitespace-nowrap text-dark-secondary md:text-sm">
+                              {lastMessage.text}
+                            </span>
                           )
                         ) : (
                           ""

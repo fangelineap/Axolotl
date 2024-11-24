@@ -153,3 +153,37 @@ export async function markMessagesAsRead(
     return { success: false };
   }
 }
+
+/**
+ * * Create an initial chat between sender and recipient
+ * @param senderId
+ * @param recipientId
+ * @returns
+ */
+export async function createInitialChat(senderId: string, recipientId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase.from("messages").insert([
+      {
+        text: "", // Pesan kosong untuk initial chat
+        sender: senderId,
+        recipient: recipientId,
+        is_read: false,
+        created_at: new Date()
+      }
+    ]);
+
+    if (error) {
+      console.error("Error creating initial chat:", error.message);
+
+      return { success: false, message: "Failed to create initial chat." };
+    }
+
+    return { success: true, data };
+  } catch (err) {
+    console.error("Unexpected error:", err);
+
+    return { success: false, message: "Unexpected error occurred." };
+  }
+}

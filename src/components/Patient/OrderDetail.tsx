@@ -124,6 +124,10 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
     }
   };
 
+  const handleChatWithCaregiver = () => {
+    router.push(`/chat`);
+  };
+
   return (
     <div className="flex flex-col lg:flex-row lg:justify-between">
       {/* Left Side */}
@@ -554,13 +558,15 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               >
                 Additional Medicine
               </button>
-              <button
-                className="flex w-full items-center justify-center gap-2 rounded border border-primary py-2 text-lg font-bold text-primary hover:bg-kalbe-ultraLight hover:text-primary"
-                onClick={() => alert("Order Finished!")}
-              >
-                <IconMessage size={25} />
-                Chat With Caregiver
-              </button>
+
+              <AxolotlButton
+                label="Chat with caregiver"
+                variant="primaryOutlined"
+                isSubmit={false}
+                customClasses="mt-4"
+                startIcon={<IconMessage size={25} />}
+                onClick={handleChatWithCaregiver}
+              />
               <ToastContainer />
             </div>
           </div>
