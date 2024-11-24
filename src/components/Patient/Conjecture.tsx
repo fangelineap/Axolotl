@@ -1,29 +1,15 @@
 "use client";
 
-import { getOrder } from "@/app/_server-action/patient";
 import { IconAlertCircleFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
 
-const Conjecture = ({ conjecture }: { conjecture: string }) => {
-  const [order, setOrder] = useState<any>({});
-  const [symptoms, setSymptoms] = useState<string[]>([]);
+interface ConjectureProps {
+  diagnosis: string;
+  symptoms: string[];
+}
 
+const Conjecture = ({ diagnosis, symptoms }: ConjectureProps) => {
   const router = useRouter();
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await getOrder(conjecture);
-
-      if (data) {
-        setOrder(data);
-        setSymptoms(data.symptoms);
-      }
-    };
-
-    getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="mt-6 flex w-[85%] flex-col justify-between lg:flex-row">
@@ -37,7 +23,7 @@ const Conjecture = ({ conjecture }: { conjecture: string }) => {
           <div className="px-5 py-2">
             <ul className="list-disc">
               <div
-                className={`grid grid-flow-col ${order.length > 9 ? "grid-rows-9" : "grid-rows-5"} gap-1`}
+                className={`grid grid-flow-col ${symptoms.length > 9 ? "grid-rows-9" : "grid-rows-5"} gap-1`}
               >
                 {symptoms.map((symptom: string) => (
                   <li key={symptom}>{symptom}</li>
@@ -51,7 +37,7 @@ const Conjecture = ({ conjecture }: { conjecture: string }) => {
               <h1>We presume that you might have</h1>
             </div>
             <h1 className="py-5 text-center font-semibold text-primary">
-              {order.diagnosis}
+              {diagnosis}
             </h1>
           </div>
         </>

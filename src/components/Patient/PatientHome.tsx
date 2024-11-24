@@ -1,12 +1,18 @@
 "use client";
 
+import { USER } from "@/types/AxolotlMainType";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
-const PatientHome = () => {
+interface PatientHomeProps {
+  currentUser: USER;
+}
+
+const PatientHome = ({ currentUser }: PatientHomeProps) => {
+  const user_full_name = currentUser?.first_name + " " + currentUser?.last_name;
   const [greeting, setGreeting] = useState("Good Day");
 
   useEffect(() => {
@@ -118,7 +124,7 @@ const PatientHome = () => {
     <div className="container mx-auto p-4 text-black">
       <div className="text-left">
         <h1 className="text-4xl">
-          {greeting}, <span className="font-bold">Axolotl!</span>{" "}
+          {greeting}, <span className="font-bold">{user_full_name}</span>{" "}
         </h1>
         <p className="mt-2">How can we help you today?</p>
       </div>

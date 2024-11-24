@@ -1,7 +1,16 @@
+import { getOrder } from "@/app/_server-action/patient";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Conjecture from "@/components/Patient/Conjecture";
 
-const page = ({ searchParams }: any) => {
+async function fetchOrderData(conjecture: string) {
+  const response = await getOrder(conjecture);
+
+  return response;
+}
+
+const page = async ({ searchParams }: any) => {
+  const order = await fetchOrderData(searchParams.appointment);
+
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center justify-center">
@@ -30,7 +39,7 @@ const page = ({ searchParams }: any) => {
         </div>
 
         {/* Content */}
-        <Conjecture conjecture={searchParams.appointment} />
+        <Conjecture diagnosis={order.diagnosis} symptoms={order.symptoms} />
       </div>
     </DefaultLayout>
   );
