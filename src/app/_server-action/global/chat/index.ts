@@ -1,12 +1,59 @@
 "use server";
 
 import createSupabaseServerClient, {
-  getUserDataFromSession
+  getUserDataFromSession,
+  getUserFromSession
 } from "@/lib/server";
 import { MESSAGES } from "@/types/AxolotlMainType";
 import { CHAT_ORDER } from "@/types/AxolotlMultipleTypes";
 import { ServerFormValidation } from "@/utils/Validation/form/ServerFormValidation";
 import { revalidatePath, unstable_noStore } from "next/cache";
+import { redirect } from "next/navigation";
+
+/**
+ * * Get all unread chat messages
+ * @returns
+ */
+export async function getUnreadChatMessages() {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data: currentUser, error: currentUserError } =
+      await getUserFromSession();
+
+    if (currentUserError) {
+      console.error("Error fetching user data:", currentUserError.message);
+
+      return currentUserError;
+    }
+
+    if (!currentUser) {
+      console.error("User not found.");
+
+      redirect("/auth/signin");
+    }
+
+    const { count, error } = await supabase
+      .from("messages")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient", currentUser.user_id)
+      .eq("is_read", false);
+
+    if (error) {
+      console.error("Error fetching unread messages:", error.message);
+
+      return error;
+    }
+
+    return count?.toString() || "0";
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+
+    return error;
+  }
+}
 
 /**
  * * Get all users corresponding to the chat order

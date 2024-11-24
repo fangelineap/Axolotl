@@ -21,6 +21,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
   /**
    * * States & Initial Variables
    */
+  // const [loading, setLoading] = useState(true);
   const [chatData, setChatData] = useState<MESSAGES[]>([]);
   const [orderData, setOrderData] = useState<CHAT_ORDER[]>([]);
   const [activeChat, setActiveChat] = useState<string | null>(null);

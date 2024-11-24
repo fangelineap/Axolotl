@@ -1,9 +1,13 @@
+import { getUnreadChatMessages } from "@/app/_server-action/global/chat";
 import DropdownUser from "@/components/Header/DropdownUser";
+import { createSupabaseClient } from "@/lib/client";
+import { getUserFromSession } from "@/lib/server";
 import { IconMessage } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import useSWR from "swr";
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -15,6 +19,7 @@ const PatientHeader: React.FC<HeaderProps> = ({
   setSidebarOpen
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState<number>(0);
   const dropdownRef = useRef<HTMLLIElement>(null);
   const pathname = usePathname();
 
@@ -26,6 +31,65 @@ const PatientHeader: React.FC<HeaderProps> = ({
       setDropdownOpen(false);
     }
   };
+
+  useSWR("unreadMessages", () => {
+    let currentUserId: string;
+    const supabase = createSupabaseClient();
+
+    const fetchUnreadMessages = async () => {
+      const initialCount = await getUnreadChatMessages();
+      setUnreadMessages(Number(initialCount));
+    };
+
+    const fetchCurrentUserId = async () => {
+      const { data: currentUser, error: currentUserError } =
+        await getUserFromSession();
+
+      if (currentUserError || !currentUser) redirect("/auth/signin");
+
+      currentUserId = currentUser.user_id;
+    };
+
+    const subscribeToMessages = () => {
+      const subscription = supabase
+        .channel("public:messages")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "messages" },
+          (payload) => {
+            if (
+              payload.eventType === "INSERT" ||
+              payload.eventType === "UPDATE"
+            ) {
+              const newMessage = payload.new as {
+                recipient: string;
+                is_read: boolean;
+              };
+
+              if (
+                newMessage.recipient === currentUserId &&
+                !newMessage.is_read
+              ) {
+                setUnreadMessages((prev) => prev + 1);
+              }
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        if (subscription) supabase.removeChannel(subscription);
+      };
+    };
+
+    fetchUnreadMessages();
+    fetchCurrentUserId();
+    const unsubscribe = subscribeToMessages();
+
+    return () => {
+      unsubscribe();
+    };
+  });
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -181,10 +245,13 @@ const PatientHeader: React.FC<HeaderProps> = ({
         </div>
         <div className="ml-auto">
           <div className="flex items-center justify-center gap-5">
-            <div className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition duration-150 ease-in-out hover:bg-gray">
+            <div className="relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition duration-150 ease-in-out hover:bg-gray">
               <Link href="/chat">
                 <IconMessage size={28} stroke={1} />
               </Link>
+              {unreadMessages > 0 && (
+                <div className="absolute right-2 top-2 h-3 w-3 rounded-full border border-white bg-red" />
+              )}
             </div>
             <DropdownUser />
           </div>
