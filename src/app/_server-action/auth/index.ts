@@ -196,7 +196,7 @@ export async function resetPassword(password: string, code: string) {
   if (sessionError) {
     console.error("Error exchanging code for session:", sessionError);
 
-    return;
+    return "Please re-enter your email to reset your password";
   }
 
   const { error } = await supabase.auth.updateUser({
@@ -204,9 +204,9 @@ export async function resetPassword(password: string, code: string) {
   });
 
   if (error) {
-    console.error("Error. Please try again.");
+    console.log("Error. Please try again.");
 
-    return;
+    return "Old pass can't be the same as new pass";
   }
 
   redirect("/auth/signin");
