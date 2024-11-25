@@ -193,7 +193,7 @@ function AddAdmin() {
                     onChange={handleInputChange}
                   />
                   <PhoneNumberBox
-                    placeholder="081XXXXXXXX"
+                    placeholder="81XXXXXXXX"
                     name="phone_number"
                     required
                     value={

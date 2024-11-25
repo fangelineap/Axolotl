@@ -204,7 +204,7 @@ export async function resetPassword(password: string, code: string) {
   });
 
   if (error) {
-    console.error("Erorr. Please try again.");
+    console.error("Error. Please try again.");
 
     return;
   }

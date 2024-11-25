@@ -22,7 +22,11 @@ const PhoneNumberBox = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { value } = e.target;
 
-    value = value.replace(/^0+/, "");
+    // Remove leading zeros
+    if (value.startsWith("0") && value.length === 1) {
+      return; // Do not allow "0" as the first character
+    }
+
     const isNumericOrEmpty = value === "" || !isNaN(Number(value));
     const isWithinMaxLength = value.length <= 13;
 

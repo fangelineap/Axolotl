@@ -103,7 +103,7 @@ const CreateAccountComponent = ({ searchParams }: any) => {
                     required
                   />
                   <PhoneNumberBox
-                    placeholder="8XXXXXXXXX"
+                    placeholder="81XXXXXXXX"
                     name="phone_number"
                     required
                   />
