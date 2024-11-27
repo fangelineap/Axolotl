@@ -25,6 +25,7 @@ import CustomTimePicker from "../Axolotl/InputFields/CustomTimePicker";
 import PhoneNumberBox from "../Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "../Axolotl/SelectDropdown";
 import { UpdateProfileValidation } from "./Validation/UpdateProfileValidation";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 
 interface EditProfileComponentProps {
   user: AdminUserTable;
@@ -66,41 +67,13 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
   });
 
   /**
-   * * Date Formatters
-   */
-  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  /**
-   * * Helper function to format dates and times
-   * @param date
-   * @param formatter
-   * @returns
-   */
-  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
-    formatter.format(new Date(date));
-
-  /**
    * * Formatted Dates
    */
   const formattedReviewDate = user.caregiver?.reviewed_at
-    ? formatDate(user.caregiver?.reviewed_at, dateTimeFormatter)
+    ? globalFormatDate(user.caregiver?.reviewed_at, "dateTime")
     : "-";
 
-  const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
+  const formattedBirthDate = globalFormatDate(user.birthdate, "longDate");
 
   /**
    * * Handle Image Load
@@ -127,6 +100,19 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
    */
   const saveProfile = async (form: FormData) => {
     // ! VALIDATION
+
+    const address = form.get("address")?.toString().toLowerCase();
+    if (!address?.includes("malang") && !address?.includes("gianyar")) {
+      toast.error(
+        "Address must include either 'Malang' (East Java) or 'Gianyar' (Bali).",
+        {
+          position: "bottom-right"
+        }
+      );
+
+      return; // Stop execution if validation fails
+    }
+
     if (!UpdateProfileValidation(form, "Basic")) return;
 
     if (user.role === "Patient" && !UpdateProfileValidation(form, "Patient"))
@@ -384,7 +370,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                       onChange={handleInputChange}
                     />
                     <PhoneNumberBox
-                      placeholder="081XXXXXXXX"
+                      placeholder="81XXXXXXXX"
                       name="phone_number"
                       required
                       value={
@@ -418,7 +404,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                       label="Address"
                       type="text"
                       name="address"
-                      placeholder="Enter Admin Address"
+                      placeholder="Enter Address"
                       value={formData.address}
                       required
                       onChange={handleInputChange}

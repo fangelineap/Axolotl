@@ -8,6 +8,10 @@ import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -17,9 +21,10 @@ import { toast } from "react-toastify";
 interface ViewUserProps {
   user: AdminUserTable;
   totalOrder: number;
+  is_complete: boolean;
 }
 
-function ViewUser({ user, totalOrder }: ViewUserProps) {
+function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
   /**
    * * States & Initial Variables
    */
@@ -32,49 +37,14 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
     "profile_photo",
     user.caregiver?.profile_photo
   );
-
-  /**
-   * * Date Formatters
-   */
-  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  /**
-   * * Helper function to format dates
-   * @param date
-   * @param formatter
-   * @returns
-   */
-  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
-    formatter.format(new Date(date));
-
-  const timeFormatter = (time: string) => {
-    const [hours, minutes] = time.split(":");
-
-    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
-  };
-
   /**
    * * Formatted Dates
    */
   const formattedReviewDate = user.caregiver?.reviewed_at
-    ? formatDate(user.caregiver?.reviewed_at, dateTimeFormatter)
+    ? globalFormatDate(user.caregiver?.reviewed_at, "dateTime")
     : "-";
 
-  const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
+  const formattedBirthDate = globalFormatDate(user.birthdate, "longDate");
 
   /**
    * * Working Schedule Variables
@@ -88,11 +58,11 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
     : "-";
 
   const startTimeSchedule = user.caregiver?.schedule_start_time
-    ? timeFormatter(user.caregiver?.schedule_start_time)
+    ? globalFormatTime(user.caregiver?.schedule_start_time, "stringTime")
     : "-";
 
   const endTimeSchedule = user.caregiver?.schedule_end_time
-    ? timeFormatter(user.caregiver?.schedule_end_time)
+    ? globalFormatTime(user.caregiver?.schedule_end_time, "stringTime")
     : "-";
 
   /**
@@ -288,295 +258,321 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
               </div>
             </div>
 
-            {/* Bottom Section */}
-            <div className="flex w-full flex-col gap-5 lg:flex-row lg:justify-between">
-              {/* First Column */}
-              <div className="flex w-full flex-col gap-4">
-                {/* User Personal Data */}
-                <div className="flex w-full flex-col">
-                  <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                    User Personal Data
+            {!is_complete ? (
+              <div className="flex w-full flex-col items-center justify-center gap-5">
+                <div className="flex w-full flex-col items-center justify-center gap-5 rounded-lg border border-red bg-red-light p-4 text-red">
+                  <h1 className="text-heading-3 font-medium">
+                    This user has incomplete personal information.
                   </h1>
-                  <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledCustomInputGroup
-                      label="First Name"
-                      value={user.first_name}
-                      horizontal={false}
-                      type="text"
-                    />
-                    <DisabledCustomInputGroup
-                      label="Last Name"
-                      value={user.last_name}
-                      horizontal={false}
-                      type="text"
-                    />
-                  </div>
-                  <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledCustomInputGroup
-                      label="Email"
-                      value={user.email}
-                      horizontal={false}
-                      type="text"
-                    />
-                    <DisabledPhoneNumberBox
-                      placeholder="081XXXXXXXX"
-                      value={Number(user.phone_number)}
-                    />
-                  </div>
-                  <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledCustomInputGroup
-                      label="Birthdate"
-                      value={formattedBirthDate}
-                      horizontal={false}
-                      type="text"
-                    />
-                    <DisabledCustomInputGroup
-                      label="Gender"
-                      value={user.gender ? user.gender : "-"}
-                      horizontal={false}
-                      type="text"
-                    />
-                  </div>
-                  <div className="flex w-full flex-col md:flex-row md:gap-5">
-                    <DisabledCustomInputGroup
-                      label="Address"
-                      value={user.address ? user.address : "-"}
-                      horizontal={false}
-                      type="text"
-                    />
-                    {user.role === "Patient" && (
-                      <DisabledCustomInputGroup
-                        label="Blood Type"
-                        value={
-                          user.patient.blood_type
-                            ? user.patient.blood_type
-                            : "-"
-                        }
-                        horizontal={false}
-                        type="text"
-                      />
-                    )}
-                  </div>
-                  {user.role === "Patient" && (
-                    <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledCustomInputGroup
-                        label="Height and Weight"
-                        horizontal={false}
-                        type="text"
-                        isMultipleUnit
-                        unit="cm"
-                        value={
-                          user.patient.height
-                            ? String(user.patient.height)
-                            : "-"
-                        }
-                        secondUnit="kg"
-                        secondValue={
-                          user.patient.weight
-                            ? String(user.patient.weight)
-                            : "-"
-                        }
-                      />
-                      <DisabledCustomInputGroup
-                        label="Smoker Status"
-                        value={user.patient.is_smoking ? "Yes" : "No"}
-                        horizontal={false}
-                        type="text"
-                      />
-                    </div>
-                  )}
+                  <p className="text-center text-xl">
+                    Please wait for the user to complete their personal
+                    information to see their full profile.
+                  </p>
                 </div>
-
-                {/* CAREGIVER - Working Schedule */}
-                {["Nurse", "Midwife"].includes(user.role) &&
-                  user.caregiver?.status !== "Rejected" && (
+                <AxolotlButton
+                  label="Go Back"
+                  variant="secondary"
+                  fontThickness="bold"
+                  customClasses="text-lg w-full md:w-fit"
+                  customWidth
+                  onClick={() => router.replace(`/admin/manage/user`)}
+                />
+              </div>
+            ) : (
+              <>
+                {/* Bottom Section */}
+                <div className="flex w-full flex-col gap-5 lg:flex-row lg:justify-between">
+                  {/* First Column */}
+                  <div className="flex w-full flex-col gap-4">
+                    {/* User Personal Data */}
                     <div className="flex w-full flex-col">
                       <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Working Schedule
+                        User Personal Data
                       </h1>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
                         <DisabledCustomInputGroup
-                          label="Start Day"
-                          value={startDaySchedule}
+                          label="First Name"
+                          value={user.first_name}
                           horizontal={false}
                           type="text"
                         />
                         <DisabledCustomInputGroup
-                          label="End Day"
-                          value={endDaySchedule}
+                          label="Last Name"
+                          value={user.last_name}
                           horizontal={false}
                           type="text"
                         />
                       </div>
                       <div className="flex w-full flex-col md:flex-row md:gap-5">
                         <DisabledCustomInputGroup
-                          label="Start Time"
-                          value={startTimeSchedule}
+                          label="Email"
+                          value={user.email}
+                          horizontal={false}
+                          type="text"
+                        />
+                        <DisabledPhoneNumberBox
+                          placeholder="081XXXXXXXX"
+                          value={Number(user.phone_number)}
+                        />
+                      </div>
+                      <div className="flex w-full flex-col md:flex-row md:gap-5">
+                        <DisabledCustomInputGroup
+                          label="Birthdate"
+                          value={formattedBirthDate}
                           horizontal={false}
                           type="text"
                         />
                         <DisabledCustomInputGroup
-                          label="End Time"
-                          value={endTimeSchedule}
+                          label="Gender"
+                          value={user.gender ? user.gender : "-"}
                           horizontal={false}
                           type="text"
                         />
                       </div>
-                    </div>
-                  )}
-              </div>
-
-              <CustomDivider />
-
-              {/* Second Column */}
-              <div className="flex w-full flex-col gap-4">
-                {/* CAREGIVER */}
-                {["Nurse", "Midwife"].includes(user.role) && (
-                  <>
-                    {/* CAREGIVER - Rating */}
-                    {user.caregiver?.status !== "Rejected" && (
-                      <div className="flex w-full flex-col">
-                        <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                          User Rating
-                        </h1>
+                      <div className="flex w-full flex-col md:flex-row md:gap-5">
+                        <DisabledCustomInputGroup
+                          label="Address"
+                          value={user.address ? user.address : "-"}
+                          horizontal={false}
+                          type="text"
+                        />
+                        {user.role === "Patient" && (
+                          <DisabledCustomInputGroup
+                            label="Blood Type"
+                            value={
+                              user.patient.blood_type
+                                ? user.patient.blood_type
+                                : "-"
+                            }
+                            horizontal={false}
+                            type="text"
+                          />
+                        )}
+                      </div>
+                      {user.role === "Patient" && (
                         <div className="flex w-full flex-col md:flex-row md:gap-5">
                           <DisabledCustomInputGroup
-                            label="Total Order"
+                            label="Height and Weight"
                             horizontal={false}
                             type="text"
-                            value={String(totalOrder)}
+                            isMultipleUnit
+                            unit="cm"
+                            value={
+                              user.patient.height
+                                ? String(user.patient.height)
+                                : "-"
+                            }
+                            secondUnit="kg"
+                            secondValue={
+                              user.patient.weight
+                                ? String(user.patient.weight)
+                                : "-"
+                            }
                           />
                           <DisabledCustomInputGroup
-                            label="Rating"
-                            type="text"
+                            label="Smoker Status"
+                            value={user.patient.is_smoking ? "Yes" : "No"}
                             horizontal={false}
-                            isRating
+                            type="text"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* CAREGIVER - Working Schedule */}
+                    {["Nurse", "Midwife"].includes(user.role) &&
+                      user.caregiver?.status !== "Rejected" && (
+                        <div className="flex w-full flex-col">
+                          <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                            User Working Schedule
+                          </h1>
+                          <div className="flex w-full flex-col md:flex-row md:gap-5">
+                            <DisabledCustomInputGroup
+                              label="Start Day"
+                              value={startDaySchedule}
+                              horizontal={false}
+                              type="text"
+                            />
+                            <DisabledCustomInputGroup
+                              label="End Day"
+                              value={endDaySchedule}
+                              horizontal={false}
+                              type="text"
+                            />
+                          </div>
+                          <div className="flex w-full flex-col md:flex-row md:gap-5">
+                            <DisabledCustomInputGroup
+                              label="Start Time"
+                              value={startTimeSchedule}
+                              horizontal={false}
+                              type="text"
+                            />
+                            <DisabledCustomInputGroup
+                              label="End Time"
+                              value={endTimeSchedule}
+                              horizontal={false}
+                              type="text"
+                            />
+                          </div>
+                        </div>
+                      )}
+                  </div>
+
+                  <CustomDivider />
+
+                  {/* Second Column */}
+                  <div className="flex w-full flex-col gap-4">
+                    {/* CAREGIVER */}
+                    {["Nurse", "Midwife"].includes(user.role) && (
+                      <>
+                        {/* CAREGIVER - Rating */}
+                        {user.caregiver?.status !== "Rejected" && (
+                          <div className="flex w-full flex-col">
+                            <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                              User Rating
+                            </h1>
+                            <div className="flex w-full flex-col md:flex-row md:gap-5">
+                              <DisabledCustomInputGroup
+                                label="Total Order"
+                                horizontal={false}
+                                type="text"
+                                value={String(totalOrder)}
+                              />
+                              <DisabledCustomInputGroup
+                                label="Rating"
+                                type="text"
+                                horizontal={false}
+                                isRating
+                                value={
+                                  user.caregiver.rate
+                                    ? String(user.caregiver.rate)
+                                    : "-"
+                                }
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* CAREGIVER Working Experiences */}
+                        <div className="flex w-full flex-col">
+                          <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                            User Working Experiences
+                          </h1>
+                          <div className="flex w-full flex-col md:flex-row md:gap-5">
+                            <DisabledCustomInputGroup
+                              label="Employment Type"
+                              value={user.caregiver.employment_type}
+                              horizontal={false}
+                              type="text"
+                            />
+                            <DisabledCustomInputGroup
+                              label="Work Experiences"
+                              value={user.caregiver.work_experiences.toString()}
+                              horizontal={false}
+                              type="text"
+                              isUnit={true}
+                              unit="year"
+                            />
+                          </div>
+                          <DisabledCustomInputGroup
+                            label="Workplace"
+                            value={user.caregiver.workplace}
+                            horizontal={false}
+                            type="text"
+                          />
+                        </div>
+
+                        {/* CAREGIVER Licenses */}
+                        <div className="flex w-full flex-col">
+                          <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                            User Licenses
+                          </h1>
+                          <div className="grid grid-cols-2 gap-5">
+                            <ClientDownloadLicenses
+                              licenseTitle="Curriculum Vitae"
+                              fileLink={user.caregiver.cv ?? ""}
+                              licenseType="CV"
+                            />
+                            <ClientDownloadLicenses
+                              licenseTitle="Degree Certificate"
+                              fileLink={user.caregiver.degree_certificate ?? ""}
+                              licenseType="Degree Certificate"
+                            />
+                            <ClientDownloadLicenses
+                              licenseTitle="Surat Tanda Registrasi"
+                              fileLink={user.caregiver.str ?? ""}
+                              licenseType="STR"
+                            />
+                            <ClientDownloadLicenses
+                              licenseTitle="Surat Izin Praktik"
+                              fileLink={user.caregiver.sip ?? ""}
+                              licenseType="SIP"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* PATIENT */}
+                    {user.role === "Patient" && (
+                      <div className="flex w-full flex-col">
+                        <h1 className="mb-3 text-heading-6 font-bold text-primary">
+                          User Past Medical History
+                        </h1>
+
+                        <DisabledCustomInputGroup
+                          label="Allergies"
+                          value={
+                            user.patient.allergies
+                              ? user.patient.allergies
+                              : "-"
+                          }
+                          horizontal={false}
+                          type="text"
+                        />
+                        <div className="flex w-full flex-col md:flex-row md:gap-5">
+                          <DisabledCustomInputGroup
+                            label="Current Medication"
                             value={
-                              user.caregiver.rate
-                                ? String(user.caregiver.rate)
+                              user.patient.current_medication
+                                ? user.patient.current_medication
+                                : "-"
+                            }
+                            horizontal={false}
+                            type="text"
+                          />
+                          <DisabledCustomInputGroup
+                            label="Medication Frequency"
+                            horizontal={false}
+                            type="text"
+                            isMultipleUnit
+                            unit="qty"
+                            value={
+                              user.patient.med_freq_times
+                                ? String(user.patient.med_freq_times)
+                                : "-"
+                            }
+                            secondUnit="/day"
+                            secondValue={
+                              user.patient.med_freq_day
+                                ? String(user.patient.med_freq_day)
                                 : "-"
                             }
                           />
                         </div>
+                        <DisabledCustomInputGroup
+                          label="Illness History"
+                          horizontal={false}
+                          type="text"
+                          isTextArea
+                          value={user.patient.illness_history}
+                        />
                       </div>
                     )}
-
-                    {/* CAREGIVER Working Experiences */}
-                    <div className="flex w-full flex-col">
-                      <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Working Experiences
-                      </h1>
-                      <div className="flex w-full flex-col md:flex-row md:gap-5">
-                        <DisabledCustomInputGroup
-                          label="Employment Type"
-                          value={user.caregiver.employment_type}
-                          horizontal={false}
-                          type="text"
-                        />
-                        <DisabledCustomInputGroup
-                          label="Work Experiences"
-                          value={user.caregiver.work_experiences.toString()}
-                          horizontal={false}
-                          type="text"
-                          isUnit={true}
-                          unit="year"
-                        />
-                      </div>
-                      <DisabledCustomInputGroup
-                        label="Workplace"
-                        value={user.caregiver.workplace}
-                        horizontal={false}
-                        type="text"
-                      />
-                    </div>
-
-                    {/* CAREGIVER Licenses */}
-                    <div className="flex w-full flex-col">
-                      <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                        User Licenses
-                      </h1>
-                      <div className="grid grid-cols-2 gap-5">
-                        <ClientDownloadLicenses
-                          licenseTitle="Curriculum Vitae"
-                          fileLink={user.caregiver.cv ?? ""}
-                          licenseType="CV"
-                        />
-                        <ClientDownloadLicenses
-                          licenseTitle="Degree Certificate"
-                          fileLink={user.caregiver.degree_certificate ?? ""}
-                          licenseType="Degree Certificate"
-                        />
-                        <ClientDownloadLicenses
-                          licenseTitle="Surat Tanda Registrasi"
-                          fileLink={user.caregiver.str ?? ""}
-                          licenseType="STR"
-                        />
-                        <ClientDownloadLicenses
-                          licenseTitle="Surat Izin Praktik"
-                          fileLink={user.caregiver.sip ?? ""}
-                          licenseType="SIP"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* PATIENT */}
-                {user.role === "Patient" && (
-                  <div className="flex w-full flex-col">
-                    <h1 className="mb-3 text-heading-6 font-bold text-primary">
-                      User Past Medical History
-                    </h1>
-
-                    <DisabledCustomInputGroup
-                      label="Allergies"
-                      value={
-                        user.patient.allergies ? user.patient.allergies : "-"
-                      }
-                      horizontal={false}
-                      type="text"
-                    />
-                    <div className="flex w-full flex-col md:flex-row md:gap-5">
-                      <DisabledCustomInputGroup
-                        label="Current Medication"
-                        value={
-                          user.patient.current_medication
-                            ? user.patient.current_medication
-                            : "-"
-                        }
-                        horizontal={false}
-                        type="text"
-                      />
-                      <DisabledCustomInputGroup
-                        label="Medication Frequency"
-                        horizontal={false}
-                        type="text"
-                        isMultipleUnit
-                        unit="qty"
-                        value={
-                          user.patient.med_freq_times
-                            ? String(user.patient.med_freq_times)
-                            : "-"
-                        }
-                        secondUnit="/day"
-                        secondValue={
-                          user.patient.med_freq_day
-                            ? String(user.patient.med_freq_day)
-                            : "-"
-                        }
-                      />
-                    </div>
-                    <DisabledCustomInputGroup
-                      label="Illness History"
-                      horizontal={false}
-                      type="text"
-                      isTextArea
-                      value={user.patient.illness_history}
-                    />
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
+              </>
+            )}
           </>
         ) : (
           user.role === "Admin" && (
@@ -706,17 +702,19 @@ function ViewUser({ user, totalOrder }: ViewUserProps) {
       )}
 
       {/* Button Group */}
-      <div className="mt-5 flex w-full items-center justify-end">
-        <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
-          <AxolotlButton
-            label="Go back"
-            variant="secondary"
-            fontThickness="bold"
-            customClasses="text-lg"
-            onClick={() => router.replace("/admin/manage/user")}
-          />
+      {is_complete && (
+        <div className="mt-5 flex w-full items-center justify-end">
+          <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
+            <AxolotlButton
+              label="Go back"
+              variant="secondary"
+              fontThickness="bold"
+              customClasses="text-lg"
+              onClick={() => router.replace("/admin/manage/user")}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <AxolotlModal
         isOpen={editConfirmationModal}

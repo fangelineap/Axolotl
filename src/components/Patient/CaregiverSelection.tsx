@@ -8,6 +8,7 @@ import { createSupabaseClient } from "@/lib/client";
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import { Skeleton } from "@mui/material";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
+import useSWR from "swr";
 
 type Caregiver = USER & {
   profile_photo_url?: string;
@@ -33,7 +34,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
   });
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
+  useSWR("caregiver", () => {
     const getUser = async () => {
       const supabase = createSupabaseClient();
 
@@ -70,7 +71,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
     if (role) {
       getUser();
     }
-  }, [, role]);
+  });
 
   useEffect(() => {
     let filteredCG: Caregiver[] = [];
@@ -447,7 +448,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                             customWidth
                             onClick={() =>
                               router.push(
-                                `/patient/health-services/appointment?caregiver=${cg.user_id}`
+                                `/patient/health-services/appointment?caregiver=${cg.user_id}&role=${cg.role}`
                               )
                             }
                           />
@@ -529,7 +530,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                           customWidth
                           onClick={() =>
                             router.push(
-                              `/patient/health-services/appointment?caregiver=${cg.user_id}`
+                              `/patient/health-services/appointment?caregiver=${cg.user_id}&role=${cg.role}`
                             )
                           }
                         />

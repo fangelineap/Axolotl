@@ -3,6 +3,10 @@ import { AdminOrderServiceLogsTable } from "@/app/(pages)/admin/order/service/ta
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import { getServerPublicStorageURL } from "@/app/_server-action/global/storage/server";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
+import {
+  globalFormatDate,
+  globalFormatPrice
+} from "@/utils/Formatters/GlobalFormatters";
 import { AxolotlServices } from "@/utils/Services";
 import { IconStarFilled, IconX } from "@tabler/icons-react";
 import Image from "next/image";
@@ -136,61 +140,38 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
     orderStatusDisplay[orderStatus as "Canceled" | "Ongoing" | "Completed"];
 
   /**
-   * * Formatters
-   */
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  const priceFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR"
-  });
-
-  /**
-   * * Helper function to format dates and price
-   */
-  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
-    formatter.format(new Date(date));
-
-  const formatPrice = (price: number) => priceFormatter.format(price);
-
-  /**
    * * Formatted Dates and Price
    */
-  const formattedCaregiverReviewDate = formatDate(
+  const formattedCaregiverReviewDate = globalFormatDate(
     serviceLogData.caregiver.reviewed_at,
-    dateFormatter
+    "longDate"
   );
 
-  const formattedPatientBirthdate = formatDate(
+  const formattedPatientBirthdate = globalFormatDate(
     serviceLogData.patient.users.birthdate,
-    dateFormatter
+    "longDate"
   );
 
-  const formattedOrderDate = formatDate(
+  const formattedOrderDate = globalFormatDate(
     serviceLogData.created_at,
-    dateFormatter
+    "longDate"
   );
 
-  const formattedOrderCompletedAt = formatDate(
+  const formattedOrderCompletedAt = globalFormatDate(
     serviceLogData.completed_at,
-    dateFormatter
+    "longDate"
   );
 
-  const formattedAppointmentPaidAt = formatDate(
+  const formattedAppointmentPaidAt = globalFormatDate(
     serviceLogData.appointment.paid_at,
-    dateFormatter
+    "longDate"
   );
 
-  const formattedOrderStartDate = formatDate(orderStartDate, dateFormatter);
-  const formattedOrderEndDate = formatDate(orderEndDate, dateFormatter);
+  const formattedOrderStartDate = globalFormatDate(orderStartDate, "longDate");
+  const formattedOrderEndDate = globalFormatDate(orderEndDate, "longDate");
 
-  const formattedServiceFee = formatPrice(serviceFee);
-  const formattedServiceTotalPayment = formatPrice(
+  const formattedServiceFee = globalFormatPrice(serviceFee);
+  const formattedServiceTotalPayment = globalFormatPrice(
     serviceLogData.appointment.total_payment
   );
 
@@ -219,12 +200,14 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
     medicinePaidAt = medicineLogData.medicineOrder.paid_at || new Date();
   }
 
-  const formattedMedicineSubTotalPrice = formatPrice(medicineSubTotalPrice);
-  const formattedMedicineDeliveryFee = formatPrice(medicineDeliveryFee);
-  const formattedMedicineTotalPrice = formatPrice(medicineTotalPrice);
-  const formattedMedicinePaidAt = formatDate(
+  const formattedMedicineSubTotalPrice = globalFormatPrice(
+    medicineSubTotalPrice
+  );
+  const formattedMedicineDeliveryFee = globalFormatPrice(medicineDeliveryFee);
+  const formattedMedicineTotalPrice = globalFormatPrice(medicineTotalPrice);
+  const formattedMedicinePaidAt = globalFormatDate(
     new Date(medicinePaidAt),
-    dateFormatter
+    "longDate"
   );
 
   return (
@@ -452,10 +435,10 @@ async function ViewOrderDetails({ orderType, data }: ViewOrderDetailsProps) {
                               {med.medicine.name}
                             </td>
                             <td className="border-primary p-2 text-right">
-                              {formatPrice(med.medicine.price)}
+                              {globalFormatPrice(med.medicine.price)}
                             </td>
                             <td className="border-primary p-2 text-right">
-                              {formatPrice(med.total_price)}
+                              {globalFormatPrice(med.total_price)}
                             </td>
                           </tr>
                         )

@@ -10,6 +10,10 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
 import ChatInput from "./ChatInput";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
 
 interface ChatComponentProps {
   senderId: string;
@@ -145,20 +149,6 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
   /**
    * * Formatters
    */
-  const hourFormatter = new Intl.DateTimeFormat("en", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: false,
-    timeZone: "Asia/Jakarta"
-  });
-
-  const dateFormatter = new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    timeZone: "Asia/Jakarta"
-  });
-
   const formatTime = (date: Date | string) => {
     try {
       const dateObj = date instanceof Date ? date : new Date(date);
@@ -166,7 +156,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
         return "Invalid time";
       }
 
-      return hourFormatter.format(dateObj);
+      return globalFormatTime(dateObj, "veryShortTime");
     } catch {
       return "Invalid time";
     }
@@ -179,7 +169,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
         return "Invalid date";
       }
 
-      return dateFormatter.format(dateObj);
+      return globalFormatDate(dateObj, "veryShortDate");
     } catch {
       return "Invalid date";
     }

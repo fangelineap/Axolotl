@@ -1,61 +1,37 @@
 "use client";
 
-import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
-import { createSupabaseClient } from "@/lib/client";
-import { CAREGIVER, USER } from "@/types/AxolotlMainType";
+import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
-import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
+import { useEffect, useMemo, useState } from "react";
 import Select from "../Axolotl/Select";
 import { Skeleton } from "@mui/material";
 import { AxolotlServices } from "@/utils/Services";
 import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
+import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
+import { IconClock } from "@tabler/icons-react";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 
-type Caregiver = USER & {
-  profile_photo_url?: string;
-  caregiver: CAREGIVER[];
-};
-
-const Appointment = ({ caregiverId }: { caregiverId: string }) => {
+const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
   const [time, setTime] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [service, setService] = useState<string>("");
-  const [caregiver, setCaregiver] = useState<Caregiver>();
   const [appointments, setAppointments] = useState<any>([]);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
+  const caregiver = caregiverData;
   const router = useRouter();
 
-  useEffect(() => {
-    const getCaregiver = async () => {
-      const supabase = createSupabaseClient();
+  const caregiverProfilePhoto = getClientPublicStorageURL(
+    "profile_photo",
+    caregiver.caregiver[0].profile_photo
+  );
 
-      try {
-        const { data } = await supabase
-          .from("users")
-          .select("*, caregiver(*)")
-          .eq("user_id", caregiverId)
-          .limit(1);
-        if (data) {
-          const url = await getGlobalUserProfilePhoto(
-            data[0].caregiver[0]?.profile_photo
-          );
-          data[0].profile_photo_url = url!;
-
-          setCaregiver(data[0]);
-        }
-      } catch (error) {
-        console.log("error", error);
-        throw new Error("Error fetching data");
-      }
-    };
-
-    if (caregiverId) {
-      getCaregiver();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  /**
+   * * Handle Image Load
+   */
+  const handleImageLoad = () => setImageLoaded(true);
 
   useEffect(() => {
     const getAppointments = async () => {
@@ -116,7 +92,7 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
 
   const toOrderForm = (formData: FormData) => {
     router.push(
-      `/patient/health-services/appointment/order-form?caregiver=${caregiverId}&service=${service}&time=${time}&date=${formData.get("appointmentDate")}`
+      `/patient/health-services/appointment/order-form?caregiver=${caregiver.user_id}&service=${service}&time=${time}&date=${formData.get("appointmentDate")}`
     );
   };
 
@@ -127,28 +103,38 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
           <div className="mt-6 flex h-[100%] w-[85%] flex-col justify-between gap-7 lg:flex-row">
             <div className="p-3 lg:w-[65%]">
               <div className="flex items-start gap-10">
-                <div className="min-w-[100px]">
+                <div className="min-w-[150px]">
+                  {!imageLoaded && (
+                    <Skeleton
+                      animation="wave"
+                      variant="circular"
+                      width={150}
+                      height={150}
+                      className="rounded-full object-cover"
+                    />
+                  )}
                   <Image
                     src={
-                      caregiver?.profile_photo_url ||
+                      caregiverProfilePhoto ||
                       "/images/user/Default Caregiver Photo.png"
                     }
-                    height={100}
-                    width={100}
-                    className="h-[100px] w-[100px] rounded-full bg-kalbe-veryLight object-cover"
+                    height={150}
+                    width={150}
+                    className="rounded-full bg-kalbe-veryLight object-cover"
                     alt="CG pfp"
+                    onLoad={handleImageLoad}
                   />
                 </div>
                 <div className="w-[50%]">
-                  <h1 className="text-lg font-bold">
+                  <h1 className="text-heading-5 font-bold">
                     {`${caregiver?.first_name} ${caregiver?.last_name}`}
                   </h1>
-                  <h1 className="mb-2 text-dark-secondary">
+                  <h1 className="mb-2 text-xl text-dark-secondary">
                     {`${caregiver?.role} at ${caregiver?.caregiver[0].workplace}`}
                   </h1>
-                  <div className="flex justify-between rounded-md border border-primary bg-kalbe-proLight p-2">
+                  <div className="flex justify-between rounded-md border border-primary bg-kalbe-ultraLight p-2">
                     <div>
-                      <h1 className="mb-2 font-semibold text-primary">
+                      <h1 className="mb-2 text-xl font-medium text-primary">
                         Work Schedule
                       </h1>
                       <div className="mb-1 flex gap-2">
@@ -164,12 +150,7 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                         </h1>
                       </div>
                       <div className="flex gap-2">
-                        <Image
-                          src="/images/icon/icon-clock-outline.svg"
-                          height={24}
-                          width={24}
-                          alt=""
-                        />
+                        <IconClock size={24} stroke={1.5} />
                         <h1>
                           {caregiver?.caregiver[0].schedule_start_time
                             ?.split(":")
@@ -197,70 +178,14 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                 <div className="my-7 h-[0.5px] w-[100%] bg-primary"></div>
               </div>
               <div className="flex flex-col gap-3">
-                <h1 className="text-lg font-extrabold">About</h1>
-                <div className="flex items-start gap-3">
-                  <Image
-                    src="/images/icon/education-outline.svg"
-                    height={35}
-                    width={35}
-                    alt="Alumni Logo"
-                  />
-                  <div className="flex flex-col">
-                    <h1 className="font-semibold">Alumni</h1>
-                    <h1 className="text-dark-secondary">
-                      Universitas Indonesia, 2010
-                    </h1>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Image
-                    src="/images/icon/icon-building.svg"
-                    height={35}
-                    width={35}
-                    alt="Alumni Logo"
-                  />
-                  <div className="flex flex-col">
-                    <h1 className="font-semibold">Work Location</h1>
-                    <h1 className="text-dark-secondary">
-                      Universitas Indonesia, 2010
-                    </h1>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Image
-                    src="/images/icon/icon-id-card-outline.svg"
-                    height={35}
-                    width={35}
-                    alt="Alumni Logo"
-                  />
-                  <div className="flex flex-col">
-                    <h1 className="font-semibold">STR Number</h1>
-                    <h1 className="text-dark-secondary">
-                      Universitas Indonesia, 2010
-                    </h1>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Image
-                    src="/images/icon/icon-sertificate-line.svg"
-                    height={35}
-                    width={35}
-                    alt="Alumni Logo"
-                  />
-                  <div className="flex flex-col">
-                    <h1 className="font-semibold">Certifications</h1>
-                    <h1 className="text-dark-secondary">
-                      Universitas Indonesia, 2010
-                    </h1>
-                  </div>
-                </div>
+                <h1 className="text-heading-6 font-medium">About</h1>
               </div>
             </div>
             <div className="p-3 lg:w-[30%]">
               {availableHours && availableHours.length === 0 && (
-                <div className="mb-5.5 rounded-md border-[1px] border-red-500 bg-red-200 py-2">
+                <div className="mb-5.5 rounded-md border-[1px] border-red bg-red-light py-2">
                   <div className="p-3">
-                    <h1 className="text-center text-lg font-bold text-red-500">
+                    <h1 className="text-center text-lg font-medium text-red">
                       Oops, this caregiver is not available on the date you
                       picked, please pick another date
                     </h1>
@@ -268,12 +193,10 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                 </div>
               )}
 
-              <div className="rounded-md border-[1px] border-stroke bg-white py-2">
-                <div className="p-3">
-                  <h1 className="text-center text-lg font-bold text-primary">
-                    Create Appointment
-                  </h1>
-                </div>
+              <div className="rounded-xl border border-stroke bg-white py-5">
+                <h1 className="text-center text-lg font-bold text-primary">
+                  Create Appointment
+                </h1>
                 <div className="px-5 py-2">
                   <DatePickerOne
                     customClasses="w-full mb-3"
@@ -316,7 +239,7 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                   />
                   {service !== "" && (
                     <div className="mb-3 rounded-md border border-stroke p-3">
-                      <h3 className="text-center font-semibold">
+                      <h3 className="text-center font-medium">
                         Service Description
                       </h3>
                       {service === "Neonatal Care" && (
