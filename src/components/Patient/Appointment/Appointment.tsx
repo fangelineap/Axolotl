@@ -134,26 +134,25 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
           <div className="mt-6 flex h-[100%] w-[85%] flex-col justify-between gap-7 lg:flex-row">
             <div className="p-3 lg:w-[65%]">
               <div className="flex items-start gap-10">
-                <div className="min-w-[150px]">
-                  {!imageLoaded && (
-                    <Skeleton
-                      animation="wave"
-                      variant="circular"
-                      width={150}
-                      height={150}
-                      className="rounded-full object-cover"
-                    />
-                  )}
+                {!imageLoaded && (
+                  <Skeleton
+                    animation="wave"
+                    variant="circular"
+                    width={160}
+                    height={160}
+                    className="rounded-full object-cover"
+                  />
+                )}
+                <div
+                  className={`h-40 w-40 overflow-hidden rounded-full border ${imageLoaded ? "" : "hidden"}`}
+                >
                   <Image
-                    src={
-                      caregiverProfilePhoto ||
-                      "/images/user/Default Caregiver Photo.png"
-                    }
-                    height={150}
-                    width={150}
-                    className={`rounded-full bg-kalbe-veryLight object-cover ${imageLoaded ? "" : "hidden"}`}
-                    alt="CG pfp"
+                    src={caregiverProfilePhoto}
+                    alt="User Profile Photo"
+                    width={200}
+                    height={200}
                     priority
+                    className={`h-full w-full object-cover ${imageLoaded ? "" : "hidden"}`}
                     onLoad={handleImageLoad}
                   />
                 </div>

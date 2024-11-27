@@ -3,6 +3,9 @@ import React from "react";
 import PatientHome from "@/components/Patient/PatientHome";
 import { getUserFromSession } from "@/lib/server";
 import { redirect } from "next/navigation";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
+
+export const metadata = getPatientMetadata("default");
 
 async function Home() {
   const { data: currentUser, error } = await getUserFromSession();

@@ -1,5 +1,8 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import OrderForm from "@/components/Patient/OrderForm/OrderForm";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
+
+export const metadata = getPatientMetadata("order form");
 
 const PlacingOrder = ({ searchParams }: any) => {
   return (

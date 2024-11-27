@@ -1,32 +1,10 @@
-"use client";
-import { getOrderDetail } from "@/app/_server-action/patient";
-import OrderDetail from "@/components/Patient/OrderDetail";
-import { Skeleton } from "@mui/material";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import OrderDetailContainer from "@/components/Patient/OrderDetailContainer";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
 
-const MedicinePreparation = () => {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+export const metadata = getPatientMetadata("order detail");
 
-  const params = useParams();
-  const id = params.id as string;
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await getOrderDetail(id);
-
-      if (data) {
-        setData(data);
-        setLoading(false);
-      }
-    };
-
-    getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+const page = () => {
   return (
     <CustomLayout>
       {/* Stepper */}
@@ -52,36 +30,10 @@ const MedicinePreparation = () => {
           </div>
         </div>
       </div>
-      <div className="">
-        <h1 className="mb-4 text-2xl font-bold">Order Details</h1>
-        {/* Use the NewComponent and pass sample data as props */}
-        {loading ? (
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            animation="wave"
-            height={300}
-            className="rounded-lg"
-          />
-        ) : (
-          data != null && (
-            <OrderDetail
-              orderStatus={data.orderStatus}
-              orderNotes={data.orderNotes}
-              medicineOrderId={data.medicineOrderId}
-              medicineIsPaid={data.medicineIsPaid}
-              caregiverInfo={data.caregiverInfo}
-              patientInfo={data.patientInfo}
-              medicalDetails={data.medicalDetails}
-              medicineDetail={data.medicineDetail}
-              serviceDetails={data.serviceDetails}
-              price={data.price}
-            />
-          )
-        )}
-      </div>
+
+      <OrderDetailContainer />
     </CustomLayout>
   );
 };
 
-export default MedicinePreparation;
+export default page;

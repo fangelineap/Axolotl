@@ -109,7 +109,7 @@ const AdditionalMedicine = ({
   };
 
   return (
-    <div className="">
+    <>
       <h1 className="mb-5 text-2xl font-semibold">Additional Medicine</h1>
       <h2 className="mb-2 text-lg font-semibold">
         Your Caregiver Recommendations
@@ -398,7 +398,7 @@ const AdditionalMedicine = ({
         question="Are you sure you want to skip this step?"
         action="skip"
       />
-    </div>
+    </>
   );
 };
 

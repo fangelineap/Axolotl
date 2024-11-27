@@ -1,6 +1,9 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import CaregiverSelection from "@/components/Patient/CaregiverSelection";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
 import Image from "next/image";
+
+export const metadata = getPatientMetadata("caregiver selection");
 
 const Page = ({ searchParams }: any) => {
   return (
