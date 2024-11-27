@@ -75,8 +75,17 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
         caregiver?.caregiver[0].schedule_start_time.split(":")[1];
 
       const hours: any = [];
-      for (let i = startHour; i < endHour; i++) {
-        hours.push(`${i}:${startMinutes}`);
+      if (startHour > endHour) {
+        for (let i = startHour; i <= 12; i++) {
+          hours.push(`${i}:${startMinutes}`);
+        }
+        for (let i = 1; i < endHour; i++) {
+          hours.push(`${i}:${startMinutes}`);
+        }
+      } else {
+        for (let i = startHour; i < endHour; i++) {
+          hours.push(`${i}:${startMinutes}`);
+        }
       }
 
       if (appointments.length > 0 && date !== "") {
