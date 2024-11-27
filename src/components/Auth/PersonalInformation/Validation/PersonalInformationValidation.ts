@@ -298,7 +298,7 @@ export const PersonalInformationValidation = (
       const med_freq_times = form.get("med_freq_times");
       const med_freq_day = form.get("med_freq_day");
 
-      if (isNaN(Number(med_freq_times))) {
+      if (isNaN(Number(med_freq_times)) || Number(med_freq_times) < 1) {
         toast.warning(
           "Please enter a valid number of medication frequency times.",
           {
@@ -309,7 +309,7 @@ export const PersonalInformationValidation = (
         return false;
       }
 
-      if (isNaN(Number(med_freq_day))) {
+      if (isNaN(Number(med_freq_day)) || Number(med_freq_times) < 1) {
         toast.warning(
           "Please enter a valid number of medication frequency days.",
           {
