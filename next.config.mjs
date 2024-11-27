@@ -55,6 +55,11 @@ const nextConfig = {
           {
             key: "Referrer-Policy",
             value: "no-referrer-when-downgrade"
+          },
+          {
+            key: "Permissions-Policy",
+            value:
+              "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
           }
         ]
       }
