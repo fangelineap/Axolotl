@@ -36,7 +36,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Home",
-        route: "/patient",
+        route: "/patient"
       },
       {
         icon: (
@@ -52,7 +52,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Order History",
-        route: "/patient/order-history",
+        route: "/patient/order-history"
       },
       {
         icon: (
@@ -75,17 +75,17 @@ const menuGroups = [
         label: "Health Service",
         route: "",
         children: [
-          { label: "Nurses", route: "/guest/nurses" },
-          { label: "Midwives", route: "/guest/midwives" },
-        ],
-      },
-    ],
-  },
+          { label: "Nurses", route: "/patient/health-services?role=Nurse" },
+          { label: "Midwives", route: "/patient/health-services?role=Midwives" }
+        ]
+      }
+    ]
+  }
 ];
 
 const PatientSidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
-  setSidebarOpen,
+  setSidebarOpen
 }) => {
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
   const dropdownRef = useRef<HTMLDivElement>(null);
