@@ -2,6 +2,7 @@
 
 import { IconAlertCircleFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 
 interface ConjectureProps {
   diagnosis: string;
@@ -26,7 +27,9 @@ const Conjecture = ({ diagnosis, symptoms }: ConjectureProps) => {
                 className={`grid grid-flow-col ${symptoms.length > 9 ? "grid-rows-9" : "grid-rows-5"} gap-1`}
               >
                 {symptoms.map((symptom: string) => (
-                  <li key={symptom}>{symptom}</li>
+                  <li key={symptom}>
+                    {symptom[0].toUpperCase() + symptom.slice(1)}
+                  </li>
                 ))}
               </div>
             </ul>
@@ -66,12 +69,15 @@ const Conjecture = ({ diagnosis, symptoms }: ConjectureProps) => {
           </ul>
         </div>
         <div className="mt-5 flex justify-end">
-          <button
+          <AxolotlButton
+            label="Continue"
+            variant="primary"
+            isSubmit
+            fontThickness="bold"
+            customWidth
+            customClasses="px-10"
             onClick={() => router.push("/patient/order-history")}
-            className="h-11 w-1/3 rounded-[7px] bg-primary p-[8px] text-lg font-semibold text-white hover:bg-opacity-90"
-          >
-            Continue
-          </button>
+          />
         </div>
       </div>
     </div>

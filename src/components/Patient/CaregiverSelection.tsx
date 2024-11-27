@@ -7,6 +7,7 @@ import { CAREGIVER, USER } from "@/types/AxolotlMainType";
 import { createSupabaseClient } from "@/lib/client";
 import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
 import { Skeleton } from "@mui/material";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import useSWR from "swr";
 
 type Caregiver = USER & {
@@ -440,16 +441,17 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                         </div>
                         <div className="h-25 w-[0.5px] bg-primary"></div>
                         <div className="flex w-[30%] justify-end">
-                          <button
+                          <AxolotlButton
+                            label="Book Now"
+                            variant="primary"
+                            fontThickness="bold"
+                            customWidth
                             onClick={() =>
                               router.push(
                                 `/patient/health-services/appointment?caregiver=${cg.user_id}&role=${cg.role}`
                               )
                             }
-                            className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80"
-                          >
-                            Book Now
-                          </button>
+                          />
                         </div>
                       </div>
                     </div>
@@ -521,16 +523,17 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                       </div>
                       <div className="h-25 w-[0.5px] bg-primary"></div>
                       <div className="flex w-[30%] justify-end">
-                        <button
+                        <AxolotlButton
+                          label="Book Now"
+                          variant="primary"
+                          fontThickness="bold"
+                          customWidth
                           onClick={() =>
                             router.push(
                               `/patient/health-services/appointment?caregiver=${cg.user_id}&role=${cg.role}`
                             )
                           }
-                          className="rounded-sm bg-primary px-3 py-1 font-semibold text-white hover:bg-opacity-80"
-                        >
-                          Book Now
-                        </button>
+                        />
                       </div>
                     </div>
                   </div>

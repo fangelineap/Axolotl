@@ -121,7 +121,10 @@ const AdditionalMedicine = ({
             <div className="mb-5.5 flex items-center justify-between rounded-md border border-stroke px-5 py-3">
               <div className="flex items-center">
                 <Checkbox
-                  sx={{ color: "kalbe-light", ml: 0 }}
+                  sx={{
+                    color: "#DADADA",
+                    ml: 0
+                  }}
                   checked={
                     selection.length > 0
                       ? selection.length === medicine.medicineOrderDetail.length
@@ -342,22 +345,19 @@ const AdditionalMedicine = ({
                 </div>
                 <div className="mb-5 mt-5 flex w-full justify-center">
                   {isCopied ? (
-                    <button
-                      className={`w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90`}
+                    <AxolotlButton
+                      label="Continue"
                       onClick={handleAdditionalMedicine}
-                    >
-                      Continue
-                    </button>
+                      fontThickness="bold"
+                      variant="primary"
+                      isSubmit
+                    />
                   ) : (
-                    <button
-                      disabled
-                      className={`w-full rounded-sm bg-gray-cancel p-[8px] font-medium text-white hover:bg-opacity-90`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                      }}
-                    >
-                      Continue
-                    </button>
+                    <AxolotlButton
+                      label="Continue"
+                      onClick={(e) => e.preventDefault()}
+                      variant="secondary"
+                    />
                   )}
                 </div>
               </div>

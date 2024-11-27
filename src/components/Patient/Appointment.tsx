@@ -1,25 +1,25 @@
 "use client";
 
 import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
-import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
 import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
-import {
-  globalFormatDate,
-  globalFormatTime
-} from "@/utils/Formatters/GlobalFormatters";
-import { AxolotlServices } from "@/utils/Services";
-import { Skeleton } from "@mui/material";
-import {
-  IconClock,
-  IconRosetteDiscountCheckFilled,
-  IconStarFilled
-} from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import Select from "../Axolotl/Select";
+import { Skeleton } from "@mui/material";
+import { AxolotlServices } from "@/utils/Services";
+import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
 import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
+import {
+  IconClock,
+  IconRosetteDiscountCheckFilled,
+  IconStarFilled
+} from "@tabler/icons-react";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
 
 const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
   const [time, setTime] = useState<string>("");
@@ -328,9 +328,12 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                 </div>
                 <div className="flex w-full justify-center px-5">
                   <AxolotlButton
-                    variant="primary"
                     label="Make Appointment"
+                    type="submit"
                     isSubmit
+                    customClasses="mb-4"
+                    fontThickness="bold"
+                    variant="primary"
                   />
                 </div>
               </div>
