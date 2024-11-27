@@ -12,6 +12,7 @@ export const PersonalInformationValidation = (
   }
 ) => {
   const address = (form.get("address")?.toString() || "").trim().toLowerCase();
+  const workExperienceYears = Number(form.get("work_experiences"));
 
   switch (userType) {
     case "Caregiver":
@@ -67,7 +68,7 @@ export const PersonalInformationValidation = (
 
       if (!address.includes("malang") && !address.includes("gianyar")) {
         toast.warning(
-          "Sorry, we only accept Patients from Malang (East Java) or Gianyar (Bali).",
+          "Sorry, we only accept Caregiver from Malang (East Java) or Gianyar (Bali).",
           {
             position: "bottom-right"
           }
@@ -102,6 +103,14 @@ export const PersonalInformationValidation = (
 
       if (!form.get("work_experiences")) {
         toast.warning("Please enter your work experiences.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (workExperienceYears < 1) {
+        toast.warning("Minimal 1 year experiences is required.", {
           position: "bottom-right"
         });
 

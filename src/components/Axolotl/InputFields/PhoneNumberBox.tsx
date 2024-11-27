@@ -23,7 +23,9 @@ const PhoneNumberBox = ({
     let { value } = e.target;
 
     // Remove leading zeros
-    if (value.startsWith("0") && value.length === 1) {
+    if (value.startsWith("0") && value.length > 1) {
+      value = value.slice(1);
+
       return; // Do not allow "0" as the first character
     }
 

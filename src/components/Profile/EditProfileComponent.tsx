@@ -127,6 +127,19 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
    */
   const saveProfile = async (form: FormData) => {
     // ! VALIDATION
+
+    const address = form.get("address")?.toString().toLowerCase();
+    if (!address?.includes("malang") && !address?.includes("gianyar")) {
+      toast.error(
+        "Address must include either 'Malang' (East Java) or 'Gianyar' (Bali).",
+        {
+          position: "bottom-right"
+        }
+      );
+
+      return; // Stop execution if validation fails
+    }
+
     if (!UpdateProfileValidation(form, "Basic")) return;
 
     if (user.role === "Patient" && !UpdateProfileValidation(form, "Patient"))
@@ -384,7 +397,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                       onChange={handleInputChange}
                     />
                     <PhoneNumberBox
-                      placeholder="081XXXXXXXX"
+                      placeholder="81XXXXXXXX"
                       name="phone_number"
                       required
                       value={
@@ -418,7 +431,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                       label="Address"
                       type="text"
                       name="address"
-                      placeholder="Enter Admin Address"
+                      placeholder="Enter Address"
                       value={formData.address}
                       required
                       onChange={handleInputChange}
