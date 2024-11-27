@@ -7,6 +7,7 @@ import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
 import { USER_AUTH_SCHEMA } from "@/types/AxolotlMultipleTypes";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import Image from "next/image";
 
 interface ViewApprovalProps {
@@ -36,44 +37,16 @@ async function ViewApproval({ caregiver }: ViewApprovalProps) {
   );
 
   /**
-   * * Date Formatters
-   */
-  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  /**
-   * * Helper function to format dates
-   * @param date
-   * @param formatter
-   * @returns
-   */
-  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
-    formatter.format(new Date(date));
-
-  /**
    * * Formatted Dates
    */
-  const formattedReviewDate = formatDate(
+  const formattedReviewDate = globalFormatDate(
     caregiver.reviewed_at,
-    dateTimeFormatter
+    "dateTime"
   );
 
-  const formattedBirthDate = formatDate(
+  const formattedBirthDate = globalFormatDate(
     caregiver.users.birthdate,
-    dateFormatter
+    "longDate"
   );
 
   return (

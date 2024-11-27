@@ -16,6 +16,7 @@ import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import MedicineModal from "@/components/Axolotl/Modal/AxolotlAddMedicine";
 import { MEDICINE } from "@/types/AxolotlMainType";
+import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
 import {
   IconCircleMinus,
   IconCirclePlus,
@@ -135,16 +136,9 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     expired: null
   });
 
-  const currencyFormatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0
-  });
-
-  const formattedTotalPrice = currencyFormatter.format(totalPrice);
-  const formattedTotalCharge = currencyFormatter.format(totalCharge);
-  const formattedDeliveryFee = currencyFormatter.format(deliveryFee);
+  const formattedTotalPrice = globalFormatPrice(totalPrice);
+  const formattedTotalCharge = globalFormatPrice(totalCharge);
+  const formattedDeliveryFee = globalFormatPrice(deliveryFee);
 
   const router = useRouter();
 
@@ -706,7 +700,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                     </td>
                     <td className="border-primary px-5 py-2">{med.name}</td>
                     <td className="border-primary px-5 py-2 text-right">
-                      {currencyFormatter.format(med.price)}
+                      {globalFormatPrice(med.price)}
                     </td>
                     {selectedMedications.length > 0 && (
                       <td className="border-primary px-5 py-2 text-right">

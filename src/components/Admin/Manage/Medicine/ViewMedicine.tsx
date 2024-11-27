@@ -5,11 +5,11 @@ import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/c
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
 import { IconBan } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { useState } from "react";
 
 interface ViewMedicineProps {
@@ -31,12 +31,7 @@ function ViewMedicine(data: ViewMedicineProps) {
   /**
    * * Date Formatter
    */
-  const formatDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(data.medicine.exp_date));
+  const formatDate = globalFormatDate(data.medicine.exp_date, "longDate");
 
   /**
    * * Handle Image Load

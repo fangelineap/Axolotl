@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import { AdminMedicineValidation } from "./Validation/AdminMedicineValidation";
 
 function AddMedicine() {
@@ -39,12 +40,7 @@ function AddMedicine() {
   /**
    * * Date Formatter
    */
-  const formatDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(formData.exp_date));
+  const formatDate = globalFormatDate(formData.exp_date, "longDate");
 
   /**
    * * Handle Input Change

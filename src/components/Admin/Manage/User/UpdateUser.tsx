@@ -23,6 +23,10 @@ import CustomInputGroup from "@/components/Axolotl/InputFields/CustomInputGroup"
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import PhoneNumberBox from "@/components/Axolotl/InputFields/PhoneNumberBox";
 import SelectDropdown from "@/components/Axolotl/SelectDropdown";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,6 +38,7 @@ import { AdminUpdateUserValidation } from "./Validation/AdminUpdateUserValidatio
 interface UpdateUserProps {
   user: AdminUserTable;
   totalOrder: number;
+  is_complete: boolean;
 }
 
 interface Licenses {
@@ -43,7 +48,7 @@ interface Licenses {
   sip: File | null;
 }
 
-function UpdateUser({ user, totalOrder }: UpdateUserProps) {
+function UpdateUser({ user, totalOrder, is_complete }: UpdateUserProps) {
   /**
    * * States & Initial Variables
    */
@@ -80,47 +85,13 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
   };
 
   /**
-   * * Date & Time Formatters
-   */
-  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  /**
-   * * Helper function to format dates
-   * @param date
-   * @param formatter
-   * @returns
-   */
-  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
-    formatter.format(new Date(date));
-
-  const timeFormatter = (time: string) => {
-    const [hours, minutes] = time.split(":");
-
-    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
-  };
-
-  /**
    * * Formatted Dates
    */
   const formattedReviewDate = user.caregiver?.reviewed_at
-    ? formatDate(user.caregiver?.reviewed_at, dateTimeFormatter)
+    ? globalFormatDate(user.caregiver?.reviewed_at, "dateTime")
     : "-";
 
-  const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
+  const formattedBirthDate = globalFormatDate(user.birthdate, "longDate");
 
   /**
    * * Working Schedule Variables
@@ -134,11 +105,11 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
     : "-";
 
   const startTimeSchedule = user.caregiver?.schedule_start_time
-    ? timeFormatter(user.caregiver?.schedule_start_time)
+    ? globalFormatTime(user.caregiver?.schedule_start_time, "stringTime")
     : "-";
 
   const endTimeSchedule = user.caregiver?.schedule_end_time
-    ? timeFormatter(user.caregiver?.schedule_end_time)
+    ? globalFormatTime(user.caregiver?.schedule_end_time, "stringTime")
     : "-";
 
   /**
@@ -416,7 +387,28 @@ function UpdateUser({ user, totalOrder }: UpdateUserProps) {
             </div>
 
             {/* Bottom Section */}
-            {isRestrictedUser ? (
+            {!is_complete ? (
+              // ! INCOMPLETE
+              <div className="flex w-full flex-col items-center justify-center gap-5">
+                <div className="flex w-full flex-col items-center justify-center gap-5 rounded-lg border border-red bg-red-light p-4 text-red">
+                  <h1 className="text-heading-3 font-medium">
+                    This user has incomplete personal information.
+                  </h1>
+                  <p className="text-center text-xl">
+                    Please wait for the user to complete their personal
+                    information to see their full profile.
+                  </p>
+                </div>
+                <AxolotlButton
+                  label="Go Back"
+                  variant="secondary"
+                  fontThickness="bold"
+                  customClasses="text-lg w-full md:w-fit"
+                  customWidth
+                  onClick={() => router.replace(`/admin/manage/user`)}
+                />
+              </div>
+            ) : isRestrictedUser ? (
               // ! RESTRICTED
               <div className="flex w-full flex-col items-center justify-center gap-5">
                 <div className="flex w-full flex-col items-center justify-center gap-5 rounded-lg border border-red bg-red-light p-4 text-red">

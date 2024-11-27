@@ -262,8 +262,16 @@ export const PersonalInformationValidation = (
 
       const weight = Number(form.get("weight"));
 
-      if (isNaN(weight) || weight < 0 || weight > 200) {
-        toast.warning("Please enter a valid weight.", {
+      if (isNaN(weight) || weight < 10) {
+        toast.warning("What are you? A skeleton? Enter a valid weight.", {
+          position: "bottom-right"
+        });
+
+        return false;
+      }
+
+      if (isNaN(weight) || weight > 200) {
+        toast.warning("What are you? A Hulk? Enter a valid weight.", {
           position: "bottom-right"
         });
 
@@ -274,6 +282,56 @@ export const PersonalInformationValidation = (
         toast.warning("Please select your smoking status.", {
           position: "bottom-right"
         });
+
+        return false;
+      }
+
+      const med_freq_times = form.get("med_freq_times");
+      const med_freq_day = form.get("med_freq_day");
+
+      if (isNaN(Number(med_freq_times))) {
+        toast.warning(
+          "Please enter a valid number of medication frequency times.",
+          {
+            position: "bottom-right"
+          }
+        );
+
+        return false;
+      }
+
+      if (isNaN(Number(med_freq_day))) {
+        toast.warning(
+          "Please enter a valid number of medication frequency days.",
+          {
+            position: "bottom-right"
+          }
+        );
+
+        return false;
+      }
+
+      const MAX_TIMES_PER_DAY = 24;
+      const MAX_DAYS = 30;
+
+      if (Number(med_freq_times) > MAX_TIMES_PER_DAY) {
+        toast.warning(
+          `Medication frequency times per day cannot exceed ${MAX_TIMES_PER_DAY}.`,
+          {
+            position: "bottom-right"
+          }
+        );
+
+        return false;
+      }
+
+      if (Number(med_freq_day) > MAX_DAYS) {
+        toast.warning(
+          `Medication frequency days cannot exceed ${MAX_DAYS} days.`,
+          {
+            position: "bottom-right"
+          }
+        );
 
         return false;
       }
