@@ -2,7 +2,7 @@ import React from "react";
 
 interface SelectProps {
   label: string;
-  name: string
+  name: string;
   placeholder: string;
   required: boolean;
   customClass: string;
@@ -22,7 +22,7 @@ const Select = ({
   selectedOption,
   setSelectedOption,
   isOptionSelected,
-  changeTextColor,
+  changeTextColor
 }: SelectProps) => {
   return (
     <div className={customClass}>
@@ -30,21 +30,21 @@ const Select = ({
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
       <select
-      name={name}
+        name={name}
         value={selectedOption}
         onChange={(e) => {
           setSelectedOption(e.target.value);
           changeTextColor();
         }}
         className={`relative z-20 w-full appearance-none rounded-[7px] border border-stroke bg-transparent px-5.5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary ${
-          isOptionSelected ? "text-dark dark:text-white" : ""
+          isOptionSelected ? "text-dark dark:text-white" : "text-dark-secondary"
         }`}
       >
         <option value="" disabled className="text-dark-6">
           {placeholder}
         </option>
         {options.map((opt) => (
-          <option key={opt} value={opt} className="text-dark-6">
+          <option key={opt} value={opt} className="text-black">
             {opt}
           </option>
         ))}

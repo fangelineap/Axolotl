@@ -281,7 +281,7 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                     name="appointmentTime"
                     placeholder="HH:MM"
                     required
-                    customClass={"w-full mb-3"}
+                    customClass={`w-full mb-3 placeholder-gray`}
                     options={availableHours || []}
                     selectedOption={time}
                     setSelectedOption={setTime}
