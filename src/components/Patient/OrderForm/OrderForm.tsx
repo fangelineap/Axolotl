@@ -10,16 +10,16 @@ import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import { AxolotlServices } from "@/utils/Services";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import DisabledCustomInputGroup from "../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
-import Select from "../Axolotl/Select";
-import SelectHorizontal from "../Axolotl/SelectHorizontal";
+import DisabledCustomInputGroup from "../../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import Select from "../../Axolotl/Select";
+import SelectHorizontal from "../../Axolotl/SelectHorizontal";
 import {
   IconCircleMinus,
   IconCirclePlus,
   IconCirclePlusFilled,
   IconCircleXFilled
 } from "@tabler/icons-react";
-import Accordion from "../Axolotl/Accordion";
+import Accordion from "../../Axolotl/Accordion";
 import Image from "next/image";
 import { Skeleton } from "@mui/material";
 

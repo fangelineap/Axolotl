@@ -1,5 +1,5 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import OrderForm from "@/components/Patient/OrderForm";
+import OrderForm from "@/components/Patient/OrderForm/OrderForm";
 
 const PlacingOrder = ({ searchParams }: any) => {
   return (
