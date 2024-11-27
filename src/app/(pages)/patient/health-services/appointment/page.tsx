@@ -1,6 +1,6 @@
 import { getGlobalCaregiverDataByCaregiverOrUserId } from "@/app/_server-action/global";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import Appointment from "@/components/Patient/Appointment";
+import Appointment from "@/components/Patient/Appointment/Appointment";
 import { redirect } from "next/navigation";
 
 interface OrderCaregiverProps {

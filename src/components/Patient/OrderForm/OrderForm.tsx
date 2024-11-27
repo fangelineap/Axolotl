@@ -5,25 +5,25 @@ import {
   getGlobalUserProfilePhoto
 } from "@/app/_server-action/global";
 import { createAppointment } from "@/app/_server-action/patient";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
+import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { getUserFromSession } from "@/lib/server";
 import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import { AxolotlServices } from "@/utils/Services";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import DisabledCustomInputGroup from "../../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
-import Select from "../../Axolotl/Select";
-import SelectHorizontal from "../../Axolotl/SelectHorizontal";
+import { Symptoms } from "@/utils/Symptoms";
+import { Chip, Skeleton, Stack } from "@mui/material";
 import {
   IconCircleMinus,
   IconCirclePlus,
   IconCirclePlusFilled
 } from "@tabler/icons-react";
-import Accordion from "../../Axolotl/Accordion";
 import Image from "next/image";
-import { Chip, Skeleton, Stack } from "@mui/material";
-import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
-import { Symptoms } from "@/utils/Symptoms";
-import AxolotlModal from "../Axolotl/Modal/AxolotlModal";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Accordion from "../../Axolotl/Accordion";
+import DisabledCustomInputGroup from "../../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
+import Select from "../../Axolotl/Select";
+import SelectHorizontal from "../../Axolotl/SelectHorizontal";
 
 interface OrderFormProps {
   time: string;

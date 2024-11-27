@@ -5,12 +5,12 @@ import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
-import Select from "../Axolotl/Select";
+import AxolotlButton from "../../Axolotl/Buttons/AxolotlButton";
+import Select from "../../Axolotl/Select";
 import { Skeleton } from "@mui/material";
 import { AxolotlServices } from "@/utils/Services";
 import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
-import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
+import DatePickerOne from "../../FormElements/DatePicker/DatePickerOne";
 import {
   IconClock,
   IconRosetteDiscountCheckFilled,
