@@ -216,5 +216,5 @@ export async function removeExistingLicenses(existingLicenses: Object) {
 export function getClientPublicStorageURL(storage: string, path: string) {
   const loweredStorage = storage.toLowerCase();
 
-  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${loweredStorage}/${encodeURIComponent(path)}`;
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/${loweredStorage}/${encodeURIComponent(path)}`;
 }
