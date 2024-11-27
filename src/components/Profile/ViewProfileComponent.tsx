@@ -7,6 +7,10 @@ import ClientDownloadLicenses from "@/components/Axolotl/Buttons/ClientDownloadL
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import DisabledPhoneNumberBox from "@/components/Axolotl/DisabledInputFields/DisabledPhoneNumberBox";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -31,47 +35,13 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
   );
 
   /**
-   * * Date Formatters
-   */
-  const dateTimeFormatter = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  const dateFormatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  });
-
-  /**
-   * * Helper function to format dates and times
-   * @param date
-   * @param formatter
-   * @returns
-   */
-  const formatDate = (date: Date, formatter: Intl.DateTimeFormat) =>
-    formatter.format(new Date(date));
-
-  const timeFormatter = (time: string) => {
-    const [hours, minutes] = time.split(":");
-
-    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
-  };
-
-  /**
    * * Formatted Dates
    */
   const formattedReviewDate = user.caregiver?.reviewed_at
-    ? formatDate(user.caregiver?.reviewed_at, dateTimeFormatter)
+    ? globalFormatDate(user.caregiver?.reviewed_at, "dateTime")
     : "-";
 
-  const formattedBirthDate = formatDate(user.birthdate, dateFormatter);
+  const formattedBirthDate = globalFormatDate(user.birthdate, "longDate");
 
   /**
    * * Working Schedule Variables
@@ -85,11 +55,11 @@ function ViewProfileComponent({ user, totalOrder }: ViewProfileComponentProps) {
     : "-";
 
   const startTimeSchedule = user.caregiver?.schedule_start_time
-    ? timeFormatter(user.caregiver?.schedule_start_time)
+    ? globalFormatTime(user.caregiver?.schedule_start_time, "stringTime")
     : "-";
 
   const endTimeSchedule = user.caregiver?.schedule_end_time
-    ? timeFormatter(user.caregiver?.schedule_end_time)
+    ? globalFormatTime(user.caregiver?.schedule_end_time, "stringTime")
     : "-";
 
   /**

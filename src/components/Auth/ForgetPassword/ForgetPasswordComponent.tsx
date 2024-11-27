@@ -2,10 +2,10 @@
 
 import { forgetPassword } from "@/app/_server-action/auth";
 import React, { useState } from "react";
-import CustomInputGroup from "../Axolotl/InputFields/CustomInputGroup";
+import CustomInputGroup from "../../Axolotl/InputFields/CustomInputGroup";
 import { useRouter } from "next/navigation";
 
-const ForgetPassword = () => {
+const ForgetPasswordComponent = () => {
   const [success, setSuccess] = useState<boolean>();
 
   const router = useRouter();
@@ -75,4 +75,4 @@ const ForgetPassword = () => {
   );
 };
 
-export default ForgetPassword;
+export default ForgetPasswordComponent;

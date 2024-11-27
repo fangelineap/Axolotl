@@ -1,10 +1,10 @@
 "use client";
 
 import { resetPassword } from "@/app/_server-action/auth";
-import React, { useState } from "react";
-import PasswordInput from "../Axolotl/InputFields/PasswordInput";
+import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
+import { useState } from "react";
 
-const ResetPassword = ({ code }: { code: string }) => {
+const ResetPasswordComponent = ({ code }: { code: string }) => {
   const [isSame, setIsSame] = useState<{ error: boolean; message?: string }>();
 
   const handleReset = async (form: FormData) => {
@@ -94,4 +94,4 @@ const ResetPassword = ({ code }: { code: string }) => {
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordComponent;

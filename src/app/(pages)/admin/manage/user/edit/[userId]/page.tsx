@@ -4,6 +4,7 @@ import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumb
 import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import { getAdminCaregiverTotalOrders } from "../../actions";
 import { AdminUserTable } from "../../table/data";
+import { getIncompleteUserPersonalInformation } from "@/app/_server-action/auth";
 
 interface AdminEditUserProps {
   params: { userId: string };
@@ -65,6 +66,11 @@ async function AdminEditUser({ params }: AdminEditUserProps) {
   const data = await fetchData({ params });
   const totalOrder = await getCaregiverTotalOrders(data);
 
+  const { is_complete } = await getIncompleteUserPersonalInformation(
+    data.user_id,
+    data.role
+  );
+
   if (!data) {
     return (
       <CustomLayout>
@@ -84,7 +90,11 @@ async function AdminEditUser({ params }: AdminEditUserProps) {
         subPage="Medicine"
         pageName="View"
       />
-      <UpdateUser user={data} totalOrder={totalOrder} />
+      <UpdateUser
+        user={data}
+        totalOrder={totalOrder}
+        is_complete={is_complete}
+      />
     </CustomLayout>
   );
 }

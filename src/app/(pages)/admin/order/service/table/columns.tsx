@@ -1,3 +1,4 @@
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import { createColumnHelper } from "@tanstack/react-table";
 import { AdminOrderServiceLogsTable } from "./data";
 
@@ -26,16 +27,6 @@ const statusDisplay: Record<
   Completed: { bgColor: "bg-kalbe-ultraLight", textColor: "text-primary" }
 };
 
-/**
- * * Date Formatters
- */
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-  month: "long",
-  day: "numeric",
-  year: "numeric"
-});
-
 const columnHelper = createColumnHelper<AdminOrderServiceLogsTable>();
 
 /**
@@ -61,7 +52,7 @@ export const columns = [
   columnHelper.accessor("appointment.appointment_date", {
     cell: (info) => {
       const created_at = info.getValue();
-      const formattedDate = dateFormatter.format(new Date(created_at));
+      const formattedDate = globalFormatDate(new Date(created_at), "longDate");
 
       return formattedDate;
     },

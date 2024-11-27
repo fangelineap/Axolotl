@@ -586,7 +586,6 @@ export async function skipAdditionalMedicine(
 export async function getAppointmentsByCaregiverId(caregiverId: string) {
   const supabase = await createSupabaseServerClient();
 
-  console.log("caregiver id", caregiverId);
   try {
     const { data, error } = await supabase
       .from("order")

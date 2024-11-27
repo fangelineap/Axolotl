@@ -58,13 +58,13 @@ export const columns = [
       }).format(new Date(created_at));
     },
     {
-      id: "Created At",
+      id: "Requested At",
       cell: (info) => {
         const formattedDate = info.getValue();
 
         return formattedDate;
       },
-      header: "Created At",
+      header: "Requested At",
       enableSorting: true,
       enableColumnFilter: true
     }

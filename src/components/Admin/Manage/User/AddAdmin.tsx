@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { AdminNewAdminValidation } from "./Validation/AdminNewAdminValidation";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 
 function AddAdmin() {
   /**
@@ -40,12 +41,7 @@ function AddAdmin() {
   /**
    * * Date Formatter
    */
-  const formatDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric"
-  }).format(new Date(formData.birthdate));
+  const formatDate = globalFormatDate(formData.birthdate, "longDate");
 
   /**
    * * Handle Input Change
