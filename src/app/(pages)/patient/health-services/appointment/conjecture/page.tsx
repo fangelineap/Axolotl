@@ -1,6 +1,9 @@
 import { getOrder } from "@/app/_server-action/patient";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Conjecture from "@/components/Patient/Conjecture";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
+
+export const metadata = getPatientMetadata("conjecture");
 
 async function fetchOrderData(conjecture: string) {
   const response = await getOrder(conjecture);

@@ -1,6 +1,9 @@
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import AdditionalMedicine from "@/components/Patient/AdditionalMedicine";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
 import React from "react";
+
+export const metadata = getPatientMetadata("additional medicine");
 
 const page = ({ searchParams }: any) => {
   return (

@@ -1,7 +1,10 @@
 import { getGlobalCaregiverDataByCaregiverOrUserId } from "@/app/_server-action/global";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import Appointment from "@/components/Patient/Appointment";
+import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
 import { redirect } from "next/navigation";
+
+export const metadata = getPatientMetadata("appointment");
 
 interface OrderCaregiverProps {
   searchParams: {
