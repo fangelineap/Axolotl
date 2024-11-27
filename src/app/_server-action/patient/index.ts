@@ -94,7 +94,7 @@ export async function createAppointment({
         day_of_visit: days_of_visit,
         diagnosis: prediction,
         appointment_time: appointment_time,
-        appointment_date: appointment_date,
+        appointment_date: new Date(appointment_date).toLocaleString(),
         total_payment: total_payment,
         symptoms: additionalSymptom
           ? symptoms.concat(additionalSymptom)
