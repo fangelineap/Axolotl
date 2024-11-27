@@ -50,7 +50,10 @@ const Medicine = ({
         {is_paid === "Unverified" && !payment && (
           <>
             <Checkbox
-              sx={{ color: "kalbe-light", ml: 0 }}
+              sx={{
+                color: "#DADADA",
+                ml: 0
+              }}
               checked={selection.includes(medicineDetail)}
               onClick={() =>
                 setSelection(

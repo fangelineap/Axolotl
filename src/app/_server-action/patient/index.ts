@@ -26,6 +26,7 @@ interface Appointment {
   appointment_date: Date;
   total_payment: number;
   symptoms: string[];
+  additionalSymptom?: string[];
 }
 export async function createAppointment({
   service_type,
@@ -39,7 +40,8 @@ export async function createAppointment({
   appointment_time,
   appointment_date,
   total_payment,
-  symptoms
+  symptoms,
+  additionalSymptom
 }: Appointment) {
   const supabase = await createSupabaseServerClient();
 
@@ -94,7 +96,9 @@ export async function createAppointment({
         appointment_time: appointment_time,
         appointment_date: appointment_date,
         total_payment: total_payment,
-        symptoms: symptoms
+        symptoms: additionalSymptom
+          ? symptoms.concat(additionalSymptom)
+          : symptoms
       })
       .select("id");
 

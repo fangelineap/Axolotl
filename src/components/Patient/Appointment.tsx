@@ -11,6 +11,7 @@ import Select from "../Axolotl/Select";
 import { Skeleton } from "@mui/material";
 import { AxolotlServices } from "@/utils/Services";
 import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 
 type Caregiver = USER & {
   profile_photo_url?: string;
@@ -139,7 +140,7 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                   />
                 </div>
                 <div className="w-[50%]">
-                  <h1 className="text-lg font-extrabold">
+                  <h1 className="text-lg font-bold">
                     {`${caregiver?.first_name} ${caregiver?.last_name}`}
                   </h1>
                   <h1 className="mb-2 text-dark-secondary">
@@ -334,12 +335,14 @@ const Appointment = ({ caregiverId }: { caregiverId: string }) => {
                   )}
                 </div>
                 <div className="flex w-full justify-center px-5">
-                  <button
+                  <AxolotlButton
+                    label="Make Appointment"
                     type="submit"
-                    className="mb-5 w-full rounded-sm bg-primary p-[8px] font-medium text-white hover:bg-opacity-90"
-                  >
-                    Make Appointment
-                  </button>
+                    isSubmit
+                    customClasses="mb-4"
+                    fontThickness="bold"
+                    variant="primary"
+                  />
                 </div>
               </div>
             </div>

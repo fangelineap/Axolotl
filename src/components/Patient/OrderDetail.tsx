@@ -535,9 +535,13 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   </div>
                   <div className="mb-3">
                     <h1 className="mb-2 text-lg font-bold">Payment Status</h1>
-                    <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
-                      <h1 className="text-center text-lg font-semibold text-primary">
-                        Verified
+                    <div
+                      className={`rounded-md border-[1px] ${medicineIsPaid === "Verified" ? "border-primary bg-kalbe-ultraLight" : "border-red bg-red-200"} px-5 py-2`}
+                    >
+                      <h1
+                        className={`text-center text-lg font-semibold ${medicineIsPaid === "Verified" ? "text-primary" : "text-red"} text-primary`}
+                      >
+                        {medicineIsPaid === "Verified" ? "Verified" : "Skipped"}
                       </h1>
                     </div>
                   </div>
@@ -548,21 +552,27 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
         ) : orderStatus === "Ongoing" && serviceDetails.rate ? (
           <div className="w-[100%] border-stroke lg:w-[35%]">
             <div className="w-full max-w-md rounded-lg bg-white p-6">
-              <button
-                className={`${medicineIsPaid !== "Verified" && medicineOrderId ? "border-primary bg-primary" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary "} mb-4 w-full rounded border py-2 text-lg font-bold text-white`}
+              <AxolotlButton
+                label="Additional Medicine"
+                variant={
+                  medicineIsPaid !== "Verified" && medicineOrderId
+                    ? "primary"
+                    : "secondary"
+                }
+                isSubmit
+                fontThickness="bold"
                 onClick={() =>
                   router.push(
                     `/patient/health-services/appointment/additional?medicineId=${medicineOrderId}&orderId=${serviceDetails.orderId}`
                   )
                 }
-              >
-                Additional Medicine
-              </button>
+              />
 
               <AxolotlButton
                 label="Chat with caregiver"
                 variant="primaryOutlined"
                 isSubmit={false}
+                fontThickness="bold"
                 customClasses="mt-4"
                 startIcon={<IconMessage size={25} />}
                 onClick={handleChatWithCaregiver}
@@ -580,15 +590,15 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   <p className="mb-5 text-center text-2xl font-bold text-primary">
                     Service Rating
                   </p>
-                  <p className="mb-3 text-dark-secondary">
+                  {/* <p className="mb-3 text-dark-secondary">
                     How is your experience?
-                  </p>
+                  </p> */}
                 </div>
-                <div className="mb-5.5 flex items-center">
+                <div className="mb-5.5 flex items-center justify-center">
                   {[...Array(5)].map((_, index) => (
                     <svg
                       key={index}
-                      className={`ms-3 h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"}`}
+                      className={`${index > 0 ? "ms-3" : ""} h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"}`}
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -620,9 +630,19 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                     variant="primary"
                     fontThickness="bold"
                     customClasses="w-full mt-7"
+                    isSubmit
                     onClick={handleRateCaregiver}
                   />
                 )}
+                <AxolotlButton
+                  label="Chat with caregiver"
+                  variant="primaryOutlined"
+                  isSubmit
+                  fontThickness="bold"
+                  customClasses="mt-4"
+                  startIcon={<IconMessage size={25} />}
+                  onClick={handleChatWithCaregiver}
+                />
               </div>
             </div>
           )
