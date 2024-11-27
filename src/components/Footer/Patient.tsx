@@ -1,3 +1,9 @@
+import {
+  IconBrandInstagram,
+  IconBrandLinkedin,
+  IconBrandX,
+  IconBrandYoutube
+} from "@tabler/icons-react";
 import Image from "next/image";
 
 const PatientFooter = () => {
@@ -39,37 +45,17 @@ const PatientFooter = () => {
 
         <div className="mt-7 flex justify-center md:mt-0 md:w-1/3 md:justify-end lg:w-1/4 xl:w-1/5 2xl:w-1/6">
           <div className="flex">
-            <div className="flex items-center rounded-md p-2 hover:bg-gray-1">
-              <Image
-                width={20}
-                height={20}
-                src="/images/icon/instagram.svg"
-                alt="Instagram"
-              />
+            <div className="rounded-md p-2 hover:bg-gray-1">
+              <IconBrandInstagram size={20} stroke={1.5} />
             </div>
             <div className="flex items-center rounded-md p-2 hover:bg-gray-1">
-              <Image
-                width={20}
-                height={20}
-                src="/images/icon/twitter.svg"
-                alt="Twitter"
-              />
+              <IconBrandX size={20} stroke={1.5} />
             </div>
             <div className="flex items-center rounded-md p-2 hover:bg-gray-1">
-              <Image
-                width={20}
-                height={20}
-                src="/images/icon/linkedin.svg"
-                alt="Linkedin"
-              />
+              <IconBrandLinkedin size={20} stroke={1.5} />
             </div>
             <div className="flex items-center rounded-md p-2 hover:bg-gray-1">
-              <Image
-                width={20}
-                height={20}
-                src="/images/icon/youtube.svg"
-                alt="Youtube"
-              />
+              <IconBrandYoutube size={20} stroke={1.5} />
             </div>
           </div>
         </div>
