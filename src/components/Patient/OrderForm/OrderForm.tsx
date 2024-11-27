@@ -11,7 +11,7 @@ import { getUserFromSession } from "@/lib/server";
 import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import { AxolotlServices } from "@/utils/Services";
 import { Symptoms } from "@/utils/Symptoms";
-import { Chip, Skeleton, Stack } from "@mui/material";
+import { Chip, Skeleton, Slide, Stack } from "@mui/material";
 import {
   IconCircleMinus,
   IconCirclePlus,
@@ -20,10 +20,13 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { TransitionGroup } from "react-transition-group";
 import Accordion from "../../Axolotl/Accordion";
 import DisabledCustomInputGroup from "../../Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import Select from "../../Axolotl/Select";
 import SelectHorizontal from "../../Axolotl/SelectHorizontal";
+import { OrderFormValidation } from "./Validation/OrderFormValidation";
+import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
 
 interface OrderFormProps {
   time: string;
@@ -104,7 +107,6 @@ const OrderForm = ({
     const getServiceTypes = () => {
       AxolotlServices.map((service) => {
         if (service.name === serviceType) {
-          console.log("service", service);
           setService(service);
           setAllTypes([]);
           service.types.map((type) => {
@@ -132,6 +134,14 @@ const OrderForm = ({
   }, [isActive, seconds]);
 
   const submitOrder = async (formData: FormData) => {
+    if (
+      !OrderFormValidation(serviceType, formData, concern, selectedAll, days)
+    ) {
+      setIsActive(false);
+
+      return;
+    }
+
     const res = await createAppointment({
       service_type: serviceType,
       caregiver_id: caregiverId,
@@ -179,7 +189,7 @@ const OrderForm = ({
               {/* Patient Information Section */}
               {session && (
                 <>
-                  <h1 className="mb-2 text-lg font-semibold">
+                  <h1 className="mb-2 text-lg font-medium">
                     Patient Information
                   </h1>
                   <div>
@@ -217,9 +227,7 @@ const OrderForm = ({
 
               {/* Order Details */}
               <>
-                <h1 className="mb-2 mt-7 text-lg font-semibold">
-                  Order Details
-                </h1>
+                <h1 className="mb-2 mt-7 text-lg font-medium">Order Details</h1>
                 <div>
                   <Select
                     label="Choose your home service"
@@ -235,8 +243,6 @@ const OrderForm = ({
                     ]}
                     selectedOption={serviceType}
                     setSelectedOption={setServiceType}
-                    isOptionSelected={false}
-                    changeTextColor={() => {}}
                   />
                   <h1 className="text-body-sm font-medium text-dark dark:text-white">
                     Service Description:
@@ -249,7 +255,7 @@ const OrderForm = ({
 
               {/* Medical Concerns */}
               <>
-                <h1 className="mb-2 mt-7 text-lg font-semibold">
+                <h1 className="mb-2 mt-7 text-lg font-medium">
                   Medical Concerns
                 </h1>
                 <div>
@@ -270,7 +276,6 @@ const OrderForm = ({
                       placeholder="Choose your concern"
                       required
                       options={allTypes}
-                      isOptionSelected={false}
                       name="main-concerns"
                       setSelectedOption={setConcern}
                       selectedOption={concern}
@@ -306,7 +311,7 @@ const OrderForm = ({
 
               {/* Symptoms */}
               <div>
-                <h1 className="mb-2 mt-7 text-lg font-semibold">
+                <h1 className="mb-2 mt-7 text-lg font-medium">
                   Add Symtoms That Match Your Condition
                 </h1>
                 <Stack
@@ -315,47 +320,84 @@ const OrderForm = ({
                   className="flex flex-wrap gap-2"
                   width={"85%"}
                 >
-                  {selectedAll.map((selected) => (
-                    <>
-                      <Chip
+                  <TransitionGroup component={null}>
+                    {selectedAll.map((selected) => (
+                      <Slide
                         key={selected}
-                        label={selected}
-                        variant="outlined"
-                        sx={{
-                          fontSize: "0.8rem",
-                          borderColor: "#1CBF90",
-                          color: "#1CBF90",
-                          "& .MuiChip-deleteIcon": {
-                            color: "#1CBF90"
-                          },
-                          "& .MuiChip-deleteIcon:hover": {
-                            color: "#26725C"
-                          }
-                        }}
-                        className="font-bold"
-                        onClick={() => {
-                          setSelectedAll((prev: string[]) =>
-                            prev.filter((item) => item !== selected)
-                          );
-                        }}
-                        onDelete={() => {
-                          setSelectedAll((prev: string[]) =>
-                            prev.filter((item) => item !== selected)
-                          );
-                        }}
-                      />
-                    </>
-                  ))}
-                  {additionalSymptom.map((additional) => (
-                    <>
-                      <Chip
+                        direction="down"
+                        timeout={300}
+                        mountOnEnter
+                        unmountOnExit
+                      >
+                        <Chip
+                          label={selected}
+                          variant="outlined"
+                          sx={{
+                            fontSize: "0.8rem",
+                            borderColor: "#1CBF90",
+                            color: "#1CBF90",
+                            "& .MuiChip-deleteIcon": {
+                              color: "#1CBF90"
+                            },
+                            "& .MuiChip-deleteIcon:hover": {
+                              color: "#26725C"
+                            }
+                          }}
+                          className="font-bold"
+                          onDelete={() => {
+                            setSelectedAll((prev) =>
+                              prev.filter((item) => item !== selected)
+                            );
+                          }}
+                        />
+                      </Slide>
+                    ))}
+                    {additionalSymptom.map((additional) => (
+                      <Slide
                         key={additional}
-                        label={
-                          additional[0].toUpperCase() + additional.slice(1)
-                        }
+                        direction="down"
+                        timeout={300}
+                        mountOnEnter
+                        unmountOnExit
+                      >
+                        <Chip
+                          label={
+                            additional[0].toUpperCase() + additional.slice(1)
+                          }
+                          variant="outlined"
+                          sx={{
+                            fontSize: "0.8rem",
+                            borderColor: "#1CBF90",
+                            color: "#1CBF90",
+                            "& .MuiChip-deleteIcon": {
+                              color: "#1CBF90"
+                            },
+                            "& .MuiChip-deleteIcon:hover": {
+                              color: "#26725C"
+                            }
+                          }}
+                          className="font-bold"
+                          onDelete={() => {
+                            setAdditionalSymptom((prev) =>
+                              prev.filter((item) => item !== additional)
+                            );
+                          }}
+                        />
+                      </Slide>
+                    ))}
+                    <Slide
+                      key="add-symptom"
+                      direction="down"
+                      timeout={300}
+                      mountOnEnter
+                      unmountOnExit
+                    >
+                      <Chip
+                        label="Add Symptom"
                         variant="outlined"
                         sx={{
                           fontSize: "0.8rem",
+                          fontWeight: "bold",
                           borderColor: "#1CBF90",
                           color: "#1CBF90",
                           "& .MuiChip-deleteIcon": {
@@ -366,39 +408,13 @@ const OrderForm = ({
                           }
                         }}
                         className="font-bold"
-                        onClick={() => {
-                          setAdditionalSymptom((prev: string[]) =>
-                            prev.filter((item) => item !== additional)
-                          );
-                        }}
+                        deleteIcon={<IconCirclePlusFilled />}
                         onDelete={() => {
-                          setAdditionalSymptom((prev: string[]) =>
-                            prev.filter((item) => item !== additional)
-                          );
+                          setOpenModal(true);
                         }}
                       />
-                    </>
-                  ))}
-                  <Chip
-                    label="Add Symptom"
-                    variant="outlined"
-                    sx={{
-                      fontSize: "0.8rem",
-                      fontWeight: "bold",
-                      borderColor: "#1CBF90",
-                      color: "#1CBF90",
-                      "& .MuiChip-deleteIcon": {
-                        color: "#1CBF90"
-                      },
-                      "& .MuiChip-deleteIcon:hover": {
-                        color: "#26725C"
-                      }
-                    }}
-                    deleteIcon={<IconCirclePlusFilled />}
-                    onDelete={() => {
-                      setOpenModal(true);
-                    }}
-                  />
+                    </Slide>
+                  </TransitionGroup>
                 </Stack>
                 <div>
                   {Symptoms.map((symptom) => (
@@ -430,10 +446,10 @@ const OrderForm = ({
                     <div className="px-5 py-2">
                       {!copied && (
                         <div className="flex flex-col items-center justify-center rounded-md border-[0.5px] border-red bg-red-light px-3 py-1 text-red">
-                          <h1 className="text-center text-lg font-semibold">
+                          <h1 className="text-center text-lg font-medium">
                             Your transaction will be automatically terminated in
                           </h1>
-                          <h1 className="text-lg font-semibold">
+                          <h1 className="text-lg font-medium">
                             {Math.floor(seconds / 3600)}:
                             {Math.floor(seconds / 60) == 60
                               ? "00"
@@ -443,13 +459,13 @@ const OrderForm = ({
                         </div>
                       )}
                       <div className="mb-1 mt-3 flex justify-between">
-                        <h1 className="font-semibold text-stroke-dark">
+                        <h1 className="font-medium text-stroke-dark">
                           Service Fee
                         </h1>
                         <h1>Rp. {service.price}</h1>
                       </div>
                       <div className="flex justify-between">
-                        <h1 className="font-semibold text-stroke-dark">
+                        <h1 className="font-medium text-stroke-dark">
                           Total Days
                         </h1>
                         <h1>{serviceType === "Booster" ? 1 : days}x visit</h1>
@@ -458,7 +474,7 @@ const OrderForm = ({
                         <div className="my-5 h-[0.5px] w-full bg-primary"></div>
                       </div>
                       <div className="mb-3 flex justify-between">
-                        <h1 className="font-semibold text-stroke-dark">
+                        <h1 className="font-medium text-stroke-dark">
                           Total Charge
                         </h1>
                         <h1 className="text-lg font-bold">
@@ -469,12 +485,12 @@ const OrderForm = ({
                         </h1>
                       </div>
                       <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">
-                        <h1 className="mb-1 text-lg font-semibold">
+                        <h1 className="mb-1 text-lg font-medium">
                           Virtual Account Number
                         </h1>
                         <h1>12345-67890-87654</h1>
                         <button
-                          className={`my-3 rounded-md ${copied ? "disabled bg-gray-cancel" : "bg-primary"} px-3 py-1 font-semibold text-white`}
+                          className={`my-3 rounded-md ${copied ? "disabled bg-gray-cancel" : "bg-primary"} px-3 py-1 font-medium text-white`}
                           onClick={async (e) => {
                             e.preventDefault();
 
@@ -497,13 +513,13 @@ const OrderForm = ({
                         </h1>
                         {copied ? (
                           <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
-                            <h1 className="text-center text-lg font-semibold text-primary">
+                            <h1 className="text-center text-lg font-medium text-primary">
                               Verified
                             </h1>
                           </div>
                         ) : (
                           <div className="rounded-md border-[1px] border-yellow bg-yellow-light px-5 py-2">
-                            <h1 className="text-center text-lg font-semibold text-yellow">
+                            <h1 className="text-center text-lg font-medium text-yellow">
                               Pending
                             </h1>
                           </div>
@@ -585,11 +601,11 @@ const OrderForm = ({
                         ) : null)}
                     </div>
                     <div className="flex justify-between px-5 py-3">
-                      <h1 className="text-lg font-semibold">Sub Total: </h1>
-                      <h1 className="text-lg font-extrabold">
+                      <h1 className="text-lg font-medium">Sub Total: </h1>
+                      <h1 className="text-lg font-bold">
                         {serviceType !== "Booster"
-                          ? `Rp ${service ? service.price * days : "0"}`
-                          : `Rp ${service ? service.price : "0"}`}
+                          ? `${service ? globalFormatPrice(service.price * days) : "0"}`
+                          : `${service ? globalFormatPrice(service.price) : "0"}`}
                       </h1>
                     </div>
                     <div className="flex w-full justify-center px-5">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface SelectProps {
   label: string;
@@ -9,7 +9,6 @@ interface SelectProps {
   options: string[];
   selectedOption: string;
   setSelectedOption: (selectedOption: string) => void;
-  isOptionSelected: boolean;
 }
 const SelectHorizontal = ({
   label,
@@ -19,9 +18,14 @@ const SelectHorizontal = ({
   options,
   selectedOption,
   setSelectedOption,
-  isOptionSelected,
   customClass
 }: SelectProps) => {
+  const [isOptionSelected, setIsOptionSelected] = useState(false);
+
+  useEffect(() => {
+    setIsOptionSelected(selectedOption !== "");
+  }, [selectedOption]);
+
   return (
     <div className="mb-3 flex items-center justify-between gap-5">
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
@@ -38,11 +42,11 @@ const SelectHorizontal = ({
           isOptionSelected ? "text-dark dark:text-white" : ""
         }`}
       >
-        <option value="" disabled className="text-dark-6">
+        <option value="" disabled className="text-dark-secondary">
           {placeholder}
         </option>
         {options.map((opt) => (
-          <option key={opt} value={opt} className="text-dark-6">
+          <option key={opt} value={opt} className="text-dark">
             {opt}
           </option>
         ))}

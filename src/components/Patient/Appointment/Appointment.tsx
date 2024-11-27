@@ -1,25 +1,26 @@
 "use client";
 
 import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
-import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import AxolotlButton from "../../Axolotl/Buttons/AxolotlButton";
-import Select from "../../Axolotl/Select";
-import { Skeleton } from "@mui/material";
-import { AxolotlServices } from "@/utils/Services";
 import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
-import DatePickerOne from "../../FormElements/DatePicker/DatePickerOne";
+import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
+import { AxolotlServices } from "@/utils/Services";
+import { Skeleton } from "@mui/material";
 import {
   IconClock,
   IconRosetteDiscountCheckFilled,
   IconStarFilled
 } from "@tabler/icons-react";
-import {
-  globalFormatDate,
-  globalFormatTime
-} from "@/utils/Formatters/GlobalFormatters";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import AxolotlButton from "../../Axolotl/Buttons/AxolotlButton";
+import Select from "../../Axolotl/Select";
+import DatePickerOne from "../../FormElements/DatePicker/DatePickerOne";
+import { AppointmentValidation } from "./Validation/AppointmentValidation";
 
 const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
   const [time, setTime] = useState<string>("");
@@ -99,6 +100,8 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
   }, [appointments, caregiver, date]);
 
   const toOrderForm = (formData: FormData) => {
+    if (AppointmentValidation(formData) === false) return;
+
     router.push(
       `/patient/health-services/appointment/order-form?caregiver=${caregiver.user_id}&service=${service}&time=${time}&date=${formData.get("appointmentDate")}`
     );
@@ -148,8 +151,9 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                     }
                     height={150}
                     width={150}
-                    className="rounded-full bg-kalbe-veryLight object-cover"
+                    className={`rounded-full bg-kalbe-veryLight object-cover ${imageLoaded ? "" : "hidden"}`}
                     alt="CG pfp"
+                    priority
                     onLoad={handleImageLoad}
                   />
                 </div>
@@ -184,7 +188,7 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                             globalFormatTime(
                               caregiver.caregiver[0].schedule_start_time,
                               "stringTime"
-                            )}
+                            )}{" "}
                           -{" "}
                           {caregiver?.caregiver[0].schedule_end_time &&
                             globalFormatTime(
@@ -281,12 +285,10 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                     name="appointmentTime"
                     placeholder="HH:MM"
                     required
-                    customClass={`w-full mb-3 placeholder-gray`}
+                    customClass={`w-full mb-3`}
                     options={availableHours || []}
                     selectedOption={time}
                     setSelectedOption={setTime}
-                    isOptionSelected={false}
-                    changeTextColor={() => {}}
                   />
                   <Select
                     label="Choose your home service"
@@ -303,8 +305,6 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                     }
                     selectedOption={service}
                     setSelectedOption={setService}
-                    isOptionSelected={false}
-                    changeTextColor={() => {}}
                   />
                   {service !== "" && (
                     <div className="mb-3 rounded-md border border-stroke p-3">

@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react";
 import AxolotlButton from "../Buttons/AxolotlButton";
 import { CAREGIVER_SCHEDULE_ORDER } from "@/types/AxolotlMultipleTypes";
+import CustomInputGroup from "../InputFields/CustomInputGroup";
 
 interface AxolotlModalProps {
   isOpen: boolean;
@@ -69,31 +70,12 @@ function AxolotlModal({
             {action === "add symptom" ? (
               <form action={handleAddSymptom}>
                 <div className="flex flex-col gap-2">
-                  <label className="block text-body-sm font-medium text-dark dark:text-white">
-                    Add Symptom <span className="ml-1 text-red">*</span>
-                  </label>
-                  <input
+                  <CustomInputGroup
                     type="text"
                     name="additionalSymptom"
-                    placeholder="Enter symptom"
-                    className={`rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
-                  />
-                </div>
-                <div className="mt-5 flex justify-between gap-4">
-                  <AxolotlButton
-                    label="Cancel"
-                    onClick={onClose}
-                    variant="secondaryOutlined"
-                    fontThickness="bold"
-                    roundType="regular"
-                  />
-                  <AxolotlButton
                     label="Add Symptom"
-                    type="submit"
-                    isSubmit
-                    variant="primary"
-                    fontThickness="bold"
-                    roundType="regular"
+                    placeholder="Enter symptom"
+                    required
                   />
                 </div>
               </form>
@@ -183,6 +165,25 @@ function AxolotlModal({
             )}
           </div>
           <div className="mx-5 flex justify-between gap-4">
+            {action === "add symptom" && (
+              <>
+                <AxolotlButton
+                  label="No, cancel"
+                  onClick={onClose}
+                  variant="secondaryOutlined"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+                <AxolotlButton
+                  label="Add symptom"
+                  isSubmit
+                  onClick={onConfirm}
+                  variant="primary"
+                  fontThickness="bold"
+                  roundType="regular"
+                />
+              </>
+            )}
             {(action === "delete" || action === "reject") && (
               <>
                 <AxolotlButton

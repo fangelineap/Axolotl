@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import OrderDetail from "@/components/Patient/OrderDetail";
 import { getOrderDetail } from "@/app/_server-action/patient";
-import { useParams } from "next/navigation";
+import OrderDetail from "@/components/Patient/OrderDetail";
 import { Skeleton } from "@mui/material";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 
 const MedicinePreparation = () => {
   const [data, setData] = useState<any>(null);
@@ -18,7 +18,6 @@ const MedicinePreparation = () => {
       const data = await getOrderDetail(id);
 
       if (data) {
-        console.log("data", data);
         setData(data);
         setLoading(false);
       }
@@ -29,7 +28,7 @@ const MedicinePreparation = () => {
   }, []);
 
   return (
-    <DefaultLayout>
+    <CustomLayout>
       {/* Stepper */}
       <div className="mb-3.5 flex items-center justify-center">
         <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
@@ -81,7 +80,7 @@ const MedicinePreparation = () => {
           )
         )}
       </div>
-    </DefaultLayout>
+    </CustomLayout>
   );
 };
 

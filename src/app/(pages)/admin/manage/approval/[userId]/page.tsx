@@ -1,6 +1,6 @@
 import ViewApproval from "@/components/Admin/Manage/Approval/ViewApproval";
-import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import { getSingleAdminApprovalById } from "../actions";
 import { AdminApprovalTable } from "../table/data";
 

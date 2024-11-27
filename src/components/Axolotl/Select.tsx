@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 interface SelectProps {
   label: string;
@@ -9,9 +9,8 @@ interface SelectProps {
   options: string[];
   selectedOption: string;
   setSelectedOption: (selectedOption: string) => void;
-  isOptionSelected: boolean;
-  changeTextColor: () => void;
 }
+
 const Select = ({
   label,
   name,
@@ -20,10 +19,14 @@ const Select = ({
   customClass,
   options,
   selectedOption,
-  setSelectedOption,
-  isOptionSelected,
-  changeTextColor
+  setSelectedOption
 }: SelectProps) => {
+  const [isOptionSelected, setIsOptionSelected] = useState(false);
+
+  useEffect(() => {
+    setIsOptionSelected(selectedOption !== "");
+  }, [selectedOption]);
+
   return (
     <div className={customClass}>
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
@@ -34,13 +37,12 @@ const Select = ({
         value={selectedOption}
         onChange={(e) => {
           setSelectedOption(e.target.value);
-          changeTextColor();
         }}
         className={`relative z-20 w-full appearance-none rounded-[7px] border border-stroke bg-transparent px-5.5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary ${
-          isOptionSelected ? "text-dark dark:text-white" : "text-dark-secondary"
+          isOptionSelected ? "text-black" : "text-dark-secondary"
         }`}
       >
-        <option value="" disabled className="text-dark-6">
+        <option value="" disabled className="text-dark-secondary">
           {placeholder}
         </option>
         {options.map((opt) => (

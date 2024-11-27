@@ -67,7 +67,7 @@ async function AdminEditUser({ params }: AdminEditUserProps) {
   const totalOrder = await getCaregiverTotalOrders(data);
 
   const { is_complete } = await getIncompleteUserPersonalInformation(
-    data.user_id,
+    data.id,
     data.role
   );
 
