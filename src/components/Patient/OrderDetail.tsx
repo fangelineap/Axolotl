@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  globalFormatPrice,
+  globalFormatDate
+} from "../../utils/Formatters/GlobalFormatters";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 
 interface MedecinePreparationProps {
@@ -214,11 +218,10 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 <div className="ml-19 flex flex-col gap-y-1">
                   <div>{caregiverInfo.name}</div>
                   <div>
-                    {
-                      new Date(caregiverInfo.reviewed_at)
-                        .toISOString()
-                        .split("T")[0]
-                    }
+                    {globalFormatDate(
+                      new Date(caregiverInfo.reviewed_at),
+                      "longDate"
+                    )}
                   </div>
                 </div>
               </div>
@@ -229,11 +232,10 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 </div>
                 <div>
                   <strong>Reviewed At:</strong>{" "}
-                  {
-                    new Date(caregiverInfo.reviewed_at)
-                      .toISOString()
-                      .split("T")[0]
-                  }
+                  {globalFormatDate(
+                    new Date(caregiverInfo.reviewed_at),
+                    "longDate"
+                  )}
                 </div>
               </div>
             )}
@@ -255,7 +257,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 <div>{patientInfo.name}</div>
                 <div>{patientInfo.address}</div>
                 <div>{patientInfo.phoneNumber}</div>
-                <div>{patientInfo.birthdate}</div>
+                <div>
+                  {globalFormatDate(
+                    new Date(patientInfo.birthdate),
+                    "longDate"
+                  )}
+                </div>
               </div>
             </div>
           ) : (
@@ -270,7 +277,8 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 <strong>Phone Number:</strong> {patientInfo.phoneNumber}
               </div>
               <div>
-                <strong>Birthdate:</strong> {patientInfo.birthdate}
+                <strong>Birthdate:</strong>{" "}
+                {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
             </div>
           )}
@@ -319,7 +327,10 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             <div className="flex">
               <strong className="mr-15">Order Date</strong>
               <div className="ml-8">
-                {new Date(serviceDetails.orderDate).toISOString().split("T")[0]}
+                {globalFormatDate(
+                  new Date(serviceDetails.orderDate),
+                  "longDate"
+                )}
               </div>
             </div>
             <div className="my-2 w-full border-b border-gray-400"></div>{" "}
@@ -334,11 +345,18 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-6.5">Start Date/Time</strong>
-              <div className="ml-8">{serviceDetails.startTime}</div>
+              <div className="ml-8">
+                {globalFormatDate(
+                  new Date(serviceDetails.startTime),
+                  "longDate"
+                )}
+              </div>
             </div>
             <div className="flex">
               <strong className="mr-8">End Date/Time</strong>
-              <div className="ml-8">{serviceDetails.endTime}</div>
+              <div className="ml-8">
+                {globalFormatDate(new Date(serviceDetails.endTime), "longDate")}
+              </div>
             </div>
             <div className="flex">
               <strong className="mr-14.5">Service Fee</strong>
@@ -375,10 +393,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                         </td>
                         <td className="border-primary p-2">{med.name}</td>
                         <td className="border-primary p-2 text-right">
-                          Rp. {med.price}
+                          {globalFormatPrice(Number(med.price))}
                         </td>
                         <td className="border-primary p-2 text-right">
-                          Rp. {parseInt(med.price) * med.quantity}
+                          {globalFormatPrice(
+                            parseInt(med.price) * med.quantity
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -392,7 +412,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                         Total Price
                       </td>
                       <td className="border-t border-primary p-2 text-right">
-                        Rp. {totalPrice.toLocaleString("id-ID")}
+                        {globalFormatPrice(totalPrice)}
                       </td>
                     </tr>
                     <tr>
@@ -403,7 +423,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                         Delivery Fee
                       </td>
                       <td className="border-primary p-2 text-right">
-                        Rp. {parseInt(price.delivery).toLocaleString("id-ID")}
+                        {globalFormatPrice(parseInt(price.delivery))}
                       </td>
                     </tr>
                     <tr>
@@ -414,9 +434,8 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                         Total Charge
                       </td>
                       <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
-                        Rp.{" "}
-                        {(parseInt(price.delivery) + totalPrice).toLocaleString(
-                          "id-ID"
+                        {globalFormatPrice(
+                          parseInt(price.delivery) + totalPrice
                         )}
                       </td>
                     </tr>
@@ -443,12 +462,11 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                     Service Fee
                   </label>
                   <label className="font-medium text-dark dark:text-white">
-                    Rp.{" "}
-                    {
+                    {globalFormatPrice(
                       AxolotlServices.find(
                         (service) => service.name === serviceDetails.serviceType
-                      )?.price
-                    }
+                      )?.price ?? 0
+                    )}
                   </label>
                 </div>
                 <div className="flex justify-between">
@@ -465,7 +483,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                     Total Charge
                   </label>
                   <label className="text-lg font-bold text-dark dark:text-white">
-                    Rp. {serviceDetails.totalCharge}
+                    {globalFormatPrice(Number(serviceDetails.totalCharge))}
                   </label>
                 </div>
                 <div className="mb-3">
@@ -504,10 +522,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                       Medicine Price
                     </label>
                     <label className="font-medium text-dark dark:text-white">
-                      Rp.{" "}
-                      {medicineDetail.reduce(
-                        (acc, med) => acc + med.quantity * parseInt(med.price),
-                        0
+                      {globalFormatPrice(
+                        medicineDetail.reduce(
+                          (acc, med) =>
+                            acc + med.quantity * parseInt(med.price),
+                          0
+                        )
                       )}
                     </label>
                   </div>
@@ -517,7 +537,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                       Delivery Fee
                     </label>
                     <label className="font-medium text-dark dark:text-white">
-                      Rp. 10000
+                      {globalFormatPrice(10000)}
                     </label>
                   </div>
                   <div className="my-5 h-[0.5px] w-full bg-kalbe-light"></div>
@@ -526,11 +546,13 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                       Total Charge
                     </label>
                     <label className="text-lg font-bold text-dark dark:text-white">
-                      Rp.{" "}
-                      {medicineDetail.reduce(
-                        (acc, med) => acc + med.quantity * parseInt(med.price),
-                        0
-                      ) + 10000}
+                      {globalFormatPrice(
+                        medicineDetail.reduce(
+                          (acc, med) =>
+                            acc + med.quantity * parseInt(med.price),
+                          0
+                        ) + 10000
+                      )}
                     </label>
                   </div>
                   <div className="mb-3">

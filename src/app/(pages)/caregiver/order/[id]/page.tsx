@@ -1,8 +1,9 @@
 import { fetchOrderDetail } from "@/app/_server-action/caregiver";
 import OrderDetail from "@/components/Caregiver/OrderDetail/OrderDetail";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import type { CaregiverOrderDetails } from "../../type/data";
 import { redirect } from "next/navigation";
+import { globalFormatDate } from "../../../../../utils/Formatters/GlobalFormatters";
+import type { CaregiverOrderDetails } from "../../type/data";
 
 async function getOrderData(orderId: string) {
   try {
@@ -31,7 +32,7 @@ function calculateEndTime(
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + dayOfVisit);
 
-  return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
+  return globalFormatDate(endDate, "shortDate") + " / " + appointmentTime;
 }
 
 const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
@@ -94,9 +95,10 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
             serviceType: orderData.appointment?.service_type || "N/A",
             totalDays: orderData.appointment?.day_of_visit,
             startTime:
-              new Date(orderData.appointment.appointment_date)
-                .toISOString()
-                .split("T")[0] +
+              globalFormatDate(
+                new Date(orderData.appointment.appointment_date),
+                "shortDate"
+              ) +
               " / " +
               orderData.appointment?.appointment_time,
             endTime: calculateEndTime(

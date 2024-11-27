@@ -9,6 +9,7 @@ import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import { getUserFromSession } from "@/lib/server";
 import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
+import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
 import { AxolotlServices } from "@/utils/Services";
 import { Symptoms } from "@/utils/Symptoms";
 import { Chip, Skeleton, Slide, Stack } from "@mui/material";
@@ -26,7 +27,6 @@ import DisabledCustomInputGroup from "../../Axolotl/DisabledInputFields/Disabled
 import Select from "../../Axolotl/Select";
 import SelectHorizontal from "../../Axolotl/SelectHorizontal";
 import { OrderFormValidation } from "./Validation/OrderFormValidation";
-import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
 
 interface OrderFormProps {
   time: string;
@@ -462,7 +462,7 @@ const OrderForm = ({
                         <h1 className="font-medium text-stroke-dark">
                           Service Fee
                         </h1>
-                        <h1>Rp. {service.price}</h1>
+                        <h1>{globalFormatPrice(service.price)}</h1>
                       </div>
                       <div className="flex justify-between">
                         <h1 className="font-medium text-stroke-dark">
@@ -478,10 +478,11 @@ const OrderForm = ({
                           Total Charge
                         </h1>
                         <h1 className="text-lg font-bold">
-                          Rp.{" "}
-                          {serviceType === "Booster"
-                            ? service.price
-                            : service.price * days}
+                          {globalFormatPrice(
+                            serviceType === "Booster"
+                              ? service.price
+                              : service.price * days
+                          )}
                         </h1>
                       </div>
                       <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">

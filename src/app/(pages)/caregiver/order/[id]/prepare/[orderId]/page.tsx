@@ -1,7 +1,8 @@
+import { CaregiverOrderDetails } from "@/app/(pages)/caregiver/type/data";
+import { medicinePreparation } from "@/app/_server-action/caregiver";
 import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/MedicinePreparation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { medicinePreparation } from "@/app/_server-action/caregiver";
-import { CaregiverOrderDetails } from "@/app/(pages)/caregiver/type/data";
+import { globalFormatDate } from "../../../../../../../utils/Formatters/GlobalFormatters";
 
 async function getMedicinePreparationData(id: string) {
   try {
@@ -31,7 +32,7 @@ function calculateEndTime(
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + dayOfVisit);
 
-  return endDate.toISOString().split("T")[0] + " / " + appointmentTime;
+  return globalFormatDate(endDate, "shortDate") + " / " + appointmentTime;
 }
 
 const MedicinePreparationPage = async ({
@@ -97,9 +98,10 @@ const MedicinePreparationPage = async ({
             serviceType: orderData.appointment?.service_type || "N/A",
             totalDays: orderData.appointment?.day_of_visit,
             startTime:
-              new Date(orderData.appointment.appointment_date)
-                .toISOString()
-                .split("T")[0] +
+              globalFormatDate(
+                new Date(orderData.appointment.appointment_date),
+                "shortDate"
+              ) +
               " / " +
               orderData.appointment?.appointment_time,
             endTime: calculateEndTime(

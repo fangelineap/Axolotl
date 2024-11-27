@@ -376,28 +376,30 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
                   <div className="flex w-full justify-between">
                     <div className="flex flex-col items-start">
                       <h1 className="font-medium">{otherUserName}</h1>
-                      <p className="truncate text-sm text-dark-secondary sm:max-w-20 lg:max-w-70">
-                        {lastMessage ? (
-                          lastMessage.sender === currentUserId ? (
-                            <div className="flex w-full items-center justify-start gap-2">
-                              {lastMessage.is_read ? (
-                                <IconChecks stroke={1} size={20} />
-                              ) : (
-                                <IconCheck stroke={1} size={20} />
-                              )}
-                              <span className="block truncate text-ellipsis whitespace-nowrap text-dark-secondary md:text-sm">
-                                {lastMessage.text}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="block truncate text-ellipsis whitespace-nowrap text-dark-secondary md:text-sm">
-                              {lastMessage.text}
-                            </span>
-                          )
+                      {lastMessage ? (
+                        lastMessage.sender === currentUserId ? (
+                          <div className="flex items-center gap-1 text-dark-secondary">
+                            {lastMessage.is_read ? (
+                              <IconChecks stroke={1} />
+                            ) : (
+                              <IconCheck stroke={1} />
+                            )}{" "}
+                            <p className="w-full text-sm text-dark-secondary">
+                              {lastMessage.text.length > 35
+                                ? `${lastMessage.text.slice(0, 35)}...`
+                                : lastMessage.text}
+                            </p>
+                          </div>
                         ) : (
-                          ""
-                        )}
-                      </p>
+                          <p className="w-full text-sm text-dark-secondary">
+                            {lastMessage.text.length > 35
+                              ? `${lastMessage.text.slice(0, 35)}...`
+                              : lastMessage.text}
+                          </p>
+                        )
+                      ) : (
+                        ""
+                      )}
                     </div>
                     <div className="flex flex-col items-center">
                       <p className="text-sm text-dark-secondary">

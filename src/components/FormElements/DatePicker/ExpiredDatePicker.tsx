@@ -1,3 +1,4 @@
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import flatpickr from "flatpickr";
 import { useEffect, useRef } from "react";
 
@@ -16,7 +17,7 @@ const ExpiredDatePicker = ({
   required,
   name,
   expired,
-  onChange,
+  onChange
 }: ExpiredDatePickerProps) => {
   const datepickerRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,13 +33,13 @@ const ExpiredDatePicker = ({
       defaultDate: expired, // Set the default date to the expired date
       onChange: (selectedDates) => {
         if (selectedDates.length > 0) {
-          onChange(selectedDates[0].toISOString()); // Call onChange with the new date in ISO format
+          onChange(globalFormatDate(selectedDates[0], "longDate")); // Call onChange with the new date in ISO format
         }
       },
       prevArrow:
         '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
       nextArrow:
-        '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
+        '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>'
     });
   }, [expired, onChange]); // Re-run effect when expired date or onChange changes
 

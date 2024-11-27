@@ -1,14 +1,15 @@
 "use client";
 
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
 import {
   MEDICINE,
   MEDICINE_ORDER_DETAIL,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
-import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
 import { Checkbox } from "@mui/material";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 
 interface MedicineProps {
   selectAll: boolean;
@@ -81,7 +82,9 @@ const Medicine = ({
         </div>
       </div>
       <div className="flex flex-col justify-between">
-        <h1 className="font-semibold">Rp. {medicineDetail.medicine.price}</h1>
+        <h1 className="font-semibold">
+          {globalFormatPrice(medicineDetail.medicine.price)}
+        </h1>
         <div className="mb-3 flex w-[100px]">
           <input
             className="w-full rounded-l-md border border-gray-1 bg-white py-2 text-center font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"

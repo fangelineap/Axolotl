@@ -1,8 +1,5 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Medicine from "./Medicine";
-import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import {
   fetchMedicineOrderById,
   handleAdditionalMedicinePayment,
@@ -12,9 +9,13 @@ import {
   MEDICINE,
   MEDICINE_ORDER_DETAIL_WITH_MEDICINE
 } from "@/types/AxolotlMainType";
-import AxolotlModal from "../Axolotl/Modal/AxolotlModal";
-import { useRouter } from "next/navigation";
+import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
 import { Checkbox, Skeleton } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
+import AxolotlModal from "../Axolotl/Modal/AxolotlModal";
+import Medicine from "./Medicine";
 
 interface MedicineProps {
   id: string;
@@ -205,31 +206,37 @@ const AdditionalMedicine = ({
                     item)
                   </p>
                   <p>
-                    Rp.{" "}
-                    {selection.length > 0
-                      ? selection.reduce(
-                          (acc, item) => acc + item.total_price,
-                          0
-                        )
-                      : 0}
+                    {globalFormatPrice(
+                      selection.length > 0
+                        ? selection.reduce(
+                            (acc, item) => acc + item.total_price,
+                            0
+                          )
+                        : 0
+                    )}
                   </p>
                 </div>
                 <div className="mb-3 flex justify-between">
                   <p className="mb-1 text-dark-secondary">Delivery Fee</p>
-                  <p>{selection.length > 0 ? "Rp. 10000" : "Rp. 0"}</p>
+                  <p>
+                    {selection.length > 0
+                      ? globalFormatPrice(10000)
+                      : globalFormatPrice(0)}
+                  </p>
                 </div>
               </div>
               <div className="mb-3 h-[1px] w-[100%] bg-kalbe-light"></div>
               <div className="mb-5 flex justify-between">
                 <h1>Total Charge</h1>
                 <h1 className="font-semibold">
-                  Rp.{" "}
-                  {selection.length > 0
-                    ? selection.reduce(
-                        (acc, item) => acc + item.total_price,
-                        0
-                      ) + 10000
-                    : 0}
+                  {globalFormatPrice(
+                    selection.length > 0
+                      ? selection.reduce(
+                          (acc, item) => acc + item.total_price,
+                          0
+                        ) + 10000
+                      : 0
+                  )}
                 </h1>
               </div>
             </>
@@ -272,20 +279,21 @@ const AdditionalMedicine = ({
                     Total Price
                   </h1>
                   <h1>
-                    Rp.{" "}
-                    {selection.length > 0
-                      ? selection.reduce(
-                          (acc, item) => acc + item.total_price,
-                          0
-                        )
-                      : 0}
+                    {globalFormatPrice(
+                      selection.length > 0
+                        ? selection.reduce(
+                            (acc, item) => acc + item.total_price,
+                            0
+                          )
+                        : 0
+                    )}
                   </h1>
                 </div>
                 <div className="flex justify-between">
                   <h1 className="font-semibold text-stroke-dark">
                     Delivery Fee
                   </h1>
-                  <h1>Rp. 10000</h1>
+                  <h1>{globalFormatPrice(10000)}</h1>
                 </div>
                 <div className="flex justify-center">
                   <div className="my-5 h-[0.5px] w-full bg-primary"></div>
@@ -295,13 +303,14 @@ const AdditionalMedicine = ({
                     Total Charge
                   </h1>
                   <h1 className="text-lg font-bold">
-                    Rp.{" "}
-                    {selection.length > 0
-                      ? selection.reduce(
-                          (acc, item) => acc + item.total_price,
-                          0
-                        ) + 10000
-                      : 0}
+                    {globalFormatPrice(
+                      selection.length > 0
+                        ? selection.reduce(
+                            (acc, item) => acc + item.total_price,
+                            0
+                          ) + 10000
+                        : 0
+                    )}
                   </h1>
                 </div>
                 <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">

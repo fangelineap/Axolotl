@@ -8,6 +8,7 @@ import { MEDICINE } from "@/types/AxolotlMainType";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
+import { globalFormatPrice } from "../../../utils/Formatters/GlobalFormatters";
 
 interface NewMedicine {
   name: string;
@@ -124,7 +125,7 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
                     <input
                       type="text"
                       className="block w-full rounded border p-2 pl-10"
-                      value={`Rp. ${currentMedicine.price}`}
+                      value={globalFormatPrice(currentMedicine.price)}
                       disabled
                     />
                   </div>

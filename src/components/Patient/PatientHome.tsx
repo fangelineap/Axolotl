@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { globalFormatPrice } from "../../utils/Formatters/GlobalFormatters";
 
 interface PatientHomeProps {
   currentUser: USER;
@@ -180,7 +181,9 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
             <div className="p-4 text-center">
               <p>
                 Starts from
-                <div className="font-bold text-black">Rp. {service.price}</div>
+                <div className="font-bold text-black">
+                  {globalFormatPrice(Number(service.price))}
+                </div>
               </p>
             </div>
           </div>
