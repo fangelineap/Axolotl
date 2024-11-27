@@ -6,12 +6,14 @@ export const AxolotlServices = [
     price: 150000,
     types: [
       {
-        name: "Satu",
-        description: "Type 1"
+        name: "Specialized Newborn Care",
+        description:
+          "Providing round-the-clock monitoring, feeding assistance, and specialized care for premature or ill newborns"
       },
       {
-        name: "Dua",
-        description: "Type 2"
+        name: "Post Delivery Care",
+        description:
+          "Offering support with breastfeeding, diaper changes, and newborn care education for new parents"
       }
     ]
   },
@@ -22,11 +24,12 @@ export const AxolotlServices = [
     price: 600000,
     types: [
       {
-        name: "Tiga",
-        description: "Type 3"
+        name: "Home Assistance",
+        description:
+          "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation"
       },
       {
-        name: "Empat",
+        name: "IDK for this one",
         description: "Type 4"
       }
     ]
@@ -38,12 +41,14 @@ export const AxolotlServices = [
     price: 70000,
     types: [
       {
-        name: "Lima",
-        description: "Type 5"
+        name: "Wound Treatment",
+        description:
+          "Providing specialized care for wound cleaning, dressing changes, and monitoring for proper healing"
       },
       {
-        name: "Enam",
-        description: "Type 6"
+        name: "Commorbid Care",
+        description:
+          "Offering personalized assistance and support for managing multiple health conditions, ensuring that all needs are met"
       }
     ]
   },
@@ -54,12 +59,14 @@ export const AxolotlServices = [
     price: 80000,
     types: [
       {
-        name: "Tujuh",
-        description: "Type 7"
+        name: "Vitamin Booster",
+        description:
+          "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility"
       },
       {
-        name: "Delapan",
-        description: "Type 8"
+        name: "Immune Booster",
+        description:
+          "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation"
       }
     ]
   }
