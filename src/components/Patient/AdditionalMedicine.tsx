@@ -104,7 +104,6 @@ const AdditionalMedicine = ({
   };
 
   const handleAdditionalMedicine = () => {
-    console.log("order id", orderId);
     handleAdditionalMedicinePayment(medicineOrder, selection, orderId);
     router.push(`/patient/order-history/${orderId}`);
   };
@@ -329,7 +328,7 @@ const AdditionalMedicine = ({
                         );
                         setIsCopied(true);
                       } catch (error) {
-                        console.log("error", error);
+                        throw new Error(error as string);
                       }
                     }}
                   >

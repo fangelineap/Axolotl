@@ -174,7 +174,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   }, [searchTerm, medicineList]);
 
   const handleMedicineSelect = (medicine: MEDICINE) => {
-    console.log("Selected Medicine UUID:", medicine.uuid);
     setCurrentMedicine(medicine);
     setIsModalOpen(true); // Open the modal when a medicine is selected
   };
@@ -409,8 +408,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             is_paid: "Unverified", // Set to true if payment has been completed
             paid_at: null // Set the date if payment is made
           });
-          console.log("Inserted Medicine Order:", newMedicineOrder);
-          console.log("ACHIVE NEW MEDICINE ORDER");
 
           // Check if newMedicineOrder and its ID are valid
           if (!newMedicineOrder || !newMedicineOrder.id) {
@@ -439,7 +436,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               })
             )
           );
-          console.log("ACHIVE INSERT NEW MEDICINE ORDER DETAIL");
 
           // Update the order with the new medicine_order_id
           const finalUpdate = await updateOrderWithMedicineOrderId(
@@ -498,7 +494,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   };
 
   const handleChatWithPatient = () => {
-    console.log("Chat with Patient");
     router.push(`/chat`);
   };
 

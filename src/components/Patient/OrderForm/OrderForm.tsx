@@ -501,7 +501,7 @@ const OrderForm = ({
                               );
                               setCopied(true);
                             } catch (error) {
-                              console.log("error", error);
+                              throw new Error(error as string);
                             }
                           }}
                         >

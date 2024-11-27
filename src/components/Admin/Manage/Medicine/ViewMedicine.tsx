@@ -38,8 +38,6 @@ function ViewMedicine(data: ViewMedicineProps) {
    */
   const handleImageLoad = () => setImageLoaded(true);
 
-  console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
-
   return (
     <>
       {/* Title */}

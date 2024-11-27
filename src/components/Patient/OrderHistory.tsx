@@ -43,10 +43,6 @@ const OrderHistory = () => {
     }
   });
 
-  orderData.forEach((order) => {
-    console.log("cg name", order.caregiver?.users?.first_name); // Access the first name for each order
-  });
-
   // Define the columns for the table
   const columns: ColumnDef<PatientOrderDetails>[] = [
     {

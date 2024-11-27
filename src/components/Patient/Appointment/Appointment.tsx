@@ -52,7 +52,7 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
           setAppointments(data);
         }
       } catch (error) {
-        console.log("Error while fetching appointments by caregiver id", error);
+        throw new Error(error as string);
       }
     };
 

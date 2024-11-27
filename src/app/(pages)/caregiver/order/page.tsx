@@ -42,10 +42,6 @@ const OrderPage = () => {
     }
   });
 
-  orderData.forEach((order) => {
-    console.log(order.patient?.users?.first_name); // Access the first name for each order
-  });
-
   // Define the columns for the table
   const columns: ColumnDef<CaregiverOrderDetails>[] = [
     {

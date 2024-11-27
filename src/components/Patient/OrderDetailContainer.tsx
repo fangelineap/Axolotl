@@ -18,7 +18,6 @@ const OrderDetailContainer = () => {
       const data = await getOrderDetail(id);
 
       if (data) {
-        console.log("data", data);
         setData(data);
         setLoading(false);
       }
