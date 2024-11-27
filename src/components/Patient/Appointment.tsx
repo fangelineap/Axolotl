@@ -5,13 +5,21 @@ import { USER_CAREGIVER } from "@/types/AxolotlMultipleTypes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
 import Select from "../Axolotl/Select";
 import { Skeleton } from "@mui/material";
 import { AxolotlServices } from "@/utils/Services";
 import { getAppointmentsByCaregiverId } from "@/app/_server-action/patient";
 import DatePickerOne from "../FormElements/DatePicker/DatePickerOne";
-import { IconClock } from "@tabler/icons-react";
-import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
+import {
+  IconClock,
+  IconRosetteDiscountCheckFilled,
+  IconStarFilled
+} from "@tabler/icons-react";
+import {
+  globalFormatDate,
+  globalFormatTime
+} from "@/utils/Formatters/GlobalFormatters";
 
 const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
   const [time, setTime] = useState<string>("");
@@ -96,6 +104,26 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
     );
   };
 
+  const renderAbout = (
+    titles: string[],
+    descriptions: (string | number)[],
+    icons?: JSX.Element[]
+  ) => {
+    return (
+      <div className="flex flex-col gap-4">
+        {titles.map((title, index) => (
+          <div key={index} className="flex items-start gap-2">
+            {icons && icons[index]}
+            <div className="flex flex-col">
+              <h1 className="text-lg font-medium">{title}</h1>
+              <p>{descriptions[index] || "Not available"}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <form action={toOrderForm}>
       {caregiver ? (
@@ -152,15 +180,17 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                       <div className="flex gap-2">
                         <IconClock size={24} stroke={1.5} />
                         <h1>
-                          {caregiver?.caregiver[0].schedule_start_time
-                            ?.split(":")
-                            .slice(0, 2)
-                            .join(":")}{" "}
+                          {caregiver?.caregiver[0].schedule_start_time &&
+                            globalFormatTime(
+                              caregiver.caregiver[0].schedule_start_time,
+                              "stringTime"
+                            )}
                           -{" "}
-                          {caregiver?.caregiver[0].schedule_end_time
-                            ?.split(":")
-                            .slice(0, 2)
-                            .join(":")}
+                          {caregiver?.caregiver[0].schedule_end_time &&
+                            globalFormatTime(
+                              caregiver.caregiver[0].schedule_end_time,
+                              "stringTime"
+                            )}
                         </h1>
                       </div>
                     </div>
@@ -178,7 +208,46 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                 <div className="my-7 h-[0.5px] w-[100%] bg-primary"></div>
               </div>
               <div className="flex flex-col gap-3">
-                <h1 className="text-heading-6 font-medium">About</h1>
+                <h1 className="text-heading-6 font-medium">
+                  Caregiver Verification Status and Rating
+                </h1>
+                {renderAbout(
+                  ["Verified at", "Rating"],
+                  [
+                    globalFormatDate(
+                      caregiver?.caregiver[0].reviewed_at,
+                      "longDate"
+                    ),
+                    caregiver?.caregiver[0].rate
+                      ? caregiver.caregiver[0].rate.toFixed(2)
+                      : "Be the first to rate this caregiver"
+                  ],
+                  [
+                    <IconRosetteDiscountCheckFilled
+                      key="calendar"
+                      size={24}
+                      stroke={1.5}
+                      className="text-primary"
+                    />,
+                    <IconStarFilled
+                      key="star"
+                      size={24}
+                      stroke={1.5}
+                      className="text-yellow"
+                    />
+                  ]
+                )}
+                <h1 className="text-heading-6 font-medium">
+                  Caregiver Profile
+                </h1>
+                {renderAbout(
+                  ["Workplace", "Work Experience", "Working Status"],
+                  [
+                    caregiver?.caregiver[0].workplace,
+                    `${caregiver?.caregiver[0].work_experiences} years`,
+                    caregiver?.caregiver[0].employment_type
+                  ]
+                )}
               </div>
             </div>
             <div className="p-3 lg:w-[30%]">
