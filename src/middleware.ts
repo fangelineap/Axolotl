@@ -8,6 +8,7 @@ import {
   getIncompleteUserPersonalInformation
 } from "./app/_server-action/auth";
 import { validateSession } from "./utils/Validation/auth/ValidateSession";
+import { Sha256 } from "@aws-crypto/sha256-js";
 
 /**
  * * Check if the pathname matches any guest page pattern
@@ -266,7 +267,44 @@ async function updateSession(request: NextRequest) {
  * @returns
  */
 export default async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  const response = await updateSession(request);
+
+  const nonce = crypto.randomUUID();
+
+  const hash = new Sha256();
+  hash.update(nonce);
+  const encryptedNonce = await hash.digest();
+  const base64Nonce = Buffer.from(encryptedNonce).toString("base64");
+
+  const cspHeader = `
+    default-src 'self';
+    style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com;
+    script-src 'self' 'nonce-${base64Nonce}' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+    img-src 'self' data: blob:;
+    font-src 'self' https://fonts.gstatic.com;
+    media-src *;
+    connect-src *;
+    frame-src 'self' https://www.youtube.com;
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+    object-src 'none';
+    frame-ancestors 'none';
+  `;
+
+  const contentSecurityPolicyHeaderValue = cspHeader
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  response?.headers.set(
+    "Content-Security-Policy",
+    contentSecurityPolicyHeaderValue
+  );
+
+  response?.headers.set("x-nonce", nonce);
+
+  return response;
 }
 
 /**

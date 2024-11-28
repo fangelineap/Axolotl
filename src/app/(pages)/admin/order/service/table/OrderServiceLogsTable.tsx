@@ -16,7 +16,10 @@ function OrderServiceLogsTable({ initialData }: OrderServiceLogsTableProps) {
         data={initialData}
         columns={columns as ColumnDef<AdminOrderServiceLogsTable>[]}
         showAction={(row: AdminOrderServiceLogsTable) => row}
-        initialSorting={[{ id: "Status", desc: false }]}
+        initialSorting={[
+          { id: "Status", desc: false },
+          { id: "Appointment Date", desc: false }
+        ]}
         selectStatusOptions={["Canceled", "Ongoing", "Completed"]}
       />
     </div>

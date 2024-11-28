@@ -16,7 +16,10 @@ function OrderMedicineLogs({ initialData }: OrderMedicineLogsProps) {
         data={initialData}
         columns={columns as ColumnDef<AdminOrderMedicineLogsTable>[]}
         showAction={(row: AdminOrderMedicineLogsTable) => row}
-        initialSorting={[{ id: "Status", desc: false }]}
+        initialSorting={[
+          { id: "Status", desc: false },
+          { id: "Appointment Date", desc: false }
+        ]}
         selectStatusOptions={["Canceled", "Ongoing", "Completed"]}
       />
     </div>

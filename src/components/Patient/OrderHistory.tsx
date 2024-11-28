@@ -137,6 +137,10 @@ const OrderHistory = () => {
             columns={columns} // Pass the columns configuration
             basePath="/patient/order-history"
             showAction={handleShowAction} // Define the action handler
+            initialSorting={[
+              { id: "Status", desc: false },
+              { id: "Appointment Date", desc: false }
+            ]}
           />
         )}
       </div>

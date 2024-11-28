@@ -145,7 +145,9 @@ function UpdateMedicine({ medicine }: UpdateMedicineProps) {
               onFileSelect={(file) => setMedicinePhoto(file)}
               label="Upload Medicine Photo"
               isDropzone={true}
-              existingFile={medicinePhotoPublicURL}
+              existingFile={
+                medicine.medicine_photo ? medicinePhotoPublicURL : null
+              }
             />
           </div>
           <div className="flex flex-col">
