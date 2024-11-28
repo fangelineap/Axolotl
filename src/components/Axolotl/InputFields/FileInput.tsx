@@ -131,7 +131,7 @@ function FileInput({
               <IconFileInvoice size={90} stroke={1} className="text-primary" />
               <p>{selectedFile.name}</p>
             </div>
-          ) : existingFile ? (
+          ) : existingFile && existingFile !== null ? (
             <Image
               src={existingFile}
               alt="Uploaded File"

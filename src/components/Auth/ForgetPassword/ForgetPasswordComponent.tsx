@@ -1,9 +1,9 @@
 "use client";
 
 import { forgetPassword } from "@/app/_server-action/auth";
-import React, { useState } from "react";
-import CustomInputGroup from "../../Axolotl/InputFields/CustomInputGroup";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import CustomInputGroup from "../../Axolotl/InputFields/CustomInputGroup";
 
 const ForgetPasswordComponent = () => {
   const [success, setSuccess] = useState<boolean>();
@@ -53,7 +53,7 @@ const ForgetPasswordComponent = () => {
                 >
                   <p className="text-sm font-medium text-kalbe-light">
                     {success
-                      ? "Check your email"
+                      ? "An email has been sent to your email address. Please check your inbox"
                       : "Your email is not registered, please create an account"}
                   </p>
                 </div>

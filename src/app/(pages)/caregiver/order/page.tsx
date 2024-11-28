@@ -144,7 +144,10 @@ const OrderPage = () => {
                 columns={columns}
                 basePath="/caregiver/order"
                 showAction={handleShowAction}
-                initialSorting={[{ id: "Status", desc: false }]}
+                initialSorting={[
+                  { id: "Status", desc: false },
+                  { id: "Appointment Date", desc: false }
+                ]}
               />
             )}
           </div>
