@@ -27,6 +27,7 @@ import DisabledCustomInputGroup from "../../Axolotl/DisabledInputFields/Disabled
 import Select from "../../Axolotl/Select";
 import SelectHorizontal from "../../Axolotl/SelectHorizontal";
 import { OrderFormValidation } from "./Validation/OrderFormValidation";
+import { ToastContainer } from "react-toastify";
 
 interface OrderFormProps {
   time: string;
@@ -635,6 +636,8 @@ const OrderForm = ({
             question=""
             action="add symptom"
           />
+
+          <ToastContainer />
         </>
       )}
     </>
