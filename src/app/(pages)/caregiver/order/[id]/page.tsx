@@ -5,7 +5,9 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { redirect } from "next/navigation";
 import { globalFormatDate } from "../../../../../utils/Formatters/GlobalFormatters";
 import type { CaregiverOrderDetails } from "../../type/data";
+import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
 
+export const metadata = getCaregiverMetadata("order detail");
 async function getOrderData(orderId: string) {
   try {
     const orderData: CaregiverOrderDetails = await fetchOrderDetail(orderId);

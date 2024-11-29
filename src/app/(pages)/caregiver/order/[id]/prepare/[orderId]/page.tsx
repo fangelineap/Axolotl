@@ -4,7 +4,10 @@ import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumb
 import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/MedicinePreparation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { globalFormatDate } from "../../../../../../../utils/Formatters/GlobalFormatters";
+import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
+import { Metadata } from "next";
 
+export const metadata: Metadata = getCaregiverMetadata("prepare");
 async function getMedicinePreparationData(id: string) {
   try {
     const data: CaregiverOrderDetails = await medicinePreparation(id);
