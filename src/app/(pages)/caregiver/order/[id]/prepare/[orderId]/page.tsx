@@ -1,5 +1,6 @@
 import { CaregiverOrderDetails } from "@/app/(pages)/caregiver/type/data";
 import { medicinePreparation } from "@/app/_server-action/caregiver";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/MedicinePreparation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { globalFormatDate } from "../../../../../../../utils/Formatters/GlobalFormatters";
@@ -57,11 +58,7 @@ const MedicinePreparationPage = async ({
 
   return (
     <DefaultLayout>
-      <div className="mb-4 text-sm text-gray-500">
-        <span>Dashboard / </span>
-        <span>Order / </span>
-        <span>Medicine Preparation</span>
-      </div>
+      <CustomBreadcrumbs parentPage="Order" pageName="Medicine Preparation" />
 
       <h1 className="mb-6 text-5xl font-bold text-gray-800">
         Preparing Medicine...

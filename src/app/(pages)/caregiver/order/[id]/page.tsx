@@ -1,4 +1,5 @@
 import { fetchOrderDetail } from "@/app/_server-action/caregiver";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import OrderDetail from "@/components/Caregiver/OrderDetail/OrderDetail";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { redirect } from "next/navigation";
@@ -57,11 +58,7 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
 
   return (
     <DefaultLayout>
-      <div className="mb-4 text-sm text-gray-500">
-        <span>Dashboard / </span>
-        <span>Order / </span>
-        <span>Service Order</span>
-      </div>
+      <CustomBreadcrumbs parentPage="Order" pageName="Order Details" />
 
       <h1 className="mb-6 text-5xl font-bold text-gray-800">Order Details</h1>
 

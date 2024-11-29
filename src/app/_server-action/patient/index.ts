@@ -6,12 +6,77 @@ import createSupabaseServerClient, {
   getUserDataFromSession
 } from "@/lib/server";
 import {
+  CAREGIVER,
   MEDICINE_ORDER_DETAIL,
-  MEDICINE_ORDER_DETAIL_WITH_MEDICINE
+  MEDICINE_ORDER_DETAIL_WITH_MEDICINE,
+  USER
 } from "@/types/AxolotlMainType";
 import { AxolotlServices } from "@/utils/Services";
 import { unstable_noStore } from "next/cache";
 import { getGlobalUserProfilePhoto } from "../global";
+
+type Caregiver = USER & {
+  caregiver: CAREGIVER[];
+};
+export async function getAllCaregiverBasedOnRole(role: string) {
+  unstable_noStore();
+
+  const supabase = await createSupabaseServerClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*, caregiver(*)")
+      .eq("role", role)
+      .not("caregiver.status", "neq", "Verified");
+
+    if (error) {
+      console.error("Error while fetching all caregiver based on role", error);
+
+      return [];
+    }
+
+    if (!data) {
+      console.warn(`No caregiver found based on ${role} role`);
+
+      return [];
+    }
+
+    const mappedCaregiverData = await Promise.all(
+      data
+        .map(async (user: Caregiver) => {
+          const caregiverData = user.caregiver[0];
+
+          if (!caregiverData) {
+            return null;
+          }
+
+          const caregiverProfilePhoto = await getGlobalUserProfilePhoto(
+            caregiverData.profile_photo
+          );
+
+          return {
+            ...user,
+            caregiver: [
+              {
+                ...caregiverData,
+                profile_photo: caregiverProfilePhoto
+              }
+            ]
+          };
+        })
+        .filter((user) => user !== null)
+    );
+
+    const cleanData = mappedCaregiverData.filter((user) => user !== null);
+
+    return cleanData as unknown as Caregiver[];
+  } catch (error) {
+    console.error("Error while fetching all caregiver based on role", error);
+
+    return [];
+  }
+}
 
 interface Appointment {
   service_type: string;

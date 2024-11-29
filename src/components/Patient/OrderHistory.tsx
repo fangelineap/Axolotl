@@ -120,30 +120,28 @@ const OrderHistory = () => {
   return (
     <>
       <h1 className="mb-6 text-5xl font-bold">Order History</h1>
-      <div className="rounded-lg bg-white p-6 shadow">
-        {loading ? (
-          <Skeleton
-            variant="rectangular"
-            width="100%"
-            animation="wave"
-            height={300}
-            className="rounded-lg"
-          />
-        ) : orderData.length === 0 ? (
-          <div>No orders found.</div>
-        ) : (
-          <DataTable
-            data={orderData} // Pass the data array
-            columns={columns} // Pass the columns configuration
-            basePath="/patient/order-history"
-            showAction={handleShowAction} // Define the action handler
-            initialSorting={[
-              { id: "Status", desc: false },
-              { id: "Appointment Date", desc: false }
-            ]}
-          />
-        )}
-      </div>
+      {loading ? (
+        <Skeleton
+          variant="rectangular"
+          width="100%"
+          animation="wave"
+          height={300}
+          className="rounded-lg"
+        />
+      ) : orderData.length === 0 ? (
+        <div>No orders found.</div>
+      ) : (
+        <DataTable
+          data={orderData} // Pass the data array
+          columns={columns} // Pass the columns configuration
+          basePath="/patient/order-history"
+          showAction={handleShowAction} // Define the action handler
+          initialSorting={[
+            { id: "Status", desc: false },
+            { id: "Appointment Date", desc: false }
+          ]}
+        />
+      )}
     </>
   );
 };

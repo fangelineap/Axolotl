@@ -1,26 +1,27 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { CAREGIVER, USER } from "@/types/AxolotlMainType";
+import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { CAREGIVER, USER } from "@/types/AxolotlMainType";
-import { createSupabaseClient } from "@/lib/client";
-import { getGlobalUserProfilePhoto } from "@/app/_server-action/global";
-import { Skeleton } from "@mui/material";
+import { useEffect, useState } from "react";
 import AxolotlButton from "../Axolotl/Buttons/AxolotlButton";
-import useSWR from "swr";
 
 type Caregiver = USER & {
-  profile_photo_url?: string;
   caregiver: CAREGIVER[];
 };
 
-const CaregiverSelection = ({ role }: { role: string }) => {
+const CaregiverSelection = ({
+  role,
+  caregiverData
+}: {
+  role: string;
+  caregiverData: Caregiver[];
+}) => {
   const router = useRouter();
+  const caregiver = caregiverData;
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [location, setLocation] = useState<"Malang" | "Bali" | "">("");
-  const [caregiver, setCaregiver] = useState<Caregiver[]>([]);
+  const [location, setLocation] = useState<"Malang" | "Bali" | null>(null);
   const [filtered, setFiltered] = useState<Caregiver[]>([]);
   const [rating, setRating] = useState<number[]>([]);
   const [pagination, setPagination] = useState({
@@ -33,45 +34,6 @@ const CaregiverSelection = ({ role }: { role: string }) => {
           : Math.ceil(filtered.length / 5)
   });
   const [loading, setLoading] = useState<boolean>(true);
-
-  useSWR("caregiver", () => {
-    const getUser = async () => {
-      const supabase = createSupabaseClient();
-
-      const { data } = await supabase
-        .from("users")
-        .select("*, caregiver(*)")
-        .eq("role", role)
-        .eq("caregiver.status", "Verified");
-
-      if (data) {
-        const verifiedCg = data.filter((user) => user.caregiver.length > 0);
-        const updatedData = await Promise.all(
-          verifiedCg.map(async (user: Caregiver) => {
-            if (user.caregiver && user.caregiver[0].profile_photo) {
-              const url = await getGlobalUserProfilePhoto(
-                user.caregiver[0].profile_photo
-              );
-              user.profile_photo_url = url!;
-            }
-
-            return user;
-          })
-        );
-
-        setCaregiver(updatedData);
-        setPagination((prev) => ({
-          ...prev,
-          pageSize: Math.ceil(data.length / 5)
-        }));
-        setLoading(false);
-      }
-    };
-
-    if (role) {
-      getUser();
-    }
-  });
 
   useEffect(() => {
     let filteredCG: Caregiver[] = [];
@@ -86,7 +48,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
             const index = filteredCG.findIndex((f) => f.id == cg.id);
 
             if (index == -1) {
-              if (cg.address.includes(location)) {
+              if (location && cg.caregiver[0].workplace.includes(location)) {
                 filteredCG.push(cg);
               }
               // filtered.splice(index, 1);
@@ -99,7 +61,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
         const index = filteredCG.findIndex((f) => f.id == cg.id);
 
         if (index == -1) {
-          if (cg.address.includes(location)) {
+          if (location && cg.caregiver[0].workplace.includes(location)) {
             filteredCG.push(cg);
           }
         }
@@ -126,7 +88,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
               <div
                 onClick={() => {
                   if (location !== "Malang") setLocation("Malang");
-                  else setLocation("");
+                  else setLocation(null);
                 }}
                 className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${location === "Malang" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
               >
@@ -149,7 +111,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
               <div
                 onClick={() => {
                   if (location !== "Bali") setLocation("Bali");
-                  else setLocation("");
+                  else setLocation(null);
                 }}
                 className={`mb-5.5 mt-5 flex w-full items-center justify-between gap-7 rounded-[7px] border-[1.5px] p-4 px-5.5 py-3 text-dark outline-none transition placeholder:text-dark-6 focus:border-primary ${location === "Bali" ? "border-kalbe-light bg-green-100" : "border-stroke bg-transparent"} cursor-pointer disabled:cursor-default dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
               >
@@ -187,7 +149,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                   <input
                     type="checkbox"
                     className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
-                    id="checkbox"
+                    id="checkbox-rating4to5"
                     name="rating4to5"
                     onChange={() => {
                       const index = rating.indexOf(4);
@@ -233,7 +195,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                   <input
                     type="checkbox"
                     className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
-                    id="checkbox"
+                    id="checkbox-rating3to4"
                     name="rating3to4"
                     onChange={() => {
                       const index = rating.indexOf(3);
@@ -279,7 +241,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                   <input
                     type="checkbox"
                     className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
-                    id="checkbox"
+                    id="checkbox-rating2to3"
                     name="rating2to3"
                     onChange={() => {
                       const index = rating.indexOf(2);
@@ -325,7 +287,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                   <input
                     type="checkbox"
                     className="before:content[''] border-blue-gray-200 before:bg-blue-gray-500 peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border transition-all before:absolute before:left-2/4 before:top-2/4 before:block before:h-12 before:w-12 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full before:opacity-0 before:transition-opacity checked:border-primary checked:bg-primary checked:before:bg-primary hover:before:opacity-10"
-                    id="checkbox"
+                    id="checkbox-rating1to2"
                     name="rating1to2"
                     onChange={() => {
                       const index = rating.indexOf(1);
@@ -367,7 +329,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
           </div>
         </div>
         <div className="lg:w-[65%]">
-          <h1 className="p-3 text-lg font-semibold">Choose Your Caregiver</h1>
+          <h1 className="p-3 text-lg font-semibold">Choose Your {role}</h1>
           <div className="px-3">
             {loading ? (
               <Skeleton
@@ -388,7 +350,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                       <div className="min-w-[100px]">
                         <Image
                           src={
-                            cg.profile_photo_url ||
+                            cg.caregiver[0].profile_photo ||
                             "/images/user/Default Caregiver Photo.png"
                           }
                           height={100}
@@ -458,7 +420,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                   </div>
                 ))
               ) : (
-                <div>There&apos;s no data</div>
+                <div>We are sorry, no {role} found in your area.</div>
               )
             ) : (
               caregiver.map((cg, index) => (
@@ -470,7 +432,7 @@ const CaregiverSelection = ({ role }: { role: string }) => {
                     <div className="min-w-[100px]">
                       <Image
                         src={
-                          cg.profile_photo_url ||
+                          cg.caregiver[0].profile_photo ||
                           "/images/user/Default Caregiver Photo.png"
                         }
                         height={100}
@@ -546,7 +508,9 @@ const CaregiverSelection = ({ role }: { role: string }) => {
               Showing{" "}
               {filtered.length > 0
                 ? (pagination.pageIndex - 1) * 5 + 1
-                : caregiver.length > 0 && rating.length === 0 && location === ""
+                : caregiver.length > 0 &&
+                    rating.length === 0 &&
+                    location === null
                   ? (pagination.pageIndex - 1) * 5 + 1
                   : 0}{" "}
               to{" "}

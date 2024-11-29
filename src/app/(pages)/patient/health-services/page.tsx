@@ -1,11 +1,25 @@
+import { getAllCaregiverBasedOnRole } from "@/app/_server-action/patient";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import CaregiverSelection from "@/components/Patient/CaregiverSelection";
 import { getPatientMetadata } from "@/utils/Metadata/PatientMetadata";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 export const metadata = getPatientMetadata("caregiver selection");
 
-const Page = ({ searchParams }: any) => {
+interface Props {
+  searchParams: { role: string };
+}
+
+const Page = async ({ searchParams }: Props) => {
+  const { role } = searchParams;
+
+  if (!role || !["Nurse", "Midwife"].includes(role)) {
+    redirect("/patient");
+  }
+
+  const caregiverData = await getAllCaregiverBasedOnRole(role);
+
   return (
     <DefaultLayout>
       <div className="flex flex-col items-center justify-center">
@@ -62,7 +76,10 @@ const Page = ({ searchParams }: any) => {
             />
           </div>
         </div>
-        <CaregiverSelection role={searchParams.role} />
+        <CaregiverSelection
+          role={searchParams.role}
+          caregiverData={caregiverData}
+        />
       </div>
     </DefaultLayout>
   );

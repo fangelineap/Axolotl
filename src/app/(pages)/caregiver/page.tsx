@@ -3,6 +3,7 @@ import {
   cancelAppointment,
   fetchOngoingOrders
 } from "@/app/_server-action/caregiver";
+import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import AxolotlModal from "@/components/Axolotl/Modal/AxolotlModal";
 import AxolotlRejectionModal from "@/components/Axolotl/Modal/AxolotlRejectionModal";
@@ -165,7 +166,7 @@ const Dashboard = () => {
 
   return (
     <DefaultLayout>
-      <nav className="mb-2 text-sm text-gray-600">Dashboard / Schedule</nav>
+      <CustomBreadcrumbs pageName="Schedule" />
       <h1 className="text-5xl font-bold">Schedule</h1>
       {loading && (
         <div className="mt-8 flex flex-col items-center justify-center gap-3">

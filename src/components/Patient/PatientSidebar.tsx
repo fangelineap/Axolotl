@@ -76,7 +76,7 @@ const menuGroups = [
         route: "",
         children: [
           { label: "Nurses", route: "/patient/health-services?role=Nurse" },
-          { label: "Midwives", route: "/patient/health-services?role=Midwives" }
+          { label: "Midwives", route: "/patient/health-services?role=Midwife" }
         ]
       }
     ]
