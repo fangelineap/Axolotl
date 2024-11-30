@@ -316,21 +316,49 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                   />
                   {service !== "" && (
                     <div className="mb-3 rounded-md border border-stroke p-3">
-                      <h3 className="text-center font-medium">
+                      <h3 className="text-center font-semibold">
                         Service Description
                       </h3>
-                      {service === "Neonatal Care" && (
-                        <p>Neonatal care service description</p>
+                      {AxolotlServices.find((s) => s.name === service) && (
+                        <p className="mt-3">
+                          {
+                            AxolotlServices.find((s) => s.name === service)
+                              ?.description
+                          }
+                        </p>
+                      )}
+                      {/* {service === "Neonatal Care" && (
+                        <p className="mt-3">
+                          {
+                            AxolotlServices.find((s) => s.name === service)
+                              ?.description
+                          }
+                        </p>
                       )}
                       {service === "Elderly Care" && (
-                        <p>Elderly care service description</p>
+                        <p>
+                          {
+                            AxolotlServices.find((s) => s.name === service)
+                              ?.description
+                          }
+                        </p>
                       )}
                       {service === "After Care" && (
-                        <p>After care service description</p>
+                        <p>
+                          {
+                            AxolotlServices.find((s) => s.name === service)
+                              ?.description
+                          }
+                        </p>
                       )}
                       {service === "Booster" && (
-                        <p>Booster service description</p>
-                      )}
+                        <p>
+                          {
+                            AxolotlServices.find((s) => s.name === service)
+                              ?.description
+                          }
+                        </p>
+                      )} */}
                     </div>
                   )}
                 </div>

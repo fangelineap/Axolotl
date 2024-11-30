@@ -236,12 +236,16 @@ const OrderForm = ({
                     placeholder="Select service"
                     required
                     customClass={`w-full mb-3 ${isActive ? "disabled pointer-events-none" : ""}`}
-                    options={[
-                      "Neonatal Care",
-                      "Elderly Care",
-                      "After Care",
-                      "Booster"
-                    ]}
+                    options={
+                      caregiver.role === "Nurse"
+                        ? [
+                            "Neonatal Care",
+                            "Elderly Care",
+                            "After Care",
+                            "Booster"
+                          ]
+                        : ["Neonatal Care", "Elderly Care", "After Care"]
+                    }
                     selectedOption={serviceType}
                     setSelectedOption={setServiceType}
                   />
