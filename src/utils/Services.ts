@@ -29,8 +29,9 @@ export const AxolotlServices = [
           "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation"
       },
       {
-        name: "IDK for this one",
-        description: "Type 4"
+        name: "Home Nursing",
+        description:
+          "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility"
       }
     ]
   },
