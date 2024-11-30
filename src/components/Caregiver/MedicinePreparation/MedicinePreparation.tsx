@@ -310,10 +310,6 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       return;
     }
 
-    toast.success("New medicine added successfully.", {
-      position: "bottom-right"
-    });
-
     // Add the new medicine to the medicineList
     setMedicineList((prevList) => [...prevList, addNewMedicine]);
 
@@ -507,7 +503,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             return;
           }
 
-          toast.success("Order updated successfully", {
+          toast.info("Order updated successfully", {
             position: "bottom-right"
           });
         }

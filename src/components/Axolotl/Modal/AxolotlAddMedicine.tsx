@@ -10,8 +10,8 @@ import Image from "next/image";
 import React, { useState } from "react";
 import AxolotlButton from "../Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "../DisabledInputFields/DisabledCustomInputGroup";
+import CustomDatePicker from "../InputFields/CustomDatePicker";
 import CustomInputGroup from "../InputFields/CustomInputGroup";
-import CustomExpiredDatePicker from "../InputFields/ExpiredDatePicker";
 import PriceBox from "../InputFields/PriceBox";
 import SelectDropdown from "../SelectDropdown";
 
@@ -154,12 +154,17 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
                   />
                 </div>
                 <div className="mb-4 flex gap-5">
-                  <CustomExpiredDatePicker
-                    label="Expired Date"
-                    required
-                    name="expiredDate"
-                    expired={newMedicine.expired || ""}
-                    onChange={(date) => setNewMedicine({ expired: date })}
+                  <CustomDatePicker
+                    name="exp_date"
+                    label="Exp. Date"
+                    placeholder={"Select Exp. Date"}
+                    required={true}
+                    horizontal={false}
+                    onChange={(e) =>
+                      setNewMedicine({
+                        expired: e.target.value
+                      })
+                    }
                   />
                   <PriceBox
                     placeholder="Enter medicine price"

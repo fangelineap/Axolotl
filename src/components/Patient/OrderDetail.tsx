@@ -123,7 +123,9 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
 
     if (res === "Success") {
       setRated(true);
-      toast.success("Rate submitted successfully !");
+      toast.success("Rate submitted successfully !", {
+        position: "bottom-right"
+      });
       router.refresh();
     }
   };
