@@ -1,3 +1,4 @@
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import flatpickr from "flatpickr";
 import { Instance } from "flatpickr/dist/types/instance";
 import { useEffect } from "react";
@@ -8,6 +9,7 @@ interface CustomProps {
   required?: boolean;
   name: string;
   horizontal?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const CustomDatePicker = ({
@@ -15,7 +17,8 @@ const CustomDatePicker = ({
   label,
   required,
   name,
-  horizontal = false
+  horizontal = false,
+  onChange
 }: CustomProps) => {
   useEffect(() => {
     // Init flatpickr
@@ -29,6 +32,19 @@ const CustomDatePicker = ({
         '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
       nextArrow:
         '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
+      onChange: (selectedDates) => {
+        if (selectedDates.length > 0) {
+          const event = {
+            target: {
+              name,
+              value: globalFormatDate(selectedDates[0], "longDate")
+            }
+          } as React.ChangeEvent<HTMLInputElement>;
+          if (onChange) {
+            onChange(event);
+          }
+        }
+      },
       onPreCalendarPosition: (
         selectedDates: Date[],
         dateStr: string,
@@ -46,7 +62,7 @@ const CustomDatePicker = ({
         }
       }
     });
-  }, [horizontal]);
+  }, [horizontal, name, onChange]);
 
   return (
     <div

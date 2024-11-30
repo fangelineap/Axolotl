@@ -518,7 +518,9 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
             </>
           ) : (
             <div className="flex h-full items-center justify-center">
-              <p className="text-gray-500">Select a chat to start messaging</p>
+              <p className="text-dark-seconday">
+                Select a chat to start messaging
+              </p>
             </div>
           )}
         </div>

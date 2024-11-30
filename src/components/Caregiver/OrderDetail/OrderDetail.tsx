@@ -1,5 +1,9 @@
 "use client";
 import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/client";
+import {
+  globalFormatDate,
+  globalFormatPrice
+} from "@/utils/Formatters/GlobalFormatters";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -184,7 +188,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-15">Order Date</strong>
-              <div className="ml-8">{serviceDetails.orderDate}</div>
+              <div className="ml-8">
+                {globalFormatDate(
+                  new Date(serviceDetails.orderDate),
+                  "longDate"
+                )}
+              </div>
             </div>
             <div className="my-2 w-full border-b border-black"></div>{" "}
             {/* Full-width horizontal line */}
@@ -194,23 +203,34 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-3">Total Days of Visit</strong>
-              <div className="ml-8">{serviceDetails.totalDays}</div>
+              <div className="ml-8">{serviceDetails.totalDays}x Visit</div>
             </div>
             <div className="flex">
               <strong className="mr-6.5">Start Date/Time</strong>
-              <div className="ml-8">{serviceDetails.startTime}</div>
+              <div className="ml-8">
+                {globalFormatDate(
+                  new Date(serviceDetails.startTime),
+                  "longDate"
+                )}
+              </div>
             </div>
             <div className="flex">
               <strong className="mr-8">End Date/Time</strong>
-              <div className="ml-8">{serviceDetails.endTime}</div>
+              <div className="ml-8">
+                {globalFormatDate(new Date(serviceDetails.endTime), "longDate")}
+              </div>
             </div>
             <div className="flex">
               <strong className="mr-14.5">Service Fee</strong>
-              <div className="ml-8">{serviceDetails.serviceFee}</div>
+              <div className="ml-8">
+                {globalFormatPrice(serviceDetails.serviceFee)}
+              </div>
             </div>
             <div className="flex">
               <strong className="mr-12.5">Total Charge</strong>
-              <div className="ml-7.5">{serviceDetails.totalCharge}</div>
+              <div className="ml-7.5">
+                {globalFormatPrice(serviceDetails.totalCharge)}
+              </div>
             </div>
           </div>
         </div>
@@ -235,7 +255,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                     </td>
                     <td className="border-primary p-2">{med.name}</td>
                     <td className="border-primary p-2 text-right">
-                      {med.price}
+                      {globalFormatPrice(med.price)}
                     </td>
                   </tr>
                 ))}
@@ -248,7 +268,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                     Total Price
                   </td>
                   <td className="border-t border-primary p-2 text-right">
-                    {price.total}
+                    {globalFormatPrice(price.total)}
                   </td>
                 </tr>
                 <tr>
@@ -259,7 +279,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                     Delivery Fee
                   </td>
                   <td className="border-primary p-2 text-right">
-                    {price.delivery}
+                    {globalFormatPrice(price.delivery)}
                   </td>
                 </tr>
                 <tr>
@@ -270,7 +290,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                     Total Charge
                   </td>
                   <td className="rounded-br-lg border-primary p-2 text-right font-bold text-black">
-                    {price.total + price.delivery}
+                    {globalFormatPrice(price.total + price.delivery)}
                   </td>
                 </tr>
               </tbody>

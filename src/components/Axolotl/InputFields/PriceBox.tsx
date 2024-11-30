@@ -30,12 +30,12 @@ const PriceBox = ({
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <h1 className="text-lg font-semibold">
+    <div className="mb-3 flex w-full flex-col gap-2">
+      <label className="font-medium text-dark dark:text-white">
         Price{" "}
         <span className="text-sm font-normal text-dark-secondary">/pcs</span>
         {required && <span className="ml-1 text-red">*</span>}
-      </h1>
+      </label>
       <div className="flex w-full items-center">
         <label className="rounded-l-md border border-r-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
           Rp.

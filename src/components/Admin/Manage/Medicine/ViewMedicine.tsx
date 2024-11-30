@@ -5,7 +5,10 @@ import { getClientPublicStorageURL } from "@/app/_server-action/global/storage/c
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "@/components/Axolotl/DisabledInputFields/DisabledCustomInputGroup";
 import PriceBox from "@/components/Axolotl/InputFields/PriceBox";
-import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
+import {
+  globalFormatDate,
+  globalFormatPrice
+} from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
 import { IconBan } from "@tabler/icons-react";
 import Image from "next/image";
@@ -115,7 +118,7 @@ function ViewMedicine(data: ViewMedicineProps) {
             </div>
             <div className="flex flex-col gap-5">
               <PriceBox
-                placeholder={data.medicine.price.toString()}
+                placeholder={globalFormatPrice(data.medicine.price)}
                 value={data.medicine.price}
                 disabled={true}
               />

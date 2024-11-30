@@ -333,7 +333,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 )}
               </div>
             </div>
-            <div className="my-2 w-full border-b border-gray-400"></div>{" "}
+            <div className="my-2 w-full border-b border-black"></div>{" "}
             {/* Full-width horizontal line */}
             <div className="flex">
               <strong className="mr-12">Service Type</strong>
@@ -341,7 +341,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-3">Total Days of Visit</strong>
-              <div className="ml-8">{serviceDetails.totalDays}</div>
+              <div className="ml-8">{serviceDetails.totalDays}x Visit</div>
             </div>
             <div className="flex">
               <strong className="mr-6.5">Start Date/Time</strong>
@@ -360,11 +360,15 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             </div>
             <div className="flex">
               <strong className="mr-14.5">Service Fee</strong>
-              <div className="ml-8">{serviceDetails.serviceFee}</div>
+              <div className="ml-8">
+                {globalFormatPrice(parseInt(serviceDetails.serviceFee))}
+              </div>
             </div>
             <div className="flex">
               <strong className="mr-12.5">Total Charge</strong>
-              <div className="ml-8">{serviceDetails.totalCharge}</div>
+              <div className="ml-8">
+                {globalFormatPrice(parseInt(serviceDetails.totalCharge))}
+              </div>
             </div>
           </div>
         </div>
@@ -474,7 +478,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                     Days of Visit
                   </label>
                   <label className="font-medium text-dark dark:text-white">
-                    {serviceDetails.totalDays}x
+                    {serviceDetails.totalDays}x Visit
                   </label>
                 </div>
                 <div className="my-5 h-[0.5px] w-full bg-kalbe-light"></div>
@@ -620,7 +624,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   {[...Array(5)].map((_, index) => (
                     <svg
                       key={index}
-                      className={`${index > 0 ? "ms-3" : ""} h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow-300" : "text-gray-300 dark:text-gray-500"}`}
+                      className={`${index > 0 ? "ms-3" : ""} h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow-300" : "dark:text-dark-seconday text-gray-300"}`}
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"

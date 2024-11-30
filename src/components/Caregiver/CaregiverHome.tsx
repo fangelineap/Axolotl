@@ -232,7 +232,7 @@ const Dashboard = () => {
                       <h3 className="text-lg font-bold">
                         {order.appointment.service_type}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-dark-seconday text-sm">
                         {order.appointment.main_concern}
                       </p>
                       <div className="mb-2 mt-1 text-sm text-gray-600">

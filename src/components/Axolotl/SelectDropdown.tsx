@@ -9,6 +9,7 @@ interface CustomProps {
   content: Array<string>;
   horizontal?: boolean;
   value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const SelectDropdown: React.FC<CustomProps> = ({
@@ -18,58 +19,50 @@ const SelectDropdown: React.FC<CustomProps> = ({
   name,
   content,
   horizontal = false,
-  value
+  value,
+  onChange
 }: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>(value || "");
-  const [isOptionSelected, setIsOptionSelected] = useState<boolean>(false);
-  const options = content;
+  const [isOptionSelected, setIsOptionSelected] = useState<boolean>(!!value);
 
   useEffect(() => {
-    if (value) {
+    if (value !== undefined) {
       setSelectedOption(value);
-      setIsOptionSelected(true);
+      setIsOptionSelected(!!value);
     }
-  }, [value]); // Sync with parent prop changes
+  }, [value]);
 
-  const changeTextColor = () => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    setSelectedOption(newValue);
     setIsOptionSelected(true);
-  };
-
-  const getContent = () => {
-    let res: any = [];
-    options.forEach((str) => {
-      res.push(
-        <>
-          <option value={str} className="bg-white text-black">
-            {str}
-          </option>
-          ,
-        </>
-      );
-    });
-
-    return res;
+    if (onChange) {
+      onChange(e);
+    }
   };
 
   return (
     <div
-      className={`mb-3 flex w-full flex-col gap-2 ${horizontal ? "md:flex-row md:items-center md:justify-between md:gap-5" : null}`}
+      className={`mb-3 flex w-full flex-col gap-2 ${
+        horizontal
+          ? "md:flex-row md:items-center md:justify-between md:gap-5"
+          : ""
+      }`}
     >
       <label className="font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
 
       <div
-        className={`relative flex w-full cursor-pointer rounded-md bg-white focus:border-primary active:border-primary dark:bg-dark-2 ${horizontal ? "md:w-3/4" : null}`}
+        className={`relative flex w-full cursor-pointer rounded-md bg-white focus:border-primary active:border-primary dark:bg-dark-2 ${
+          horizontal ? "md:w-3/4" : ""
+        }`}
       >
         <select
           title={label}
           name={name}
           value={selectedOption}
-          onChange={(e) => {
-            setSelectedOption(e.target.value);
-            changeTextColor();
-          }}
+          onChange={handleOnChange}
           className={`relative z-10 w-full cursor-pointer appearance-none rounded-md border-[1.5px] border-gray-1 bg-transparent bg-white py-2 pl-3 pr-11.5 transition focus:border-primary focus-visible:outline-none active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
             isOptionSelected
               ? "text-dark dark:text-white"
@@ -84,7 +77,11 @@ const SelectDropdown: React.FC<CustomProps> = ({
           >
             {placeholder}
           </option>
-          {getContent()}
+          {content.map((str) => (
+            <option key={str} value={str} className="bg-white text-black">
+              {str}
+            </option>
+          ))}
         </select>
 
         <IconChevronDown

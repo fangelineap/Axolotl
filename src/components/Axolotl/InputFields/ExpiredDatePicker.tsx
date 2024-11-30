@@ -2,7 +2,7 @@ import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import flatpickr from "flatpickr";
 import { useEffect, useRef } from "react";
 
-interface ExpiredDatePickerProps {
+interface CustomExpiredDatePickerProps {
   customClasses?: string;
   label: string;
   required?: boolean;
@@ -11,14 +11,14 @@ interface ExpiredDatePickerProps {
   onChange: (date: string) => void; // Callback to handle date changes
 }
 
-const ExpiredDatePicker = ({
+const CustomExpiredDatePicker = ({
   customClasses,
   label,
   required,
   name,
   expired,
   onChange
-}: ExpiredDatePickerProps) => {
+}: CustomExpiredDatePickerProps) => {
   const datepickerRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -44,16 +44,20 @@ const ExpiredDatePicker = ({
   }, [expired, onChange]); // Re-run effect when expired date or onChange changes
 
   return (
-    <div className={customClasses}>
-      <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        {label} {required}
+    <div
+      className={
+        customClasses ? customClasses : "mb-3 flex w-full flex-col gap-2"
+      }
+    >
+      <label className="block text-body-sm font-medium text-dark dark:text-white">
+        {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
       <div className="relative">
         <input
           ref={datepickerRef}
           name={name}
           defaultValue={expired} // Set the input's initial value
-          className="form-datepicker w-full rounded-[4px] border-[1.5px] border-stroke bg-transparent px-5 py-2 font-normal outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary"
+          className={`form-datepicker w-full truncate rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 pr-10 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
           placeholder="mm/dd/yyyy"
           data-class="flatpickr-right"
           required={required}
@@ -104,4 +108,4 @@ const ExpiredDatePicker = ({
   );
 };
 
-export default ExpiredDatePicker;
+export default CustomExpiredDatePicker;

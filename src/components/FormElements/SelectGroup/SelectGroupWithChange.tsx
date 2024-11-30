@@ -16,7 +16,7 @@ const SelectGroupWithChange: React.FC<CustomProps> = ({
   content = ["One", "Two"],
   required,
   name,
-  onChange, // Menambahkan onChange
+  onChange // Menambahkan onChange
 }: CustomProps) => {
   const [selectedOption, setSelectedOption] = useState<string>("");
 
@@ -30,11 +30,7 @@ const SelectGroupWithChange: React.FC<CustomProps> = ({
 
   const getContent = () => {
     return content.map((str, index) => (
-      <option
-        key={index}
-        value={str}
-        className="bg-kalbe-proLight text-dark-5 dark:text-dark-6"
-      >
+      <option value={str} className="bg-white text-black" key={index}>
         {str}
       </option>
     ));
@@ -43,7 +39,7 @@ const SelectGroupWithChange: React.FC<CustomProps> = ({
   return (
     <div className={customClasses}>
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
-        {label} {required}
+        {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
 
       <div className="relative z-20 rounded-[7px] bg-white dark:bg-dark-2">
@@ -51,7 +47,7 @@ const SelectGroupWithChange: React.FC<CustomProps> = ({
           name={name}
           value={selectedOption}
           onChange={handleSelectChange} // Menggunakan handler onChange yang dimodifikasi
-          className={`relative z-10 w-full appearance-none rounded-[4px] border border-stroke bg-transparent py-2 pl-5 pr-11.5 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
+          className={`relative z-10 w-full appearance-none rounded-md border border-stroke bg-transparent py-2 pl-5 pr-11.5 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 ${
             selectedOption ? "text-dark dark:text-white" : ""
           }`}
         >

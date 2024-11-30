@@ -16,7 +16,10 @@ import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
 import MedicineModal from "@/components/Axolotl/Modal/AxolotlAddMedicine";
 import { MEDICINE } from "@/types/AxolotlMainType";
-import { globalFormatPrice } from "@/utils/Formatters/GlobalFormatters";
+import {
+  globalFormatDate,
+  globalFormatPrice
+} from "@/utils/Formatters/GlobalFormatters";
 import {
   IconCircleMinus,
   IconCirclePlus,
@@ -230,8 +233,53 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
   };
 
   const handleSaveNewMedicine = async () => {
-    if (!newMedicine.name || !newMedicine.price || !newMedicine.expired) {
-      toast.warning("Please fill out all fields.", {
+    if (
+      !newMedicine.name &&
+      !newMedicine.type &&
+      !newMedicine.expired &&
+      !newMedicine.price
+    ) {
+      toast.error("Please fill out all fields.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    if (!newMedicine.name) {
+      toast.warning("Please enter a medicine name.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    if (!newMedicine.type) {
+      toast.warning("Please select a medicine type.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    if (!newMedicine.expired) {
+      toast.warning("Please select a medicine expiration date.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    if (newMedicine.expired && new Date(newMedicine.expired) < new Date()) {
+      toast.warning("Please select a valid expiration date.", {
+        position: "bottom-right"
+      });
+
+      return;
+    }
+
+    if (!newMedicine.price) {
+      toast.warning("Please enter a medicine price.", {
         position: "bottom-right"
       });
 
@@ -249,7 +297,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         name: newMedicine.name,
         type: newMedicine.type,
         price: isNaN(medicinePrice) ? 0 : medicinePrice,
-        exp_date: new Date(newMedicine.expired)
+        exp_date: new Date(new Date(newMedicine.expired).toLocaleDateString())
       },
       orderId
     );
@@ -262,11 +310,18 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       return;
     }
 
+    toast.success("New medicine added successfully.", {
+      position: "bottom-right"
+    });
+
+    // Add the new medicine to the medicineList
+    setMedicineList((prevList) => [...prevList, addNewMedicine]);
+
     // Add the newly created medicine with its ID to the selected medications
     setSelectedMedications((prev) => [
       ...prev,
       {
-        id: addNewMedicine.uuid, // Use the ID returned from the database
+        id: addNewMedicine.uuid,
         quantity: newMedicine.quantity,
         name: newMedicine.name,
         price: isNaN(medicinePrice) ? 0 : medicinePrice,
@@ -277,6 +332,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
     ]);
 
     // Close the modal and reset the new medicine form
+    setSearchTerm("");
     setIsAddNewMedicineModalOpen(false);
     resetFormNewMedicine();
   };
@@ -523,10 +579,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <span
               className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
                 orderStatus === "Completed"
-                  ? "bg-green-500"
+                  ? "bg-primary"
                   : orderStatus === "Ongoing"
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
+                    ? "bg-yellow"
+                    : "bg-red"
               }`}
             >
               {orderStatus}
@@ -544,7 +600,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 patientInfo.name,
                 patientInfo.address,
                 patientInfo.phoneNumber,
-                patientInfo.birthdate.toString()
+                globalFormatDate(patientInfo.birthdate, "longDate")
               ]
             )
           ) : (
@@ -559,7 +615,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 <strong>Phone Number:</strong> {patientInfo.phoneNumber}
               </div>
               <div>
-                <strong>Birthdate:</strong> {patientInfo.birthdate.toString()}
+                <strong>Birthdate:</strong>{" "}
+                {globalFormatDate(patientInfo.birthdate, "longDate")}
               </div>
             </div>
           )}
@@ -602,12 +659,14 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             ["Order ID", "Order Date"],
             [
               serviceDetails.orderId,
-              new Date(serviceDetails.orderDate).toLocaleString()
+              globalFormatDate(new Date(serviceDetails.orderDate), "longDate")
             ]
           )}
 
           {/* Divider */}
-          <CustomDivider horizontal color="black" />
+          <div className="my-2">
+            <CustomDivider horizontal color="black" />
+          </div>
 
           {renderFields(
             [
@@ -619,8 +678,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             [
               serviceDetails.serviceType,
               String(serviceDetails.totalDays),
-              serviceDetails.startTime,
-              serviceDetails.endTime
+              globalFormatDate(new Date(serviceDetails.startTime), "longDate"),
+              globalFormatDate(new Date(serviceDetails.endTime), "longDate")
             ]
           )}
         </div>
@@ -632,7 +691,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
             <div className="flex items-center">
               <input
                 type="text"
-                className="w-full rounded-l-md border p-2 focus:border-primary focus:outline-none"
+                className="w-full rounded-l-md border border-gray-1 px-3 py-2 
+        outline-none transition focus:border-primary active:border-primary"
                 placeholder="Search for a medicine"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -649,14 +709,14 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                     className="flex cursor-pointer items-center justify-between p-2 hover:bg-gray-100"
                     onClick={() => handleMedicineSelect(medicine)}
                   >
-                    <span className="text-gray-500">{medicine.name}</span>
-                    <span className="italic text-gray-500">
+                    <span className="text-dark-secondary">{medicine.name}</span>
+                    <span className="italic text-dark-secondary">
                       {medicine.type}
                     </span>
                   </div>
                 ))}
                 <div
-                  className="cursor-pointer p-2 text-gray-500 hover:bg-gray-100"
+                  className="cursor-pointer p-2 text-dark-secondary hover:bg-gray-100"
                   onClick={handleAddNewMedicine}
                 >
                   Not in the list?{" "}
@@ -683,12 +743,18 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 {selectedMedications.map((med, index) => (
                   <tr key={index}>
                     <td className="border-primary px-2 py-2 text-left">
-                      <div className="flex w-1/2 justify-between gap-3 p-2 text-primary">
-                        <button onClick={() => handleDecreaseQuantity(index)}>
+                      <div className="flex w-1/2 items-center justify-between gap-5 p-2 text-primary">
+                        <button
+                          onClick={() => handleDecreaseQuantity(index)}
+                          className="rounded-full p-2 transition duration-300 ease-in-out hover:bg-primary hover:text-white"
+                        >
                           <IconCircleMinus size={25} />
                         </button>
                         <h1 className="text-lg text-black">{med.quantity}</h1>
-                        <button onClick={() => handleIncreaseQuantity(index)}>
+                        <button
+                          onClick={() => handleIncreaseQuantity(index)}
+                          className="rounded-full p-2 transition duration-300 ease-in-out hover:bg-primary hover:text-white"
+                        >
                           <IconCirclePlus size={25} />
                         </button>
                       </div>
@@ -699,10 +765,11 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                     </td>
                     {selectedMedications.length > 0 && (
                       <td className="border-primary px-5 py-2 text-right">
-                        <button onClick={() => handleRemoveMedicine(index)}>
-                          <div className="flex items-center justify-center text-red">
-                            <IconX size={30} />
-                          </div>
+                        <button
+                          onClick={() => handleRemoveMedicine(index)}
+                          className="rounded-full p-2 text-red transition duration-300 ease-in-out hover:bg-red hover:text-white"
+                        >
+                          <IconX size={30} />
                         </button>
                       </td>
                     )}
@@ -752,12 +819,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
       {/* Evidence Upload */}
       <div className="w-full max-w-md rounded-lg bg-white p-6">
         <div className="rounded-xl border p-4">
-          <h2 className="mb-4 text-center text-xl font-extrabold text-primary">
+          <h2 className="mb-4 text-center text-xl font-bold text-primary">
             Evidence
           </h2>
-          <p className="text-md mb-4 text-left font-extrabold">
-            Proof of Service
-          </p>
+          <p className="text-md mb-4 text-left font-bold">Proof of Service</p>
           {uploadedImage ? (
             <div className="mt-4 flex flex-col gap-3 rounded-lg border p-4">
               <Image

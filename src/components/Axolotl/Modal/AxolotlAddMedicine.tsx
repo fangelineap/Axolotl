@@ -1,14 +1,19 @@
 "use client";
 
-import ExpiredDatePicker from "@/components/FormElements/DatePicker/ExpiredDatePicker";
-import InputGroupWithCurrency from "@/components/FormElements/InputGroup/InputGroupWithCurrency";
-import InputGroupWithChange from "@/components/FormElements/InputGroup/InputWithChange";
-import SelectGroupWithChange from "@/components/FormElements/SelectGroup/SelectGroupWithChange";
 import { MEDICINE } from "@/types/AxolotlMainType";
+import {
+  globalFormatDate,
+  globalFormatPrice
+} from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
-import { globalFormatPrice } from "../../../utils/Formatters/GlobalFormatters";
+import AxolotlButton from "../Buttons/AxolotlButton";
+import DisabledCustomInputGroup from "../DisabledInputFields/DisabledCustomInputGroup";
+import CustomInputGroup from "../InputFields/CustomInputGroup";
+import CustomExpiredDatePicker from "../InputFields/ExpiredDatePicker";
+import PriceBox from "../InputFields/PriceBox";
+import SelectDropdown from "../SelectDropdown";
 
 interface NewMedicine {
   name: string;
@@ -55,9 +60,9 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="mx-auto w-full max-w-lg overflow-y-auto rounded-lg bg-white">
         <div className="rounded-t-lg bg-primary px-6 py-4">
-          <h2 className="text-center text-lg font-bold text-white">
+          <h1 className="text-center text-heading-6 font-bold text-white">
             {mode === "addExisting" ? "Add Medicine" : "Add New Medicine"}
-          </h2>
+          </h1>
         </div>
         <div className="p-6">
           {mode === "addExisting" && currentMedicine ? (
@@ -92,43 +97,33 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
                   Medicine Description
                 </h3>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium">Name</label>
-                  <input
+                  <DisabledCustomInputGroup
                     type="text"
-                    className="mt-1 block w-full rounded border p-2"
+                    label="Name"
                     value={currentMedicine.name}
-                    disabled
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium">Type</label>
-                  <input
-                    className="mt-1 block w-full rounded border p-2"
+                  <DisabledCustomInputGroup
+                    type="text"
+                    label="Type"
                     value={currentMedicine.type}
-                    disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center">
-                  <div className="w-1/2">
-                    <label className="block text-sm font-medium">
-                      Expired Date
-                    </label>
-                    <input
-                      type="text"
-                      className="mt-1 block w-full rounded border p-2"
-                      value={new Date(currentMedicine.exp_date).toDateString()}
-                      disabled
-                    />
-                  </div>
-                  <div className="w-1/2 pl-4">
-                    <label className="block text-sm font-medium">Price</label>
-                    <input
-                      type="text"
-                      className="block w-full rounded border p-2 pl-10"
-                      value={globalFormatPrice(currentMedicine.price)}
-                      disabled
-                    />
-                  </div>
+                <div className="mb-4 flex gap-5">
+                  <DisabledCustomInputGroup
+                    type="text"
+                    label="Expired Date"
+                    value={globalFormatDate(
+                      new Date(currentMedicine.exp_date),
+                      "shortDate"
+                    )}
+                  />
+                  <PriceBox
+                    placeholder={globalFormatPrice(currentMedicine.price)}
+                    value={globalFormatPrice(currentMedicine.price)}
+                    disabled={true}
+                  />
                 </div>
               </div>
             </>
@@ -138,68 +133,65 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
               <>
                 {/* Add New Medicine Form */}
                 <div className="mb-4">
-                  <InputGroupWithChange
-                    label="Name"
+                  <CustomInputGroup
+                    label="Medicine Name"
                     type="text"
+                    name="medicineName"
+                    onChange={(e) => setNewMedicine({ name: e.target.value })}
                     placeholder="Enter medicine name"
                     required
-                    name="medicineName"
-                    value={newMedicine.name}
-                    onChange={(e) => setNewMedicine({ name: e.target.value })}
                   />
                 </div>
                 <div className="mb-4">
-                  <SelectGroupWithChange
-                    name="Brand"
+                  <SelectDropdown
+                    name="medicineType"
                     label="Type"
                     content={["Branded", "Generic"]}
                     required
-                    onChange={(value) => setNewMedicine({ type: value })}
+                    placeholder="Select medicine type"
+                    value={newMedicine.type}
+                    onChange={(e) => setNewMedicine({ type: e.target.value })}
                   />
                 </div>
-                <div className="mb-4 flex items-center">
-                  <ExpiredDatePicker
+                <div className="mb-4 flex gap-5">
+                  <CustomExpiredDatePicker
                     label="Expired Date"
                     required
                     name="expiredDate"
                     expired={newMedicine.expired || ""}
                     onChange={(date) => setNewMedicine({ expired: date })}
                   />
-                  <div className="w-1/2 pl-4">
-                    <InputGroupWithCurrency
-                      label="Price"
-                      type="text"
-                      placeholder="Enter medicine price"
-                      required
-                      name="medicinePrice"
-                      value={newMedicine.price.toLocaleString("id-ID")}
-                      onChange={(e) => {
-                        const price = parseInt(
-                          e.target.value.replace(/\./g, "")
-                        );
-                        setNewMedicine({ price: isNaN(price) ? 0 : price });
-                      }}
-                    />
-                  </div>
+                  <PriceBox
+                    placeholder="Enter medicine price"
+                    required
+                    name="medicinePrice"
+                    value={newMedicine.price.toLocaleString("id-ID")}
+                    disabled={false}
+                    onChange={(e) => {
+                      const price = parseInt(e.target.value.replace(/\./g, ""));
+                      setNewMedicine({ price: isNaN(price) ? 0 : price });
+                    }}
+                  />
                 </div>
               </>
             )
           )}
 
           {/* Modal Action Buttons */}
-          <div className="flex justify-end space-x-4">
-            <button
-              className="rounded bg-gray-500 px-4 py-2 text-white"
+          <div className="flex justify-end gap-5">
+            <AxolotlButton
+              type="button"
+              label="Cancel"
+              variant="secondary"
               onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              className="rounded bg-primary px-4 py-2 text-white"
+            />
+            <AxolotlButton
+              type="button"
+              label="Save"
+              variant="primary"
               onClick={onSave}
-            >
-              Save
-            </button>
+              isSubmit
+            />
           </div>
         </div>
       </div>

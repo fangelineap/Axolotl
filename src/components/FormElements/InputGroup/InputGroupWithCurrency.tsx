@@ -18,7 +18,7 @@ const InputGroupWithCurrency: React.FC<InputGroupWithCurrencyProps> = ({
   required,
   name,
   value,
-  onChange,
+  onChange
 }) => {
   const [inputValue, setInputValue] = useState<string>(value || "");
 
@@ -26,7 +26,7 @@ const InputGroupWithCurrency: React.FC<InputGroupWithCurrencyProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
     const formattedValue = new Intl.NumberFormat("id-ID").format(
-      parseInt(rawValue) || 0,
+      parseInt(rawValue) || 0
     ); // Format the value to Indonesian currency format
     setInputValue(formattedValue);
 
@@ -44,7 +44,7 @@ const InputGroupWithCurrency: React.FC<InputGroupWithCurrencyProps> = ({
       </label>
       <div className="relative mt-1 flex items-center">
         {/* Prefix "Rp." */}
-        <span className="absolute left-3 text-gray-500">Rp.</span>
+        <span className="text-dark-seconday absolute left-3">Rp.</span>
         <input
           name={name}
           type="text"
