@@ -1,13 +1,13 @@
 import { getGlobalProfile } from "@/app/_server-action/global/profile";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
+import CaregiverScheduleComponent from "@/components/Profile/CaregiverScheduleComponent";
 import ViewProfileComponent from "@/components/Profile/ViewProfileComponent";
 import { getUserFromSession } from "@/lib/server";
 import { getGlobalMetadata } from "@/utils/Metadata/GlobalMetadata";
 import { redirect } from "next/navigation";
 import { getAdminCaregiverTotalOrders } from "../admin/manage/user/actions";
 import { AdminUserTable } from "../admin/manage/user/table/data";
-import CaregiverScheduleComponent from "@/components/Profile/CaregiverScheduleComponent";
 
 export const metadata = getGlobalMetadata("Profile");
 

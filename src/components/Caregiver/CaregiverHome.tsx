@@ -13,8 +13,9 @@ import { CAREGIVER_SCHEDULE_ORDER } from "@/types/AxolotlMultipleTypes";
 import { Skeleton } from "@mui/material";
 import { IconClock, IconMapPin, IconUserCircle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
+import useSWR from "swr";
 
 // Helper function to format the date
 const formatDate = (date: Date) => {
@@ -37,7 +38,6 @@ const Dashboard = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [openCancelNoteModal, setOpenCancelNoteModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isCanceled, setIsCanceled] = useState(false);
   const router = useRouter();
 
   const [orderId, setOrderId] = useState<ORDER["id"]>("");
@@ -78,33 +78,39 @@ const Dashboard = () => {
   };
 
   // Fetch orders from the backend
-  useEffect(() => {
-    const getOrders = async () => {
-      try {
-        setLoading(true);
+  useSWR(
+    "orders",
+    () => {
+      const getOrders = async () => {
+        try {
+          setLoading(true);
 
-        // Fetch data from the backend
-        const data = await fetchOngoingOrders();
+          // Fetch data from the backend
+          const data = await fetchOngoingOrders();
 
-        if (data) {
-          // Call handleFilter with the fetched data
-          handleFilter(data);
-        } else {
-          // Handle the case where data is undefined or null
-          setOrders({});
+          if (data) {
+            // Call handleFilter with the fetched data
+            handleFilter(data);
+          } else {
+            // Handle the case where data is undefined or null
+            setOrders({});
+          }
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+          // Handle error state if necessary
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-        // Handle error state if necessary
-      } finally {
-        setLoading(false);
-        setIsCanceled(false);
-      }
-    };
+      };
 
-    getOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCanceled]);
+      getOrders();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true
+    }
+  );
 
   const openFirstModal = (appointment: any) => {
     setOrderId(appointment.id);
@@ -140,8 +146,6 @@ const Dashboard = () => {
 
         return;
       }
-
-      setIsCanceled(true);
     } catch (error) {
       console.error(error);
       toast.error("Failed to perform the action. Please try again.", {
