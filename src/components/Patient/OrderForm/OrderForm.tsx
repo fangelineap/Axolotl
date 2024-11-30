@@ -540,6 +540,7 @@ const OrderForm = ({
                             label="Continue"
                             variant="secondary"
                             fontThickness="bold"
+                            type="button"
                           />
                         )}
                       </div>
