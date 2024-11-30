@@ -3,7 +3,7 @@ import { medicinePreparation } from "@/app/_server-action/caregiver";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
 import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/MedicinePreparation";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { globalFormatDate } from "../../../../../../../utils/Formatters/GlobalFormatters";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
 import { Metadata } from "next";
 

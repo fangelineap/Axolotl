@@ -4,11 +4,7 @@ import React from "react";
 
 export const metadata = getCaregiverMetadata("order history");
 const page = () => {
-  return (
-    <div>
-      <OrderPage />
-    </div>
-  );
+  return <OrderPage />;
 };
 
 export default page;

@@ -3,7 +3,7 @@ import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumb
 import OrderDetail from "@/components/Caregiver/OrderDetail/OrderDetail";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { redirect } from "next/navigation";
-import { globalFormatDate } from "../../../../../utils/Formatters/GlobalFormatters";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import type { CaregiverOrderDetails } from "../../type/data";
 import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
 
