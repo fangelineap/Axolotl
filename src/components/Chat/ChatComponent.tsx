@@ -520,7 +520,9 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
               <p className="text-dark-seconday">
                 {orderData.length > 0
                   ? "Select a chat to start messaging"
-                  : "You don't have any chats yet. Please wait for any patient start an order with you."}
+                  : role === "Patient"
+                    ? "Currently, you don't have any orders. Please start an appointment with our Caregiver to start chatting"
+                    : "You don't have any chats yet. Please wait for any patient start an order with you."}
               </p>
             </div>
           )}
