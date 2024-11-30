@@ -62,11 +62,14 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
     <DefaultLayout>
       <CustomBreadcrumbs parentPage="Order" pageName="Order Details" />
 
-      <h1 className="mb-6 text-5xl font-bold text-gray-800">Order Details</h1>
+      <h1 className="text-gray-text-black mb-6 text-5xl font-bold">
+        Order Details
+      </h1>
 
       <div>
         <OrderDetail
           status={orderData.status}
+          notes={orderData.notes || "N/A"}
           patientInfo={{
             name: `${first_name} ${last_name}`,
             address: address || "N/A",

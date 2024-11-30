@@ -10,7 +10,7 @@ interface PaginationProps {
 function CustomPagination({
   pageCount,
   currentPage,
-  onPageChange,
+  onPageChange
 }: PaginationProps) {
   return (
     <div className="mt-4 flex items-center justify-between">
@@ -28,15 +28,15 @@ function CustomPagination({
             "&.Mui-selected": {
               backgroundColor: "transparent",
               color: "#1CBF90", // Color for the selected item
-              fontWeight: "bold",
+              fontWeight: "bold"
             },
             "&:hover:not(.Mui-selected)": {
-              backgroundColor: "#E9ECEF", // Hover color for non-selected items
-            },
-          },
+              backgroundColor: "#E9ECEF" // Hover color for non-selected items
+            }
+          }
         }}
       />
-      <span className="mr-2 text-sm text-gray-600">
+      <span className="mr-2 text-sm text-black">
         Showing <b>{currentPage + 1}</b> of <b>{pageCount}</b> Pages
       </span>
     </div>

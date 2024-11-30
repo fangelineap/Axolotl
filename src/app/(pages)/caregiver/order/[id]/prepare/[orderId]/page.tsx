@@ -63,7 +63,7 @@ const MedicinePreparationPage = async ({
     <DefaultLayout>
       <CustomBreadcrumbs parentPage="Order" pageName="Medicine Preparation" />
 
-      <h1 className="mb-6 text-5xl font-bold text-gray-800">
+      <h1 className="text-gray-text-black mb-6 text-5xl font-bold">
         Preparing Medicine...
       </h1>
       <div>

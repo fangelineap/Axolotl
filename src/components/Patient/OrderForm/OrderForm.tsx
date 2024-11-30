@@ -579,7 +579,7 @@ const OrderForm = ({
                             <label className="font-medium text-dark dark:text-white">
                               Days of Visit
                             </label>
-                            <div className="my-2 flex justify-between rounded-full border-[1px] border-stroke p-2 text-primary">
+                            <div className="my-2 flex items-center justify-between rounded-full border-[1px] border-stroke p-1 text-primary">
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -587,6 +587,7 @@ const OrderForm = ({
                                     setDays(days - 1);
                                   }
                                 }}
+                                className="rounded-full p-2 transition duration-300 ease-in-out hover:bg-primary hover:text-white"
                               >
                                 <IconCircleMinus size={30} />
                               </button>
@@ -596,6 +597,7 @@ const OrderForm = ({
                                   e.preventDefault();
                                   setDays(days + 1);
                                 }}
+                                className="rounded-full p-2 transition duration-300 ease-in-out hover:bg-primary hover:text-white"
                               >
                                 <IconCirclePlus size={30} />
                               </button>

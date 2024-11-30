@@ -216,7 +216,7 @@ const Dashboard = () => {
                 className={`text-3xl font-medium sm:text-2xl ${
                   date === formatDate(today)
                     ? "rounded-lg border-0 bg-kalbe-ultraLight py-2 pl-5 text-kalbe-light"
-                    : "rounded-lg border-0 bg-gray py-2 pl-5 text-gray-800"
+                    : "text-gray-text-black rounded-lg border-0 bg-gray py-2 pl-5"
                 }`}
               >
                 {date}{" "}
@@ -239,7 +239,7 @@ const Dashboard = () => {
                       <p className="text-dark-seconday text-sm">
                         {order.appointment.main_concern}
                       </p>
-                      <div className="mb-2 mt-1 text-sm text-gray-600">
+                      <div className="mb-2 mt-1 text-sm text-black">
                         <div className="flex items-center">
                           <IconUserCircle
                             className="text-dark-secondary "

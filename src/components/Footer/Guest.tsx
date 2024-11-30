@@ -40,16 +40,16 @@ const GuestFooter = () => {
           </div>
           <div className="mt-7 flex flex-col items-center md:ml-20 md:mt-0 md:items-start">
             <span className="text-lg dark:text-white">Company</span>
-            <span className="mt-2 text-dark-secondary dark:text-gray-400">
+            <span className="dark:text-gray-text-dark-secondary mt-2 text-dark-secondary">
               About Us
             </span>
-            <span className="mt-2 text-dark-secondary dark:text-gray-400">
+            <span className="dark:text-gray-text-dark-secondary mt-2 text-dark-secondary">
               Careers
             </span>
-            <span className="mt-2 text-dark-secondary dark:text-gray-400">
+            <span className="dark:text-gray-text-dark-secondary mt-2 text-dark-secondary">
               Security
             </span>
-            <span className="mt-2 text-dark-secondary dark:text-gray-400">
+            <span className="dark:text-gray-text-dark-secondary mt-2 text-dark-secondary">
               Terms & Privacy
             </span>
           </div>

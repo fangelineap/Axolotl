@@ -571,7 +571,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         <div className="mb-6">
           <h2 className="text-xl font-bold">Order Status</h2>
           <div className="mt-2 flex items-center">
-            <p className="font-bold text-gray-600">Current Status</p>
+            <p className="font-bold text-black">Current Status</p>
             <span
               className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
                 orderStatus === "Completed"
@@ -702,7 +702,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 {filteredMedicineList.map((medicine) => (
                   <div
                     key={medicine.uuid}
-                    className="flex cursor-pointer items-center justify-between p-2 hover:bg-gray-100"
+                    className="flex cursor-pointer items-center justify-between p-2 hover:bg-gray-1"
                     onClick={() => handleMedicineSelect(medicine)}
                   >
                     <span className="text-dark-secondary">{medicine.name}</span>
@@ -712,7 +712,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                   </div>
                 ))}
                 <div
-                  className="cursor-pointer p-2 text-dark-secondary hover:bg-gray-100"
+                  className="cursor-pointer p-2 text-dark-secondary hover:bg-gray-1"
                   onClick={handleAddNewMedicine}
                 >
                   Not in the list?{" "}

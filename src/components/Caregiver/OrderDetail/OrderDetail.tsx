@@ -4,11 +4,13 @@ import {
   globalFormatDate,
   globalFormatPrice
 } from "@/utils/Formatters/GlobalFormatters";
+import { IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 interface OrderDetailProps {
   status: string;
+  notes: string;
   patientInfo: {
     name: string;
     address: string;
@@ -52,6 +54,7 @@ interface OrderDetailProps {
 
 const OrderDetail: React.FC<OrderDetailProps> = ({
   status,
+  notes,
   patientInfo,
   medicalDetails,
   serviceDetails,
@@ -86,12 +89,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
             <div>
               <h2 className="text-xl font-bold">Order Status</h2>
             </div>
-            <div className="flex flex-row">
+            <div className="mb-3 flex flex-row items-center">
               <div>
-                <p className="font-bold text-gray-600">Current Status</p>
+                <p className="font-bold text-black">Current Status</p>
               </div>
               <div
-                className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
+                className={`ml-20 inline-block rounded-full px-3 py-2 text-xs font-bold text-white ${
                   status === "Completed"
                     ? "bg-primary"
                     : status === "Ongoing"
@@ -102,6 +105,34 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                 {status}
               </div>
             </div>
+            {/* Canceled */}
+            {status === "Canceled" && (
+              <div className="flex w-full flex-col items-center justify-center gap-2 rounded-md border border-red bg-red-light p-5 text-center text-red">
+                <IconX
+                  size={60}
+                  className="rounded-full bg-red p-2 text-red-light"
+                />
+                <h1 className="text-heading-5 font-bold">
+                  This order has been canceled
+                </h1>
+                <h1 className="text-lg font-medium">
+                  The system has processed the refund to the patient&apos;s
+                  virtual account.
+                </h1>
+                <div className="w-full text-left">
+                  <p>
+                    You{" "}
+                    <span className="font-medium">
+                      have rejected this order
+                    </span>{" "}
+                    due to the following reasons:
+                  </p>
+                  <ol className="list-disc pl-5">
+                    <li>{notes}</li>
+                  </ol>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -300,23 +331,25 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
       </div>
 
       {/* Right Side */}
-      <div className=" w-full max-w-md rounded-lg  bg-white p-6 lg:mt-0 lg:w-auto">
-        <div className="rounded-xl border p-4">
-          <h2 className="mb-4 text-center text-xl font-bold text-primary">
-            Evidence
-          </h2>
-          <p className="text-md mb-4 text-left font-bold">Proof of Service</p>
-          <div className="mt-4 rounded-lg border p-4">
-            <Image
-              src={proof_of_service_photo}
-              alt="Proof of Service"
-              className="mx-auto h-auto max-w-full rounded-lg"
-              height={500}
-              width={500}
-            />
+      {status === "Completed" && (
+        <div className=" w-full max-w-md rounded-lg  bg-white p-6 lg:mt-0 lg:w-auto">
+          <div className="rounded-xl border p-4">
+            <h2 className="mb-4 text-center text-xl font-bold text-primary">
+              Evidence
+            </h2>
+            <p className="text-md mb-4 text-left font-bold">Proof of Service</p>
+            <div className="mt-4 rounded-lg border p-4">
+              <Image
+                src={proof_of_service_photo}
+                alt="Proof of Service"
+                className="mx-auto h-auto max-w-full rounded-lg"
+                height={500}
+                width={500}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

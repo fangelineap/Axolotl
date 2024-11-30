@@ -539,7 +539,7 @@ of ${caregiver.length} entries
                       }
                     }}
                     className={`${pagination.pageIndex === 1 && "disabled"} text-dark-seconday ms-0 flex h-8 items-center justify-center rounded-s-lg border border-e-0 border-gray-300 bg-white px-3
-                     leading-tight hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400
+                     leading-tight hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400
                       dark:hover:bg-gray-700 dark:hover:text-white`}
                   >
                     <span className="sr-only">Previous</span>
@@ -573,7 +573,7 @@ of ${caregiver.length} entries
                               }));
                             }
                           }}
-                          className={`${pagination.pageIndex === index ? "bg-kalbe-light px-3 text-white" : "text-dark-seconday bg-white px-3 leading-tight hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"} flex h-8 items-center justify-center border border-gray-300`}
+                          className={`${pagination.pageIndex === index ? "bg-kalbe-light px-3 text-white" : "text-dark-seconday bg-white px-3 leading-tight hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"} flex h-8 items-center justify-center border border-gray-300`}
                         >
                           {index + 1}
                         </a>
@@ -581,14 +581,14 @@ of ${caregiver.length} entries
                     ))}
                     <li>
                       <a
-                        className={`disabled text-dark-seconday flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+                        className={`disabled text-dark-seconday flex h-8 items-center justify-center border border-gray-300 bg-white px-3 leading-tight hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
                       >
                         ...
                       </a>
                     </li>
                     <li>
                       <a
-                        className={`flex h-8 items-center justify-center border border-gray-300 bg-kalbe-light px-3 leading-tight text-white hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+                        className={`flex h-8 items-center justify-center border border-gray-300 bg-kalbe-light px-3 leading-tight text-white hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
                       >
                         {pagination.pageIndex}
                       </a>
@@ -606,7 +606,7 @@ of ${caregiver.length} entries
                             }));
                           }
                         }}
-                        className={`${pagination.pageIndex === index + 1 ? "bg-kalbe-light px-3 text-white" : "text-dark-seconday bg-white px-3 leading-tight hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"} flex h-8 items-center justify-center border border-gray-300`}
+                        className={`${pagination.pageIndex === index + 1 ? "bg-kalbe-light px-3 text-white" : "text-dark-seconday bg-white px-3 leading-tight hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"} flex h-8 items-center justify-center border border-gray-300`}
                       >
                         {index + 1}
                       </a>
@@ -627,7 +627,7 @@ of ${caregiver.length} entries
                     className={`${
                       pagination.pageIndex + 1 > pagination.pageSize
                         ? "disabled"
-                        : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-white"
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
                     }
                       text-dark-seconday flex h-8 items-center justify-center rounded-e-lg border border-gray-300 bg-white px-3 leading-tight dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400`}
                   >

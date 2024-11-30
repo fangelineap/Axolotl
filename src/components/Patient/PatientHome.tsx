@@ -170,7 +170,7 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
               <h3 className="text-lg font-bold">{service.title}</h3>
               {service.features.map((feature, i) => (
                 <ul
-                  className="ml-4 mt-2 list-outside list-disc text-sm text-gray-600"
+                  className="ml-4 mt-2 list-outside list-disc text-sm text-black"
                   key={i}
                 >
                   <li className="mt-1">{feature}</li>

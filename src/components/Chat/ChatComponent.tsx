@@ -25,7 +25,6 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
   /**
    * * States & Initial Variables
    */
-  // const [loading, setLoading] = useState(true);
   const [chatData, setChatData] = useState<MESSAGES[]>([]);
   const [orderData, setOrderData] = useState<CHAT_ORDER[]>([]);
   const [activeChat, setActiveChat] = useState<string | null>(null);
@@ -470,8 +469,8 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
                   <div key={chat.id} className="mb-5 flex flex-col gap-2">
                     {showDate && (
                       <div className="mb-3 flex justify-center">
-                        <span className="rounded-lg bg-gray-200 px-3 py-1 text-xs">
-                          {formatDate(chat.created_at)}
+                        <span className="rounded-lg bg-gray px-3 py-1 text-xs">
+                          {globalFormatDate(chat.created_at, "longDate")}
                         </span>
                       </div>
                     )}
@@ -519,7 +518,9 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
           ) : (
             <div className="flex h-full items-center justify-center">
               <p className="text-dark-seconday">
-                Select a chat to start messaging
+                {orderData.length > 0
+                  ? "Select a chat to start messaging"
+                  : "You don't have any chats yet. Please wait for any patient start an order with you."}
               </p>
             </div>
           )}

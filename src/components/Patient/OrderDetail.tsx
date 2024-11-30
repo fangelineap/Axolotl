@@ -142,9 +142,9 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
         <div className="mb-6">
           <h2 className="text-xl font-bold">Order Status</h2>
           <div className="mt-2 flex items-center">
-            <p className="font-bold text-gray-600">Current Status</p>
+            <p className="font-bold text-black">Current Status</p>
             <span
-              className={`ml-20 inline-block rounded-full px-5 py-1.5 text-xs font-bold text-white ${
+              className={`ml-20 inline-block rounded-full px-3 py-2 text-xs font-bold text-white ${
                 orderStatus === "Completed"
                   ? "bg-primary"
                   : orderStatus === "Ongoing"
@@ -157,7 +157,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           </div>
         </div>
         {orderStatus === "Canceled" && (
-          <div className="mb-6 flex flex-col items-center justify-center rounded-[7px] border border-red bg-red-200 p-4">
+          <div className="mb-6 flex flex-col items-center justify-center rounded-[7px] border border-red bg-red-light p-4">
             <svg
               width="70"
               height="70"
@@ -184,7 +184,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   due to the following reasons:
                 </p>
                 <p className="text-start text-red">
-                  <ul className="list-disc">
+                  <ul className="ml-5 list-disc">
                     <li>{orderNotes}</li>
                   </ul>
                 </p>
@@ -626,7 +626,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   {[...Array(5)].map((_, index) => (
                     <svg
                       key={index}
-                      className={`${index > 0 ? "ms-3" : ""} h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow-300" : "dark:text-dark-seconday text-gray-300"}`}
+                      className={`${index > 0 ? "ms-3" : ""} h-8 w-8 cursor-pointer ${index <= (serviceDetails.rate ? serviceDetails.rate - 1 : rating) ? "text-yellow" : "dark:text-dark-seconday text-dark-secondary"}`}
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
