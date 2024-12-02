@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: AdminShowServiceOrderProps) {
   }
 
   return {
-    title: `Order ID ${response.id} Details`
+    title: `Order ID ${response.patient.users.first_name} ${response.patient.users.last_name} Details`
   };
 }
 
@@ -67,7 +67,10 @@ async function AdminShowServiceOrder({ params }: AdminShowServiceOrderProps) {
         subPage="Service Logs"
         pageName="Details"
       />
-      <h1 className="mb-5 text-heading-1 font-bold">Order {data.id} Details</h1>
+      <h1 className="mb-5 text-heading-1 font-bold">
+        Order {data.patient.users.first_name} {data.patient.users.last_name}{" "}
+        Details
+      </h1>
       <ViewOrderDetails orderType="service" data={data} />
     </CustomLayout>
   );

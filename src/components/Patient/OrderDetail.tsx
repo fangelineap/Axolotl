@@ -135,7 +135,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row lg:justify-between">
+    <div className="flex flex-col font-medium lg:flex-row lg:justify-between">
       {/* Left Side */}
       <div className="mb-6 flex-1 lg:mr-8">
         {/* Order Status */}
@@ -180,8 +180,8 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               <div className="mb-3">
                 <p className="text-lg text-red">
                   Your caregiver{" "}
-                  <span className="font-semibold">has rejected this order</span>{" "}
-                  due to the following reasons:
+                  <span className="font-bold">has rejected this order</span> due
+                  to the following reasons:
                 </p>
                 <p className="text-start text-red">
                   <ul className="ml-5 list-disc">
@@ -190,7 +190,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 </p>
               </div>
             </div>
-            <p className="my-5 w-[1/2] text-xl font-semibold text-red">
+            <p className="my-5 w-[1/2] text-xl font-bold text-red">
               We have processed the refund to your virtual account. It should
               reflect shortly.
             </p>
@@ -214,10 +214,10 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             {isMdOrLarger ? (
               <div className=" mt-2 flex flex-row ">
                 <div className=" flex flex-col gap-y-1">
-                  <strong>Caregiver Name</strong>
-                  <strong>Reviewed At</strong>
+                  <p>Caregiver Name</p>
+                  <p>Reviewed At</p>
                 </div>
-                <div className="ml-19 flex flex-col gap-y-1">
+                <div className="ml-19 flex flex-col gap-y-1 font-normal">
                   <div>{caregiverInfo.name}</div>
                   <div>
                     {globalFormatDate(
@@ -228,12 +228,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="mt-2 flex flex-col gap-y-2">
+              <div className="mt-2 flex flex-col gap-y-2 font-normal">
                 <div>
-                  <strong>Caregiver Name:</strong> {caregiverInfo.name}
+                  <p>Caregiver Name:</p> {caregiverInfo.name}
                 </div>
                 <div>
-                  <strong>Reviewed At:</strong>{" "}
+                  <p>Reviewed At:</p>{" "}
                   {globalFormatDate(
                     new Date(caregiverInfo.reviewed_at),
                     "longDate"
@@ -250,12 +250,12 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           {isMdOrLarger ? (
             <div className=" mt-2 flex flex-row ">
               <div className=" flex flex-col gap-y-1">
-                <strong>Patient Name</strong>
-                <strong>Address</strong>
-                <strong>Phone Number</strong>
-                <strong>Birthdate</strong>
+                <p>Patient Name</p>
+                <p>Address</p>
+                <p>Phone Number</p>
+                <p>Birthdate</p>
               </div>
-              <div className="ml-19 flex flex-col gap-y-1">
+              <div className="ml-19 flex flex-col gap-y-1 font-normal">
                 <div>{patientInfo.name}</div>
                 <div>{patientInfo.address}</div>
                 <div>{patientInfo.phoneNumber}</div>
@@ -270,16 +270,16 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           ) : (
             <div className="mt-2 flex flex-col gap-y-2">
               <div>
-                <strong>Patient Name:</strong> {patientInfo.name}
+                <p>Patient Name:</p> {patientInfo.name}
               </div>
               <div>
-                <strong>Address:</strong> {patientInfo.address}
+                <p>Address:</p> {patientInfo.address}
               </div>
               <div>
-                <strong>Phone Number:</strong> {patientInfo.phoneNumber}
+                <p>Phone Number:</p> {patientInfo.phoneNumber}
               </div>
               <div>
-                <strong>Birthdate:</strong>{" "}
+                <p>Birthdate:</p>{" "}
                 {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
             </div>
@@ -291,20 +291,22 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           <h2 className="text-xl font-bold">Medical Concerns & Conjecture</h2>
           <div className="mt-2 flex flex-col sm:flex-row">
             <div className="flex flex-col gap-y-1">
-              <strong>Causes</strong>
-              <strong>Main Concerns</strong>
-              <strong>Current Medicine</strong>
-              <strong>Symptoms</strong>
-              <strong>Medical Descriptions</strong>
+              <p>Causes</p>
+              <p>Main Concerns</p>
+              <p>Current Medicine</p>
+              <p>Symptoms</p>
+              <p>Medical Descriptions</p>
             </div>
-            <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
+            <div className="mt-2 flex flex-col gap-y-1 font-normal sm:ml-8 sm:mt-0">
               <div>{medicalDetails.causes}</div>
               <div>{medicalDetails.mainConcerns.join(", ")}</div>
               <div>{medicalDetails.currentMedicine.join(", ")}</div>
               <div>{medicalDetails.symptoms.join(", ")}</div>
             </div>
           </div>
-          <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
+          <div className="mt-2 font-normal">
+            {medicalDetails.medicalDescriptions}
+          </div>
 
           <div className="mt-2">
             <div className="flex flex-col items-center justify-center text-center">
@@ -323,12 +325,14 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
           <h2 className="text-xl font-bold">Service Details</h2>
           <div className="flex flex-col gap-y-1">
             <div className="flex">
-              <strong className="mr-19.5">Order ID</strong>
-              <div className="ml-8">{serviceDetails.orderId}</div>{" "}
+              <p className="mr-19.5">Order ID</p>
+              <div className="ml-8 font-normal">
+                {serviceDetails.orderId}
+              </div>{" "}
             </div>
             <div className="flex">
-              <strong className="mr-15">Order Date</strong>
-              <div className="ml-8">
+              <p className="mr-15">Order Date</p>
+              <div className="ml-8 font-normal">
                 {globalFormatDate(
                   new Date(serviceDetails.orderDate),
                   "longDate"
@@ -338,16 +342,20 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             <div className="my-2 w-full border-b border-black"></div>{" "}
             {/* Full-width horizontal line */}
             <div className="flex">
-              <strong className="mr-12">Service Type</strong>
-              <div className="ml-8">{serviceDetails.serviceType}</div>
+              <p className="mr-12">Service Type</p>
+              <div className="ml-8 font-normal">
+                {serviceDetails.serviceType}
+              </div>
             </div>
             <div className="flex">
-              <strong className="mr-3">Total Days of Visit</strong>
-              <div className="ml-8">{serviceDetails.totalDays}x Visit</div>
+              <p className="mr-3">Total Days of Visit</p>
+              <div className="ml-8 font-normal">
+                {serviceDetails.totalDays}x Visit
+              </div>
             </div>
             <div className="flex">
-              <strong className="mr-6.5">Start Date/Time</strong>
-              <div className="ml-8">
+              <p className="mr-6.5">Start Date/Time</p>
+              <div className="ml-8 font-normal">
                 {globalFormatDate(
                   new Date(serviceDetails.startTime),
                   "longDate"
@@ -355,20 +363,20 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
               </div>
             </div>
             <div className="flex">
-              <strong className="mr-8">End Date/Time</strong>
-              <div className="ml-8">
+              <p className="mr-8">End Date/Time</p>
+              <div className="ml-8 font-normal">
                 {globalFormatDate(new Date(serviceDetails.endTime), "longDate")}
               </div>
             </div>
             <div className="flex">
-              <strong className="mr-14.5">Service Fee</strong>
-              <div className="ml-8">
+              <p className="mr-14.5">Service Fee</p>
+              <div className="ml-8 font-normal">
                 {globalFormatPrice(parseInt(serviceDetails.serviceFee))}
               </div>
             </div>
             <div className="flex">
-              <strong className="mr-12.5">Total Charge</strong>
-              <div className="ml-8">
+              <p className="mr-12.5">Total Charge</p>
+              <div className="ml-8 font-normal">
                 {globalFormatPrice(parseInt(serviceDetails.totalCharge))}
               </div>
             </div>
@@ -495,7 +503,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 <div className="mb-3">
                   <h1 className="mb-2 text-lg font-bold">Payment Status</h1>
                   <div className="rounded-md border-[1px] border-primary bg-kalbe-ultraLight px-5 py-2">
-                    <h1 className="text-center text-lg font-semibold text-primary">
+                    <h1 className="text-center text-lg font-bold text-primary">
                       Verified
                     </h1>
                   </div>
@@ -567,7 +575,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                       className={`rounded-md border-[1px] ${medicineIsPaid === "Verified" ? "border-primary bg-kalbe-ultraLight" : "border-red bg-red-200"} px-5 py-2`}
                     >
                       <h1
-                        className={`text-center text-lg font-semibold ${medicineIsPaid === "Verified" ? "text-primary" : "text-red"} text-primary`}
+                        className={`text-center text-lg font-bold ${medicineIsPaid === "Verified" ? "text-primary" : "text-red"} text-primary`}
                       >
                         {medicineIsPaid === "Verified" ? "Verified" : "Skipped"}
                       </h1>
@@ -588,6 +596,7 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                     : "secondary"
                 }
                 isSubmit
+                disabled={medicineOrderId ? false : true}
                 fontThickness="bold"
                 onClick={() =>
                   router.push(

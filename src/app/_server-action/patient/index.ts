@@ -201,6 +201,8 @@ export async function createAppointment({
         update_at: new Date()
       })
       .select("*");
+
+    if (orderError) console.error(orderError);
     if (orderData) {
       console.log("order id", orderData);
     }
@@ -547,6 +549,8 @@ export async function handleAdditionalMedicinePayment(
       })
       .eq("id", medicineOrderId)
       .select("*");
+
+    console.error(error);
 
     if (data) {
       try {

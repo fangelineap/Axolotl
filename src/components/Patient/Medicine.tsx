@@ -68,8 +68,8 @@ const Medicine = ({
         )}
         <Image
           src={medicinePhoto || "/images/user/caregiver.png"}
-          width={50}
-          height={50}
+          width={200}
+          height={200}
           className="h-[100px] w-[100px] rounded-md object-cover"
           alt="medicine"
         />
@@ -81,11 +81,11 @@ const Medicine = ({
           <h1>{medicineDetail.medicine.type}</h1>
         </div>
       </div>
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col items-end justify-between">
         <h1 className="font-semibold">
           {globalFormatPrice(medicineDetail.medicine.price)}
         </h1>
-        <div className="mb-3 flex w-[100px]">
+        <div className="mb-3 flex w-[100px] justify-end">
           <input
             className="w-full rounded-l-md border border-gray-1 bg-white py-2 text-center font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
             type="number"

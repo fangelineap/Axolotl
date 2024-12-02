@@ -300,7 +300,7 @@ const OrderForm = ({
                     />
                   </div>
                   <div>
-                    <label className="mb-3 block font-medium text-dark dark:text-white">
+                    <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
                       Describe Your Current Conditions{" "}
                       <span className="ml-1 text-red">*</span>
                     </label>
