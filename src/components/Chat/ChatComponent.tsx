@@ -362,7 +362,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
                 }`}
                 onClick={() => setActiveChat(otherUserUuid)}
               >
-                <div className="relative h-12 w-12 flex-shrink-0">
+                <div className="relative max-h-12 min-h-12 min-w-12 max-w-12 flex-shrink-0 overflow-hidden rounded-full">
                   <Image
                     width={200}
                     height={200}
@@ -430,7 +430,7 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
         {/* Header */}
         {activeChat && (
           <div className="flex items-center gap-3 border-b p-5">
-            <div className="relative h-12 w-12">
+            <div className="relative max-h-12 min-h-12 min-w-12 max-w-12 overflow-hidden rounded-full">
               <Image
                 width={200}
                 height={200}
@@ -520,7 +520,9 @@ const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
               <p className="text-dark-seconday">
                 {orderData.length > 0
                   ? "Select a chat to start messaging"
-                  : "You don't have any chats yet. Please wait for any patient start an order with you."}
+                  : role === "Patient"
+                    ? "Currently, you don't have any orders. Please start an appointment with our Caregiver to start chatting"
+                    : "You don't have any chats yet. Please wait for any patient start an order with you."}
               </p>
             </div>
           )}

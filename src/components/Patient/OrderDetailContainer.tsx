@@ -29,6 +29,32 @@ const OrderDetailContainer = () => {
 
   return (
     <>
+      {/* Stepper */}
+      <div className="mb-3.5 flex items-center justify-center">
+        <div className="grid min-w-[350px] grid-cols-2 gap-4 gap-x-10 lg:flex lg:gap-7">
+          <div className="flex items-center justify-start gap-1">
+            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
+              1
+            </h2>
+            <h2>Place an Order</h2>
+          </div>
+          <div className="flex items-center justify-start gap-1">
+            <h2 className="flex h-7 w-7 items-center justify-center rounded-full bg-kalbe-light font-medium text-white">
+              2
+            </h2>
+            <h2>Conjecture</h2>
+          </div>
+          <div className="flex items-center justify-start gap-1">
+            <h2
+              className={`flex h-7 w-7 items-center justify-center rounded-full ${data?.medicineOrderId ? "bg-kalbe-light" : ""} bg-gray-cancel font-medium text-white`}
+            >
+              3
+            </h2>
+            <h2>Additional</h2>
+          </div>
+        </div>
+      </div>
+
       <h1 className="mb-4 text-2xl font-bold">Order Details</h1>
       {/* Use the NewComponent and pass sample data as props */}
       {loading ? (

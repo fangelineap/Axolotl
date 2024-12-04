@@ -298,51 +298,53 @@ export const PersonalInformationValidation = (
       const med_freq_times = form.get("med_freq_times");
       const med_freq_day = form.get("med_freq_day");
 
-      if (isNaN(Number(med_freq_times)) || Number(med_freq_times) < 1) {
-        toast.warning(
-          "Please enter a valid number of medication frequency times.",
-          {
-            position: "bottom-right"
-          }
-        );
+      if (med_freq_day && med_freq_times) {
+        if (isNaN(Number(med_freq_times)) || Number(med_freq_times) < 1) {
+          toast.warning(
+            "Please enter a valid number of medication frequency times.",
+            {
+              position: "bottom-right"
+            }
+          );
 
-        return false;
-      }
+          return false;
+        }
 
-      if (isNaN(Number(med_freq_day)) || Number(med_freq_times) < 1) {
-        toast.warning(
-          "Please enter a valid number of medication frequency days.",
-          {
-            position: "bottom-right"
-          }
-        );
+        if (isNaN(Number(med_freq_day)) || Number(med_freq_times) < 1) {
+          toast.warning(
+            "Please enter a valid number of medication frequency days.",
+            {
+              position: "bottom-right"
+            }
+          );
 
-        return false;
-      }
+          return false;
+        }
 
-      const MAX_TIMES_PER_DAY = 24;
-      const MAX_DAYS = 30;
+        const MAX_TIMES_PER_DAY = 24;
+        const MAX_DAYS = 30;
 
-      if (Number(med_freq_times) > MAX_TIMES_PER_DAY) {
-        toast.warning(
-          `Medication frequency times per day cannot exceed ${MAX_TIMES_PER_DAY}.`,
-          {
-            position: "bottom-right"
-          }
-        );
+        if (Number(med_freq_times) > MAX_TIMES_PER_DAY) {
+          toast.warning(
+            `Medication frequency times per day cannot exceed ${MAX_TIMES_PER_DAY}.`,
+            {
+              position: "bottom-right"
+            }
+          );
 
-        return false;
-      }
+          return false;
+        }
 
-      if (Number(med_freq_day) > MAX_DAYS) {
-        toast.warning(
-          `Medication frequency days cannot exceed ${MAX_DAYS} days.`,
-          {
-            position: "bottom-right"
-          }
-        );
+        if (Number(med_freq_day) > MAX_DAYS) {
+          toast.warning(
+            `Medication frequency days cannot exceed ${MAX_DAYS} days.`,
+            {
+              position: "bottom-right"
+            }
+          );
 
-        return false;
+          return false;
+        }
       }
 
       if (!form.get("illness_history")) {

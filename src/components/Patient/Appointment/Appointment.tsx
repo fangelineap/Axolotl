@@ -316,7 +316,7 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                   />
                   {service !== "" && (
                     <div className="mb-3 rounded-md border border-stroke p-3">
-                      <h3 className="text-center font-semibold">
+                      <h3 className="text-center font-medium">
                         Service Description
                       </h3>
                       {AxolotlServices.find((s) => s.name === service) && (
@@ -327,38 +327,6 @@ const Appointment = ({ caregiverData }: { caregiverData: USER_CAREGIVER }) => {
                           }
                         </p>
                       )}
-                      {/* {service === "Neonatal Care" && (
-                        <p className="mt-3">
-                          {
-                            AxolotlServices.find((s) => s.name === service)
-                              ?.description
-                          }
-                        </p>
-                      )}
-                      {service === "Elderly Care" && (
-                        <p>
-                          {
-                            AxolotlServices.find((s) => s.name === service)
-                              ?.description
-                          }
-                        </p>
-                      )}
-                      {service === "After Care" && (
-                        <p>
-                          {
-                            AxolotlServices.find((s) => s.name === service)
-                              ?.description
-                          }
-                        </p>
-                      )}
-                      {service === "Booster" && (
-                        <p>
-                          {
-                            AxolotlServices.find((s) => s.name === service)
-                              ?.description
-                          }
-                        </p>
-                      )} */}
                     </div>
                   )}
                 </div>
