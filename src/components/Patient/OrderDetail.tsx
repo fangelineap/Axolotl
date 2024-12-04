@@ -211,23 +211,23 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
             />
           </div>
           <div>
-            {isMdOrLarger ? (
-              <div className=" mt-2 flex flex-row ">
-                <div className=" flex flex-col gap-y-1">
-                  <strong>Caregiver Name</strong>
-                  <strong>Reviewed At</strong>
-                </div>
-                <div className="ml-19 flex flex-col gap-y-1">
-                  <div>{caregiverInfo.name}</div>
-                  <div>
-                    {globalFormatDate(
-                      new Date(caregiverInfo.reviewed_at),
-                      "longDate"
-                    )}
-                  </div>
+            {/* {isMdOrLarger ? ( */}
+            <div className=" mt-2 flex flex-row ">
+              <div className=" flex min-w-[200px] flex-col gap-y-1">
+                <strong>Caregiver Name</strong>
+                <strong>Reviewed At</strong>
+              </div>
+              <div className="ml-19 flex flex-col gap-y-1">
+                <div>{caregiverInfo.name}</div>
+                <div>
+                  {globalFormatDate(
+                    new Date(caregiverInfo.reviewed_at),
+                    "longDate"
+                  )}
                 </div>
               </div>
-            ) : (
+            </div>
+            {/* ) : (
               <div className="mt-2 flex flex-col gap-y-2">
                 <div>
                   <strong>Caregiver Name:</strong> {caregiverInfo.name}
@@ -240,34 +240,31 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                   )}
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
         {/* Patient Information */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Patient Information</h2>
-          {isMdOrLarger ? (
-            <div className=" mt-2 flex flex-row ">
-              <div className=" flex flex-col gap-y-1">
-                <strong>Patient Name</strong>
-                <strong>Address</strong>
-                <strong>Phone Number</strong>
-                <strong>Birthdate</strong>
-              </div>
-              <div className="ml-19 flex flex-col gap-y-1">
-                <div>{patientInfo.name}</div>
-                <div>{patientInfo.address}</div>
-                <div>{patientInfo.phoneNumber}</div>
-                <div>
-                  {globalFormatDate(
-                    new Date(patientInfo.birthdate),
-                    "longDate"
-                  )}
-                </div>
+          {/* {isMdOrLarger ? ( */}
+          <div className=" mt-2 flex flex-row ">
+            <div className=" flex min-w-[200px] flex-col gap-y-1">
+              <strong>Patient Name</strong>
+              <strong>Address</strong>
+              <strong>Phone Number</strong>
+              <strong>Birthdate</strong>
+            </div>
+            <div className="ml-19 flex flex-col gap-y-1">
+              <div>{patientInfo.name}</div>
+              <div>{patientInfo.address}</div>
+              <div>{patientInfo.phoneNumber}</div>
+              <div>
+                {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
             </div>
-          ) : (
+          </div>
+          {/* ) : (
             <div className="mt-2 flex flex-col gap-y-2">
               <div>
                 <strong>Patient Name:</strong> {patientInfo.name}
@@ -283,27 +280,48 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
                 {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* Medical Concerns & Conjecture (Medical Details) */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Medical Concerns & Conjecture</h2>
-          <div className="mt-2 flex flex-col sm:flex-row">
-            <div className="flex flex-col gap-y-1">
+          {/* {isMdOrLarger ? ( */}
+          <div className=" mt-2 flex flex-row ">
+            <div className=" flex min-w-[200px] flex-col gap-y-1">
               <strong>Causes</strong>
               <strong>Main Concerns</strong>
               <strong>Current Medicine</strong>
               <strong>Symptoms</strong>
               <strong>Medical Descriptions</strong>
             </div>
-            <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
+            <div className="ml-19 flex flex-col gap-y-1">
               <div>{medicalDetails.causes}</div>
               <div>{medicalDetails.mainConcerns.join(", ")}</div>
               <div>{medicalDetails.currentMedicine.join(", ")}</div>
               <div>{medicalDetails.symptoms.join(", ")}</div>
             </div>
           </div>
+          {/* ) : (
+            <div className="mt-2 flex flex-col gap-y-2">
+              <div>
+                <strong>Causes:</strong> {medicalDetails.causes}
+              </div>
+              <div>
+                <strong>Main Concerns:</strong>{" "}
+                {medicalDetails.mainConcerns.join(", ")}
+              </div>
+              <div>
+                <strong>Current Medicine:</strong>{" "}
+                {medicalDetails.currentMedicine.join(", ")}
+              </div>
+              <div>
+                <strong>Symptons:</strong> {medicalDetails.symptoms.join(", ")}
+              </div>
+              <div>Medical Descriptions:</div>
+            </div>
+          )} */}
+
           <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
 
           <div className="mt-2">
