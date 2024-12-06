@@ -369,7 +369,6 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                       required
                       onChange={handleInputChange}
                     />
-                    {/* TODO: UPDATE THIS INPUT */}
                     <PhoneNumberBox
                       placeholder="81XXXXXXXX"
                       name="phone_number"
