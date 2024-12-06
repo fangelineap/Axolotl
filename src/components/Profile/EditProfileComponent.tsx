@@ -373,11 +373,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                       placeholder="81XXXXXXXX"
                       name="phone_number"
                       required
-                      value={
-                        typeof formData.phone_number === "string"
-                          ? formData.phone_number
-                          : ""
-                      }
+                      value={formData.phone_number}
                       onChange={(e) => {
                         const inputValue = e.target.value;
                         setFormData({
@@ -674,11 +670,7 @@ function EditProfileComponent({ user }: EditProfileComponentProps) {
                         placeholder="081XXXXXXXX"
                         name="phone_number"
                         required
-                        value={
-                          typeof formData.phone_number === "string"
-                            ? formData.phone_number
-                            : ""
-                        }
+                        value={formData.phone_number}
                         onChange={(e) => {
                           const inputValue = e.target.value;
                           setFormData({
