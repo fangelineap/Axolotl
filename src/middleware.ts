@@ -140,7 +140,7 @@ async function updateSession(request: NextRequest) {
     }
   };
 
-  console.log(userValidity);
+  console.dir(userValidity, { depth: null, colors: true });
 
   // If there is a invalid role query parameter with the current user role
   const urlRole = new URL(request.url).searchParams.get("role");
@@ -169,15 +169,44 @@ async function updateSession(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ! COMPLETE USER DATA
   if (userPersonalData.success && userPersonalData.is_complete) {
     if (pathname.startsWith("/registration/personal-information")) {
       return NextResponse.redirect(new URL(roleRedirect, request.url));
     }
   }
 
+  // ! CHAT
+  if (pathname.startsWith("/chat")) {
+    if (["Nurse", "Midwife"].includes(userRole)) {
+      const caregiverStatus = await getCaregiverVerificationStatus(userData.id);
+
+      if (!caregiverStatus)
+        return NextResponse.redirect(new URL("/", request.url));
+
+      if (["Unverified", "Rejected"].includes(caregiverStatus)) {
+        return NextResponse.redirect(new URL("/caregiver/review", request.url));
+      }
+    }
+
+    return NextResponse.next();
+  }
+
+  // ! PROFILE
   if (pathname.startsWith("/profile") || pathname.startsWith("/profile/edit")) {
     if (!urlRole || !urlUser)
       return NextResponse.redirect(new URL(roleRedirect, request.url));
+
+    if (["Nurse", "Midwife"].includes(userRole)) {
+      const caregiverStatus = await getCaregiverVerificationStatus(userData.id);
+
+      if (!caregiverStatus)
+        return NextResponse.redirect(new URL("/", request.url));
+
+      if (["Unverified", "Rejected"].includes(caregiverStatus)) {
+        return NextResponse.redirect(new URL("/caregiver/review", request.url));
+      }
+    }
 
     if (urlRole && urlRole !== userRole) {
       const redirectPath = pathname.startsWith("/profile/edit")
@@ -227,7 +256,7 @@ async function updateSession(request: NextRequest) {
     if (!caregiverStatus)
       return NextResponse.redirect(new URL("/", request.url));
 
-    console.log({ caregiverStatus });
+    console.dir({ caregiverStatus }, { color: true });
 
     if (isValid && ["Rejected", "Unverified"].includes(caregiverStatus)) {
       if (pathname !== "/caregiver/review") {
