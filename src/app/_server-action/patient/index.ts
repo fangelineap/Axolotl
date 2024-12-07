@@ -13,7 +13,10 @@ import {
 } from "@/types/AxolotlMainType";
 import { AxolotlServices } from "@/utils/Services";
 import { unstable_noStore } from "next/cache";
-import { getGlobalUserProfilePhoto } from "../global";
+import {
+  getGlobalCaregiverDataByCaregiverOrUserId,
+  getGlobalUserProfilePhoto
+} from "../global";
 
 type Caregiver = USER & {
   caregiver: CAREGIVER[];
@@ -601,14 +604,34 @@ export async function updateRating(
           .eq("caregiver_id", caregiverId);
         try {
           if (data) {
-            const { data: updateData } = await supabase
-              .from("caregiver")
-              .update({ rate: (data[0].rate + rating + 1) / 2 })
-              .eq("caregiver_id", caregiverId)
-              .select("rate");
+            const { data: cgData, error: cgError } =
+              await getGlobalCaregiverDataByCaregiverOrUserId(
+                "caregiver",
+                caregiverId
+              );
 
-            if (updateData) {
-              return "Success";
+            if (cgData) {
+              if (cgData.rate) {
+                const { data: updateData } = await supabase
+                  .from("caregiver")
+                  .update({ rate: (data[0].rate + rating + 1) / 2 })
+                  .eq("caregiver_id", caregiverId)
+                  .select("rate");
+
+                if (updateData) {
+                  return "Success";
+                }
+              } else {
+                const { data: updateData } = await supabase
+                  .from("caregiver")
+                  .update({ rate: rating + 1 })
+                  .eq("caregiver_id", caregiverId)
+                  .select("rate");
+
+                if (updateData) {
+                  return "Success";
+                }
+              }
             }
           } else {
             const { data: updateData } = await supabase
