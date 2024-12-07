@@ -40,7 +40,7 @@ const PriceBox = ({
       </label>
       <div className="flex w-full items-center">
         {!isViewOnly && (
-          <span className="flex-none rounded-l-md border border-r-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+          <span className="flex-none rounded-l-md border border-r-0 border-gray-1 bg-gray px-1 py-2 font-normal text-dark-secondary dark:text-white">
             Rp.
           </span>
         )}
@@ -54,7 +54,9 @@ const PriceBox = ({
           disabled={disabled || isViewOnly}
           maxLength={12}
           className={`${
-            isViewOnly ? "cursor-not-allowed bg-gray-200" : "bg-white"
+            isViewOnly
+              ? "cursor-not-allowed rounded-md bg-gray-200"
+              : "bg-white"
           } flex-1 rounded-r-md border border-gray-1 px-2 py-2 font-normal text-dark outline-none transition ${
             disabled
               ? "disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary"
