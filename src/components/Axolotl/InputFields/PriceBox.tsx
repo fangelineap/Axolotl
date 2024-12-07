@@ -40,7 +40,7 @@ const PriceBox = ({
       </label>
       <div className="flex w-full items-center">
         {!isViewOnly && (
-          <span className="flex-none rounded-l-md border border-r-0 border-gray-1 bg-gray px-1 py-2 font-normal text-dark-secondary dark:text-white">
+          <span className="flex-none rounded-l-md border border-r-0 border-gray-1 bg-gray p-2 font-normal text-dark-secondary dark:text-white">
             Rp.
           </span>
         )}
