@@ -57,9 +57,9 @@ const PriceBox = ({
           />
         ) : (
           <div className="flex w-full items-center">
-            <p className="rounded-l-md border border-r-0 border-gray-1 bg-gray px-1 py-2 font-normal text-dark-secondary dark:text-white">
+            <span className="rounded-l-md border border-r-0 border-gray-1 bg-gray px-1 py-2 font-normal text-dark-secondary dark:text-white">
               Rp.
-            </p>
+            </span>
             <input
               name={name}
               aria-label="Price"
