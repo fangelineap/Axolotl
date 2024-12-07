@@ -145,7 +145,7 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
               <Image
                 src={banner}
                 alt={`Banner ${index + 1}`}
-                className="w-full rounded-md"
+                className="max-h-96 w-full rounded-md object-cover"
                 width={1200}
                 height={400}
               />

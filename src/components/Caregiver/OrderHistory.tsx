@@ -67,9 +67,10 @@ const OrderPage = () => {
     },
     {
       id: "Patient Name",
-      accessorKey: "patient.users.first_name",
+      accessorKey: "patient.users",
       header: "Patient Name",
-      cell: ({ row }) => `${row.original.patient?.users?.first_name || "N/A"}`
+      cell: ({ row }) =>
+        `${row.original.patient?.users?.first_name || ""} ${row.original.patient?.users?.last_name || ""}`.trim()
     },
     {
       accessorKey: "status",

@@ -14,7 +14,7 @@ import {
 import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import CustomDivider from "@/components/Axolotl/CustomDivider";
 import FileInput from "@/components/Axolotl/InputFields/FileInput";
-import MedicineModal from "@/components/Axolotl/Modal/AxolotlAddMedicine";
+import AxolotlAddMedicineModal from "@/components/Axolotl/Modal/AxolotlAddMedicineModal";
 import { MEDICINE } from "@/types/AxolotlMainType";
 import {
   globalFormatDate,
@@ -75,7 +75,9 @@ function renderFields(fieldName: string[], fieldValue: string[]) {
     <div className="mt-2 flex w-full flex-col items-center justify-start gap-7 sm:flex-row">
       <div className="flex w-40 flex-col gap-y-1">
         {fieldName.map((field, index) => (
-          <strong key={index}>{field}</strong>
+          <p className="font-medium" key={index}>
+            {field}
+          </p>
         ))}
       </div>
       <div className="mt-2 flex flex-1 flex-col gap-y-1 sm:mt-0">
@@ -622,14 +624,23 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
         <div className="mb-6">
           <h2 className="text-xl font-bold">Medical Concerns & Conjecture</h2>
           {renderFields(
-            ["Causes", "Main Concerns", "Current Medicine", "Symptoms"],
+            ["Causes", "Main Concerns", "Current Medicine"],
             [
               medicalDetails.causes,
               medicalDetails.mainConcerns,
-              medicalDetails.currentMedicine,
-              medicalDetails.symptoms.join(", ")
+              medicalDetails.currentMedicine
             ]
           )}
+          <div className="mt-2 flex w-full flex-col items-start justify-start gap-7 sm:flex-row">
+            <div className="flex w-40 flex-col gap-y-1">
+              <p className="font-medium">Symptoms</p>
+            </div>
+            <ol className="list-decimal pl-5">
+              {medicalDetails.symptoms.map((symptom, index) => (
+                <li key={index}>{symptom}</li>
+              ))}
+            </ol>
+          </div>
 
           <div className="mt-2 flex flex-1 flex-col gap-y-1 font-bold">
             Medical Description
@@ -868,7 +879,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
       {/* Modal for Adding Medicine */}
       {isModalOpen && currentMedicine && (
-        <MedicineModal
+        <AxolotlAddMedicineModal
           mode="addExisting"
           isOpen={isModalOpen ? true : false}
           currentMedicine={currentMedicine}
@@ -880,7 +891,7 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
 
       {/* Modal for Adding New Medicine */}
       {isAddNewMedicineModalOpen && (
-        <MedicineModal
+        <AxolotlAddMedicineModal
           mode="addNew"
           isOpen={true}
           newMedicine={newMedicine}
