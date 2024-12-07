@@ -1,5 +1,6 @@
 "use client";
 
+import CustomDatePickerCaregiver from "@/components/Caregiver/InputField/CustomDatePickerCaregiver";
 import { MEDICINE } from "@/types/AxolotlMainType";
 import {
   globalFormatDate,
@@ -10,7 +11,6 @@ import Image from "next/image";
 import React, { useState } from "react";
 import AxolotlButton from "../Buttons/AxolotlButton";
 import DisabledCustomInputGroup from "../DisabledInputFields/DisabledCustomInputGroup";
-import CustomDatePicker from "../InputFields/CustomDatePicker";
 import CustomInputGroup from "../InputFields/CustomInputGroup";
 import PriceBox from "../InputFields/PriceBox";
 import SelectDropdown from "../SelectDropdown";
@@ -58,13 +58,13 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="mx-auto w-full max-w-lg overflow-y-auto rounded-lg bg-white">
+      <div className="mx-auto flex max-h-[90vh] w-full max-w-lg flex-col overflow-y-auto rounded-lg bg-white">
         <div className="rounded-t-lg bg-primary px-6 py-4">
-          <h1 className="text-center text-heading-6 font-bold text-white">
+          <h1 className="flex-none text-center text-heading-6 font-bold text-white">
             {mode === "addExisting" ? "Add Medicine" : "Add New Medicine"}
           </h1>
         </div>
-        <div className="p-6">
+        <div className="flex-grow overflow-y-auto p-6">
           {mode === "addExisting" && currentMedicine ? (
             <>
               {/* Display Medicine Photo */}
@@ -123,6 +123,7 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
                     placeholder={globalFormatPrice(currentMedicine.price)}
                     value={globalFormatPrice(currentMedicine.price)}
                     disabled={true}
+                    isViewOnly={true}
                   />
                 </div>
               </div>
@@ -154,7 +155,7 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
                   />
                 </div>
                 <div className="mb-4 flex gap-5">
-                  <CustomDatePicker
+                  <CustomDatePickerCaregiver
                     name="exp_date"
                     label="Exp. Date"
                     placeholder={"Select Exp. Date"}

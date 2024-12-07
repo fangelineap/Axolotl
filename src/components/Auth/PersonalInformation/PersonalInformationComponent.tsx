@@ -490,7 +490,7 @@ function PersonalInformationComponent({
                             name="work_experiences"
                             label="Work Experiences"
                             type="number"
-                            placeholder="500"
+                            placeholder="5"
                             required
                             isUnit
                             unit="year"
