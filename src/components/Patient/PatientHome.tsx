@@ -148,6 +148,7 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
                 className="max-h-96 w-full rounded-md object-cover"
                 width={1200}
                 height={400}
+                priority
               />
             </div>
           ))}
