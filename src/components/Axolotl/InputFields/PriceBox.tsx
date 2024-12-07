@@ -53,7 +53,7 @@ const PriceBox = ({
             value={value === 0 ? "" : value?.toString()}
             onChange={handleInputChange}
             disabled={disabled}
-            maxLength={12} // Disesuaikan sesuai kebutuhan
+            maxLength={12}
             className={`flex-1 rounded-r-md border border-gray-1 bg-white px-3 py-2 font-normal text-dark outline-none transition ${
               disabled
                 ? "disabled:cursor-default disabled:bg-gray disabled:text-dark-secondary"

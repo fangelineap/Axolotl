@@ -1,6 +1,6 @@
 "use client";
 
-import CustomDatePickerCaregiver from "@/components/Caregiver/InputField/CustomDatePickerCaregiver";
+import CustomDatePickerCaregiver from "@/components/Axolotl/InputFields/CustomDatePickerForCG";
 import { MEDICINE } from "@/types/AxolotlMainType";
 import {
   globalFormatDate,
