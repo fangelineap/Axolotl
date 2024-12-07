@@ -20,19 +20,13 @@ const PhoneNumberBox = ({
   const [internalValue, setInternalValue] = useState<string>(value.toString());
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { value } = e.target;
-
-    // Remove leading zeros
-    if (value.startsWith("0") && value.length > 1) {
-      value = value.slice(1);
-
-      return; // Do not allow "0" as the first character
-    }
+    const { value } = e.target;
 
     const isNumericOrEmpty = value === "" || !isNaN(Number(value));
     const isWithinMaxLength = value.length <= 13;
+    const isNotLeadingZero = !(value.length === 1 && value[0] === "0");
 
-    if (!isNumericOrEmpty || !isWithinMaxLength) return;
+    if (!isNumericOrEmpty || !isWithinMaxLength || !isNotLeadingZero) return;
 
     onChange ? onChange(e) : setInternalValue(value);
   };

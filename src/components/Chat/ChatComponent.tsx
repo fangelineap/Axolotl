@@ -20,7 +20,6 @@ interface ChatComponentProps {
   role: string;
 }
 
-// TODO: UPDATE ITS RESPONSIVENESS
 const ChatComponent = ({ senderId, role }: ChatComponentProps) => {
   /**
    * * States & Initial Variables

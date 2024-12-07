@@ -73,7 +73,6 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
   serviceDetails,
   price
 }) => {
-  const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [rating, setRating] = useState<number>(0);
   const [rated, setRated] = useState<boolean>(false);
@@ -102,16 +101,6 @@ const OrderDetail: React.FC<MedecinePreparationProps> = ({
 
     calculateTotalPrice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 768px)"); // Tailwind's 'md' size is 768px
-    setIsMdOrLarger(mediaQuery.matches);
-
-    const handleResize = () => setIsMdOrLarger(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleResize);
-
-    return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
 
   const handleRateCaregiver = async () => {
