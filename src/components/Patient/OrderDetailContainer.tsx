@@ -55,7 +55,7 @@ const OrderDetailContainer = () => {
         </div>
       </div>
 
-      <h1 className="mb-4 text-2xl font-bold">Order Details</h1>
+      <h1 className="mb-4 text-heading-1 font-bold">Order Details</h1>
       {/* Use the NewComponent and pass sample data as props */}
       {loading ? (
         <Skeleton

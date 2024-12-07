@@ -6,7 +6,7 @@ import {
 } from "@/utils/Formatters/GlobalFormatters";
 import { IconX } from "@tabler/icons-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 interface OrderDetailProps {
   status: string;
@@ -62,22 +62,10 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
   price,
   proofOfService
 }) => {
-  const [isMdOrLarger, setIsMdOrLarger] = useState<boolean>(false);
-
   const proof_of_service_photo = getClientPublicStorageURL(
     "proof_of_service",
     proofOfService.imageUrl
   );
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 768px)"); // Tailwind's 'md' size is 768px
-    setIsMdOrLarger(mediaQuery.matches);
-
-    const handleResize = () => setIsMdOrLarger(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleResize);
-
-    return () => mediaQuery.removeEventListener("change", handleResize);
-  }, []);
 
   return (
     <div className="flex flex-col lg:flex-row lg:justify-between">
@@ -139,63 +127,53 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
         {/* Patient Information */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Patient Information</h2>
-          {isMdOrLarger ? (
-            <div className=" mt-2 flex flex-row ">
-              <div className=" flex flex-col gap-y-1">
-                <strong>Patient Name</strong>
-                <strong>Address</strong>
-                <strong>Phone Number</strong>
-                <strong>Birthdate</strong>
-              </div>
-              <div className="ml-19 flex flex-col gap-y-1">
-                <div>{patientInfo.name}</div>
-                <div>{patientInfo.address}</div>
-                <div>{patientInfo.phoneNumber}</div>
-                <div>{patientInfo.birthdate}</div>
+          <div className=" mt-2 flex flex-row ">
+            <div className=" flex min-w-[200px] flex-col gap-y-1">
+              <p>Patient Name</p>
+              <p>Address</p>
+              <p>Phone Number</p>
+              <p>Birthdate</p>
+            </div>
+            <div className="ml-19 flex flex-col gap-y-1 font-normal">
+              <div>{patientInfo.name}</div>
+              <div>{patientInfo.address}</div>
+              <div>{patientInfo.phoneNumber}</div>
+              <div>
+                {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
             </div>
-          ) : (
-            <div className="mt-2 flex flex-col gap-y-2">
-              <div>
-                <strong>Patient Name:</strong> {patientInfo.name}
-              </div>
-              <div>
-                <strong>Address:</strong> {patientInfo.address}
-              </div>
-              <div>
-                <strong>Phone Number:</strong> {patientInfo.phoneNumber}
-              </div>
-              <div>
-                <strong>Birthdate:</strong> {patientInfo.birthdate}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Medical Concerns & Conjecture (Medical Details) */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Medical Concerns & Conjecture</h2>
-          <div className="mt-2 flex flex-col sm:flex-row">
-            <div className="flex flex-col gap-y-1">
-              <strong>Causes</strong>
-              <strong>Main Concerns</strong>
-              <strong>Current Medicine</strong>
-              <strong>Symptoms</strong>
-              <strong>Medical Descriptions</strong>
+          <div className=" mt-2 flex flex-row ">
+            <div className=" flex min-w-[200px] flex-col gap-y-1">
+              <p>Causes</p>
+              <p>Main Concerns</p>
+              <p>Current Medicine</p>
+              <p>Symptoms</p>
             </div>
-            <div className="mt-2 flex flex-col gap-y-1 sm:ml-8 sm:mt-0">
+            <div className="ml-19 flex flex-col gap-y-1 font-normal">
               <div>{medicalDetails.causes}</div>
               <div>{medicalDetails.mainConcerns}</div>
               <div>{medicalDetails.currentMedicine}</div>
               <div>
-                {Array.isArray(medicalDetails.symptoms) &&
-                medicalDetails.symptoms.length > 0
-                  ? medicalDetails.symptoms.join(", ")
-                  : "No symptoms available"}
+                <ol className="list-decimal pl-5">
+                  {medicalDetails.symptoms.map((symptom, index) => (
+                    <li key={index}>{symptom}</li>
+                  ))}
+                </ol>
               </div>
             </div>
           </div>
-          <div className="mt-2">{medicalDetails.medicalDescriptions}</div>
+          <div className="mt-2">
+            <p className="font-medium">Medical Descriptions</p>
+            <div className="font-normal">
+              {medicalDetails.medicalDescriptions}
+            </div>
+          </div>
 
           <div className="mt-2">
             <div className="flex flex-col items-center justify-center text-center">
@@ -212,14 +190,16 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
         {/* Service Details */}
         <div className="mb-6">
           <h2 className="text-xl font-bold">Service Details</h2>
-          <div className="flex flex-col gap-y-1">
+          <div className="flex min-w-[200px] flex-col gap-y-1">
             <div className="flex">
-              <strong className="mr-19.5">Order ID</strong>
-              <div className="ml-8">{serviceDetails.orderId}</div>{" "}
+              <p className="mr-19.5">Order ID</p>
+              <div className="ml-8 font-normal">
+                {serviceDetails.orderId}
+              </div>{" "}
             </div>
             <div className="flex">
-              <strong className="mr-15">Order Date</strong>
-              <div className="ml-8">
+              <p className="mr-15">Order Date</p>
+              <div className="ml-8 font-normal">
                 {globalFormatDate(
                   new Date(serviceDetails.orderDate),
                   "longDate"
@@ -229,16 +209,20 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
             <div className="my-2 w-full border-b border-black"></div>{" "}
             {/* Full-width horizontal line */}
             <div className="flex">
-              <strong className="mr-12">Service Type</strong>
-              <div className="ml-8">{serviceDetails.serviceType}</div>
+              <p className="mr-12">Service Type</p>
+              <div className="ml-8 font-normal">
+                {serviceDetails.serviceType}
+              </div>
             </div>
             <div className="flex">
-              <strong className="mr-3">Total Days of Visit</strong>
-              <div className="ml-8">{serviceDetails.totalDays}x Visit</div>
+              <p className="mr-3">Total Days of Visit</p>
+              <div className="ml-8 font-normal">
+                {serviceDetails.totalDays}x Visit
+              </div>
             </div>
             <div className="flex">
-              <strong className="mr-6.5">Start Date/Time</strong>
-              <div className="ml-8">
+              <p className="mr-6.5">Start Date/Time</p>
+              <div className="ml-8 font-normal">
                 {globalFormatDate(
                   new Date(serviceDetails.startTime),
                   "longDate"
@@ -246,20 +230,20 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               </div>
             </div>
             <div className="flex">
-              <strong className="mr-8">End Date/Time</strong>
-              <div className="ml-8">
+              <p className="mr-8">End Date/Time</p>
+              <div className="ml-8 font-normal">
                 {globalFormatDate(new Date(serviceDetails.endTime), "longDate")}
               </div>
             </div>
             <div className="flex">
-              <strong className="mr-14.5">Service Fee</strong>
-              <div className="ml-8">
+              <p className="mr-14.5">Service Fee</p>
+              <div className="ml-8 font-normal">
                 {globalFormatPrice(serviceDetails.serviceFee)}
               </div>
             </div>
             <div className="flex">
-              <strong className="mr-12.5">Total Charge</strong>
-              <div className="ml-7.5">
+              <p className="mr-12.5">Total Charge</p>
+              <div className="ml-8 font-normal">
                 {globalFormatPrice(serviceDetails.totalCharge)}
               </div>
             </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import CustomDatePickerCaregiver from "@/components/Caregiver/InputField/CustomDatePickerCaregiver";
+import CustomDatePickerCaregiver from "@/components/Axolotl/InputFields/CustomDatePickerForCG";
 import { MEDICINE } from "@/types/AxolotlMainType";
 import {
   globalFormatDate,
@@ -23,7 +23,7 @@ interface NewMedicine {
   expired: string | null;
 }
 
-interface MedicineModalProps {
+interface AxolotlAddMedicineModalProps {
   mode: "addExisting" | "addNew";
   isOpen: boolean;
   currentMedicine?: MEDICINE | null;
@@ -40,7 +40,7 @@ interface MedicineModalProps {
   onSave: () => void;
 }
 
-const MedicineModal: React.FC<MedicineModalProps> = ({
+const AxolotlAddMedicineModal: React.FC<AxolotlAddMedicineModalProps> = ({
   mode,
   isOpen,
   currentMedicine,
@@ -188,12 +188,14 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
             <AxolotlButton
               type="button"
               label="Cancel"
+              fontThickness="bold"
               variant="secondary"
               onClick={onClose}
             />
             <AxolotlButton
               type="button"
               label="Save"
+              fontThickness="bold"
               variant="primary"
               onClick={onSave}
               isSubmit
@@ -205,4 +207,4 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
   );
 };
 
-export default MedicineModal;
+export default AxolotlAddMedicineModal;

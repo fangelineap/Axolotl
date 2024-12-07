@@ -24,7 +24,7 @@ const CustomDatePickerCaregiver = ({
     // Init flatpickr
     flatpickr(".form-datepicker", {
       mode: "single",
-      //   static: true,
+      // static: true,
       position: "above",
       monthSelectorType: "static",
       dateFormat: "l, F d, Y",

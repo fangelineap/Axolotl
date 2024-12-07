@@ -39,7 +39,12 @@ const PriceBox = ({
         {required && <span className="ml-1 text-red">*</span>}
       </label>
       <div className="flex w-full items-center">
-        {isViewOnly ? (
+        <div className="flex w-full items-center">
+          {!isViewOnly && (
+            <span className="flex-none rounded-l-md border border-r-0 border-gray-1 bg-gray px-2 py-2 font-normal text-dark-secondary dark:text-white">
+              Rp.
+            </span>
+          )}
           <input
             name={name}
             aria-label="Price"

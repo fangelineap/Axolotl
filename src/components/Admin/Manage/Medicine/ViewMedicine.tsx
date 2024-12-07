@@ -119,8 +119,9 @@ function ViewMedicine(data: ViewMedicineProps) {
             <div className="flex flex-col gap-5">
               <PriceBox
                 placeholder={globalFormatPrice(data.medicine.price)}
-                value={data.medicine.price}
+                value={globalFormatPrice(data.medicine.price)}
                 disabled={true}
+                isViewOnly
               />
 
               <AxolotlButton
