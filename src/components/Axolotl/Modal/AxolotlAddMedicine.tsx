@@ -154,7 +154,7 @@ const MedicineModal: React.FC<MedicineModalProps> = ({
                     onChange={(e) => setNewMedicine({ type: e.target.value })}
                   />
                 </div>
-                <div className="mb-4 flex gap-5">
+                <div className="mb-4 flex justify-between gap-5">
                   <CustomDatePickerCaregiver
                     name="exp_date"
                     label="Exp. Date"
