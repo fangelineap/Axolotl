@@ -50,9 +50,11 @@ const ForgetPasswordComponent = () => {
 
               {success != null && (
                 <div
-                  className={`${success ? "visible bg-kalbe-ultraLight" : "visible bg-red"} rounded-md p-3`}
+                  className={`${success ? "visible border-primary bg-kalbe-ultraLight" : "visible border-red bg-red-light"} rounded-md border p-3`}
                 >
-                  <p className="text-sm font-medium text-kalbe-light">
+                  <p
+                    className={`font-medium ${success ? "text-primary" : "text-red"}`}
+                  >
                     {success
                       ? "An email has been sent to your email address. Please check your inbox"
                       : "Your email is not registered, please create an account"}
@@ -62,12 +64,14 @@ const ForgetPasswordComponent = () => {
             </div>
 
             <div className="flex justify-center">
-              <AxolotlButton
-                isSubmit
-                label="Confirm Email"
-                variant="primary"
-                fontThickness="bold"
-              />
+              {!success && (
+                <AxolotlButton
+                  isSubmit
+                  label="Confirm Email"
+                  variant="primary"
+                  fontThickness="bold"
+                />
+              )}
             </div>
           </div>
         </form>
