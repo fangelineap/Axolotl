@@ -4,6 +4,7 @@ import { forgetPassword } from "@/app/_server-action/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CustomInputGroup from "../../Axolotl/InputFields/CustomInputGroup";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 
 const ForgetPasswordComponent = () => {
   const [success, setSuccess] = useState<boolean>();
@@ -49,7 +50,7 @@ const ForgetPasswordComponent = () => {
 
               {success != null && (
                 <div
-                  className={`${success ? "visible bg-kalbe-veryLight" : "visible bg-red"} rounded-md p-3`}
+                  className={`${success ? "visible bg-kalbe-ultraLight" : "visible bg-red"} rounded-md p-3`}
                 >
                   <p className="text-sm font-medium text-kalbe-light">
                     {success
@@ -61,12 +62,12 @@ const ForgetPasswordComponent = () => {
             </div>
 
             <div className="flex justify-center">
-              <button
-                type="submit"
-                className={`w-full rounded-md border ${!success ? "border-primary bg-primary hover:bg-kalbe-ultraLight hover:text-primary md:w-1/2" : "disabled pointer-events-none border-dark-secondary bg-dark-secondary"}  px-3 py-2 text-lg font-semibold text-white `}
-              >
-                Confirm Email
-              </button>
+              <AxolotlButton
+                isSubmit
+                label="Confirm Email"
+                variant="primary"
+                fontThickness="bold"
+              />
             </div>
           </div>
         </form>

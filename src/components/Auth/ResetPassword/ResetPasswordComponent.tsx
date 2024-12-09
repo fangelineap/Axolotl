@@ -1,6 +1,7 @@
 "use client";
 
 import { resetPassword } from "@/app/_server-action/auth";
+import AxolotlButton from "@/components/Axolotl/Buttons/AxolotlButton";
 import PasswordInput from "@/components/Axolotl/InputFields/PasswordInput";
 import { useState } from "react";
 
@@ -80,12 +81,12 @@ const ResetPasswordComponent = ({ code }: { code: string }) => {
             </div>
 
             <div className="flex justify-center">
-              <button
-                type="submit"
-                className="w-full rounded-md border border-primary bg-primary px-3 py-2 text-lg font-semibold text-white hover:bg-kalbe-ultraLight hover:text-primary md:w-1/2"
-              >
-                Reset Password
-              </button>
+              <AxolotlButton
+                isSubmit
+                label="Reset Password"
+                variant="primary"
+                fontThickness="bold"
+              />
             </div>
           </div>
         </form>
