@@ -58,11 +58,17 @@ const OrderForm = ({
   const [profilePhoto, setProfilePhoto] = useState<string>("");
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [additionalSymptom, setAdditionalSymptom] = useState<string[]>([]);
 
   const router = useRouter();
+
+  /**
+   * * Handle Image Load
+   */
+  const handleImageLoad = () => setImageLoaded(true);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -554,12 +560,22 @@ const OrderForm = ({
                   <>
                     <div className="px-5 py-2">
                       <div className="my-3 flex items-center gap-3 rounded-md border-[1px] border-stroke p-3">
+                        {!imageLoaded && (
+                          <Skeleton
+                            variant="circular"
+                            width={60}
+                            height={60}
+                            className="rounded-full object-cover"
+                          />
+                        )}
                         <Image
                           src={profilePhoto}
                           height={60}
                           width={60}
-                          className="h-[60px] w-[60px] rounded-full bg-kalbe-veryLight object-cover"
+                          priority
+                          className={`h-[60px] w-[60px] rounded-full object-cover ${imageLoaded ? "" : "hidden"}`}
                           alt="CG pfp"
+                          onLoad={handleImageLoad}
                         />
                         <h1>
                           {caregiver?.first_name} {caregiver?.last_name}

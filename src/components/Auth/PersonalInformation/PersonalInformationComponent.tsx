@@ -341,7 +341,7 @@ function PersonalInformationComponent({
                         <div className="mb-3 flex flex-col gap-5 lg:flex-row">
                           <CustomInputGroup
                             name="address"
-                            label="Address"
+                            label="Address (e.g. Jl. Kebon Apel No. 1, Malang, East Java, Indonesia)"
                             type="text"
                             placeholder="Street, Subdistrict, District/City, Province"
                             required
@@ -449,7 +449,7 @@ function PersonalInformationComponent({
                         </div>
                         <CustomInputGroup
                           name="address"
-                          label="Current Location"
+                          label="Current Location (e.g. Jl. Kebon Apel No. 1, Malang, East Java, Indonesia)"
                           type="text"
                           placeholder="Street, Subdistrict, District/City, Province"
                           required
@@ -490,7 +490,7 @@ function PersonalInformationComponent({
                             name="work_experiences"
                             label="Work Experiences"
                             type="number"
-                            placeholder="500"
+                            placeholder="5"
                             required
                             isUnit
                             unit="year"

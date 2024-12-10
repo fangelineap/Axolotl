@@ -83,8 +83,10 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
     ["Nurse", "Midwife"].includes(user.role) &&
     ["Unverified", "Rejected"].includes(user.caregiver?.status || "");
 
+  const bannedEditProfileRoles = ["Patient", "Caregiver"].includes(user.role);
+
   const editProfileVariant =
-    isCaregiverUnverifiedOrRejected || user.role === "Patient"
+    isCaregiverUnverifiedOrRejected || bannedEditProfileRoles
       ? "secondary"
       : "primary";
 
@@ -93,6 +95,13 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
    */
   const handleEditProfileButton = () => {
     switch (user.role) {
+      case "Caregiver":
+        toast.error(
+          "Bruh, you can't edit caregiver profile. They didn't even finish their personal information. 🤦‍♂️",
+          { position: "bottom-right" }
+        );
+
+        return;
       case "Nurse":
       case "Midwife":
         const caregiverStatus = user.caregiver?.status;
@@ -146,7 +155,7 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
       {/* Container */}
       <div className={`flex w-full flex-col justify-between gap-5`}>
         {/* ROLE BASED RENDERING */}
-        {["Nurse", "Midwife", "Patient"].includes(user.role) ? (
+        {["Nurse", "Midwife", "Patient", "Caregiver"].includes(user.role) ? (
           <>
             {/* Top Section */}
             {/* Profile with Profile Picture Section */}
@@ -163,7 +172,17 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
               <div
                 className={`h-40 w-40 overflow-hidden rounded-full border ${imageLoaded ? "" : "hidden"}`}
               >
-                {["Nurse", "Midwife"].includes(user.role) ? (
+                {user.role === "Caregiver" ? (
+                  <Image
+                    src="/images/user/Default Caregiver Photo.png"
+                    alt="User Profile Photo"
+                    width={200}
+                    height={200}
+                    priority
+                    className={`h-full w-full object-cover ${imageLoaded ? "" : "hidden"}`}
+                    onLoad={handleImageLoad}
+                  />
+                ) : ["Nurse", "Midwife"].includes(user.role) ? (
                   <Image
                     src={caregiverProfilePhoto}
                     alt="User Profile Photo"
@@ -194,10 +213,16 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
                 {/* User Role */}
                 <div className="flex flex-col gap-2">
                   {/* Caregiver Role */}
-                  {["Nurse", "Midwife"].includes(user.role) && (
+                  {["Nurse", "Midwife", "Caregiver"].includes(user.role) && (
                     <div className="flex items-center justify-center gap-2">
                       <div>
-                        {user.role === "Nurse" ? (
+                        {user.role === "Caregiver" ? (
+                          <div className="flex items-center justify-center rounded-md border border-gray-cancel bg-white p-2 text-gray-cancel">
+                            <p className="font-bold text-gray-cancel">
+                              {user.role}
+                            </p>
+                          </div>
+                        ) : user.role === "Nurse" ? (
                           <div className="flex items-center justify-center rounded-md border border-yellow bg-yellow-light p-2">
                             <p className="font-bold text-yellow">{user.role}</p>
                           </div>
@@ -208,33 +233,34 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
                         )}
                       </div>
                       <div className="flex">
-                        {user.caregiver?.status === "Unverified" ? (
-                          <div className="rounded-md border border-blue bg-blue-light p-2">
-                            <p className="font-bold text-blue">
-                              Awaiting for verification
-                            </p>
-                          </div>
-                        ) : user.caregiver?.status === "Verified" ? (
-                          <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
-                            <p className="font-bold text-primary">
-                              Verified on:{" "}
-                              <span className="font-medium">
-                                {" "}
-                                {formattedReviewDate}
-                              </span>
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="rounded-md border border-red bg-red-light p-2">
-                            <p className="font-bold text-red">
-                              Rejected on:{" "}
-                              <span className="font-medium">
-                                {" "}
-                                {formattedReviewDate}
-                              </span>
-                            </p>
-                          </div>
-                        )}
+                        {["Nurse", "Midwife"].includes(user.role) &&
+                          (user.caregiver?.status === "Unverified" ? (
+                            <div className="rounded-md border border-blue bg-blue-light p-2">
+                              <p className="font-bold text-blue">
+                                Awaiting for verification
+                              </p>
+                            </div>
+                          ) : user.caregiver?.status === "Verified" ? (
+                            <div className="rounded-md border border-primary bg-kalbe-ultraLight p-2">
+                              <p className="font-bold text-primary">
+                                Verified on:{" "}
+                                <span className="font-medium">
+                                  {" "}
+                                  {formattedReviewDate}
+                                </span>
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="rounded-md border border-red bg-red-light p-2">
+                              <p className="font-bold text-red">
+                                Rejected on:{" "}
+                                <span className="font-medium">
+                                  {" "}
+                                  {formattedReviewDate}
+                                </span>
+                              </p>
+                            </div>
+                          ))}
                       </div>
                     </div>
                   )}
@@ -258,14 +284,14 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
               </div>
             </div>
 
-            {!is_complete ? (
+            {!is_complete || user.role === "Caregiver" ? (
               <div className="flex w-full flex-col items-center justify-center gap-5">
                 <div className="flex w-full flex-col items-center justify-center gap-5 rounded-lg border border-red bg-red-light p-4 text-red">
                   <h1 className="text-heading-3 font-medium">
-                    This user has incomplete personal information.
+                    This {user.role} has incomplete personal information.
                   </h1>
                   <p className="text-center text-xl">
-                    Please wait for the user to complete their personal
+                    Please wait for the {user.role} to complete their personal
                     information to see their full profile.
                   </p>
                 </div>
@@ -707,11 +733,28 @@ function ViewUser({ user, totalOrder, is_complete }: ViewUserProps) {
           <div className="flex w-full flex-col items-center justify-center gap-2 md:w-1/4 md:flex-row md:justify-end md:gap-5">
             <AxolotlButton
               label="Go back"
-              variant="secondary"
+              variant={
+                ["Nurse", "Midwife"].includes(user.role) &&
+                ["Rejected", "Unverified"].includes(user.caregiver.status)
+                  ? "secondaryOutlined"
+                  : "secondary"
+              }
               fontThickness="bold"
               customClasses="text-lg"
               onClick={() => router.replace("/admin/manage/user")}
             />
+            {["Nurse", "Midwife"].includes(user.role) &&
+              ["Rejected", "Unverified"].includes(user.caregiver.status) && (
+                <AxolotlButton
+                  label="Verify this user"
+                  variant="primary"
+                  fontThickness="bold"
+                  customClasses="text-lg"
+                  onClick={() =>
+                    router.push(`/admin/manage/approval/${user.user_id}`)
+                  }
+                />
+              )}
           </div>
         </div>
       )}

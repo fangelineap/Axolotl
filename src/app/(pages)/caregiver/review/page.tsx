@@ -57,8 +57,10 @@ function getStatusContent(status: string, notes?: string) {
     case "Unverified":
       return {
         heading: "Sit Tight! ⏳",
-        subheading: "We're analyzing your awesomeness.",
-        message: "In the meantime, maybe perfect your victory dance?",
+        subheading:
+          "We're analyzing your awesomeness. This process can take up to 2 weeks.",
+        message:
+          "Currently, you don't have access to our features, such as receiving orders, chatting, etc. except for logging out from your account. In the meantime, why not perfect your victory dance?",
         icon: (
           <IconClock
             size={180}

@@ -68,7 +68,7 @@ export const PersonalInformationValidation = (
 
       if (!address.includes("malang") && !address.includes("gianyar")) {
         toast.warning(
-          "Sorry, we only accept Caregiver from Malang (East Java) or Gianyar (Bali).",
+          "Sorry, we only accept Caregiver from Malang (East Java) or Gianyar (Bali). Please add your City to your address.",
           {
             position: "bottom-right"
           }
@@ -218,7 +218,7 @@ export const PersonalInformationValidation = (
 
       if (!address.includes("malang") && !address.includes("gianyar")) {
         toast.warning(
-          "Sorry, we only accept Patients from Malang (East Java) or Gianyar (Bali).",
+          "Sorry, we only accept Patients from Malang (East Java) or Gianyar (Bali). Please add your City to your address.",
           {
             position: "bottom-right"
           }

@@ -1,69 +1,94 @@
 import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import flatpickr from "flatpickr";
-import { useEffect, useRef } from "react";
+import { Instance } from "flatpickr/dist/types/instance";
+import { useEffect } from "react";
 
-interface CustomExpiredDatePickerProps {
-  customClasses?: string;
+interface CustomProps {
+  placeholder: string;
   label: string;
   required?: boolean;
   name: string;
-  expired: string; // Accepts a date string for the expired date
-  onChange: (date: string) => void; // Callback to handle date changes
+  horizontal?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const CustomExpiredDatePicker = ({
-  customClasses,
+const CustomDatePickerCaregiver = ({
+  placeholder,
   label,
   required,
   name,
-  expired,
+  horizontal = false,
   onChange
-}: CustomExpiredDatePickerProps) => {
-  const datepickerRef = useRef<HTMLInputElement | null>(null);
-
+}: CustomProps) => {
   useEffect(() => {
-    if (!datepickerRef.current) return;
-
-    // Initialize flatpickr with a reference to the input element
-    flatpickr(datepickerRef.current, {
+    // Init flatpickr
+    flatpickr(".form-datepicker", {
       mode: "single",
-      static: true,
+      // static: true,
+      position: "above",
       monthSelectorType: "static",
-      dateFormat: "M j, Y",
-      defaultDate: expired, // Set the default date to the expired date
-      onChange: (selectedDates) => {
-        if (selectedDates.length > 0) {
-          onChange(globalFormatDate(selectedDates[0], "longDate")); // Call onChange with the new date in ISO format
-        }
-      },
+      dateFormat: "l, F d, Y",
       prevArrow:
         '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
       nextArrow:
-        '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>'
+        '<svg class="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
+      onChange: (selectedDates) => {
+        if (selectedDates.length > 0) {
+          const event = {
+            target: {
+              name,
+              value: globalFormatDate(selectedDates[0], "longDate")
+            }
+          } as React.ChangeEvent<HTMLInputElement>;
+          if (onChange) {
+            onChange(event);
+          }
+        }
+      },
+      onPreCalendarPosition: (
+        selectedDates: Date[],
+        dateStr: string,
+        instance: Instance
+      ) => {
+        const calendarContainer = instance.calendarContainer as HTMLElement;
+        if (calendarContainer && horizontal) {
+          calendarContainer.style.setProperty(
+            "position",
+            "absolute",
+            "important"
+          );
+          calendarContainer.style.setProperty("top", "auto", "important");
+          calendarContainer.style.setProperty("bottom", "100%", "important");
+        }
+      }
     });
-  }, [expired, onChange]); // Re-run effect when expired date or onChange changes
+  }, [horizontal, name, onChange]);
 
   return (
     <div
-      className={
-        customClasses ? customClasses : "mb-3 flex w-full flex-col gap-2"
-      }
+      className={`mb-3 flex w-full flex-col gap-2 ${
+        horizontal
+          ? "md:flex-row md:items-center md:justify-between md:gap-5"
+          : ""
+      }`}
     >
-      <label className="block text-body-sm font-medium text-dark dark:text-white">
+      <label className="font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
-      <div className="relative">
+      <div className={`relative w-full ${horizontal ? "md:w-3/4" : ""}`}>
         <input
-          ref={datepickerRef}
           name={name}
-          defaultValue={expired} // Set the input's initial value
-          className={`form-datepicker w-full flex-1 truncate rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 pr-10 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
-          placeholder="mm/dd/yyyy"
+          className={`form-datepicker w-full truncate rounded-md border-[1.5px] border-gray-1 bg-white px-3 py-2 pr-10 font-normal text-dark outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary dark:disabled:bg-dark`}
+          placeholder={placeholder}
           data-class="flatpickr-right"
           required={required}
+          style={{
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            overflow: "hidden"
+          }}
         />
-
-        <div className="pointer-events-none absolute inset-0 left-auto right-5 flex items-center">
+        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
           <svg
             width="20"
             height="20"
@@ -108,4 +133,4 @@ const CustomExpiredDatePicker = ({
   );
 };
 
-export default CustomExpiredDatePicker;
+export default CustomDatePickerCaregiver;

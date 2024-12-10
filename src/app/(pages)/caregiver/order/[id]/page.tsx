@@ -1,11 +1,11 @@
 import { fetchOrderDetail } from "@/app/_server-action/caregiver";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import OrderDetail from "@/components/Caregiver/OrderDetail/OrderDetail";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { redirect } from "next/navigation";
 import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
-import type { CaregiverOrderDetails } from "../../type/data";
 import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
+import { redirect } from "next/navigation";
+import type { CaregiverOrderDetails } from "../../type/data";
 
 export const metadata = getCaregiverMetadata("order detail");
 async function getOrderData(orderId: string) {
@@ -59,10 +59,10 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
   }
 
   return (
-    <DefaultLayout>
+    <CustomLayout>
       <CustomBreadcrumbs parentPage="Order" pageName="Order Details" />
 
-      <h1 className="text-gray-text-black mb-6 text-5xl font-bold">
+      <h1 className="text-gray-text-black mb-6 text-heading-1 font-bold">
         Order Details
       </h1>
 
@@ -128,7 +128,7 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
           patientName={`${first_name} ${last_name}`}
         />
       </div>
-    </DefaultLayout>
+    </CustomLayout>
   );
 };
 

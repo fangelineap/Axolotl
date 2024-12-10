@@ -178,7 +178,8 @@ export async function forgetPassword(email: string) {
   const supabase = await createSupabaseServerClient();
 
   return await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "http://localhost:3000/auth/resetpassword"
+    redirectTo:
+      "https://axolotl-your-caregiver-257622146567.asia-southeast1.run.app/auth/resetpassword"
   });
 }
 

@@ -68,9 +68,10 @@ const OrderHistory = () => {
     },
     {
       id: "Caregiver Name",
-      accessorKey: "caregiver.users.first_name",
+      accessorKey: "caregiver.users",
       header: "Caregiver Name",
-      cell: ({ row }) => `${row.original.caregiver?.users?.first_name || "N/A"}`
+      cell: ({ row }) =>
+        `${row.original.caregiver?.users?.first_name || ""} ${row.original.caregiver?.users?.last_name || ""}`.trim()
     },
     {
       accessorKey: "status",

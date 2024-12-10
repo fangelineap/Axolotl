@@ -1,8 +1,8 @@
 import { CaregiverOrderDetails } from "@/app/(pages)/caregiver/type/data";
 import { medicinePreparation } from "@/app/_server-action/caregiver";
 import CustomBreadcrumbs from "@/components/Axolotl/Breadcrumbs/CustomBreadcrumbs";
+import CustomLayout from "@/components/Axolotl/Layouts/CustomLayout";
 import MedicinePreparation from "@/components/Caregiver/MedicinePreparation/MedicinePreparation";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import { getCaregiverMetadata } from "@/utils/Metadata/CaregiverMetadata";
 import { Metadata } from "next";
@@ -60,7 +60,7 @@ const MedicinePreparationPage = async ({
   const birthdate = user?.birthdate;
 
   return (
-    <DefaultLayout>
+    <CustomLayout>
       <CustomBreadcrumbs parentPage="Order" pageName="Medicine Preparation" />
 
       <h1 className="text-gray-text-black mb-6 text-5xl font-bold">
@@ -120,7 +120,7 @@ const MedicinePreparationPage = async ({
           rate={orderData.rate}
         />
       </div>
-    </DefaultLayout>
+    </CustomLayout>
   );
 };
 
