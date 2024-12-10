@@ -86,7 +86,10 @@ const AxolotlAddMedicineModal: React.FC<AxolotlAddMedicineModalProps> = ({
                       />
                     </div>
                   ) : (
-                    <p>No Image Available</p>
+                    <p>
+                      This medication does not have a photo available yet, as it
+                      was newly added by the caregiver rather than the admin.
+                    </p>
                   )}
                 </div>
               </div>

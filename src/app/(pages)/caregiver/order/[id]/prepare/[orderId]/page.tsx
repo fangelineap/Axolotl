@@ -59,6 +59,14 @@ const MedicinePreparationPage = async ({
   const phone_number = user?.phone_number;
   const birthdate = user?.birthdate;
   const allergies = orderData.patient?.allergies;
+  const blood_type = orderData.patient?.blood_type;
+  const height = orderData.patient?.height;
+  const weight = orderData.patient?.weight;
+  const isSmoking = orderData.patient?.is_smoking;
+  const current_medication = orderData.patient?.current_medication;
+  const med_freq_times = orderData.patient?.med_freq_times;
+  const med_freq_day = orderData.patient?.med_freq_day;
+  const illness_history = orderData.patient?.illness_history;
 
   return (
     <CustomLayout>
@@ -77,7 +85,15 @@ const MedicinePreparationPage = async ({
             address: address,
             phoneNumber: phone_number,
             birthdate: birthdate,
-            allergies: allergies || "-"
+            allergies: allergies || "-",
+            bloodType: blood_type,
+            height: height.toString(),
+            weight: weight.toString(),
+            isSmoking: isSmoking,
+            currentMedication: current_medication || "N/A",
+            medFreqTimes: med_freq_times.toString() || "0",
+            medFreqDay: med_freq_day.toString() || "0",
+            illnessHistory: illness_history
           }}
           medicalDetails={{
             causes: orderData.appointment?.causes,

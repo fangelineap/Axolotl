@@ -15,7 +15,7 @@ import { IconClock, IconMapPin, IconUserCircle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // Helper function to format the date
 const formatDate = (date: Date) => {
@@ -139,12 +139,16 @@ const Dashboard = () => {
     try {
       const cancel = await cancelAppointment(orderId, notes);
 
-      if (!cancel) {
+      if (cancel) {
+        // Jika pembatalan berhasil, lakukan mutate ke key "orders"
+        mutate("orders");
+        toast.success("Appointment canceled successfully", {
+          position: "bottom-right"
+        });
+      } else {
         toast.error("Failed to perform the action. Please try again.", {
           position: "bottom-right"
         });
-
-        return;
       }
     } catch (error) {
       console.error(error);
@@ -152,12 +156,7 @@ const Dashboard = () => {
         position: "bottom-right"
       });
     } finally {
-      toast.success("Appointment canceled successfully", {
-        position: "bottom-right"
-      });
-
       closeSecondModal();
-
       setTimeout(() => {
         router.refresh();
       }, 1000);

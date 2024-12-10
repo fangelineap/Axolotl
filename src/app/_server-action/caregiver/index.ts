@@ -387,6 +387,7 @@ export async function cancelAppointment(orderId: string, notes: string) {
 
       return false;
     }
+    revalidatePath(`/caregiver`);
 
     return true;
   } catch (error) {

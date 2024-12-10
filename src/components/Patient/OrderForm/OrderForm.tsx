@@ -145,7 +145,7 @@ const OrderForm = ({
   useEffect(() => {
     const fetchPatient = async () => {
       if (session && session.user_id) {
-        const patient = await getGlobalAllPatient(session.user_id);
+        const patient = await getGlobalAllPatient(session.id);
         setPatientData(patient);
       }
     };
@@ -244,7 +244,7 @@ const OrderForm = ({
                     <DisabledCustomInputGroup
                       label="Allergies"
                       horizontal
-                      placeholder={patientData?.allergies || "-"}
+                      placeholder={patientData?.allergies}
                       type="text"
                       key={"patient-allergies"}
                     />
@@ -333,7 +333,7 @@ const OrderForm = ({
                     <textarea
                       name="medicalDescription"
                       rows={4}
-                      placeholder="lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+                      placeholder="I am experiencing a persistent, dull ache in my lower back that started about two weeks ago. The pain typically intensifies after long periods of sitting and seems to improve slightly when I take short walks or stretch. I haven’t noticed any swelling or discoloration, but there’s a mild stiffness, especially in the mornings. My energy levels are normal, and I haven’t had any significant changes in appetite, sleep, or mood. While the discomfort is manageable, it’s beginning to interfere with my daily routine, and I’m considering seeking medical advice if it does not improve within the next week."
                       className={`${isActive ? "disabled pointer-events-none" : ""} w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                     ></textarea>
                   </div>

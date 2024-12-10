@@ -17,6 +17,14 @@ interface OrderDetailProps {
     phoneNumber: string;
     birthdate: string;
     allergies: string;
+    bloodType: string;
+    height: string;
+    weight: string;
+    isSmoking: boolean;
+    currentMedication: string;
+    medFreqTimes: string;
+    medFreqDay: string;
+    illnessHistory: string;
   };
   medicalDetails: {
     causes: string;
@@ -135,6 +143,14 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <p>Phone Number</p>
               <p>Birthdate</p>
               <p>Allergies</p>
+              <p>Blood Type</p>
+              <p>Height</p>
+              <p>Weight</p>
+              <p>Active Smoker</p>
+              <p>Current Medication</p>
+              <p>Med. Freq. Times</p>
+              <p>Med. Freq. Day</p>
+              <p>Illness History</p>
             </div>
             <div className="ml-19 flex flex-col gap-y-1 font-normal">
               <div>{patientInfo.name}</div>
@@ -144,6 +160,14 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
                 {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
               <div>{patientInfo.allergies}</div>
+              <div>{patientInfo.bloodType}</div>
+              <div>{patientInfo.height} cm</div>
+              <div>{patientInfo.weight} kg</div>
+              <div>{patientInfo.isSmoking}</div>
+              <div>{patientInfo.currentMedication}</div>
+              <div>{patientInfo.medFreqTimes}</div>
+              <div>{patientInfo.medFreqDay}</div>
+              <div>{patientInfo.illnessHistory}</div>
             </div>
           </div>
         </div>
