@@ -16,6 +16,7 @@ interface OrderDetailProps {
     address: string;
     phoneNumber: string;
     birthdate: string;
+    allergies: string;
   };
   medicalDetails: {
     causes: string;
@@ -133,6 +134,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <p>Address</p>
               <p>Phone Number</p>
               <p>Birthdate</p>
+              <p>Allergies</p>
             </div>
             <div className="ml-19 flex flex-col gap-y-1 font-normal">
               <div>{patientInfo.name}</div>
@@ -141,6 +143,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <div>
                 {globalFormatDate(new Date(patientInfo.birthdate), "longDate")}
               </div>
+              <div>{patientInfo.allergies}</div>
             </div>
           </div>
         </div>

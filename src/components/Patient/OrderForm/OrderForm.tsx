@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  getGlobalAllPatient,
   getGlobalCaregiverDataByCaregiverOrUserId,
   getGlobalUserProfilePhoto
 } from "@/app/_server-action/global";
@@ -56,6 +57,7 @@ const OrderForm = ({
   const [allTypes, setAllTypes] = useState<string[]>([]);
   const [service, setService] = useState<any>(null);
   const [profilePhoto, setProfilePhoto] = useState<string>("");
+  const [patientData, setPatientData] = useState<any>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
@@ -139,6 +141,17 @@ const OrderForm = ({
 
     return () => clearInterval(interval as NodeJS.Timeout);
   }, [isActive, seconds]);
+
+  useEffect(() => {
+    const fetchPatient = async () => {
+      if (session && session.user_id) {
+        const patient = await getGlobalAllPatient(session.user_id);
+        setPatientData(patient);
+      }
+    };
+
+    fetchPatient();
+  }, [session]);
 
   const submitOrder = async (formData: FormData) => {
     if (
@@ -227,6 +240,13 @@ const OrderForm = ({
                       placeholder={session.birthdate}
                       type="text"
                       key={"patient-birthdate"}
+                    />
+                    <DisabledCustomInputGroup
+                      label="Allergies"
+                      horizontal
+                      placeholder={patientData?.allergies || "-"}
+                      type="text"
+                      key={"patient-allergies"}
                     />
                   </div>
                 </>

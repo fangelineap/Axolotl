@@ -43,6 +43,7 @@ interface MedecinePreparationProps {
     address: string;
     phoneNumber: string;
     birthdate: Date;
+    allergies: string;
   };
   medicalDetails: {
     causes: string;
@@ -598,7 +599,8 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
                 patientInfo.name,
                 patientInfo.address,
                 patientInfo.phoneNumber,
-                globalFormatDate(patientInfo.birthdate, "longDate")
+                globalFormatDate(patientInfo.birthdate, "longDate"),
+                patientInfo.allergies
               ]
             )
           ) : (
@@ -615,6 +617,10 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               <div>
                 <strong>Birthdate:</strong>{" "}
                 {globalFormatDate(patientInfo.birthdate, "longDate")}
+              </div>
+              <div>
+                <strong>Allergies:</strong>
+                {patientInfo.allergies}
               </div>
             </div>
           )}

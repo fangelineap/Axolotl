@@ -58,6 +58,7 @@ const MedicinePreparationPage = async ({
   const address = user?.address;
   const phone_number = user?.phone_number;
   const birthdate = user?.birthdate;
+  const allergies = orderData.patient?.allergies;
 
   return (
     <CustomLayout>
@@ -75,7 +76,8 @@ const MedicinePreparationPage = async ({
             name: `${first_name} ${last_name}`,
             address: address,
             phoneNumber: phone_number,
-            birthdate: birthdate
+            birthdate: birthdate,
+            allergies: allergies || "-"
           }}
           medicalDetails={{
             causes: orderData.appointment?.causes,

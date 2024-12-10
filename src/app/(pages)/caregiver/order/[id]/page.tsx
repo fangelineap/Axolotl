@@ -74,7 +74,8 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
             name: `${first_name} ${last_name}`,
             address: address || "N/A",
             phoneNumber: phone_number || "N/A",
-            birthdate: String(birthdate) || "N/A"
+            birthdate: String(birthdate) || "N/A",
+            allergies: orderData.patient?.allergies || "-"
           }}
           medicalDetails={{
             causes: orderData.appointment?.causes || "N/A",

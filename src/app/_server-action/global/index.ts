@@ -198,3 +198,25 @@ export async function getGlobalAllMedicine() {
     return [];
   }
 }
+
+/**
+ * * Get all patient
+ * @returns
+ */
+export async function getGlobalAllPatient(userId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data: patientData, error: patientDataError } = await supabase
+    .from("patient")
+    .select("*") // Jika ingin kolom spesifik, sesuaikan select
+    .eq("patient_id", userId)
+    .single();
+
+  if (patientDataError) {
+    console.error("Error fetching patient data:", patientDataError);
+
+    return null;
+  }
+
+  return patientData;
+}
