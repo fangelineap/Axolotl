@@ -81,8 +81,8 @@ export const OrderFormValidation = (
     return false;
   }
 
-  if (selectedAll.length < 4) {
-    toast.warn("Your symptoms should be at least 4 symptoms.", {
+  if (selectedAll.length < 2) {
+    toast.warn("Your symptoms should be at least 2 symptoms.", {
       position: "bottom-right"
     });
 
