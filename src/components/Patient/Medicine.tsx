@@ -34,16 +34,14 @@ const Medicine = ({
   const [medicinePhoto, setMedicinePhoto] = useState<string | null>(null);
 
   useEffect(() => {
-    const medicinePhoto = getClientPublicStorageURL(
-      "medicine",
-      medicineDetail.medicine.medicine_photo as string
-    );
-
-    if (medicinePhoto) {
-      setMedicinePhoto(medicinePhoto);
+    const photoName = medicineDetail.medicine.medicine_photo;
+    if (!photoName || photoName === "null") {
+      setMedicinePhoto(null);
+    } else {
+      const photoURL = getClientPublicStorageURL("medicine", photoName);
+      setMedicinePhoto(photoURL);
     }
-    //eslint-disable-next-line
-  }, []);
+  }, [medicineDetail.medicine.medicine_photo]);
 
   return (
     <div className="flex justify-between">
@@ -67,7 +65,7 @@ const Medicine = ({
           </>
         )}
         <Image
-          src={medicinePhoto || "/images/user/caregiver.png"}
+          src={medicinePhoto || "/images/freepik/Booster.svg"}
           width={200}
           height={200}
           className="h-[100px] w-[100px] rounded-md object-cover"

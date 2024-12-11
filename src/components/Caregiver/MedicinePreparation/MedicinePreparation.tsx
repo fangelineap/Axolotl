@@ -43,6 +43,15 @@ interface MedecinePreparationProps {
     address: string;
     phoneNumber: string;
     birthdate: Date;
+    allergies: string;
+    bloodType: string;
+    height: string;
+    weight: string;
+    isSmoking: boolean;
+    currentMedication: string;
+    medFreqTimes: string;
+    medFreqDay: string;
+    illnessHistory: string;
   };
   medicalDetails: {
     causes: string;
@@ -593,12 +602,35 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
           <h2 className="text-xl font-bold">Patient Information</h2>
           {isMdOrLarger ? (
             renderFields(
-              ["Patient Name", "Address", "Phone Number", "Birthdate"],
+              [
+                "Patient Name",
+                "Address",
+                "Phone Number",
+                "Birthdate",
+                "Allergies",
+                "Blood Type",
+                "Height",
+                "Weight",
+                "Active Smoker",
+                "Current Medication",
+                "Med. Freq. Times",
+                "Med. Freq. Days",
+                "Illness History"
+              ],
               [
                 patientInfo.name,
                 patientInfo.address,
                 patientInfo.phoneNumber,
-                globalFormatDate(patientInfo.birthdate, "longDate")
+                globalFormatDate(patientInfo.birthdate, "longDate"),
+                patientInfo.allergies,
+                patientInfo.bloodType,
+                patientInfo.height + " cm",
+                patientInfo.weight + " kg",
+                patientInfo.isSmoking ? "Yes" : "No",
+                patientInfo.currentMedication,
+                patientInfo.medFreqTimes,
+                patientInfo.medFreqDay,
+                patientInfo.illnessHistory
               ]
             )
           ) : (
@@ -615,6 +647,38 @@ const MedicinePreparation: React.FC<MedecinePreparationProps> = ({
               <div>
                 <strong>Birthdate:</strong>{" "}
                 {globalFormatDate(patientInfo.birthdate, "longDate")}
+              </div>
+              <div>
+                <strong>Allergies:</strong>
+                {patientInfo.allergies}
+              </div>
+              <div>
+                <strong>Blood Type:</strong> {patientInfo.bloodType}
+              </div>
+              <div>
+                <strong>Height:</strong> {patientInfo.height}
+              </div>
+              <div>
+                <strong>Weight:</strong> {patientInfo.weight}
+              </div>
+              <div>
+                <strong>Is Smoking:</strong>{" "}
+                {patientInfo.isSmoking ? "Yes" : "No"}
+              </div>
+              <div>
+                <strong>Current Medication:</strong>{" "}
+                {patientInfo.currentMedication}
+              </div>
+              <div>
+                <strong>Medication Frequency Times:</strong>{" "}
+                {patientInfo.medFreqTimes}
+              </div>
+              <div>
+                <strong>Medication Frequency Day:</strong>{" "}
+                {patientInfo.medFreqDay}
+              </div>
+              <div>
+                <strong>Illness History:</strong> {patientInfo.illnessHistory}
               </div>
             </div>
           )}

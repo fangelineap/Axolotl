@@ -602,36 +602,17 @@ export async function updateRating(
           .from("caregiver")
           .select("rate")
           .eq("caregiver_id", caregiverId);
+
         try {
-          if (data) {
-            const { data: cgData, error: cgError } =
-              await getGlobalCaregiverDataByCaregiverOrUserId(
-                "caregiver",
-                caregiverId
-              );
+          if (data && data[0].rate) {
+            const { data: updateData } = await supabase
+              .from("caregiver")
+              .update({ rate: (data[0].rate + rating + 1) / 2 })
+              .eq("caregiver_id", caregiverId)
+              .select("rate");
 
-            if (cgData) {
-              if (cgData.rate) {
-                const { data: updateData } = await supabase
-                  .from("caregiver")
-                  .update({ rate: (data[0].rate + rating + 1) / 2 })
-                  .eq("caregiver_id", caregiverId)
-                  .select("rate");
-
-                if (updateData) {
-                  return "Success";
-                }
-              } else {
-                const { data: updateData } = await supabase
-                  .from("caregiver")
-                  .update({ rate: rating + 1 })
-                  .eq("caregiver_id", caregiverId)
-                  .select("rate");
-
-                if (updateData) {
-                  return "Success";
-                }
-              }
+            if (updateData) {
+              return "Success";
             }
           } else {
             const { data: updateData } = await supabase

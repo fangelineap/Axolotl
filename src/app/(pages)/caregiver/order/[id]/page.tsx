@@ -74,7 +74,16 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
             name: `${first_name} ${last_name}`,
             address: address || "N/A",
             phoneNumber: phone_number || "N/A",
-            birthdate: String(birthdate) || "N/A"
+            birthdate: String(birthdate) || "N/A",
+            allergies: orderData.patient?.allergies || "-",
+            bloodType: orderData.patient?.blood_type,
+            height: orderData.patient?.height.toString(),
+            weight: orderData.patient?.weight.toString(),
+            isSmoking: orderData.patient?.is_smoking,
+            currentMedication: orderData.patient?.current_medication,
+            medFreqTimes: orderData.patient?.med_freq_times.toString(),
+            medFreqDay: orderData.patient?.med_freq_day.toString(),
+            illnessHistory: orderData.patient?.illness_history
           }}
           medicalDetails={{
             causes: orderData.appointment?.causes || "N/A",
