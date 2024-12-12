@@ -163,7 +163,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({
               <div>{patientInfo.bloodType}</div>
               <div>{patientInfo.height} cm</div>
               <div>{patientInfo.weight} kg</div>
-              <div>{patientInfo.isSmoking}</div>
+              <div>{patientInfo.isSmoking ? "Yes" : "No"}</div>
               <div>{patientInfo.currentMedication}</div>
               <div>{patientInfo.medFreqTimes}</div>
               <div>{patientInfo.medFreqDay}</div>

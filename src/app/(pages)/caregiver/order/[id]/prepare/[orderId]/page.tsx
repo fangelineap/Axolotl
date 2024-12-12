@@ -85,35 +85,40 @@ const MedicinePreparationPage = async ({
             address: address,
             phoneNumber: phone_number,
             birthdate: birthdate,
-            allergies: allergies || "-",
+            allergies: allergies ?? "-",
             bloodType: blood_type,
             height: height.toString(),
             weight: weight.toString(),
             isSmoking: isSmoking,
-            currentMedication: current_medication || "N/A",
-            medFreqTimes: med_freq_times.toString() || "0",
-            medFreqDay: med_freq_day.toString() || "0",
-            illnessHistory: illness_history
+            currentMedication: current_medication ?? "Not Available",
+            medFreqTimes:
+              med_freq_times?.toString() ??
+              "This patient is currently not taking any medication.",
+            medFreqDay:
+              med_freq_day?.toString() ??
+              "This patient is currently not taking any medication.",
+            illnessHistory: illness_history ?? "Not Available"
           }}
           medicalDetails={{
             causes: orderData.appointment?.causes,
             mainConcerns: orderData.appointment?.main_concern,
-            currentMedicine: orderData.appointment?.current_medication || "N/A",
+            currentMedicine:
+              orderData.appointment?.current_medication ?? "Not Available",
             symptoms:
               Array.isArray(orderData.appointment?.symptoms) &&
               orderData.appointment.symptoms.length > 0
                 ? orderData.appointment.symptoms
                 : [],
             medicalDescriptions:
-              orderData.appointment?.medical_description || "N/A",
-            conjectures: orderData.appointment?.diagnosis || "N/A"
+              orderData.appointment?.medical_description ?? "Not Available",
+            conjectures: orderData.appointment?.diagnosis ?? "Not Available"
           }}
           serviceDetails={{
             orderId: `#${orderData.id}`,
             orderDate: orderData.created_at
               ? orderData.created_at.toString()
-              : "N/A",
-            serviceType: orderData.appointment?.service_type || "N/A",
+              : "Not Available",
+            serviceType: orderData.appointment?.service_type ?? "Not Available",
             totalDays: orderData.appointment?.day_of_visit,
             startTime:
               globalFormatDate(

@@ -69,41 +69,49 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
       <div>
         <OrderDetail
           status={orderData.status}
-          notes={orderData.notes || "N/A"}
+          notes={orderData.notes ?? "Not Available"}
           patientInfo={{
             name: `${first_name} ${last_name}`,
-            address: address || "N/A",
-            phoneNumber: phone_number || "N/A",
-            birthdate: String(birthdate) || "N/A",
-            allergies: orderData.patient?.allergies || "-",
-            bloodType: orderData.patient?.blood_type,
+            address: address ?? "Not Available",
+            phoneNumber: phone_number ?? "Not Available",
+            birthdate: String(birthdate) ?? "Not Available",
+            allergies: orderData.patient?.allergies ?? "-",
+            bloodType: orderData.patient?.blood_type ?? "-",
             height: orderData.patient?.height.toString(),
             weight: orderData.patient?.weight.toString(),
             isSmoking: orderData.patient?.is_smoking,
-            currentMedication: orderData.patient?.current_medication,
-            medFreqTimes: orderData.patient?.med_freq_times.toString(),
-            medFreqDay: orderData.patient?.med_freq_day.toString(),
-            illnessHistory: orderData.patient?.illness_history
+            currentMedication:
+              orderData.patient?.current_medication ?? "Not Available",
+            medFreqTimes:
+              orderData.patient?.med_freq_times?.toString() ??
+              "This patient is currently not taking any medication.",
+            medFreqDay:
+              orderData.patient?.med_freq_day?.toString() ??
+              "This patient is currently not taking any medication.",
+            illnessHistory:
+              orderData.patient?.illness_history ?? "Not Available"
           }}
           medicalDetails={{
-            causes: orderData.appointment?.causes || "N/A",
-            mainConcerns: orderData.appointment?.main_concern || "N/A",
-            currentMedicine: orderData.appointment?.current_medication || "N/A",
+            causes: orderData.appointment?.causes ?? "Not Available",
+            mainConcerns:
+              orderData.appointment?.main_concern ?? "Not Available",
+            currentMedicine:
+              orderData.appointment?.current_medication ?? "Not Available",
             symptoms:
               Array.isArray(orderData.appointment?.symptoms) &&
               orderData.appointment.symptoms.length > 0
                 ? orderData.appointment.symptoms
                 : [],
             medicalDescriptions:
-              orderData.appointment?.medical_description || "N/A",
-            conjectures: orderData.appointment?.diagnosis || "N/A"
+              orderData.appointment?.medical_description ?? "Not Available",
+            conjectures: orderData.appointment?.diagnosis ?? "Not Available"
           }}
           serviceDetails={{
             orderId: `#${orderData.id}`,
             orderDate: orderData.created_at
               ? orderData.created_at.toString()
-              : "N/A",
-            serviceType: orderData.appointment?.service_type || "N/A",
+              : "Not Available",
+            serviceType: orderData.appointment?.service_type ?? "Not Available",
             totalDays: orderData.appointment?.day_of_visit,
             startTime:
               globalFormatDate(
@@ -114,26 +122,26 @@ const OrderDetailPage = async ({ params }: { params: { id: string } }) => {
               orderData.appointment?.appointment_time,
             endTime: calculateEndTime(
               orderData.appointment.appointment_date,
-              orderData.appointment?.day_of_visit || 0,
+              orderData.appointment?.day_of_visit ?? 0,
               orderData.appointment.appointment_time
             ),
             serviceFee: orderData.appointment.total_payment,
             totalCharge: orderData.total_payment
           }}
           price={{
-            total: orderData.medicineOrder?.sub_total_medicine || 0,
-            delivery: orderData.medicineOrder?.delivery_fee || 0,
-            totalCharge: orderData.total_payment || 0
+            total: orderData.medicineOrder?.sub_total_medicine ?? 0,
+            delivery: orderData.medicineOrder?.delivery_fee ?? 0,
+            totalCharge: orderData.total_payment ?? 0
           }}
           medications={orderData.medicines.map((detail) => ({
             quantity: detail.quantity,
-            name: detail.name || "Unknown",
+            name: detail.name ?? "Unknown",
             price: detail.quantity * detail.price || 0
           }))}
           proofOfService={{
-            imageUrl: proof_of_service || ""
+            imageUrl: proof_of_service ?? ""
           }}
-          orderType={orderData.appointment?.id || "N/A"}
+          orderType={orderData.appointment?.id ?? "Not Available"}
           patientName={`${first_name} ${last_name}`}
         />
       </div>
