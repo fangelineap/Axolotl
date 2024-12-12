@@ -91,7 +91,7 @@ const GuestPage = () => {
                 <span className="font-medium text-primary">
                   Axolotl (Ambystoma mexicanum)
                 </span>
-                , we have an ambition to
+                , we have an ambition
               </p>
             </div>
           </div>
