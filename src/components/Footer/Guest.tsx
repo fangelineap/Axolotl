@@ -7,31 +7,8 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-const useActiveLink = (targetPath: string) => {
-  const [isActive, setIsActive] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname;
-
-      if (currentPath.endsWith(targetPath)) {
-        setIsActive(true);
-      } else {
-        setIsActive(false);
-      }
-    }
-  }, [targetPath]);
-
-  return isActive;
-};
 
 const GuestFooter = () => {
-  const isHomeActive = useActiveLink("/");
-  const isAboutActive = useActiveLink("/guest/about");
-  const isCareersActive = useActiveLink("/guest/careers");
-
   return (
     <footer className="mt-auto w-full border-t border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark">
       <div className="flex flex-col items-center justify-between px-5 pt-10 md:ml-10 md:flex-row md:px-2 lg:ml-10 2xl:px-10">
@@ -62,27 +39,15 @@ const GuestFooter = () => {
               />
             </div>
           </div>
-          <div className="mt-7 flex flex-col items-center md:ml-20 md:mt-10 md:items-start">
+          <div className="mt-7 flex flex-col items-center gap-2 md:ml-20 md:mt-10 md:items-start">
             <Link href="/">
-              <span
-                className={`${isHomeActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                Home
-              </span>
+              <span>Home</span>
             </Link>
             <Link href="/guest/about">
-              <span
-                className={` ${isAboutActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                About
-              </span>
+              <span>About</span>
             </Link>
             <Link href="/guest/careers">
-              <span
-                className={`${isCareersActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                Careers
-              </span>
+              <span>Careers</span>
             </Link>
           </div>
         </div>

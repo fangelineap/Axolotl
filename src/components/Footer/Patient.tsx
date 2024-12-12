@@ -6,44 +6,8 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-const useActiveLink = (targetPath: string, targetSearch: string = "") => {
-  const [isActive, setIsActive] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const currentUrl = new URL(window.location.href);
-      const currentPath = currentUrl.pathname;
-      const currentSearchParams = new URLSearchParams(currentUrl.search);
-
-      const queryMatches = targetSearch
-        ? currentSearchParams.get("role") === targetSearch
-        : true;
-
-      if (currentPath === targetPath && queryMatches) {
-        setIsActive(true);
-      } else {
-        setIsActive(false);
-      }
-    }
-  }, [targetPath, targetSearch]);
-
-  return isActive;
-};
 
 const PatientFooter = () => {
-  const isDashboardActive = useActiveLink("/patient");
-  const isOrderhistoryActive = useActiveLink("/patient/order-history");
-  const isOrderNurseActive = useActiveLink("/patient/health-services", "Nurse");
-  const isOrderMidwifeActive = useActiveLink(
-    "/patient/health-services",
-    "Midwife"
-  );
-
-  console.log("midwife: ", isOrderMidwifeActive);
-  console.log("nusre: ", isOrderNurseActive);
-
   return (
     <footer className="mt-auto w-full border-t border-stroke bg-white">
       <div className="mx-4 flex h-45 w-auto flex-col items-center justify-between py-10 md:mx-20 md:flex-row md:px-2">
@@ -71,34 +35,18 @@ const PatientFooter = () => {
               className="mt-2"
             />
           </div>
-          <div className="mt-7 flex flex-col gap-2 text-center md:ml-10 md:mt-0 md:text-left lg:ml-20 lg:items-start">
+          <div className="flex flex-col gap-3 text-center md:ml-10 md:mt-0 md:text-left lg:ml-20 lg:items-start">
             <Link href="/patient">
-              <span
-                className={`${isDashboardActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                Dashboard
-              </span>
+              <span>Dashboard</span>
             </Link>
             <Link href="/patient/order-history">
-              <span
-                className={` ${isOrderhistoryActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                Order History
-              </span>
+              <span>Order History</span>
             </Link>
             <Link href="/patient/health-services?role=Nurse">
-              <span
-                className={`${isOrderNurseActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                Order Nurse
-              </span>
+              <span>Order Nurse</span>
             </Link>
             <Link href="/patient/health-services?role=Midwife">
-              <span
-                className={`${isOrderMidwifeActive ? "text-lg font-bold" : "text-gray-400"}`}
-              >
-                Order Midwife
-              </span>
+              <span>Order Midwife</span>
             </Link>
           </div>
         </div>
