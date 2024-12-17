@@ -154,9 +154,16 @@ const OrderForm = ({
   }, [session]);
 
   const submitOrder = async (formData: FormData) => {
-    if (
-      !OrderFormValidation(serviceType, formData, concern, selectedAll, days)
-    ) {
+    const allSelectedSymtoms = [...selectedAll, ...additionalSymptom];
+    const isValid = OrderFormValidation(
+      serviceType,
+      formData,
+      concern,
+      allSelectedSymtoms,
+      days
+    );
+
+    if (!isValid) {
       setIsActive(false);
 
       return;
