@@ -2,72 +2,72 @@ export const AxolotlServices = [
   {
     name: "Neonatal Care",
     description:
-      "Neonatal care is the care of newborn infants, especially those who were born prematurely or with a low birth weight. Neonatal care includes care of the newborn infant during the first 28 days of life.",
+      "Neonatal care looks after newborn babies—particularly those who arrive early or have low birth weights. We focus on giving them gentle, specialized support during those crucial first 28 days of life.",
     price: 150000,
     types: [
       {
         name: "Specialized Newborn Care",
         description:
-          "Providing round-the-clock monitoring, feeding assistance, and specialized care for premature or ill newborns"
+          "We provide round-the-clock monitoring, feeding help, and dedicated attention for premature or unwell newborns."
       },
       {
-        name: "Post Delivery Care",
+        name: "Post-Delivery Care",
         description:
-          "Offering support with breastfeeding, diaper changes, and newborn care education for new parents"
+          "We support new parents with breastfeeding, diaper changes, and hands-on newborn care tips to help everyone settle in."
       }
     ]
   },
   {
     name: "Elderly Care",
     description:
-      "Elderly care is the care of older people. It includes the care of older people during the first 28 days of life.",
+      "Our elderly care services help older adults stay comfortable, safe, and engaged at home. We're here to lend a hand with everyday tasks, health needs, and companionship.",
     price: 600000,
     types: [
       {
         name: "Home Assistance",
         description:
-          "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation"
+          "We assist with bathing, dressing, managing medications, meal prep, and other daily activities."
       },
       {
         name: "Home Nursing",
         description:
-          "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility"
+          "If more medical help is needed, we offer professional nursing services—from medication administration to mobility support—right in the comfort of home."
       }
     ]
   },
   {
     name: "After Care",
     description:
-      "After care is the care for disabled people. It includes the care of disabled people during the first 28 days of life.",
+      "After care provides ongoing support for anyone transitioning from a hospital stay or living with chronic conditions and disabilities. We focus on recovery, rehabilitation, and helping you feel your best.",
     price: 70000,
     types: [
       {
         name: "Wound Treatment",
         description:
-          "Providing specialized care for wound cleaning, dressing changes, and monitoring for proper healing"
+          "We handle wound cleaning, dressing changes, and close monitoring to ensure proper healing."
       },
       {
         name: "Commorbid Care",
         description:
-          "Offering personalized assistance and support for managing multiple health conditions, ensuring that all needs are met"
+          "For those with multiple health concerns, we tailor support so all your needs are met under one care plan."
       }
     ]
   },
   {
     name: "Booster",
     description:
-      "Booster is the care for people that needs vitamin injection or other specific injections",
+      "Our booster services include vitamin shots or immune-boosting injections to help you maintain a strong, healthy body.",
     price: 80000,
     types: [
       {
         name: "Vitamin Booster",
         description:
-          "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility"
+          "We deliver key vitamins and nutrients through targeted injections to help keep your energy and wellness levels up."
       },
       {
         name: "Immune Booster",
         description:
-          "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation"
+          "Designed to strengthen your immune system, these injections help your body better ward off illness."
       }
     ]
   }

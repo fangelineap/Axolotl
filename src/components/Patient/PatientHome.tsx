@@ -33,9 +33,9 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
       image: "/images/healthservices/neonatal-care.svg",
       features: [
         "Specialized Newborn Care",
-        "Providing round-the-clock monitoring, feeding assistance, and specialized care for premature or ill newborns.",
-        "Developmental Support",
-        "Offering early intervention therapies and developmental activities to promote healthy growth."
+        "We provide round-the-clock monitoring, feeding help, and dedicated attention for premature or unwell newborns.",
+        "Post-Delivery Care",
+        "We support new parents with breastfeeding, diaper changes, and hands-on newborn care tips to help everyone settle in."
       ],
       price: "500.000"
     },
@@ -43,10 +43,10 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
       title: "Elderly Care",
       image: "/images/healthservices/elderly-care.svg",
       features: [
-        "Personalized Assistance",
-        "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation.",
-        "Mobility Assistance",
-        "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility."
+        "Home Assistance",
+        "We assist with bathing, dressing, managing medications, meal prep, and other daily activities.",
+        "Home Nursing",
+        "If more medical help is needed, we offer professional nursing services—from medication administration to mobility support—right in the comfort of home."
       ],
       price: "500.000"
     },
@@ -55,9 +55,9 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
       image: "/images/healthservices/after-care.svg",
       features: [
         "Wound treatment",
-        "Providing specialized care for wound cleaning, dressing changes, and monitoring for proper healing.",
-        "Someone who has comorbidities",
-        "Offering personalized assistance and support for managing multiple health conditions, ensuring optimal wound healing and overall well-being."
+        "Handling wound cleaning, dressing changes, and close monitoring to ensure proper healing.",
+        "Comorbid Care",
+        "For those with multiple health concerns, we tailor support so all your needs are met under one care plan."
       ],
       price: "500.000"
     },
@@ -65,10 +65,10 @@ const PatientHome = ({ currentUser }: PatientHomeProps) => {
       title: "Booster",
       image: "/images/healthservices/booster.svg",
       features: [
-        "Immune Booster",
-        "Providing support with daily living activities such as bathing, dressing, medication management, and meal preparation.",
         "Vitamin Booster",
-        "Helping with safe transfers, ambulation, and exercises to maintain strength and mobility."
+        "Delivering key vitamins and nutrients through targeted injections to help keep your energy and wellness levels up.",
+        "Immune Booster",
+        "Helping you maintain a strong, healthy body with vitamin shots or immune-boosting injections."
       ],
       price: "500.000"
     }
