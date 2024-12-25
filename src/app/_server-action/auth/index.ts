@@ -197,7 +197,7 @@ export async function resetPassword(password: string, code: string) {
   if (sessionError) {
     console.error("Error exchanging code for session:", sessionError);
 
-    return "Please re-enter your email to reset your password";
+    return "Something went wrong while exchanging code for session";
   }
 
   const { error } = await supabase.auth.updateUser({
