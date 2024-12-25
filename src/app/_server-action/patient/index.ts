@@ -588,10 +588,12 @@ export async function updateRating(
   try {
     const supabase = await createSupabaseServerClient();
 
+    console.log("rating", rating);
+
     const { data, error } = await supabase
       .from("order")
       .update({
-        rate: rating + 1
+        rate: rating
       })
       .eq("id", orderId)
       .select("rate");
@@ -607,7 +609,7 @@ export async function updateRating(
           if (data && data[0].rate) {
             const { data: updateData } = await supabase
               .from("caregiver")
-              .update({ rate: (data[0].rate + rating + 1) / 2 })
+              .update({ rate: (data[0].rate + rating) / 2 })
               .eq("caregiver_id", caregiverId)
               .select("rate");
 
@@ -617,7 +619,7 @@ export async function updateRating(
           } else {
             const { data: updateData } = await supabase
               .from("caregiver")
-              .update({ rate: rating + 1 })
+              .update({ rate: rating })
               .eq("caregiver_id", caregiverId)
               .select("rate");
 
