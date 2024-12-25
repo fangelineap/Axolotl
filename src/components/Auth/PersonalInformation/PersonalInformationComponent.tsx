@@ -109,7 +109,9 @@ function PersonalInformationComponent({
     const userPersonalData: UserPersonalInformation = {
       address: form.get("address")?.toString() || "",
       gender: form.get("gender")?.toString() || "",
-      birthdate: new Date(form.get("birthdate")?.toString() || ""),
+      birthdate: new Date(
+        new Date(form.get("birthdate")?.toString() || "").toLocaleDateString()
+      ),
       role:
         (form.get("caregiver_role")?.toString() as "Nurse" | "Midwife") ||
         "Patient"
