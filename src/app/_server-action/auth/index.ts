@@ -197,7 +197,7 @@ export async function resetPassword(password: string, code: string) {
   if (sessionError) {
     console.error("Error exchanging code for session:", sessionError);
 
-    return "Something went wrong while exchanging code for session";
+    return "Something went wrong while exchanging code for session. Please try to clear your cookies or reset your password using another browser or device";
   }
 
   const { error } = await supabase.auth.updateUser({
@@ -205,9 +205,9 @@ export async function resetPassword(password: string, code: string) {
   });
 
   if (error) {
-    console.log("Error. Please try again.");
+    console.log("Error updating password:", error);
 
-    return "Old pass can't be the same as new pass";
+    return "Failed to update password. Please try again";
   }
 
   redirect("/auth/signin");
