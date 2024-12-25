@@ -341,9 +341,9 @@ function PersonalInformationComponent({
                         <div className="mb-3 flex flex-col gap-5 lg:flex-row">
                           <CustomInputGroup
                             name="address"
-                            label="Address (e.g. Jl. Kebon Apel No. 1, Malang, East Java, Indonesia)"
+                            label="Full Address"
                             type="text"
-                            placeholder="Street, Subdistrict, District/City, Province"
+                            placeholder="e.g. Jl. Kebon Apel No. 1, Malang, East Java, Indonesia"
                             required
                           />
                           <CheckboxBlood blood={blood} setBlood={setBlood} />
@@ -449,9 +449,9 @@ function PersonalInformationComponent({
                         </div>
                         <CustomInputGroup
                           name="address"
-                          label="Current Location (e.g. Jl. Kebon Apel No. 1, Malang, East Java, Indonesia)"
+                          label="Full Address"
                           type="text"
-                          placeholder="Street, Subdistrict, District/City, Province"
+                          placeholder="e.g. Jl. Kebon Apel No. 1, Malang, East Java, Indonesia"
                           required
                         />
                       </div>
