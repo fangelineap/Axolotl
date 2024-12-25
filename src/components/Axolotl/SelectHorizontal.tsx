@@ -28,7 +28,7 @@ const SelectHorizontal = ({
 
   return (
     <div className="mb-3 flex items-center justify-between gap-5">
-      <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+      <label className="block font-medium text-dark dark:text-white">
         {label} {required && <span className="ml-1 text-red">*</span>}
       </label>
       <select
@@ -38,7 +38,7 @@ const SelectHorizontal = ({
           e.preventDefault();
           setSelectedOption(e.target.value);
         }}
-        className={`${customClass} relative z-20 w-3/4 appearance-none rounded-[7px] border border-stroke bg-transparent px-5.5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary ${
+        className={`${customClass} relative z-20 w-3/4 appearance-none rounded-[7px] border border-stroke bg-transparent px-3 py-2 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary ${
           isOptionSelected ? "text-dark dark:text-white" : ""
         }`}
       >

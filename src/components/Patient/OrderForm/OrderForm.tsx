@@ -282,12 +282,17 @@ const OrderForm = ({
                     selectedOption={serviceType}
                     setSelectedOption={setServiceType}
                   />
-                  <h1 className="text-body-sm font-medium text-dark dark:text-white">
+                  <h1 className="font-medium text-dark dark:text-white">
                     Service Description:
                   </h1>
-                  <p className="w-[75%] text-body-sm">
-                    Service desc for after care
-                  </p>
+                  {AxolotlServices.find((s) => s.name === serviceType) && (
+                    <p className="w-[75%] text-body-sm">
+                      {
+                        AxolotlServices.find((s) => s.name === serviceType)
+                          ?.description
+                      }
+                    </p>
+                  )}
                 </div>
               </>
 
@@ -298,14 +303,14 @@ const OrderForm = ({
                 </h1>
                 <div>
                   <div className="mb-3 flex items-center justify-between gap-5">
-                    <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+                    <label className="block font-medium text-dark dark:text-white">
                       Causes <span className="ml-1 text-red">*</span>
                     </label>
                     <input
                       type="text"
                       name="causes"
                       placeholder="Causes"
-                      className={`${isActive ? "disabled pointer-events-none" : ""} w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
+                      className={`${isActive ? "disabled pointer-events-none" : ""} w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-3 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                     />
                   </div>
                   {allTypes.length > 0 && (
@@ -321,7 +326,7 @@ const OrderForm = ({
                     />
                   )}
                   <div className="mb-3 flex items-center justify-between gap-5">
-                    <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+                    <label className="block font-medium text-dark dark:text-white">
                       Current Medication{" "}
                       <span className="ml-1 text-red">*</span>
                     </label>
@@ -329,19 +334,19 @@ const OrderForm = ({
                       type="text"
                       name="currentMedication"
                       placeholder="Enter your current medication (separated by ',')"
-                      className={`${isActive ? "disabled pointer-events-none" : ""} w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
+                      className={`${isActive ? "disabled pointer-events-none" : ""} w-[75%] rounded-[7px] border-[1.5px] border-stroke bg-transparent px-3 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                     />
                   </div>
                   <div>
-                    <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+                    <label className="mb-3 block font-medium text-dark dark:text-white">
                       Describe Your Current Conditions{" "}
                       <span className="ml-1 text-red">*</span>
                     </label>
                     <textarea
                       name="medicalDescription"
                       rows={4}
-                      placeholder="I am experiencing a persistent, dull ache in my lower back that started about two weeks ago. The pain typically intensifies after long periods of sitting and seems to improve slightly when I take short walks or stretch. I haven’t noticed any swelling or discoloration, but there’s a mild stiffness, especially in the mornings. My energy levels are normal, and I haven’t had any significant changes in appetite, sleep, or mood. While the discomfort is manageable, it’s beginning to interfere with my daily routine, and I’m considering seeking medical advice if it does not improve within the next week."
-                      className={`${isActive ? "disabled pointer-events-none" : ""} w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-5.5 py-3 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
+                      placeholder="I am experiencing a persistent, dull ache in my lower back that started about two weeks ago. The pain typically intensifies after long periods of sitting and seems to improve slightly when I take short walks or stretch. I haven't noticed any swelling or discoloration, but there's a mild stiffness, especially in the mornings. My energy levels are normal, and I haven't had any significant changes in appetite, sleep, or mood. While the discomfort is manageable, it's beginning to interfere with my daily routine, and I'm considering seeking medical advice if it does not improve within the next week."
+                      className={`${isActive ? "disabled pointer-events-none" : ""} w-full rounded-[7px] border-[1.5px] border-stroke bg-transparent px-3 py-2 text-dark outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2 dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary`}
                     ></textarea>
                   </div>
                 </div>

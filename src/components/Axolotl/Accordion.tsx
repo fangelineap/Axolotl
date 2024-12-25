@@ -46,7 +46,7 @@ const Accordion = ({
     >
       <h6 className="mb-0">
         <button
-          className="flex w-full items-center justify-between rounded-t-md p-4 text-left font-semibold text-slate-700 transition-all ease-in"
+          className="flex w-full items-center justify-between rounded-t-md p-4 text-left font-semibold text-black transition-all ease-in"
           onClick={handleToggle}
           aria-expanded={open}
           aria-controls={`accordion-content-${type}`}
@@ -115,7 +115,7 @@ const Accordion = ({
                       className={`flex h-5 w-5 items-center justify-center rounded border ${
                         selectedAll.includes(symptom)
                           ? "border-primary bg-primary dark:bg-transparent"
-                          : "border-dark-5 dark:border-dark-6"
+                          : "border-gray-dark dark:border-dark-6"
                       }`}
                     >
                       <span

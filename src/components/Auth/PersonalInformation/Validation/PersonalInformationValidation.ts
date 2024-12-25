@@ -12,10 +12,13 @@ export const PersonalInformationValidation = (
   }
 ) => {
   const address = (form.get("address")?.toString() || "").trim().toLowerCase();
-  const workExperienceYears = Number(form.get("work_experiences"));
 
   switch (userType) {
     case "Caregiver":
+      const workplace = (form.get("workplace")?.toString() || "")
+        .trim()
+        .toLowerCase();
+      const workExperienceYears = Number(form.get("work_experiences"));
       if (
         !form.get("address") &&
         !form.get("gender") &&
@@ -97,6 +100,17 @@ export const PersonalInformationValidation = (
         toast.warning("Please enter your workplace.", {
           position: "bottom-right"
         });
+
+        return false;
+      }
+
+      if (!workplace.includes("malang") && !workplace.includes("gianyar")) {
+        toast.warning(
+          "Sorry, we only accept Caregiver from Malang (East Java) or Gianyar (Bali). Please add your City to your workplace. For example: RS XXX, Malang, East Java or RS XXX, Gianyar, Bali.",
+          {
+            position: "bottom-right"
+          }
+        );
 
         return false;
       }
