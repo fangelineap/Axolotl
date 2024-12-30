@@ -85,11 +85,7 @@ async function AdminShowUser({ params }: AdminShowUserProps) {
 
   return (
     <CustomLayout>
-      <CustomBreadcrumbs
-        parentPage="Manage"
-        subPage="Medicine"
-        pageName="View"
-      />
+      <CustomBreadcrumbs parentPage="Manage" subPage="User" pageName="View" />
       <ViewUser user={data} totalOrder={totalOrder} is_complete={is_complete} />
     </CustomLayout>
   );

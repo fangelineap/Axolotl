@@ -219,17 +219,6 @@ export const PersonalInformationValidation = (
         return false;
       }
 
-      if ((form.get("address")?.toString() ?? "").length < 10) {
-        toast.warning(
-          "Please enter your full address, including its city and province.",
-          {
-            position: "bottom-right"
-          }
-        );
-
-        return false;
-      }
-
       if (!address.includes("malang") && !address.includes("gianyar")) {
         toast.warning(
           "Sorry, we only accept Patients from Malang (East Java) or Gianyar (Bali). Please add your City to your address, for example: Malang, East Java or Gianyar, Bali.",

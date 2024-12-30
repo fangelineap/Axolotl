@@ -85,11 +85,7 @@ async function AdminEditUser({ params }: AdminEditUserProps) {
 
   return (
     <CustomLayout>
-      <CustomBreadcrumbs
-        parentPage="Manage"
-        subPage="Medicine"
-        pageName="View"
-      />
+      <CustomBreadcrumbs parentPage="Manage" subPage="User" pageName="View" />
       <UpdateUser
         user={data}
         totalOrder={totalOrder}

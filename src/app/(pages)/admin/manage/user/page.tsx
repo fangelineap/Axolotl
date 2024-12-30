@@ -21,7 +21,7 @@ async function AdminManageUser() {
   return (
     <div className="bg-gray">
       <CustomLayout>
-        <CustomBreadcrumbs parentPage="Manage" pageName="Medicine" />
+        <CustomBreadcrumbs parentPage="Manage" pageName="User" />
         <h1 className="mb-5 text-heading-1 font-bold">User List</h1>
         <ManageUserTable initialData={data} />
       </CustomLayout>

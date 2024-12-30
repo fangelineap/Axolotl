@@ -525,6 +525,11 @@ export async function saveUserPersonalInformation(
     return { success: false, message: validationError.message };
   }
 
+  const syncBirthdate = {
+    ...form,
+    birthdate: new Date(birthdate!).toLocaleString()
+  };
+
   try {
     const { data: currentUserData, error: currentUserError } =
       await getUserFromSession();
@@ -540,7 +545,7 @@ export async function saveUserPersonalInformation(
     const { error } = await supabase
       .from("users")
       .update({
-        ...form,
+        ...syncBirthdate,
         updated_at: new Date()
       })
       .eq("id", userId)

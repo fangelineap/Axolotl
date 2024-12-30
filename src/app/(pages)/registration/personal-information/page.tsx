@@ -25,7 +25,7 @@ const PersonalInformation = async ({
 
     if (!data) redirect("/auth/signin");
 
-    return redirect(
+    redirect(
       `/registration/personal-information?role=${data.role}&user=${data.user_id}&signed-in=true&personal-information=false`
     );
   }
