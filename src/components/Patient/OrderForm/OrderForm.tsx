@@ -169,6 +169,8 @@ const OrderForm = ({
       return;
     }
 
+    const timezoneOffset = 7 * 60 * 60 * 1000;
+
     const res = await createAppointment({
       service_type: serviceType,
       caregiver_id: caregiverId,
@@ -179,7 +181,7 @@ const OrderForm = ({
       medical_description: formData.get("medicalDescription")!.toString(),
       days_of_visit: days,
       appointment_time: time,
-      appointment_date: new Date(date),
+      appointment_date: new Date(new Date(date).getTime() + timezoneOffset),
       total_payment: days * service.price,
       symptoms: selectedAll.map((symptom) => {
         return symptom.toLowerCase();
