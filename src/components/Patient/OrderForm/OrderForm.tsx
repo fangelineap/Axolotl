@@ -49,6 +49,7 @@ const OrderForm = ({
 
   const [isActive, setIsActive] = useState(false);
   const [seconds, setSeconds] = useState(3600);
+  const [isValid, setIsValid] = useState(true);
 
   const [copied, setCopied] = useState(false);
   const [serviceType, setServiceType] = useState<string>("");
@@ -133,6 +134,11 @@ const OrderForm = ({
 
     if (isActive) {
       interval = setInterval(() => {
+        if (seconds === 0) {
+          setIsValid(false);
+
+          return;
+        }
         setSeconds((prevSeconds) => prevSeconds - 1);
       }, 1000);
     } else if (!isActive && seconds !== 0) {
@@ -491,16 +497,25 @@ const OrderForm = ({
                     <div className="px-5 py-2">
                       {!copied && (
                         <div className="flex flex-col items-center justify-center rounded-md border-[0.5px] border-red bg-red-light px-3 py-1 text-red">
-                          <h1 className="text-center text-lg font-medium">
-                            Your transaction will be automatically terminated in
-                          </h1>
-                          <h1 className="text-lg font-medium">
-                            {Math.floor(seconds / 3600)}:
-                            {Math.floor(seconds / 60) == 60
-                              ? "00"
-                              : Math.floor(seconds / 60)}
-                            :{seconds % 60 == 0 ? "00" : seconds % 60}
-                          </h1>
+                          {isValid ? (
+                            <>
+                              <h1 className="text-center text-lg font-medium">
+                                Your transaction will be automatically
+                                terminated in
+                              </h1>
+                              <h1 className="text-lg font-medium">
+                                {Math.floor(seconds / 3600)}:
+                                {Math.floor(seconds / 60) == 60
+                                  ? "00"
+                                  : Math.floor(seconds / 60)}
+                                :{seconds % 60 == 0 ? "00" : seconds % 60}
+                              </h1>
+                            </>
+                          ) : (
+                            <h1 className="text-center text-lg font-medium">
+                              Transaction failed
+                            </h1>
+                          )}
                         </div>
                       )}
                       <div className="mb-1 mt-3 flex justify-between">
@@ -530,29 +545,45 @@ const OrderForm = ({
                           )}
                         </h1>
                       </div>
-                      <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">
-                        <h1 className="mb-1 text-lg font-medium">
-                          Virtual Account Number
-                        </h1>
-                        <h1>12345-67890-87654</h1>
-                        <button
-                          className={`my-3 rounded-md ${copied ? "disabled bg-gray-cancel" : "bg-primary"} px-3 py-1 font-medium text-white`}
-                          onClick={async (e) => {
-                            e.preventDefault();
+                      {isValid && !copied ? (
+                        <div className="flex flex-col items-center rounded-md border-[1px] border-stroke px-5 py-2">
+                          <h1 className="mb-1 text-lg font-medium">
+                            Virtual Account Number
+                          </h1>
+                          <h1>12345-67890-87654</h1>
+                          <button
+                            className={`my-3 rounded-md ${copied ? "disabled bg-gray-cancel" : "bg-primary"} px-3 py-1 font-medium text-white`}
+                            onClick={async (e) => {
+                              e.preventDefault();
 
-                            try {
-                              await navigator.clipboard.writeText(
-                                "12345-67890-87654"
-                              );
-                              setCopied(true);
-                            } catch (error) {
-                              throw new Error(error as string);
-                            }
-                          }}
-                        >
-                          {copied ? "Copied" : "Copy to clipboard"}
-                        </button>
-                      </div>
+                              try {
+                                await navigator.clipboard.writeText(
+                                  "12345-67890-87654"
+                                );
+                                setCopied(true);
+                              } catch (error) {
+                                throw new Error(error as string);
+                              }
+                            }}
+                          >
+                            {copied ? "Copied" : "Copy to clipboard"}
+                          </button>
+                        </div>
+                      ) : (
+                        !isValid && (
+                          <AxolotlButton
+                            label="Retry"
+                            variant="primary"
+                            fontThickness="bold"
+                            customClasses="mb-3"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setIsValid(true);
+                              setSeconds(3600);
+                            }}
+                          />
+                        )
+                      )}
                       <div>
                         <h1 className="mb-2 text-lg font-bold">
                           Payment Status
@@ -563,10 +594,16 @@ const OrderForm = ({
                               Verified
                             </h1>
                           </div>
-                        ) : (
+                        ) : isValid ? (
                           <div className="rounded-md border-[1px] border-yellow bg-yellow-light px-5 py-2">
                             <h1 className="text-center text-lg font-medium text-yellow">
                               Pending
+                            </h1>
+                          </div>
+                        ) : (
+                          <div className="rounded-md border-[1px] border-red bg-red-light px-5 py-2">
+                            <h1 className="text-center text-lg font-medium text-red">
+                              Failed
                             </h1>
                           </div>
                         )}
