@@ -27,7 +27,7 @@ const statusDisplay: Record<
   Completed: { bgColor: "bg-kalbe-ultraLight", textColor: "text-primary" }
 };
 
-const columnHelper = createColumnHelper<AdminOrderMedicineLogsTable>();
+export const columnHelper = createColumnHelper<AdminOrderMedicineLogsTable>();
 
 /**
  * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled

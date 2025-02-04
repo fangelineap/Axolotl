@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
-
+import { CaregiverOrderDetails } from "@/app/(pages)/caregiver/type/data";
+import { PatientOrderDetails } from "@/app/(pages)/patient/type/data";
 import { fetchOrdersByPatient } from "@/app/_server-action/patient";
 import { DataTable } from "@/components/Tables/DataTable";
+import { globalFormatDate } from "@/utils/Formatters/GlobalFormatters";
 import { Skeleton } from "@mui/material";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR from "swr";
-import { PatientOrderDetails } from "@/app/(pages)/patient/type/data";
 
 /**
  * * Default Sort Function; This function will sort the table starting from Ongoing, Completed, and Canceled
@@ -44,52 +44,57 @@ const OrderHistory = () => {
   });
 
   // Define the columns for the table
-  const columns: ColumnDef<PatientOrderDetails>[] = [
-    {
-      id: "Appointment Date",
-      accessorKey: "appointment.appointment_date",
-      header: "Appointment Date",
+  const columnHelper = createColumnHelper<CaregiverOrderDetails>();
+
+  function userFullName(row: any) {
+    console.log(row);
+
+    return `${row.caregiver.users?.first_name} ${row.caregiver.users?.last_name}`.trim();
+  }
+
+  const statusDisplay: Record<
+    "Canceled" | "Ongoing" | "Completed",
+    { bgColor: string; textColor: string }
+  > = {
+    Canceled: { bgColor: "bg-red-light", textColor: "text-red" },
+    Ongoing: { bgColor: "bg-yellow-light", textColor: "text-yellow" },
+    Completed: { bgColor: "bg-kalbe-ultraLight", textColor: "text-primary" }
+  };
+
+  const columns = [
+    columnHelper.accessor("appointment.appointment_date", {
       cell: (info) => {
         const created_at = info.getValue();
-        const formattedDate = new Intl.DateTimeFormat("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-          year: "numeric"
-        }).format(new Date(created_at as string | number));
+        const formattedDate = globalFormatDate(
+          new Date(created_at),
+          "longDate"
+        );
 
         return formattedDate;
-      }
-    },
-    {
+      },
+      id: "Appointment Date",
+      header: "Appointment Date",
+      enableSorting: true,
+      enableColumnFilter: true
+    }),
+    columnHelper.accessor("appointment.service_type", {
+      cell: (info) => info.getValue(),
       id: "Order Type",
-      accessorKey: "appointment.service_type",
-      header: "Order Type"
-    },
-    {
+      header: "Order Type",
+      enableSorting: true,
+      enableColumnFilter: true
+    }),
+    columnHelper.accessor((row) => userFullName(row), {
+      cell: (info) => info.getValue(),
       id: "Caregiver Name",
-      accessorKey: "caregiver.users",
       header: "Caregiver Name",
-      cell: ({ row }) =>
-        `${row.original.caregiver?.users?.first_name || ""} ${row.original.caregiver?.users?.last_name || ""}`.trim()
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
+      enableSorting: true,
+      enableColumnFilter: true
+    }),
+    columnHelper.accessor("status", {
       cell: (info) => {
-        const statusColor: Record<
-          "Canceled" | "Ongoing" | "Completed",
-          { bgColor: string; textColor: string }
-        > = {
-          Canceled: { bgColor: "bg-red-light", textColor: "text-red" },
-          Ongoing: { bgColor: "bg-yellow-light", textColor: "text-yellow" },
-          Completed: {
-            bgColor: "bg-kalbe-ultraLight",
-            textColor: "text-primary"
-          }
-        };
         const status = info.getValue() as "Canceled" | "Ongoing" | "Completed";
-        const { bgColor, textColor } = statusColor[status];
+        const { bgColor, textColor } = statusDisplay[status];
 
         return (
           <div className={`flex items-center justify-center`}>
@@ -100,11 +105,11 @@ const OrderHistory = () => {
         );
       },
       id: "Status",
+      header: "Status",
       enableSorting: true,
       enableColumnFilter: true,
-      sortingFn: customStatusSort,
-      filterFn: "equals"
-    }
+      sortingFn: customStatusSort
+    })
   ];
 
   // Handle action to show order details
@@ -134,13 +139,14 @@ const OrderHistory = () => {
       ) : (
         <DataTable
           data={orderData} // Pass the data array
-          columns={columns} // Pass the columns configuration
+          columns={columns as ColumnDef<PatientOrderDetails>[]} // Pass the columns configuration
           basePath="/patient/order-history"
           showAction={handleShowAction} // Define the action handler
           initialSorting={[
             { id: "Status", desc: false },
             { id: "Appointment Date", desc: false }
           ]}
+          selectStatusOptions={["Canceled", "Ongoing", "Completed"]}
         />
       )}
     </>
